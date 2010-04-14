@@ -1,0 +1,117 @@
+package module.siadap.domain; 
+
+enum module.siadap.domain.SiadapEvaluation as SiadapEvaluation;
+
+class SiadapRootModule {
+	Integer number;
+}
+
+class SiadapProcess extends .module.workflow.domain.WorkflowProcess {
+}
+
+class Siadap {
+	Integer year;
+	Integer currentObjectiveVersion;
+	LocalDate requestedAcknowledgeDate;
+	LocalDate acknowledgeDate;
+}
+
+class SiadapEvaluationItem {
+	DateTime whenCreated;
+	SiadapEvaluation autoEvaluation;
+	SiadapEvaluation evaluation;
+}
+
+class ObjectiveEvaluation extends SiadapEvaluationItem {
+	String objective;	
+	String measurementIndicator;
+	String superationCriteria;
+	Integer fromVersion;
+	Integer untilVersion;
+}
+
+class CompetenceEvaluation extends SiadapEvaluationItem {
+}
+
+class Competence {
+	Integer number;
+	String name;
+	String description;
+}
+
+class CompetenceType {
+	String name;
+}
+
+relation SiadapModuleRootMyOrg {
+	.myorg.domain.MyOrg playsRole myOrg;
+	SiadapRootModule playsRole siadapRootModule;
+}
+
+relation SiadapRootModuleSiadap {
+	Siadap playsRole siadaps {
+		multiplicity *;
+	}
+	SiadapRootModule playsRole siadapRootModule;
+}
+
+relation SiadapRootModuleSiadapEvaluation {
+	SiadapEvaluationItem playsRole evaluationItems {
+		multiplicity *;
+	}
+	SiadapRootModule playsRole siadapRootModule;
+}
+
+relation SiadapRootModuleCompetence {
+	Competence playsRole competences {
+		multiplicity *;
+	}
+	SiadapRootModule playsRole siadapRootModule;
+}
+
+relation SiadapRootModuleCompetenceType {
+	CompetenceType playsRole competenceTypes {
+		multiplicity *;
+	}
+	SiadapRootModule playsRole siadapRootModule;
+}
+
+relation SiadapProcessSiadap {
+	SiadapProcess playsRole process;
+	Siadap playsRole siadap;
+}
+
+relation SiadapSiadapEvaluationItems {
+	Siadap playsRole siadap;
+	SiadapEvaluationItem playsRole siadapEvaluationItems {
+		multiplicity *;
+	}
+}
+
+relation SiadapEvaluator {
+	.module.organization.domain.Person playsRole evaluator;
+	Siadap playsRole siadapsAsEvaluator {
+		multiplicity *;
+	}
+}
+
+relation SiadapEvaluated {
+	.module.organization.domain.Person playsRole evaluated;
+	Siadap playsRole siadapsAsEvaluated {
+		multiplicity *;
+	}
+}
+
+relation CompetenceEvaluationCompetence {
+	CompetenceEvaluation playsRole competenceEvaluation {
+		multiplicity *;
+	}
+	Competence playsRole competence;
+}
+
+relation CompetenceCompentenceType {
+	CompetenceType playsRole competenceType;
+	Competence playsRole competences {
+		multiplicity *;
+	}	
+}

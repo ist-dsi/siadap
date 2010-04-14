@@ -1,0 +1,2 @@
+name=siadap-module
+depends=core,workflow-module,organization
