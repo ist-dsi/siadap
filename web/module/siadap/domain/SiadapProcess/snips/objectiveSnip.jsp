@@ -26,10 +26,10 @@
 		<th class="width30px"> <bean:message key="label.measurementIndicator" bundle="SIADAP_RESOURCES"/> </th>
 		<td style="width: 450px" class="aleft"> <fr:view name="objectiveEvaluation" property="measurementIndicator"/>	</td>
 		<td rowspan="2" valign="middle">
-			<fr:view name="objectiveEvaluation" property="autoEvaluation"/>
+			<fr:view name="objectiveEvaluation" property="autoEvaluation" type="module.siadap.domain.SiadapEvaluation"/>
 		</td>
 		<td rowspan="2" valign="middle">
-			<fr:view name="objectiveEvaluation" property="evaluation"/>
+			<fr:view name="objectiveEvaluation" property="evaluation" type="module.siadap.domain.SiadapEvaluation"/>
 		</td> 
 	</tr>
 	<tr>

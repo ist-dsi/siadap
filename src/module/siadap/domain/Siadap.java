@@ -93,6 +93,6 @@ public class Siadap extends Siadap_Base {
     }
 
     public BigDecimal getTotalEvaluationScoring() {
-	return getPonderatedCompetencesScoring().add(getObjectivesScoring());
+	return getPonderatedCompetencesScoring().add(getPonderatedObjectivesScoring());
     }
 }
