@@ -52,12 +52,12 @@ public class Siadap extends Siadap_Base {
 	return evaluationItems;
     }
 
-    public boolean hasBeenEvaluated() {
+    public boolean isEvaluationDone() {
 	return getProcess().hasBeenExecuted(Evaluation.class);
     }
 
     private BigDecimal getEvaluationScoring(List<? extends SiadapEvaluationItem> evaluations) {
-	if (!hasBeenEvaluated()) {
+	if (!isEvaluationDone()) {
 	    return BigDecimal.ZERO;
 	}
 

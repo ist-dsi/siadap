@@ -9,7 +9,7 @@ public class AutoEvaluation extends GenericEvaluationActivity {
     @Override
     public boolean isActive(SiadapProcess process, User user) {
 	Siadap siadap = process.getSiadap();
-	return siadap.getEvaluated().getUser() == user && !siadap.hasBeenEvaluated();
+	return siadap.getEvaluated().getUser() == user && !siadap.isEvaluationDone();
     }
 
 }
