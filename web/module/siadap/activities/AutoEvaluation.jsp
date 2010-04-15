@@ -7,6 +7,7 @@
 <bean:define id="processId" name="process" property="externalId" type="java.lang.String"/>
 <bean:define id="name" name="information" property="activityName"/>
 
+<div class="dinline forminline">
 <fr:form action='<%= "/workflowProcessManagement.do?method=process&processId=" + processId + "&activity=" + name %>'>
 	
 		<fr:edit id="activityBean" name="information" visible="false"/>
@@ -35,5 +36,9 @@
 		</logic:iterate>	
 		</table>	
 	
-	<html:submit>Submeter</html:submit>
+	<html:submit styleClass="inputbutton"><bean:message key="renderers.form.submit.name" bundle="RENDERER_RESOURCES"/></html:submit>
 </fr:form>
+<fr:form action='<%= "/workflowProcessManagement.do?method=viewProcess&processId=" + processId %>'>
+	<html:submit styleClass="inputbutton"><bean:message key="renderers.form.cancel.name" bundle="RENDERER_RESOURCES"/> </html:submit>
+</fr:form>
+</div>

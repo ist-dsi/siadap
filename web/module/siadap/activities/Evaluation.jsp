@@ -7,13 +7,16 @@
 <bean:define id="processId" name="process" property="externalId" type="java.lang.String"/>
 <bean:define id="name" name="information" property="activityName"/>
 
+<bean:define id="siadap" name="information" property="process.siadap"/>
+
+<div class="dinline forminline">	
 <fr:form action='<%= "/workflowProcessManagement.do?method=process&processId=" + processId + "&activity=" + name %>'>
 	
 		<fr:edit id="activityBean" name="information" visible="false"/>
 		
 		Objectivos:
 		<table>
-		<logic:iterate id="evaluation" name="information" property="process.siadap.objectiveEvaluations">
+		<logic:iterate id="evaluation" name="siadap" property="objectiveEvaluations">
 			<tr>
 				<td><fr:view name="evaluation" property="objective"/></td>
 				<td><fr:view name="evaluation" property="autoEvaluation"/></td>
@@ -26,7 +29,7 @@
 	    
 	    Competências:
 	    <table>
-	    <logic:iterate id="competence" name="information" property="process.siadap.competenceEvaluations">
+	    <logic:iterate id="competence" name="siadap" property="competenceEvaluations">
 			<tr>
 				<td><fr:view name="competence" property="competence.name"/></td>
 				<td><fr:view name="competence" property="autoEvaluation"/></td>
@@ -36,6 +39,28 @@
 			</tr>
 		</logic:iterate>	
 		</table>	
+		
+		Menção Qualitativa:
+		
+		
+		
+		 <table>
+			<tr>
+				<td>
+					<fr:edit name="siadap" slot="qualitativeEvaluation"/>					
+				</td>
+			</tr>
+			<tr>
+				<td>
+					<fr:edit name="siadap" slot="evaluationJustification" layout="longText" type="java.lang.String"/>		
+				</td>
+			</tr>
+		</table>	
 	
-	<html:submit>Submeter</html:submit>
+	<html:submit styleClass="inputbutton"><bean:message key="renderers.form.submit.name" bundle="RENDERER_RESOURCES"/></html:submit>
 </fr:form>
+
+<fr:form action='<%= "/workflowProcessManagement.do?method=viewProcess&processId=" + processId %>'>
+	<html:submit styleClass="inputbutton"><bean:message key="renderers.form.cancel.name" bundle="RENDERER_RESOURCES"/> </html:submit>
+</fr:form>
+</div>

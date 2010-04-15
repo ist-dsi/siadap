@@ -4,6 +4,8 @@ enum module.siadap.domain.SiadapEvaluation as SiadapEvaluation;
 
 class SiadapRootModule {
 	Integer number;
+	Double objectivesPonderation;
+	Double competencesPonderation;
 }
 
 class SiadapProcess extends .module.workflow.domain.WorkflowProcess {
@@ -14,6 +16,8 @@ class Siadap {
 	Integer currentObjectiveVersion;
 	LocalDate requestedAcknowledgeDate;
 	LocalDate acknowledgeDate;
+	SiadapEvaluation qualitativeEvaluation;
+	String evaluationJustification;
 }
 
 class SiadapEvaluationItem {

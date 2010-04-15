@@ -11,5 +11,4 @@ public class Evaluation extends GenericEvaluationActivity {
 	Siadap siadap = process.getSiadap();
 	return siadap.getEvaluator().getUser() == user;
     }
-
 }

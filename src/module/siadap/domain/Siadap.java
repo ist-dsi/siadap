@@ -1,14 +1,19 @@
 package module.siadap.domain;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import module.organization.domain.Person;
+import module.siadap.activities.Evaluation;
+
 import org.apache.commons.collections.Predicate;
 
-import module.organization.domain.Person;
-
 public class Siadap extends Siadap_Base {
+
+    private static final int PRECISION = 3;
+    private static final int ROUND_MODE = BigDecimal.ROUND_HALF_EVEN;
 
     public Siadap(int year, Person evaluator, Person evaluated) {
 	super();
@@ -45,5 +50,49 @@ public class Siadap extends Siadap_Base {
 	}
 	Collections.sort(evaluationItems, SiadapEvaluationItem.COMPARATOR_BY_DATE);
 	return evaluationItems;
+    }
+
+    public boolean hasBeenEvaluated() {
+	return getProcess().hasBeenExecuted(Evaluation.class);
+    }
+
+    private BigDecimal getEvaluationScoring(List<? extends SiadapEvaluationItem> evaluations) {
+	if (!hasBeenEvaluated()) {
+	    return BigDecimal.ZERO;
+	}
+
+	BigDecimal result = new BigDecimal(0);
+	for (SiadapEvaluationItem evaluation : evaluations) {
+	    result = result.add(new BigDecimal(evaluation.getEvaluation().getPoints()));
+	}
+
+	return result.divide(new BigDecimal(evaluations.size()), Siadap.PRECISION, Siadap.ROUND_MODE);
+    }
+
+    public BigDecimal getObjectivesScoring() {
+	return getEvaluationScoring(getObjectiveEvaluations());
+    }
+
+    private BigDecimal getPonderationResult(BigDecimal scoring, Double usedPercentage) {
+	BigDecimal percentage = BigDecimal.valueOf(usedPercentage).divide(new BigDecimal(100));
+
+	BigDecimal result = percentage.multiply(scoring);
+	return result.setScale(Siadap.PRECISION, Siadap.ROUND_MODE);
+    }
+
+    public BigDecimal getPonderatedObjectivesScoring() {
+	return getPonderationResult(getObjectivesScoring(), SiadapRootModule.getInstance().getObjectivesPonderation());
+    }
+
+    public BigDecimal getCompetencesScoring() {
+	return getEvaluationScoring(getCompetenceEvaluations());
+    }
+
+    public BigDecimal getPonderatedCompetencesScoring() {
+	return getPonderationResult(getCompetencesScoring(), SiadapRootModule.getInstance().getCompetencesPonderation());
+    }
+
+    public BigDecimal getTotalEvaluationScoring() {
+	return getPonderatedCompetencesScoring().add(getObjectivesScoring());
     }
 }

@@ -21,6 +21,9 @@
 	</fr:view>
 </logic:iterate>
 
+Scoring dos objectivos: <fr:view name="process" property="siadap.objectivesScoring"/>
+Pontuação: <fr:view name="process" property="siadap.ponderatedObjectivesScoring"/>
+
 <logic:iterate id="competenceEvaluation" name="process" property="siadap.competenceEvaluations">
 	<fr:view name="competenceEvaluation">
 		<fr:schema bundle="SIADAP_RESOURCES" type="module.siadap.domain.CompetenceEvaluation">
@@ -34,3 +37,6 @@
 		</fr:layout>
 	</fr:view>
 </logic:iterate>
+
+Scoring das competências: <fr:view name="process" property="siadap.competencesScoring"/>
+Pontuação: <fr:view name="process" property="siadap.ponderatedCompetencesScoring"/>

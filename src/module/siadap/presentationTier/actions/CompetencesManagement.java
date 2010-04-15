@@ -21,7 +21,9 @@ public class CompetencesManagement extends ContextBaseAction {
 
     public ActionForward manageCompetences(final ActionMapping mapping, final ActionForm form, final HttpServletRequest request,
 	    final HttpServletResponse response) throws Exception {
-	request.setAttribute("competenceTypes", SiadapRootModule.getInstance().getCompetenceTypes());
+	SiadapRootModule rootModule = SiadapRootModule.getInstance();
+	request.setAttribute("competenceTypes", rootModule.getCompetenceTypes());
+	request.setAttribute("siadapRoot", rootModule);
 	return forward(request, "/module/siadap/competences/manageCompetences.jsp");
     }
 
