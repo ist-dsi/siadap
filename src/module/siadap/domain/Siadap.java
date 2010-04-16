@@ -81,7 +81,7 @@ public class Siadap extends Siadap_Base {
     }
 
     public BigDecimal getPonderatedObjectivesScoring() {
-	return getPonderationResult(getObjectivesScoring(), SiadapRootModule.getInstance().getObjectivesPonderation());
+	return getPonderationResult(getObjectivesScoring(), getObjectivesPonderation());
     }
 
     public BigDecimal getCompetencesScoring() {
@@ -89,10 +89,18 @@ public class Siadap extends Siadap_Base {
     }
 
     public BigDecimal getPonderatedCompetencesScoring() {
-	return getPonderationResult(getCompetencesScoring(), SiadapRootModule.getInstance().getCompetencesPonderation());
+	return getPonderationResult(getCompetencesScoring(), getCompetencesPonderation());
     }
 
     public BigDecimal getTotalEvaluationScoring() {
 	return getPonderatedCompetencesScoring().add(getPonderatedObjectivesScoring());
+    }
+
+    public Double getObjectivesPonderation() {
+	return SiadapRootModule.getInstance().getObjectivesPonderation();
+    }
+
+    public Double getCompetencesPonderation() {
+	return SiadapRootModule.getInstance().getCompetencesPonderation();
     }
 }

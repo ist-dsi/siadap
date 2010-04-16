@@ -16,6 +16,10 @@ class Siadap {
 	Integer currentObjectiveVersion;
 	LocalDate requestedAcknowledgeDate;
 	LocalDate acknowledgeDate;
+	LocalDate validationDate;
+	LocalDate acknowledgeValidationDate;
+	LocalDate homologationDate;
+	LocalDate acknowledgeHomologationDate;
 	SiadapEvaluation qualitativeEvaluation;
 	String evaluationJustification;
 }

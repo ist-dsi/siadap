@@ -5,11 +5,15 @@ import java.util.List;
 
 import module.organization.domain.Person;
 import module.siadap.activities.AcknowledgeEvaluationObjectives;
+import module.siadap.activities.AcknowledgeEvaluationValidation;
+import module.siadap.activities.AcknowledgeHomologation;
 import module.siadap.activities.AutoEvaluation;
 import module.siadap.activities.CreateCompetenceEvaluation;
 import module.siadap.activities.CreateObjectiveEvaluation;
 import module.siadap.activities.Evaluation;
+import module.siadap.activities.Homologate;
 import module.siadap.activities.RequestAcknowledgeForEvaluationObjectives;
+import module.siadap.activities.ValidateEvaluation;
 import module.workflow.activities.ActivityInformation;
 import module.workflow.activities.WorkflowActivity;
 import module.workflow.domain.LabelLog;
@@ -31,6 +35,10 @@ public class SiadapProcess extends SiadapProcess_Base {
 	activities.add(new AcknowledgeEvaluationObjectives());
 	activities.add(new AutoEvaluation());
 	activities.add(new Evaluation());
+	activities.add(new ValidateEvaluation());
+	activities.add(new AcknowledgeEvaluationValidation());
+	activities.add(new Homologate());
+	activities.add(new AcknowledgeHomologation());
     }
 
     public SiadapProcess(Integer year, Person evaluator, Person evaluated) {

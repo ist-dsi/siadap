@@ -1,6 +1,7 @@
 package module.siadap.activities;
 
 import module.siadap.domain.ObjectiveEvaluation;
+import module.siadap.domain.Siadap;
 import module.siadap.domain.SiadapProcess;
 import module.workflow.activities.ActivityInformation;
 import module.workflow.activities.WorkflowActivity;
@@ -10,7 +11,8 @@ public class CreateObjectiveEvaluation extends WorkflowActivity<SiadapProcess, C
 
     @Override
     public boolean isActive(SiadapProcess process, User user) {
-	return process.getSiadap().getEvaluator().getUser() == user;
+	Siadap siadap = process.getSiadap();
+	return siadap.getEvaluator().getUser() == user && !siadap.isEvaluationDone();
     }
 
     @Override

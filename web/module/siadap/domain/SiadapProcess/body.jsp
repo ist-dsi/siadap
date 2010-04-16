@@ -4,17 +4,40 @@
 <%@ taglib uri="/WEB-INF/struts-logic.tld" prefix="logic"%>
 <%@ taglib uri="/WEB-INF/fenix-renderers.tld" prefix="fr"%>
 
+<div class="infobox">
+	<fr:view name="process" property="siadap">
+		<fr:schema type="module.siadap.domain.Siadap" bundle="SIADAP_RESOURCES">
+			<fr:slot name="totalEvaluationScoring">
+				<fr:property name="classes" value="bold"/>
+			</fr:slot>
+			<logic:equal name="process" property="siadap.evaluationDone" value="true">
+				<fr:slot name="objectivesScoring"/>
+				<fr:slot name="process.siadap" key="label.objectivesPonderation" layout="format">
+					<fr:property name="format" value="${objectivesPonderation}%%"/> 
+				</fr:slot>
+				<fr:slot name="competencesScoring"/>
+				<fr:slot name="this" key="label.competencesPonderation" layout="format">
+					<fr:property name="format" value="${competencesPonderation}%%"/> 
+				</fr:slot>
+				<fr:slot name="qualitativeEvaluation" />
+				<fr:slot name="evaluationJustification"/>
+			</logic:equal>
+			
+			<fr:slot name="acknowledgeDate"/>
+			<fr:slot name="validationDate"/>
+			<fr:slot name="acknowledgeValidationDate"/>
+			<fr:slot name="homologationDate"/>
+			<fr:slot name="acknowledgeHomologationDate"/>
+		</fr:schema>
+		<fr:layout name="tabular">
+			<fr:property name="classes" value="style1"/>
+			<fr:property name="columnClasses" value="aleft,"/>
+		</fr:layout>
+	</fr:view>
+</div>
+
 <strong><bean:message key="label.objectives"
 	bundle="SIADAP_RESOURCES" />:</strong>
-
-<logic:equal name="process" property="siadap.evaluationDone" value="true">
-<div>	
-<bean:message key="label.evaluation" bundle="SIADAP_RESOURCES"/>:	<fr:view name="process" property="siadap.objectivesScoring" /> x <fr:view
-		name="process"
-		property="siadap.siadapRootModule.objectivesPonderation" />% = <strong><fr:view
-		name="process" property="siadap.ponderatedObjectivesScoring" /></strong>
-	</div>
-</logic:equal>
 
 <logic:iterate id="objective" name="process"
 	property="siadap.objectiveEvaluations" indexId="i">
@@ -27,15 +50,6 @@
 
 <strong><bean:message key="label.competences"
 	bundle="SIADAP_RESOURCES" />:</strong>
-
-<logic:equal name="process" property="siadap.evaluationDone" value="true">
-	<div>	
-<bean:message key="label.evaluation" bundle="SIADAP_RESOURCES"/>:<fr:view name="process" property="siadap.competencesScoring" /> x <fr:view
-		name="process"
-		property="siadap.siadapRootModule.competencesPonderation" />% = <strong><fr:view
-		name="process" property="siadap.ponderatedCompetencesScoring" /></strong>
-		</div>
-</logic:equal>
 <p>
 	<fr:view name="process" property="siadap.competenceEvaluations">
 		<fr:schema bundle="SIADAP_RESOURCES"
@@ -50,9 +64,3 @@
 		</fr:layout>
 	</fr:view>
 </p>
-
-<strong><bean:message key="label.overalEvaluation" bundle="SIADAP_RESOURCES"/></strong>:
-
-<fr:view name="process" property="siadap.totalEvaluationScoring"/>
-<fr:view name="process" property="siadap.qualitativeEvaluation" type="module.siadap.domain.SiadapEvaluation"/>
-<fr:view name="process" property="siadap.evaluationJustification" type="java.lang.String"/>
