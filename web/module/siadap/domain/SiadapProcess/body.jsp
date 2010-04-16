@@ -22,7 +22,17 @@
 				<fr:slot name="qualitativeEvaluation" />
 				<fr:slot name="evaluationJustification"/>
 			</logic:equal>
-			
+		</fr:schema>
+		<fr:layout name="tabular">
+			<fr:property name="classes" value="style1"/>
+			<fr:property name="columnClasses" value="width165px aleft,,"/>
+		</fr:layout>
+	</fr:view>
+	
+	<div id="extraInfo" style="display: none;">
+	
+	<fr:view name="process" property="siadap">
+		<fr:schema type="module.siadap.domain.Siadap" bundle="SIADAP_RESOURCES">
 			<fr:slot name="acknowledgeDate"/>
 			<fr:slot name="validationDate"/>
 			<fr:slot name="acknowledgeValidationDate"/>
@@ -30,10 +40,33 @@
 			<fr:slot name="acknowledgeHomologationDate"/>
 		</fr:schema>
 		<fr:layout name="tabular">
-			<fr:property name="classes" value="style1"/>
-			<fr:property name="columnClasses" value="aleft,"/>
+			<fr:property name="classes" value="tstyle1"/>
+			<fr:property name="columnClasses" value="width165px aleft,,"/>
 		</fr:layout>
 	</fr:view>
+	</div>
+	
+	<p class="mvert05"><span id="show1" class="link"><bean:message key="label.moreInfo" bundle="SIADAP_RESOURCES"/></span></p>
+	<p class="mvert05"><span id="show2" style="display: none" class="link"><bean:message key="label.lessInfo" bundle="SIADAP_RESOURCES"/></span></p>
+	
+	<script type="text/javascript">
+			$("#show1").click(
+					function() {
+						$('#extraInfo').slideToggle();
+						$('#show1').hide();
+						$('#show2').show();
+					}
+				);
+
+			$("#show2").click(
+					function() {
+						$('#extraInfo').slideToggle();
+						$('#show2').hide();
+						$('#show1').show();
+					}
+				);
+	</script>
+	
 </div>
 
 <strong><bean:message key="label.objectives"
