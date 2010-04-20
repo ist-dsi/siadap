@@ -2,9 +2,11 @@ package module.siadap.domain;
 
 import java.util.Comparator;
 
+import module.siadap.domain.scoring.IScoring;
+
 import org.joda.time.DateTime;
 
-public class SiadapEvaluationItem extends SiadapEvaluationItem_Base {
+public abstract class SiadapEvaluationItem extends SiadapEvaluationItem_Base {
 
     public static Comparator<SiadapEvaluationItem> COMPARATOR_BY_DATE = new Comparator<SiadapEvaluationItem>() {
 
@@ -21,4 +23,7 @@ public class SiadapEvaluationItem extends SiadapEvaluationItem_Base {
 	setSiadapRootModule(SiadapRootModule.getInstance());
     }
 
+    public abstract IScoring getItemEvaluation();
+
+    public abstract IScoring getItemAutoEvaluation();
 }

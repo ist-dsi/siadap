@@ -14,12 +14,12 @@
 	
 		<fr:edit id="activityBean" name="information" visible="false"/>
 		
-		Objectivos:
-		<table>
+		<bean:message key="label.objectives" bundle="SIADAP_RESOURCES"/>:
+		<table class="tstyle2">
 		<logic:iterate id="evaluation" name="siadap" property="objectiveEvaluations">
 			<tr>
 				<td><fr:view name="evaluation" property="objective"/></td>
-				<td><fr:view name="evaluation" property="autoEvaluation"/></td>
+				<td><fr:view name="evaluation" property="autoEvaluation" type="module.siadap.domain.scoring.SiadapObjectivesEvaluation" /></td>
 				<td>
 					<fr:edit name="evaluation" slot="evaluation"/>					
 				</td>
@@ -27,12 +27,12 @@
 		</logic:iterate>		
 		</table>
 	    
-	    Competências:
-	    <table>
+	   <bean:message key="label.competences" bundle="SIADAP_RESOURCES"/>:
+	    <table class="tstyle2">
 	    <logic:iterate id="competence" name="siadap" property="competenceEvaluations">
 			<tr>
 				<td><fr:view name="competence" property="competence.name"/></td>
-				<td><fr:view name="competence" property="autoEvaluation"/></td>
+				<td><fr:view name="competence" property="autoEvaluation" type="module.siadap.domain.scoring.SiadapCompetencesEvaluation"/></td>
 				<td>
 					<fr:edit name="competence" slot="evaluation"/>					
 				</td>
@@ -40,11 +40,11 @@
 		</logic:iterate>	
 		</table>	
 		
-		Menção Qualitativa:
+		<bean:message key="label.qualitativeEvaluation" bundle="SIADAP_RESOURCES"/>:
 		
 		
 		
-		 <table>
+		 <table class="tstyle2">
 			<tr>
 				<td>
 					<fr:edit name="siadap" slot="qualitativeEvaluation"/>					

@@ -5,6 +5,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import module.organization.domain.Person;
 import module.siadap.domain.SiadapProcess;
+import module.siadap.domain.SiadapYearConfiguration;
 import module.workflow.domain.WorkflowProcess;
 import module.workflow.presentationTier.actions.ProcessManagement;
 import myorg.applicationTier.Authenticate.UserView;
@@ -13,6 +14,7 @@ import myorg.presentationTier.actions.ContextBaseAction;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
+import org.joda.time.LocalDate;
 
 import pt.ist.fenixWebFramework.struts.annotations.Mapping;
 
@@ -35,4 +37,10 @@ public class SiadapManagement extends ContextBaseAction {
 	return forward(request, "/module/siadap/listSiadaps.jsp");
     }
 
+    public final ActionForward createNewSiadapYearConfiguration(final ActionMapping mapping, final ActionForm form,
+	    final HttpServletRequest request, final HttpServletResponse response) throws Exception {
+
+	SiadapYearConfiguration.createNewSiadapYearConfiguration(new LocalDate().getYear());
+	return manageSiadap(mapping, form, request, response);
+    }
 }

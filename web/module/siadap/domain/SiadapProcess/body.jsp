@@ -69,7 +69,7 @@
 	
 </div>
 
-<strong><bean:message key="label.objectives"
+<strong><bean:message key="label.results"
 	bundle="SIADAP_RESOURCES" />:</strong>
 
 <logic:iterate id="objective" name="process"
@@ -94,6 +94,13 @@
 		</fr:schema>
 		<fr:layout name="tabular">
 			<fr:property name="classes" value="tstyle2 width100pc" />
+			<fr:property name="sortBy" value="competence.number"/>
 		</fr:layout>
 	</fr:view>
+</p>
+
+<strong><bean:message key="label.overalEvaluation" bundle="SIADAP_RESOURCES"/>:</strong>
+<p>
+	<bean:define id="siadap" name="process" property="siadap" toScope="request"/>
+	<jsp:include page="snips/globalEvaluationSnip.jsp" flush="true"/>
 </p>

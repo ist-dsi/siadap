@@ -63,7 +63,7 @@ public class Siadap extends Siadap_Base {
 
 	BigDecimal result = new BigDecimal(0);
 	for (SiadapEvaluationItem evaluation : evaluations) {
-	    result = result.add(new BigDecimal(evaluation.getEvaluation().getPoints()));
+	    result = result.add(new BigDecimal(evaluation.getItemEvaluation().getPoints()));
 	}
 
 	return result.divide(new BigDecimal(evaluations.size()), Siadap.PRECISION, Siadap.ROUND_MODE);
@@ -97,10 +97,10 @@ public class Siadap extends Siadap_Base {
     }
 
     public Double getObjectivesPonderation() {
-	return SiadapRootModule.getInstance().getObjectivesPonderation();
+	return SiadapYearConfiguration.getSiadapYearConfiguration(getYear()).getObjectivesPonderation();
     }
 
     public Double getCompetencesPonderation() {
-	return SiadapRootModule.getInstance().getCompetencesPonderation();
+	return SiadapYearConfiguration.getSiadapYearConfiguration(getYear()).getCompetencesPonderation();
     }
 }

@@ -8,17 +8,6 @@
 Criar novo tipo de competências
 </html:link>
 
-
-<fr:edit name="siadapRoot">
-	<fr:schema bundle="SIADAP_RESOURCES" type="module.siadap.domain.SiadapRootModule">
-		<fr:slot name="objectivesPonderation"/>
-		<fr:slot name="competencesPonderation"/>
-	</fr:schema>
-	<fr:layout name="tabular">
-		<fr:property name="classes" value="tstyle2"/>
-	</fr:layout>
-</fr:edit>
-
 <fr:view name="competenceTypes">
 	<fr:schema bundle="SIADAP_RESOURCES" type="module.siadap.domain.CompetenceType">
 		<fr:slot name="name"/>

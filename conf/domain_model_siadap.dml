@@ -1,11 +1,17 @@
 package module.siadap.domain; 
 
-enum module.siadap.domain.SiadapEvaluation as SiadapEvaluation;
+enum module.siadap.domain.scoring.SiadapObjectivesEvaluation as SiadapObjectivesEvaluation;
+enum module.siadap.domain.scoring.SiadapCompetencesEvaluation as SiadapCompetencesEvaluation;
+enum module.siadap.domain.scoring.SiadapGlobalEvaluation as SiadapGlobalEvaluation;
 
 class SiadapRootModule {
 	Integer number;
+}
+
+class SiadapYearConfiguration {
+	int year;
 	Double objectivesPonderation;
-	Double competencesPonderation;
+	Double competencesPonderation;	
 }
 
 class SiadapProcess extends .module.workflow.domain.WorkflowProcess {
@@ -20,25 +26,28 @@ class Siadap {
 	LocalDate acknowledgeValidationDate;
 	LocalDate homologationDate;
 	LocalDate acknowledgeHomologationDate;
-	SiadapEvaluation qualitativeEvaluation;
+	SiadapGlobalEvaluation qualitativeEvaluation;
 	String evaluationJustification;
 }
 
 class SiadapEvaluationItem {
-	DateTime whenCreated;
-	SiadapEvaluation autoEvaluation;
-	SiadapEvaluation evaluation;
+	DateTime whenCreated;	
 }
 
 class ObjectiveEvaluation extends SiadapEvaluationItem {
 	String objective;	
 	String measurementIndicator;
 	String superationCriteria;
+	String justificationForModification;
 	Integer fromVersion;
 	Integer untilVersion;
+	SiadapObjectivesEvaluation autoEvaluation;
+	SiadapObjectivesEvaluation evaluation;
 }
 
 class CompetenceEvaluation extends SiadapEvaluationItem {
+	SiadapCompetencesEvaluation autoEvaluation;
+	SiadapCompetencesEvaluation evaluation;
 }
 
 class Competence {
@@ -123,3 +132,10 @@ relation CompetenceCompentenceType {
 		multiplicity *;
 	}	
 }
+
+relation SiadapYearConfigurationSiadapRootModule {
+	SiadapRootModule playsRole siadapRootModule;
+	SiadapYearConfiguration playsRole yearConfigurations {
+		multiplicity *;
+	}
+}	

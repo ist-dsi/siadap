@@ -22,23 +22,34 @@
 	bundle="SIADAP_RESOURCES"
 	type="module.siadap.activities.CreateCompetenceEvaluationActivityInformation">
 	<slot name="competenceType" layout="menu-select-postback">
-		<property name="providerClass" value="module.siadap.presentationTier.renderers.providers.CompetenceTypeProvider" />
+		<property name="providerClass"
+			value="module.siadap.presentationTier.renderers.providers.CompetenceTypeProvider" />
 		<property name="format" value="${name}" />
 		<property name="sortBy" value="name" />
 	</slot>
 	<slot name="competences" layout="option-select">
-		<property name="providerClass" value="module.siadap.presentationTier.renderers.providers.CompetencesForCompetenceType" />
+		<property name="providerClass"
+			value="module.siadap.presentationTier.renderers.providers.CompetencesForCompetenceType" />
 		<property name="sortBy" value="number" />
-		<property name="eachLayout" value="values"/>
-		<property name="eachSchema" value="view.competence.name"/>
+		<property name="eachLayout" value="values" />
+		<property name="eachSchema" value="view.competence.name" />
 	</slot>
 </schema>
 
-<schema name="view.competence.name"
-	bundle="SIADAP_RESOURCES"
+<schema name="view.competence.name" bundle="SIADAP_RESOURCES"
 	type="module.siadap.domain.Competence">
 	<slot name="name" layout="output-with-hover">
-		<property name="useParent" value="true"/>
-		<property name="format" value="${description}"/>
+		<property name="useParent" value="true" />
+		<property name="format" value="${description}" />
 	</slot>
 </schema>
+
+<schema name="activityInformation.EditObjectiveEvaluation"
+	bundle="SIADAP_RESOURCES" extends="activityInformation.CreateObjectiveEvaluation"
+	type="module.siadap.activities.EditObjectiveEvaluationActivityInformation">
+	<slot name="justification" layout="longText"
+		validator="pt.ist.fenixWebFramework.renderers.validators.RequiredValidator">
+		<property name="rows" value="3" />
+		<property name="columns" value="50" />
+	</slot>
+</schema> 

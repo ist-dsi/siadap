@@ -12,11 +12,11 @@
 	
 		<fr:edit id="activityBean" name="information" visible="false"/>
 		
-		Objectivos:
-		<table>
-		<logic:iterate id="evaluation" name="information" property="process.siadap.objectiveEvaluations">
+		<bean:message key="label.objectives" bundle="SIADAP_RESOURCES"/>:
+		<table class="tstyle2">
+		<logic:iterate id="evaluation" name="information" property="process.siadap.objectiveEvaluations" type="module.siadap.domain.ObjectiveEvaluation">
 			<tr>
-				<td><fr:view name="evaluation" property="objective"/></td>
+				<th><fr:view name="evaluation" property="objective"/></th>
 				<td>
 					<fr:edit name="evaluation" slot="autoEvaluation"/>					
 				</td>
@@ -24,11 +24,11 @@
 		</logic:iterate>		
 		</table>
 	    
-	    Competências:
-	    <table>
+	 <bean:message key="label.competences" bundle="SIADAP_RESOURCES"/>:
+	    <table class="tstyle2">
 	    <logic:iterate id="competence" name="information" property="process.siadap.competenceEvaluations">
 			<tr>
-				<td><fr:view name="competence" property="competence.name"/></td>
+				<th><fr:view name="competence" property="competence.name"/></th>
 				<td>
 					<fr:edit name="competence" slot="autoEvaluation"/>					
 				</td>

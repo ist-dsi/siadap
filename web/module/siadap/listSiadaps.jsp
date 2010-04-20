@@ -7,6 +7,7 @@
 
 <html:link page="/siadapManagement.do?method=createNewSiadapProcess">Criar Novo processo</html:link>
 
+<html:link page="/siadapManagement.do?method=createNewSiadapYearConfiguration">Criar configuração para o ano corrente</html:link>
 <ul>
 <logic:iterate id="process" name="siadaps">
 		<li><html:link page="/workflowProcessManagement.do?method=viewProcess" paramName="process" paramProperty="externalId" paramId="processId"><fr:view name="process" property="processNumber"/></html:link></li>
