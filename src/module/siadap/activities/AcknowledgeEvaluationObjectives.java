@@ -13,15 +13,14 @@ public class AcknowledgeEvaluationObjectives extends WorkflowActivity<SiadapProc
     @Override
     public boolean isActive(SiadapProcess process, User user) {
 	Siadap siadap = process.getSiadap();
-	return siadap.getEvaluated().getUser() == user && siadap.getRequestedAcknowledgeDate() != null
-		&& siadap.getAcknowledgeDate() == null;
+	return siadap.getEvaluated().getUser() == user && !siadap.isEvaluatedWithKnowledgeOfObjectives();
     }
 
     @Override
     protected void process(ActivityInformation<SiadapProcess> activityInformation) {
 	activityInformation.getProcess().getSiadap().setAcknowledgeDate(new LocalDate());
     }
-    
+
     @Override
     public boolean isConfirmationNeeded(SiadapProcess process) {
 	return true;
@@ -32,4 +31,3 @@ public class AcknowledgeEvaluationObjectives extends WorkflowActivity<SiadapProc
 	return "resources/SiadapResources";
     }
 }
-

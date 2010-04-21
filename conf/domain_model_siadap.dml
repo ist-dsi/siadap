@@ -20,8 +20,6 @@ class SiadapProcess extends .module.workflow.domain.WorkflowProcess {
 class Siadap {
 	Integer year;
 	Integer currentObjectiveVersion;
-	LocalDate requestedAcknowledgeDate;
-	LocalDate acknowledgeDate;
 	LocalDate validationDate;
 	LocalDate acknowledgeValidationDate;
 	LocalDate homologationDate;
@@ -32,6 +30,7 @@ class Siadap {
 
 class SiadapEvaluationItem {
 	DateTime whenCreated;	
+	LocalDate acknowledgeDate;
 }
 
 class ObjectiveEvaluation extends SiadapEvaluationItem {

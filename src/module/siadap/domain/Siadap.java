@@ -6,9 +6,11 @@ import java.util.Collections;
 import java.util.List;
 
 import module.organization.domain.Person;
+import module.siadap.activities.AutoEvaluation;
 import module.siadap.activities.Evaluation;
 
 import org.apache.commons.collections.Predicate;
+import org.joda.time.LocalDate;
 
 public class Siadap extends Siadap_Base {
 
@@ -44,12 +46,16 @@ public class Siadap extends Siadap_Base {
     private <T extends SiadapEvaluationItem> List<T> getEvaluations(Class<T> clazz, Predicate predicate) {
 	List<T> evaluationItems = new ArrayList<T>();
 	for (SiadapEvaluationItem item : getSiadapEvaluationItems()) {
-	    if (item.getClass().isAssignableFrom(clazz) && (predicate == null || predicate.evaluate(item))) {
+	    if (clazz.isAssignableFrom(item.getClass()) && (predicate == null || predicate.evaluate(item))) {
 		evaluationItems.add((T) item);
 	    }
 	}
 	Collections.sort(evaluationItems, SiadapEvaluationItem.COMPARATOR_BY_DATE);
 	return evaluationItems;
+    }
+
+    public boolean isAutoEvaliationDone() {
+	return getProcess().hasBeenExecuted(AutoEvaluation.class);
     }
 
     public boolean isEvaluationDone() {
@@ -102,5 +108,34 @@ public class Siadap extends Siadap_Base {
 
     public Double getCompetencesPonderation() {
 	return SiadapYearConfiguration.getSiadapYearConfiguration(getYear()).getCompetencesPonderation();
+    }
+
+    public List<SiadapEvaluationItem> getCurrentEvaluationItems() {
+	return getEvaluations(SiadapEvaluationItem.class, new Predicate() {
+
+	    @Override
+	    public boolean evaluate(Object arg0) {
+		return (arg0 instanceof ObjectiveEvaluation) ? ((ObjectiveEvaluation) arg0)
+			.isValidForVersion(getCurrentObjectiveVersion()) : true;
+	    }
+	});
+
+    }
+
+    public boolean isEvaluatedWithKnowledgeOfObjectives() {
+	for (SiadapEvaluationItem item : getCurrentEvaluationItems()) {
+	    if (item.getAcknowledgeDate() == null) {
+		return false;
+	    }
+	}
+	return true;
+    }
+
+    public void setAcknowledgeDate(LocalDate acknowledgeDate) {
+	for (SiadapEvaluationItem item : getCurrentEvaluationItems()) {
+	    if (item.getAcknowledgeDate() == null) {
+		item.setAcknowledgeDate(acknowledgeDate);
+	    }
+	}
     }
 }

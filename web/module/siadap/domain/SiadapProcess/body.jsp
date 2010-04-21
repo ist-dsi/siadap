@@ -4,6 +4,13 @@
 <%@ taglib uri="/WEB-INF/struts-logic.tld" prefix="logic"%>
 <%@ taglib uri="/WEB-INF/fenix-renderers.tld" prefix="fr"%>
 
+
+<logic:equal name="process" property="siadap.evaluatedWithKnowledgeOfObjectives" value="false">
+	<div class="highlightBox mtop05 mbottom15">
+		<bean:message key="label.info.objectivesNotKownToEvaluated" bundle="SIADAP_RESOURCES"/>
+	</div>
+</logic:equal>
+
 <div class="infobox">
 	<fr:view name="process" property="siadap">
 		<fr:schema type="module.siadap.domain.Siadap" bundle="SIADAP_RESOURCES">
@@ -33,7 +40,6 @@
 	
 	<fr:view name="process" property="siadap">
 		<fr:schema type="module.siadap.domain.Siadap" bundle="SIADAP_RESOURCES">
-			<fr:slot name="acknowledgeDate"/>
 			<fr:slot name="validationDate"/>
 			<fr:slot name="acknowledgeValidationDate"/>
 			<fr:slot name="homologationDate"/>
