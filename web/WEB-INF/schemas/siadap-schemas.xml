@@ -16,6 +16,7 @@
 		<property name="rows" value="3" />
 		<property name="columns" value="50" />
 	</slot>
+	<slot name="type"/>
 </schema>
 
 <schema name="activityInformation.CreateCompetenceEvaluation"
@@ -47,6 +48,7 @@
 <schema name="activityInformation.EditObjectiveEvaluation"
 	bundle="SIADAP_RESOURCES" extends="activityInformation.CreateObjectiveEvaluation"
 	type="module.siadap.activities.EditObjectiveEvaluationActivityInformation">
+	<remove name="type"/>
 	<slot name="justification" layout="longText"
 		validator="pt.ist.fenixWebFramework.renderers.validators.RequiredValidator">
 		<property name="rows" value="3" />

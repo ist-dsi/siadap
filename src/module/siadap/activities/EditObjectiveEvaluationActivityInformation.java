@@ -23,6 +23,7 @@ public class EditObjectiveEvaluationActivityInformation extends CreateObjectiveE
 	setObjective(evaluation.getObjective());
 	setMeasurementIndicator(evaluation.getMeasurementIndicator());
 	setSuperationCriteria(evaluation.getSuperationCriteria());
+	setType(evaluation.getType());
     }
 
     public ObjectiveEvaluation getEvaluation() {

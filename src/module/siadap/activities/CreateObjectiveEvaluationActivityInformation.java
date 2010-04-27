@@ -1,6 +1,7 @@
 package module.siadap.activities;
 
 import module.siadap.domain.Siadap;
+import module.siadap.domain.SiadapEvaluationObjectivesType;
 import module.siadap.domain.SiadapProcess;
 import module.workflow.activities.ActivityInformation;
 import module.workflow.activities.WorkflowActivity;
@@ -14,6 +15,7 @@ public class CreateObjectiveEvaluationActivityInformation extends ActivityInform
     private String objective;
     private String measurementIndicator;
     private String superationCriteria;
+    private SiadapEvaluationObjectivesType type;
 
     public CreateObjectiveEvaluationActivityInformation(SiadapProcess process,
 	    WorkflowActivity<? extends WorkflowProcess, ? extends ActivityInformation> activity) {
@@ -58,10 +60,18 @@ public class CreateObjectiveEvaluationActivityInformation extends ActivityInform
 	this.superationCriteria = superationCriteria;
     }
 
+    public SiadapEvaluationObjectivesType getType() {
+	return type;
+    }
+
+    public void setType(SiadapEvaluationObjectivesType type) {
+	this.type = type;
+    }
+
     @Override
     public boolean hasAllneededInfo() {
 	return getSiadap() != null && !StringUtils.isEmpty(getObjective()) && !StringUtils.isEmpty(getMeasurementIndicator())
-		&& !StringUtils.isEmpty(getSuperationCriteria());
+		&& !StringUtils.isEmpty(getSuperationCriteria()) && getType() != null;
     }
 
 }

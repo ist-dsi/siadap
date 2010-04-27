@@ -1,5 +1,6 @@
 package module.siadap.activities;
 
+import pt.ist.expenditureTrackingSystem.domain.acquisitions.AcquisitionProcessStateType;
 import module.siadap.domain.SiadapProcess;
 import module.workflow.activities.ActivityInformation;
 import module.workflow.activities.WorkflowActivity;
@@ -16,7 +17,7 @@ public class EditObjectiveEvaluation extends WorkflowActivity<SiadapProcess, Edi
     protected void process(EditObjectiveEvaluationActivityInformation activityInformation) {
 	activityInformation.getEvaluation().edit(activityInformation.getObjective(),
 		activityInformation.getMeasurementIndicator(), activityInformation.getSuperationCriteria(),
-		activityInformation.getJustification());
+		activityInformation.getJustification(), activityInformation.getType());
     }
 
     @Override

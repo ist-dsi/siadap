@@ -4,7 +4,8 @@ import module.siadap.domain.scoring.IScoring;
 
 public class ObjectiveEvaluation extends ObjectiveEvaluation_Base {
 
-    public ObjectiveEvaluation(Siadap siadap, String objective, String measurementIndicator, String superationCriteria) {
+    public ObjectiveEvaluation(Siadap siadap, String objective, String measurementIndicator, String superationCriteria,
+	    SiadapEvaluationObjectivesType type) {
 	super();
 	setObjective(objective);
 	setMeasurementIndicator(measurementIndicator);
@@ -12,11 +13,12 @@ public class ObjectiveEvaluation extends ObjectiveEvaluation_Base {
 	setSiadap(siadap);
 	setFromVersion(siadap.getCurrentObjectiveVersion());
 	setUntilVersion(null);
+	setType(type);
     }
 
     private ObjectiveEvaluation(Siadap siadap, String objective, String measurementIndicator, String superationCriteria,
-	    String justification) {
-	this(siadap, objective, measurementIndicator, superationCriteria);
+	    String justification, SiadapEvaluationObjectivesType type) {
+	this(siadap, objective, measurementIndicator, superationCriteria, type);
 	setJustificationForModification(justification);
     }
 
@@ -26,13 +28,13 @@ public class ObjectiveEvaluation extends ObjectiveEvaluation_Base {
     }
 
     public ObjectiveEvaluation edit(String objective, String measurementIndicator, String superationCriteria,
-	    String editionJustification) {
+	    String editionJustification, SiadapEvaluationObjectivesType type) {
 	Siadap siadap = getSiadap();
 	Integer currentObjectiveVersion = siadap.getCurrentObjectiveVersion();
 	int newVersion = currentObjectiveVersion + 1;
 	setUntilVersion(currentObjectiveVersion);
 	siadap.setCurrentObjectiveVersion(newVersion);
-	return new ObjectiveEvaluation(siadap, objective, measurementIndicator, superationCriteria, editionJustification);
+	return new ObjectiveEvaluation(siadap, objective, measurementIndicator, superationCriteria, editionJustification, type);
     }
 
     @Override

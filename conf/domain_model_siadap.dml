@@ -3,6 +3,7 @@ package module.siadap.domain;
 enum module.siadap.domain.scoring.SiadapObjectivesEvaluation as SiadapObjectivesEvaluation;
 enum module.siadap.domain.scoring.SiadapCompetencesEvaluation as SiadapCompetencesEvaluation;
 enum module.siadap.domain.scoring.SiadapGlobalEvaluation as SiadapGlobalEvaluation;
+enum module.siadap.domain.SiadapEvaluationObjectivesType as SiadapEvaluationObjectivesType;
 
 class SiadapRootModule {
 	Integer number;
@@ -25,7 +26,23 @@ class Siadap {
 	LocalDate homologationDate;
 	LocalDate acknowledgeHomologationDate;
 	SiadapGlobalEvaluation qualitativeEvaluation;
-	String evaluationJustification;
+	String evaluationJustification;	
+}
+
+class SiadapAutoEvaluation {
+	String objectivesJustification;
+	String competencesJustification;
+	String otherFactorsJustification;
+	String extremesJustification;
+	String commentsAndProposals;
+	
+	Integer factorOneClassification;
+	Integer factorTwoClassification;
+	Integer factorThreeClassification;
+	Integer factorFourClassification;
+	Integer factorFiveClassification;
+	Integer factorSixClassification;
+	
 }
 
 class SiadapEvaluationItem {
@@ -42,6 +59,7 @@ class ObjectiveEvaluation extends SiadapEvaluationItem {
 	Integer untilVersion;
 	SiadapObjectivesEvaluation autoEvaluation;
 	SiadapObjectivesEvaluation evaluation;
+	SiadapEvaluationObjectivesType type;
 }
 
 class CompetenceEvaluation extends SiadapEvaluationItem {
@@ -92,6 +110,14 @@ relation SiadapRootModuleCompetenceType {
 	SiadapRootModule playsRole siadapRootModule;
 }
 
+relation SiadapRootModuleSiadapAutoEvaluation {
+	SiadapAutoEvaluation playsRole autoEvaluations {
+		multiplicity *;
+	}
+	SiadapRootModule playsRole siadapRootModule;
+}
+
+
 relation SiadapProcessSiadap {
 	SiadapProcess playsRole process;
 	Siadap playsRole siadap;
@@ -102,6 +128,12 @@ relation SiadapSiadapEvaluationItems {
 	SiadapEvaluationItem playsRole siadapEvaluationItems {
 		multiplicity *;
 	}
+}
+
+
+relation SiadapAutoEvaluationSiadap {
+	Siadap playsRole siadap;
+	SiadapAutoEvaluation playsRole autoEvaliationData;
 }
 
 relation SiadapEvaluator {

@@ -23,7 +23,7 @@
 	</wf:isActive>	
 	
 	<tr>
-		<th rowspan="3" valign="middle" style="width: 3%">
+		<th rowspan="4" valign="middle" style="width: 3%">
 			<fr:view name="index"/>
 		</th>
 		<th style="width: 10%"> <bean:message key="label.objective" bundle="SIADAP_RESOURCES"/> </th>
@@ -38,16 +38,20 @@
 	<tr>
 		<th> <bean:message key="label.measurementIndicator" bundle="SIADAP_RESOURCES"/> </th>
 		<td class="aleft"> <fr:view name="objectiveEvaluation" property="measurementIndicator"/>	</td>
-		<td rowspan="2" valign="middle">
+		<td rowspan="3" valign="middle">
 			<fr:view name="objectiveEvaluation" property="autoEvaluation" type="module.siadap.domain.scoring.SiadapObjectivesEvaluation"/>
 		</td>
-		<td rowspan="2" valign="middle">
+		<td rowspan="3" valign="middle">
 			<fr:view name="objectiveEvaluation" property="evaluation" type="module.siadap.domain.scoring.SiadapObjectivesEvaluation"/>
 		</td> 
 	</tr>
 	<tr>
 		<th> <bean:message key="label.superationCriteria" bundle="SIADAP_RESOURCES"/> </th>
 		<td class="aleft"> <fr:view name="objectiveEvaluation" property="superationCriteria"/>	</td>
+	</tr>
+	<tr>
+		<th> <bean:message key="label.type" bundle="SIADAP_RESOURCES"/> </th>
+		<td class="aleft"> <fr:view name="objectiveEvaluation" property="type" type="module.siadap.domain.SiadapEvaluationObjectivesType"/>	</td>
 	</tr>
 </table>
 </div>

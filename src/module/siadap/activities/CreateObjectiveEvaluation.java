@@ -18,7 +18,7 @@ public class CreateObjectiveEvaluation extends WorkflowActivity<SiadapProcess, C
     @Override
     protected void process(CreateObjectiveEvaluationActivityInformation activityInformation) {
 	new ObjectiveEvaluation(activityInformation.getSiadap(), activityInformation.getObjective(), activityInformation
-		.getMeasurementIndicator(), activityInformation.getSuperationCriteria());
+		.getMeasurementIndicator(), activityInformation.getSuperationCriteria(), activityInformation.getType());
     }
 
     @Override
