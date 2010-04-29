@@ -21,12 +21,19 @@ class SiadapProcess extends .module.workflow.domain.WorkflowProcess {
 class Siadap {
 	Integer year;
 	Integer currentObjectiveVersion;
+	LocalDate requestedAcknowledgeDate;
 	LocalDate validationDate;
 	LocalDate acknowledgeValidationDate;
 	LocalDate homologationDate;
 	LocalDate acknowledgeHomologationDate;
 	SiadapGlobalEvaluation qualitativeEvaluation;
+}
+
+class SiadapEvaluation {
 	String evaluationJustification;	
+	String noEvaluationJustification;
+	String personalDevelopment;
+	String trainningNeeds;
 }
 
 class SiadapAutoEvaluation {
@@ -89,7 +96,7 @@ relation SiadapRootModuleSiadap {
 	SiadapRootModule playsRole siadapRootModule;
 }
 
-relation SiadapRootModuleSiadapEvaluation {
+relation SiadapRootModuleSiadapEvaluationItem {
 	SiadapEvaluationItem playsRole evaluationItems {
 		multiplicity *;
 	}
@@ -117,6 +124,12 @@ relation SiadapRootModuleSiadapAutoEvaluation {
 	SiadapRootModule playsRole siadapRootModule;
 }
 
+relation SiadapRootModuleSiadapEvaluation {
+	SiadapEvaluation playsRole evaluations {
+		multiplicity *;
+	}
+	SiadapRootModule playsRole siadapRootModule;
+}
 
 relation SiadapProcessSiadap {
 	SiadapProcess playsRole process;
@@ -135,6 +148,12 @@ relation SiadapAutoEvaluationSiadap {
 	Siadap playsRole siadap;
 	SiadapAutoEvaluation playsRole autoEvaliationData;
 }
+
+relation SiadapSiadapEvaluation {
+	Siadap playsRole siadap;
+	SiadapEvaluation playsRole evaliationData;
+}
+
 
 relation SiadapEvaluator {
 	.module.organization.domain.Person playsRole evaluator;

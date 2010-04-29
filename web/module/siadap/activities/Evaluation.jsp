@@ -14,7 +14,7 @@
 	
 		<fr:edit id="activityBean" name="information" visible="false"/>
 		
-		<bean:message key="label.objectives" bundle="SIADAP_RESOURCES"/>:
+		<strong><bean:message key="label.objectives" bundle="SIADAP_RESOURCES"/></strong>:
 		<table class="tstyle2">
 		<logic:iterate id="evaluation" name="siadap" property="objectiveEvaluations">
 			<tr>
@@ -27,7 +27,7 @@
 		</logic:iterate>		
 		</table>
 	    
-	   <bean:message key="label.competences" bundle="SIADAP_RESOURCES"/>:
+	   <strong><bean:message key="label.competences" bundle="SIADAP_RESOURCES"/></strong>:
 	    <table class="tstyle2">
 	    <logic:iterate id="competence" name="siadap" property="competenceEvaluations">
 			<tr>
@@ -40,23 +40,47 @@
 		</logic:iterate>	
 		</table>	
 		
-		<bean:message key="label.qualitativeEvaluation" bundle="SIADAP_RESOURCES"/>:
+		<div>
+		<strong><bean:message key="label.qualitativeEvaluation" bundle="SIADAP_RESOURCES"/></strong>:
 		
+		<p>
+			<fr:edit name="siadap" slot="qualitativeEvaluation"/>	
+		</p>
+
+		<strong><bean:message key="label.qualitativeEvaluation.justification" bundle="SIADAP_RESOURCES"/></strong>:
 		
+		<fr:edit name="information" slot="evaluationJustification" type="java.lang.String">
+			<fr:layout name="longText">
+				<fr:property name="rows" value="3" />
+				<fr:property name="columns" value="50" />
+			</fr:layout>
+		</fr:edit>		
+		</div>
 		
-		 <table class="tstyle2">
-			<tr>
-				<td>
-					<fr:edit name="siadap" slot="qualitativeEvaluation"/>					
-				</td>
-			</tr>
-			<tr>
-				<td>
-					<fr:edit name="siadap" slot="evaluationJustification" layout="longText" type="java.lang.String"/>		
-				</td>
-			</tr>
-		</table>	
 	
+		<div>
+	    <strong><bean:message key="label.personalDevelopment" bundle="SIADAP_RESOURCES"/></strong>
+	    <p>
+	    	<fr:edit name="information" slot="personalDevelopment" type="java.lang.String">
+				<fr:layout name="longText">
+					<fr:property name="rows" value="3" />
+					<fr:property name="columns" value="50" />
+				</fr:layout>
+			</fr:edit>
+	    </p>
+	    </div>
+	    
+	   	<div>
+	    <strong><bean:message key="label.trainningNeeds" bundle="SIADAP_RESOURCES"/></strong>
+	    <p>
+	    	<fr:edit name="information" slot="trainningNeeds" type="java.lang.String">
+				<fr:layout name="longText">
+					<fr:property name="rows" value="3" />
+					<fr:property name="columns" value="50" />
+				</fr:layout>
+			</fr:edit>
+	    </p>
+	    </div>
 	<html:submit styleClass="inputbutton"><bean:message key="renderers.form.submit.name" bundle="RENDERER_RESOURCES"/></html:submit>
 </fr:form>
 

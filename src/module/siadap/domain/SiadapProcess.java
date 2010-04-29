@@ -13,6 +13,7 @@ import module.siadap.activities.CreateObjectiveEvaluation;
 import module.siadap.activities.EditObjectiveEvaluation;
 import module.siadap.activities.Evaluation;
 import module.siadap.activities.Homologate;
+import module.siadap.activities.SubmitForObjectivesAcknowledge;
 import module.siadap.activities.ValidateEvaluation;
 import module.workflow.activities.ActivityInformation;
 import module.workflow.activities.WorkflowActivity;
@@ -39,6 +40,7 @@ public class SiadapProcess extends SiadapProcess_Base {
 	activities.add(new Homologate());
 	activities.add(new AcknowledgeHomologation());
 	activities.add(new EditObjectiveEvaluation());
+	activities.add(new SubmitForObjectivesAcknowledge());
     }
 
     public SiadapProcess(Integer year, Person evaluator, Person evaluated) {

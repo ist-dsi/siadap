@@ -17,6 +17,12 @@ public class Siadap extends Siadap_Base {
     private static final int PRECISION = 3;
     private static final int ROUND_MODE = BigDecimal.ROUND_HALF_EVEN;
 
+    private static final int MINIMUM_EFICIENCY_OBJECTIVES_NUMBER = 1;
+    private static final int MINIMUM_PERFORMANCE_OBJECTIVES_NUMBER = 1;
+    private static final int MINIMUM_INOVATION_OBJECTIVES_NUMBER = 1;
+
+    private static final int MINIMUM_COMPETENCES_NUMBER = 6;
+
     public Siadap(int year, Person evaluator, Person evaluated) {
 	super();
 	setYear(year);
@@ -137,5 +143,40 @@ public class Siadap extends Siadap_Base {
 		item.setAcknowledgeDate(acknowledgeDate);
 	    }
 	}
+    }
+
+    public boolean isWithObjectivesFilled() {
+	int competencesCounter = 0;
+	int efficiencyObjectives = 0;
+	int performanceObjectives = 0;
+	int inovationObjectives = 0;
+
+	Integer currentObjectiveVersion = getCurrentObjectiveVersion();
+
+	for (SiadapEvaluationItem item : getSiadapEvaluationItems()) {
+
+	    if (item instanceof CompetenceEvaluation) {
+		competencesCounter++;
+	    } else {
+		ObjectiveEvaluation objectiveEvaluation = (ObjectiveEvaluation) item;
+		if (objectiveEvaluation.isValidForVersion(currentObjectiveVersion)) {
+		    switch (objectiveEvaluation.getType()) {
+
+		    case EFICIENCY:
+			efficiencyObjectives++;
+			break;
+		    case PERFORMANCE:
+			performanceObjectives++;
+			break;
+		    case INOVATION:
+			inovationObjectives++;
+			break;
+		    }
+		}
+	    }
+	}
+	return competencesCounter >= MINIMUM_COMPETENCES_NUMBER && efficiencyObjectives >= MINIMUM_EFICIENCY_OBJECTIVES_NUMBER
+		&& performanceObjectives >= MINIMUM_PERFORMANCE_OBJECTIVES_NUMBER
+		&& inovationObjectives >= MINIMUM_INOVATION_OBJECTIVES_NUMBER;
     }
 }

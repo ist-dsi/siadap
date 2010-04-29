@@ -24,7 +24,7 @@ public class ObjectiveEvaluation extends ObjectiveEvaluation_Base {
 
     public boolean isValidForVersion(Integer version) {
 	Integer untilVersion = getUntilVersion();
-	return getFromVersion() >= version && (untilVersion == null || untilVersion <= version);
+	return getFromVersion() <= version && (untilVersion == null || untilVersion >= version);
     }
 
     public ObjectiveEvaluation edit(String objective, String measurementIndicator, String superationCriteria,
