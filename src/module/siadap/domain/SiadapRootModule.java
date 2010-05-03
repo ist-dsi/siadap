@@ -1,5 +1,9 @@
 package module.siadap.domain;
 
+import java.util.HashSet;
+import java.util.Set;
+
+import module.organization.domain.Unit;
 import myorg.domain.ModuleInitializer;
 import myorg.domain.MyOrg;
 import pt.ist.fenixWebFramework.services.Service;
@@ -62,5 +66,22 @@ public class SiadapRootModule extends SiadapRootModule_Base implements ModuleIni
 	Integer processNumber = super.getNumber();
 	setNumber(processNumber + 1);
 	return processNumber;
+    }
+
+    private void addHarmonizationUnits(Set<Unit> set, SiadapYearConfiguration siadapYearConfiguration, Unit unit) {
+	set.add(unit);
+	for (Unit iteratingUnit : unit.getChildUnits(siadapYearConfiguration.getUnitRelations())) {
+	    if (!iteratingUnit.getChildPersons(siadapYearConfiguration.getHarmonizationResponsibleRelation()).isEmpty()) {
+		addHarmonizationUnits(set, siadapYearConfiguration, iteratingUnit);
+	    }
+	}
+    }
+
+    public Set<Unit> getHarmonizationUnits(Integer year) {
+	SiadapYearConfiguration siadapYearConfiguration = SiadapYearConfiguration.getSiadapYearConfiguration(year);
+	Unit topUnit = siadapYearConfiguration.getSiadapStructureTopUnit();
+	Set<Unit> units = new HashSet<Unit>();
+	addHarmonizationUnits(units, siadapYearConfiguration, topUnit);
+	return units;
     }
 }

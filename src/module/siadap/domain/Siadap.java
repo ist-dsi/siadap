@@ -2,10 +2,13 @@ package module.siadap.domain;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
+import module.organization.domain.Party;
 import module.organization.domain.Person;
+import module.organization.domain.Unit;
 import module.siadap.activities.AutoEvaluation;
 import module.siadap.activities.Evaluation;
 
@@ -17,17 +20,16 @@ public class Siadap extends Siadap_Base {
     private static final int PRECISION = 3;
     private static final int ROUND_MODE = BigDecimal.ROUND_HALF_EVEN;
 
-    private static final int MINIMUM_EFICIENCY_OBJECTIVES_NUMBER = 1;
-    private static final int MINIMUM_PERFORMANCE_OBJECTIVES_NUMBER = 1;
-    private static final int MINIMUM_INOVATION_OBJECTIVES_NUMBER = 1;
+    public static final int MINIMUM_EFICIENCY_OBJECTIVES_NUMBER = 1;
+    public static final int MINIMUM_PERFORMANCE_OBJECTIVES_NUMBER = 1;
+    public static final int MINIMUM_INOVATION_OBJECTIVES_NUMBER = 1;
 
-    private static final int MINIMUM_COMPETENCES_NUMBER = 6;
+    public static final int MINIMUM_COMPETENCES_NUMBER = 6;
 
     public Siadap(int year, Person evaluator, Person evaluated) {
 	super();
 	setYear(year);
 	setEvaluated(evaluated);
-	setEvaluator(evaluator);
 	setCurrentObjectiveVersion(0);
 	setSiadapRootModule(SiadapRootModule.getInstance());
     }
@@ -143,6 +145,11 @@ public class Siadap extends Siadap_Base {
 		item.setAcknowledgeDate(acknowledgeDate);
 	    }
 	}
+    }
+
+    public Person getEvaluator() {
+	SiadapYearConfiguration configuration = SiadapYearConfiguration.getSiadapYearConfiguration(getYear());
+	return configuration.getEvaluatorFor(getEvaluated());
     }
 
     public boolean isWithObjectivesFilled() {

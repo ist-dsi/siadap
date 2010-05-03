@@ -154,14 +154,6 @@ relation SiadapSiadapEvaluation {
 	SiadapEvaluation playsRole evaliationData;
 }
 
-
-relation SiadapEvaluator {
-	.module.organization.domain.Person playsRole evaluator;
-	Siadap playsRole siadapsAsEvaluator {
-		multiplicity *;
-	}
-}
-
 relation SiadapEvaluated {
 	.module.organization.domain.Person playsRole evaluated;
 	Siadap playsRole siadapsAsEvaluated {
@@ -189,3 +181,39 @@ relation SiadapYearConfigurationSiadapRootModule {
 		multiplicity *;
 	}
 }	
+
+
+relation UnitRelationsAccountabilityType {
+	SiadapYearConfiguration playsRole yearConfigurationsForUnitRelations {
+		multiplicity *;
+	}
+	.module.organization.domain.AccountabilityType playsRole unitRelations;
+}
+
+relation HarmonizationAccountabilityType {
+	SiadapYearConfiguration playsRole yearConfigurationsForHarmonizationRelations {
+		multiplicity *;
+	}
+	.module.organization.domain.AccountabilityType playsRole harmonizationResponsibleRelation;
+}
+
+relation WorkingAccountabilityType {
+	SiadapYearConfiguration playsRole yearConfigurationsForWorkingRelations {
+		multiplicity *;
+	}
+	.module.organization.domain.AccountabilityType playsRole workingRelation;
+}
+
+relation EvaluationAccountabilityType {
+	SiadapYearConfiguration playsRole yearConfigurationsForEvaluationRelations {
+		multiplicity *;
+	}
+	.module.organization.domain.AccountabilityType playsRole evaluationRelation;
+}
+
+relation SiadapTopUnit {
+	SiadapYearConfiguration playsRole yearConfigurationsForTopUnit {
+		multiplicity *;
+	}
+	.module.organization.domain.Unit playsRole siadapStructureTopUnit;
+}

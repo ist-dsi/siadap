@@ -34,6 +34,7 @@ public class SiadapManagement extends ContextBaseAction {
 	    final HttpServletResponse response) throws Exception {
 
 	request.setAttribute("siadaps", WorkflowProcess.getAllProcesses(SiadapProcess.class));
+	request.setAttribute("configuration", SiadapYearConfiguration.getSiadapYearConfiguration(new LocalDate().getYear()));
 	return forward(request, "/module/siadap/listSiadaps.jsp");
     }
 

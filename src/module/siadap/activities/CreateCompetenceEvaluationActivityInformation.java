@@ -55,7 +55,8 @@ public class CreateCompetenceEvaluationActivityInformation extends ActivityInfor
 
     @Override
     public boolean hasAllneededInfo() {
-	return getSiadap() != null && getCompetences() != null && !getCompetences().isEmpty() && getCompetenceType() != null;
+	return getSiadap() != null && getCompetences() != null && getCompetenceType() != null
+		&& getCompetences().size() >= Siadap.MINIMUM_COMPETENCES_NUMBER;
     }
 
 }
