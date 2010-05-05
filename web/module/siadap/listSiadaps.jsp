@@ -6,10 +6,14 @@
 
 
 <html:link page="/siadapManagement.do?method=createNewSiadapProcess">Criar Novo processo</html:link>
-
+|
 <html:link
 	page="/siadapManagement.do?method=createNewSiadapYearConfiguration">Criar configuração para o ano corrente</html:link>
+|
+<html:link
+	page="/siadapManagement.do?method=evaluationHarmonization">Harmonizar valores</html:link>
 
+<logic:present name="configuration">
 <fr:edit name="configuration"
 	action="/siadapManagement.do?method=manageSiadap">
 	<fr:schema type="module.siadap.domain.SiadapYearConfiguration"
@@ -72,6 +76,7 @@
 		<fr:property name="classes" value="tstyle2" />
 	</fr:layout>
 </fr:edit>
+</logic:present>
 
 <ul>
 	<logic:iterate id="process" name="siadaps">

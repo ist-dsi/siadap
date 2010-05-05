@@ -1,11 +1,18 @@
 package module.siadap.presentationTier.actions;
 
+import java.lang.reflect.Array;
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import module.organization.domain.Person;
+import module.organization.domain.Unit;
+import module.siadap.domain.SiadapEvaluation;
 import module.siadap.domain.SiadapProcess;
 import module.siadap.domain.SiadapYearConfiguration;
+import module.siadap.domain.dto.UnitSiadapEvaluation;
 import module.workflow.domain.WorkflowProcess;
 import module.workflow.presentationTier.actions.ProcessManagement;
 import myorg.applicationTier.Authenticate.UserView;
@@ -43,5 +50,22 @@ public class SiadapManagement extends ContextBaseAction {
 
 	SiadapYearConfiguration.createNewSiadapYearConfiguration(new LocalDate().getYear());
 	return manageSiadap(mapping, form, request, response);
+    }
+
+    public final ActionForward evaluationHarmonization(final ActionMapping mapping, final ActionForm form,
+	    final HttpServletRequest request, final HttpServletResponse response) throws Exception {
+
+	Person loggedPerson = UserView.getCurrentUser().getPerson();
+	int year = new LocalDate().getYear();
+	SiadapYearConfiguration configuration = SiadapYearConfiguration.getSiadapYearConfiguration(year);
+
+	List<UnitSiadapEvaluation> unitSiadapEvaluations = new ArrayList<UnitSiadapEvaluation>();
+
+	for (Unit unit : configuration.getHarmozationUnitsFor(loggedPerson)) {
+	    unitSiadapEvaluations.add(new UnitSiadapEvaluation(unit, year));
+	}
+	request.setAttribute("harmonizationUnits", unitSiadapEvaluations);
+
+	return forward(request, "/module/siadap/harmonization/listUnits.jsp");
     }
 }
