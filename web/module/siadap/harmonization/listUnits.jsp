@@ -6,14 +6,19 @@
 
 
 <fr:view name="harmonizationUnits">
-	<fr:schema type="module.siadap.domain.dto.UnitSiadapEvaluation" bundle="SIADAP_RESOURCES">
+	<fr:schema type="module.siadap.domain.wrappers.UnitSiadapWrapper" bundle="SIADAP_RESOURCES">
 		<fr:slot name="unit.partyName" />
 		<fr:slot name="unit.acronym"/>
 		<fr:slot name="relevantEvaluationPercentage"/>
 		<fr:slot name="totalPeople"/>
-		<fr:slot name="totalPeopleEvaluated"/>
+		<fr:slot name="totalPeopleWithSiadap"/>
 	</fr:schema>
 	<fr:layout name="tabular">
 		<fr:property name="classes" value="tstyle2"/>
+		<fr:property name="link(view)" value="/siadapManagement.do?method=viewUnitHarmonizationData"/>
+		<fr:property name="bundle(view)" value="MYORG_RESOURCES"/>
+		<fr:property name="key(view)" value="link.view"/>
+		<fr:property name="param(view)" value="unit.externalId/unitId"/>
+		<fr:property name="order(view)" value="1"/>
 	</fr:layout>	
 </fr:view>

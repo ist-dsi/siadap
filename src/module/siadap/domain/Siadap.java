@@ -2,13 +2,10 @@ package module.siadap.domain;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
-import module.organization.domain.Party;
 import module.organization.domain.Person;
-import module.organization.domain.Unit;
 import module.siadap.activities.AutoEvaluation;
 import module.siadap.activities.Evaluation;
 
@@ -26,7 +23,7 @@ public class Siadap extends Siadap_Base {
 
     public static final int MINIMUM_COMPETENCES_NUMBER = 6;
 
-    public Siadap(int year, Person evaluator, Person evaluated) {
+    public Siadap(int year, Person evaluated) {
 	super();
 	setYear(year);
 	setEvaluated(evaluated);

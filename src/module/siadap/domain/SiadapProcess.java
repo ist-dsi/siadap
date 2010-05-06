@@ -15,11 +15,14 @@ import module.siadap.activities.Evaluation;
 import module.siadap.activities.Homologate;
 import module.siadap.activities.SubmitForObjectivesAcknowledge;
 import module.siadap.activities.ValidateEvaluation;
+import module.siadap.domain.scoring.SiadapCompetencesEvaluation;
 import module.workflow.activities.ActivityInformation;
 import module.workflow.activities.WorkflowActivity;
 import module.workflow.domain.LabelLog;
 import module.workflow.domain.WorkflowProcess;
+import myorg.applicationTier.Authenticate.UserView;
 import myorg.domain.User;
+import myorg.domain.exceptions.DomainException;
 
 import org.joda.time.LocalDate;
 
@@ -43,13 +46,21 @@ public class SiadapProcess extends SiadapProcess_Base {
 	activities.add(new SubmitForObjectivesAcknowledge());
     }
 
-    public SiadapProcess(Integer year, Person evaluator, Person evaluated) {
+    public SiadapProcess(Integer year, Person evaluated) {
 	super();
-	setSiadap(new Siadap(year, evaluator, evaluated));
+
+	User currentUser = UserView.getCurrentUser();
+	Person possibleEvaluator = currentUser.getPerson();
+
+	if (SiadapYearConfiguration.getSiadapYearConfiguration(year).getEvaluatorFor(evaluated) != possibleEvaluator) {
+	    throw new DomainException("error.onlyEvaluatorCanCreateSiadap");
+	}
+
+	setSiadap(new Siadap(year, evaluated));
 	setProcessNumber("S" + SiadapRootModule.getInstance().getNumberAndIncrement());
 
-	new LabelLog(this, evaluator.getUser(), this.getClass().getName() + ".creation", "resources/SiadapResources", evaluated
-		.getName(), year.toString());
+	new LabelLog(this, currentUser, this.getClass().getName() + ".creation", "resources/SiadapResources",
+		evaluated.getName(), year.toString());
     }
 
     @Override
@@ -73,8 +84,13 @@ public class SiadapProcess extends SiadapProcess_Base {
     }
 
     @Service
-    public static SiadapProcess createNewProcess(Person evaluator, Person evaluated) {
-	return new SiadapProcess(new LocalDate().getYear(), evaluator, evaluated);
+    public static SiadapProcess createNewProcess(Person evaluated) {
+	return new SiadapProcess(new LocalDate().getYear(), evaluated);
     }
 
+    @Override
+    public boolean isAccessible(User user) {
+	Person accessor = user.getPerson();
+	return accessor == getSiadap().getEvaluated() || accessor == getSiadap().getEvaluator();
+    }
 }

@@ -1,6 +1,5 @@
 package module.siadap.presentationTier.actions;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -9,10 +8,10 @@ import javax.servlet.http.HttpServletResponse;
 
 import module.organization.domain.Person;
 import module.organization.domain.Unit;
-import module.siadap.domain.SiadapEvaluation;
 import module.siadap.domain.SiadapProcess;
 import module.siadap.domain.SiadapYearConfiguration;
-import module.siadap.domain.dto.UnitSiadapEvaluation;
+import module.siadap.domain.wrappers.PersonSiadapWrapper;
+import module.siadap.domain.wrappers.UnitSiadapWrapper;
 import module.workflow.domain.WorkflowProcess;
 import module.workflow.presentationTier.actions.ProcessManagement;
 import myorg.applicationTier.Authenticate.UserView;
@@ -31,8 +30,8 @@ public class SiadapManagement extends ContextBaseAction {
     public final ActionForward createNewSiadapProcess(final ActionMapping mapping, final ActionForm form,
 	    final HttpServletRequest request, final HttpServletResponse response) throws Exception {
 
-	Person person = UserView.getCurrentUser().getPerson();
-	SiadapProcess siadapProcess = SiadapProcess.createNewProcess(person, person);
+	Person person = getDomainObject(request, "personId");
+	SiadapProcess siadapProcess = SiadapProcess.createNewProcess(person);
 
 	return ProcessManagement.forwardToProcess(siadapProcess);
     }
@@ -59,13 +58,38 @@ public class SiadapManagement extends ContextBaseAction {
 	int year = new LocalDate().getYear();
 	SiadapYearConfiguration configuration = SiadapYearConfiguration.getSiadapYearConfiguration(year);
 
-	List<UnitSiadapEvaluation> unitSiadapEvaluations = new ArrayList<UnitSiadapEvaluation>();
+	List<UnitSiadapWrapper> unitSiadapEvaluations = new ArrayList<UnitSiadapWrapper>();
 
 	for (Unit unit : configuration.getHarmozationUnitsFor(loggedPerson)) {
-	    unitSiadapEvaluations.add(new UnitSiadapEvaluation(unit, year));
+	    unitSiadapEvaluations.add(new UnitSiadapWrapper(unit, year));
 	}
 	request.setAttribute("harmonizationUnits", unitSiadapEvaluations);
 
 	return forward(request, "/module/siadap/harmonization/listUnits.jsp");
+    }
+
+    public final ActionForward viewUnitHarmonizationData(final ActionMapping mapping, final ActionForm form,
+	    final HttpServletRequest request, final HttpServletResponse response) throws Exception {
+	int year = new LocalDate().getYear();
+	
+	Unit unit = getDomainObject(request.getParameter("unitId"));
+	request.setAttribute("currentUnit", new UnitSiadapWrapper(unit,year));
+	
+	SiadapYearConfiguration configuration = SiadapYearConfiguration.getSiadapYearConfiguration(year);
+
+	List<PersonSiadapWrapper> peopleSiadapEvaluation = new ArrayList<PersonSiadapWrapper>();
+	for (Person person : unit.getChildPersons(configuration.getWorkingRelation())) {
+	    peopleSiadapEvaluation.add(new PersonSiadapWrapper(person, year));
+	}
+	request.setAttribute("people", peopleSiadapEvaluation);
+
+	List<UnitSiadapWrapper> unitSiadapEvaluations = new ArrayList<UnitSiadapWrapper>();
+
+	for (Unit subUnit : unit.getChildUnits(configuration.getUnitRelations())) {
+	    unitSiadapEvaluations.add(new UnitSiadapWrapper(subUnit, year));
+	}
+	request.setAttribute("subUnits", unitSiadapEvaluations);
+
+	return forward(request, "/module/siadap/harmonization/viewUnit.jsp");
     }
 }
