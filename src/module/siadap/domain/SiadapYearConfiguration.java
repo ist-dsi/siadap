@@ -16,8 +16,10 @@ public class SiadapYearConfiguration extends SiadapYearConfiguration_Base {
     public static final Double DEFAULT_OBJECTIVES_PONDERATION = 75.0;
     public static final Double DEFAULT_COMPETENCES_PONDERATION = 25.0;
     public static final Double MAXIMUM_HIGH_GRADE_QUOTA = 25.0;
-    public static final Double MAXIMUM_EXCELLENCY_GRADE_QUOTA = 1.25; // 5% of the 25%
-    
+    public static final Double MAXIMUM_EXCELLENCY_GRADE_QUOTA = 1.25; // 5% of
+
+    // the 25%
+
     public SiadapYearConfiguration(Integer year, Double objectivesPonderation, Double competencesPonderation) {
 	super();
 	setYear(year);
@@ -70,6 +72,14 @@ public class SiadapYearConfiguration extends SiadapYearConfiguration_Base {
 	return loggedPerson.getParentUnits(getHarmonizationResponsibleRelation());
     }
 
+    public Unit getHarmonizationUnitToWhichUnitBelongs(Unit unit) {
+	if (!unit.getChildPersons(getHarmonizationResponsibleRelation()).isEmpty()) {
+	    return unit;
+	}
+	Collection<Unit> units = unit.getParentUnits(getUnitRelations());
+	return units.isEmpty() ? null : getHarmonizationUnitToWhichUnitBelongs(units.iterator().next());
+    }
+
     public BigDecimal getRelevantEvaluationPercentageFor(Unit unit) {
 	int count = 0;
 	Collection<Person> childPersons = unit.getChildPersons(getWorkingRelation());
@@ -92,7 +102,7 @@ public class SiadapYearConfiguration extends SiadapYearConfiguration_Base {
 	    for (Unit subUnit : unit.getChildUnits(getUnitRelations())) {
 		people += getTotalPeopleWorkingFor(subUnit, continueToSubUnit);
 	    }
-	} 
+	}
 	return people;
     }
 

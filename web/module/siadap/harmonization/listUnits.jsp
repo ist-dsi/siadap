@@ -7,8 +7,8 @@
 
 <fr:view name="harmonizationUnits">
 	<fr:schema type="module.siadap.domain.wrappers.UnitSiadapWrapper" bundle="SIADAP_RESOURCES">
-		<fr:slot name="unit.partyName" />
-		<fr:slot name="unit.acronym"/>
+		<fr:slot name="unit.partyName"  key="label.unit" bundle="ORGANIZATION_RESOURCES" />
+		<fr:slot name="unit.acronym" key="label.acronym" bundle="ORGANIZATION_RESOURCES" />
 		<fr:slot name="relevantEvaluationPercentage"/>
 		<fr:slot name="totalPeople"/>
 		<fr:slot name="totalPeopleWithSiadap"/>

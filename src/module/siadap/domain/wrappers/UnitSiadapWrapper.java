@@ -101,4 +101,17 @@ public class UnitSiadapWrapper implements Serializable {
     public int getCurrentUsedExcellencyGradeQuota() {
 	return 0;
     }
+
+    public Unit getHarmonizationUnit() {
+	return this.configuration.getHarmonizationUnitToWhichUnitBelongs(getUnit());
+    }
+
+    public boolean isUnitAnHarmonizationUnit() {
+	return !getUnit().getChildPersons(this.configuration.getHarmonizationResponsibleRelation()).isEmpty();
+    }
+
+    public Unit getSuperiorUnit() {
+	Collection<Unit> parentUnits = getUnit().getParentUnits(this.configuration.getUnitRelations());
+	return parentUnits.isEmpty() ? null : parentUnits.iterator().next();
+    }
 }

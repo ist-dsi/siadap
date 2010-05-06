@@ -71,12 +71,13 @@ public class SiadapManagement extends ContextBaseAction {
     public final ActionForward viewUnitHarmonizationData(final ActionMapping mapping, final ActionForm form,
 	    final HttpServletRequest request, final HttpServletResponse response) throws Exception {
 	int year = new LocalDate().getYear();
-	
-	Unit unit = getDomainObject(request.getParameter("unitId"));
-	request.setAttribute("currentUnit", new UnitSiadapWrapper(unit,year));
-	
-	SiadapYearConfiguration configuration = SiadapYearConfiguration.getSiadapYearConfiguration(year);
 
+	Unit unit = getDomainObject(request, "unitId");
+
+	request.setAttribute("currentUnit", new UnitSiadapWrapper(unit, year));
+
+	SiadapYearConfiguration configuration = SiadapYearConfiguration.getSiadapYearConfiguration(year);
+	
 	List<PersonSiadapWrapper> peopleSiadapEvaluation = new ArrayList<PersonSiadapWrapper>();
 	for (Person person : unit.getChildPersons(configuration.getWorkingRelation())) {
 	    peopleSiadapEvaluation.add(new PersonSiadapWrapper(person, year));
