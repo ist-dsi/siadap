@@ -8,6 +8,7 @@ import java.util.List;
 import module.organization.domain.Person;
 import module.siadap.activities.AutoEvaluation;
 import module.siadap.activities.Evaluation;
+import module.siadap.domain.scoring.SiadapGlobalEvaluation;
 
 import org.apache.commons.collections.Predicate;
 import org.joda.time.LocalDate;
@@ -182,5 +183,9 @@ public class Siadap extends Siadap_Base {
 	return competencesCounter >= MINIMUM_COMPETENCES_NUMBER && efficiencyObjectives >= MINIMUM_EFICIENCY_OBJECTIVES_NUMBER
 		&& performanceObjectives >= MINIMUM_PERFORMANCE_OBJECTIVES_NUMBER
 		&& inovationObjectives >= MINIMUM_INOVATION_OBJECTIVES_NUMBER;
+    }
+
+    public boolean hasRelevantEvaluation() {
+	return isEvaluationDone() && getQualitativeEvaluation() == SiadapGlobalEvaluation.HIGH;
     }
 }

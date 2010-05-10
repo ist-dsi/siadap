@@ -1,6 +1,7 @@
 package module.siadap.domain.wrappers;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 
 import module.organization.domain.Person;
 import module.siadap.domain.Siadap;
@@ -69,5 +70,19 @@ public class PersonSiadapWrapper implements Serializable {
 
     public boolean isCurrentUserAbleToCreateProcess() {
 	return getSiadap() == null && isCurrentUserAbleToEvaluate();
+    }
+
+    public BigDecimal getTotalEvaluationScoring() {
+	Siadap siadap = getSiadap();
+	return siadap != null ? (siadap.isEvaluationDone() ? siadap.getTotalEvaluationScoring() : null) : null;
+    }
+
+    public UnitSiadapWrapper getWorkingUnit() {
+	return new UnitSiadapWrapper(getPerson().getParentUnits(configuration.getWorkingRelation()).iterator().next(),
+		configuration.getYear());
+    }
+
+    public boolean isResponsibleForHarmonization(Person accessor) {
+	return getWorkingUnit().isPersonResponsibleForHarmonization(accessor);
     }
 }

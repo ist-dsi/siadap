@@ -32,7 +32,7 @@
 				<fr:property name="eachSchema" value="organization.domain.Person.view.short"/>
 				<fr:property name="htmlSeparator" value=", "/>
 			</fr:slot>
-			<fr:slot name="totalPeople" />
+			<fr:slot name="totalPeopleWorkingInUnit" />
 			<fr:slot name="highGradeQuota" />
 			<fr:slot name="currentUsedHighGradeQuota"/>
 			<fr:slot name="relevantEvaluationPercentage"/>
@@ -44,6 +44,25 @@
 		</fr:layout>
 	</fr:view>
 </div>
+
+<logic:equal name="currentUnit" property="responsibleForHarmonization" value="true">
+	<logic:equal name="currentUnit" property="aboveQuotas" value="true">
+	
+		<bean:define id="currentHighQuota" name="currentUnit" property="currentUsedHighGradeQuota"/>
+		<bean:define id="highQuota" name="currentUnit" property="highGradeQuota"/>
+		<bean:define id="currentExcellencyQuota" name="currentUnit" property="currentUsedExcellencyGradeQuota"/>
+		<bean:define id="excellencyGrade" name="currentUnit" property="excellencyGradeQuota"/>
+		
+		<div class="highlightBox">
+			<bean:message key="warning.harmonizationUnitAboveQuotas" bundle="SIADAP_RESOURCES" arg0="<%= currentHighQuota.toString() %>" arg1="<%= highQuota.toString() %>" arg2="<%= currentExcellencyQuota.toString() %>" arg3="<%= excellencyGrade.toString() %>"/>
+		</div>
+	</logic:equal>
+	
+	<p>
+	<html:link page="/siadapManagement.do?method=listHighGlobalEvaluations" paramName="currentUnit" paramProperty="unit.externalId" paramId="unitId"> <bean:message key="label.viewHighGlobalEvaluations" bundle="SIADAP_RESOURCES"/> </html:link> | <a href="#"> Ver desempenhos excelentes </a>
+	</p>
+</logic:equal>
+
 
 <logic:notEmpty name="people">
 	<strong>
@@ -57,7 +76,9 @@
 				<fr:slot name="person.user.username" key="label.login.username" bundle="MYORG_RESOURCES"/>
 				<fr:slot name="evaluator.partyName" key="label.evaluator"/>
 				<fr:slot name="evaluator.user.username" key="label.login.username" bundle="MYORG_RESOURCES"/>
-				<fr:slot name="evaluationStarted" key="label.evaluationStarted"/>
+				<fr:slot name="totalEvaluationScoring" layout="null-as-label" key="label.totalEvaluationScoring">
+					<fr:property name="subLayout" value=""/>
+				</fr:slot>
 			</fr:schema>
 			<fr:layout name="tabular">
 				<fr:property name="classes" value="tstyle2"/>
@@ -95,8 +116,8 @@
 				<fr:slot name="unit.partyName" key="label.unit" bundle="ORGANIZATION_RESOURCES" />
 				<fr:slot name="unit.acronym" key="label.acronym" bundle="ORGANIZATION_RESOURCES"/>
 				<fr:slot name="relevantEvaluationPercentage"/>
-				<fr:slot name="totalPeople"/>
-				<fr:slot name="totalPeopleWithSiadap"/>
+				<fr:slot name="totalPeopleWorkingInUnit"/>
+				<fr:slot name="totalPeopleWithSiadapWorkingInUnit"/>
 			</fr:schema>
 			<fr:layout name="tabular">
 				<fr:property name="classes" value="tstyle2"/>

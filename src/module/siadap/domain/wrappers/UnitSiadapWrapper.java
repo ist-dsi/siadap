@@ -3,21 +3,27 @@ package module.siadap.domain.wrappers;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
+
+import org.apache.commons.collections.Predicate;
 
 import module.organization.domain.Person;
 import module.organization.domain.Unit;
+import module.siadap.domain.Siadap;
 import module.siadap.domain.SiadapYearConfiguration;
+import module.siadap.domain.scoring.SiadapGlobalEvaluation;
 
 public class UnitSiadapWrapper implements Serializable {
 
     private static final int SCALE = 4;
 
     private Unit unit;
-    private int year;
+    private Integer year;
     private SiadapYearConfiguration configuration;
 
-    public UnitSiadapWrapper(Unit unit, int year) {
+    public UnitSiadapWrapper(Unit unit, Integer year) {
 	this.unit = unit;
 	this.year = year;
 	this.configuration = SiadapYearConfiguration.getSiadapYearConfiguration(year);
@@ -31,7 +37,7 @@ public class UnitSiadapWrapper implements Serializable {
 	this.unit = unit;
     }
 
-    public int getYear() {
+    public Integer getYear() {
 	return year;
     }
 
@@ -47,8 +53,80 @@ public class UnitSiadapWrapper implements Serializable {
 	this.configuration = configuration;
     }
 
+    public int getTotalPeopleWorkingInUnit() {
+	return getTotalPeopleWorkingInUnit(true);
+    }
+
+    public int getTotalPeopleWorkingInUnit(boolean continueToSubUnits) {
+	return getTotalPeopleWorkingInUnit(getUnit(), continueToSubUnits);
+    }
+
+    private int getTotalPeopleWorkingInUnit(Unit unit, boolean continueToSubUnit) {
+	int people = 0;
+	Collection<Person> childPersons = unit.getChildPersons(configuration.getWorkingRelation());
+	people += childPersons.size();
+	if (continueToSubUnit) {
+	    for (Unit subUnit : unit.getChildUnits(configuration.getUnitRelations())) {
+		people += getTotalPeopleWorkingInUnit(subUnit, continueToSubUnit);
+	    }
+	}
+	return people;
+    }
+
+    public int getTotalPeopleWithSiadapWorkingInUnit() {
+	return getTotalPeopleWithSiadapWorkingInUnit(true);
+    }
+
+    public int getTotalPeopleWithSiadapWorkingInUnit(boolean continueToSubUnits) {
+	return getTotalPeopleWithSiadapWorkingInUnit(getUnit(), continueToSubUnits);
+    }
+
+    private int getTotalPeopleWithSiadapWorkingInUnit(Unit unit, boolean continueToSubUnit) {
+	int people = 0;
+	int year = getYear();
+	Collection<Person> childPersons = unit.getChildPersons(configuration.getWorkingRelation());
+	for (Person person : childPersons) {
+	    if (configuration.getSiadapFor(person, year) != null) {
+		people++;
+	    }
+	}
+	if (continueToSubUnit) {
+	    for (Unit subUnit : unit.getChildUnits(configuration.getUnitRelations())) {
+		people += getTotalPeopleWithSiadapWorkingInUnit(subUnit, continueToSubUnit);
+	    }
+	}
+	return people;
+    }
+
+    public int getTotalRelevantEvaluationsForUnit() {
+	return getTotalRelevantEvaluationsForUnit(true);
+    }
+
+    public int getTotalRelevantEvaluationsForUnit(boolean continueToSubUnits) {
+	return getTotalRelevantEvaluationsForUnit(getUnit(), continueToSubUnits);
+    }
+
+    private int getTotalRelevantEvaluationsForUnit(Unit unit, boolean continueToSubUnits) {
+	int counter = 0;
+	for (Person person : unit.getChildPersons(configuration.getWorkingRelation())) {
+	    Siadap siadap = configuration.getSiadapFor(person, getYear());
+	    if (siadap != null) {
+		if (siadap.hasRelevantEvaluation()) {
+		    counter++;
+		}
+	    }
+	}
+	if (continueToSubUnits) {
+	    for (Unit subUnit : unit.getChildUnits(configuration.getUnitRelations())) {
+		counter += getTotalRelevantEvaluationsForUnit(subUnit, continueToSubUnits);
+	    }
+	}
+
+	return counter;
+    }
+
     public BigDecimal getRelevantEvaluationPercentage() {
-	int totalPeopleWorkingForUnit = configuration.getTotalPeopleWorkingFor(getUnit(), true);
+	int totalPeopleWorkingForUnit = getTotalPeopleWorkingInUnit(true);
 	int totalRelevantEvaluationsForUnit = getCurrentUsedHighGradeQuota();
 
 	if (totalRelevantEvaluationsForUnit == 0) {
@@ -59,20 +137,12 @@ public class UnitSiadapWrapper implements Serializable {
 		UnitSiadapWrapper.SCALE, RoundingMode.HALF_EVEN).multiply(new BigDecimal(100)).setScale(UnitSiadapWrapper.SCALE);
     }
 
-    public int getTotalPeople() {
-	return configuration.getTotalPeopleWorkingFor(getUnit(), true);
-    }
-
-    public int getTotalPeopleWithSiadap() {
-	return configuration.getTotalPeopleWithSiadapWorkingFor(getUnit(), true);
-    }
-
     public Collection<Person> getEvaluationResponsibles() {
 	return getUnit().getChildPersons(this.configuration.getEvaluationRelation());
     }
 
-    public int getHighGradeQuota() {
-	int totalPeople = getTotalPeople();
+    public Integer getHighGradeQuota() {
+	int totalPeople = getTotalPeopleWorkingInUnit();
 
 	BigDecimal result = new BigDecimal(totalPeople)
 		.multiply(new BigDecimal(SiadapYearConfiguration.MAXIMUM_HIGH_GRADE_QUOTA)).divide(new BigDecimal(100));
@@ -82,12 +152,12 @@ public class UnitSiadapWrapper implements Serializable {
 	// to 1
     }
 
-    public int getCurrentUsedHighGradeQuota() {
-	return configuration.getTotalRelevantEvaluationsForUnit(getUnit(), true);
+    public Integer getCurrentUsedHighGradeQuota() {
+	return getTotalRelevantEvaluationsForUnit(getUnit(), true);
     }
 
-    public int getExcellencyGradeQuota() {
-	int totalPeople = getTotalPeople();
+    public Integer getExcellencyGradeQuota() {
+	int totalPeople = getTotalPeopleWorkingInUnit();
 
 	BigDecimal result = new BigDecimal(totalPeople).multiply(
 		new BigDecimal(SiadapYearConfiguration.MAXIMUM_EXCELLENCY_GRADE_QUOTA)).divide(new BigDecimal(100));
@@ -98,20 +168,80 @@ public class UnitSiadapWrapper implements Serializable {
     }
 
     // TODO: implement this method after implementing excellency.
-    public int getCurrentUsedExcellencyGradeQuota() {
+    public Integer getCurrentUsedExcellencyGradeQuota() {
 	return 0;
     }
 
     public Unit getHarmonizationUnit() {
-	return this.configuration.getHarmonizationUnitToWhichUnitBelongs(getUnit());
+	return getHarmonizationUnit(getUnit());
     }
 
-    public boolean isUnitAnHarmonizationUnit() {
+    private Unit getHarmonizationUnit(Unit unit) {
+	if (!unit.getChildPersons(configuration.getHarmonizationResponsibleRelation()).isEmpty()) {
+	    return unit;
+	}
+	Collection<Unit> units = unit.getParentUnits(configuration.getUnitRelations());
+	return units.isEmpty() ? null : getHarmonizationUnit(units.iterator().next());
+    }
+
+    public boolean isResponsibleForHarmonization() {
 	return !getUnit().getChildPersons(this.configuration.getHarmonizationResponsibleRelation()).isEmpty();
+    }
+
+    public boolean isPersonResponsibleForHarmonization(Person person) {
+	return isPersonResponsibleForHarmonization(getUnit(), person);
+    }
+
+    private boolean isPersonResponsibleForHarmonization(Unit unit, Person person) {
+	Collection<Person> childPersons = getUnit().getChildPersons(this.configuration.getHarmonizationResponsibleRelation());
+	if (childPersons.contains(person)) {
+	    return true;
+	} else {
+	    Collection<Unit> parentUnits = getUnit().getParentUnits(this.configuration.getHarmonizationResponsibleRelation());
+	    if (parentUnits.isEmpty()) {
+		return false;
+	    } else {
+		return isPersonResponsibleForHarmonization(parentUnits.iterator().next(), person);
+	    }
+	}
+    }
+
+    public boolean isAboveQuotas() {
+	return getCurrentUsedHighGradeQuota() > getHighGradeQuota()
+		|| getCurrentUsedExcellencyGradeQuota() > getExcellencyGradeQuota();
     }
 
     public Unit getSuperiorUnit() {
 	Collection<Unit> parentUnits = getUnit().getParentUnits(this.configuration.getUnitRelations());
 	return parentUnits.isEmpty() ? null : parentUnits.iterator().next();
+    }
+
+    public List<PersonSiadapWrapper> getUnitEmployees() {
+	return getUnitEmployees(null);
+    }
+
+    public List<PersonSiadapWrapper> getUnitEmployees(Predicate predicate) {
+	return getUnitEmployees(true, predicate);
+    }
+
+    public List<PersonSiadapWrapper> getUnitEmployees(boolean continueToSubUnits, Predicate predicate) {
+	List<PersonSiadapWrapper> employees = new ArrayList<PersonSiadapWrapper>();
+	getUnitEmployees(getUnit(), employees, true, predicate);
+	return employees;
+    }
+
+    private void getUnitEmployees(Unit unit, List<PersonSiadapWrapper> employees, boolean continueToSubunits, Predicate predicate) {
+	for (Person person : unit.getChildPersons(configuration.getWorkingRelation())) {
+	    PersonSiadapWrapper personWrapper = new PersonSiadapWrapper(person, configuration.getYear());
+	    if (predicate == null || predicate.evaluate(personWrapper)) {
+		employees.add(personWrapper);
+	    }
+	}
+
+	if (continueToSubunits) {
+	    for (Unit subUnit : unit.getChildUnits(configuration.getUnitRelations())) {
+		getUnitEmployees(subUnit, employees, continueToSubunits, predicate);
+	    }
+	}
     }
 }

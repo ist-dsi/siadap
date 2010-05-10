@@ -17,6 +17,7 @@ import module.workflow.presentationTier.actions.ProcessManagement;
 import myorg.applicationTier.Authenticate.UserView;
 import myorg.presentationTier.actions.ContextBaseAction;
 
+import org.apache.commons.collections.Predicate;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
@@ -77,7 +78,7 @@ public class SiadapManagement extends ContextBaseAction {
 	request.setAttribute("currentUnit", new UnitSiadapWrapper(unit, year));
 
 	SiadapYearConfiguration configuration = SiadapYearConfiguration.getSiadapYearConfiguration(year);
-	
+
 	List<PersonSiadapWrapper> peopleSiadapEvaluation = new ArrayList<PersonSiadapWrapper>();
 	for (Person person : unit.getChildPersons(configuration.getWorkingRelation())) {
 	    peopleSiadapEvaluation.add(new PersonSiadapWrapper(person, year));
@@ -92,5 +93,26 @@ public class SiadapManagement extends ContextBaseAction {
 	request.setAttribute("subUnits", unitSiadapEvaluations);
 
 	return forward(request, "/module/siadap/harmonization/viewUnit.jsp");
+    }
+
+    public final ActionForward listHighGlobalEvaluations(final ActionMapping mapping, final ActionForm form,
+	    final HttpServletRequest request, final HttpServletResponse response) throws Exception {
+
+	int year = new LocalDate().getYear();
+
+	Unit unit = getDomainObject(request, "unitId");
+	UnitSiadapWrapper unitSiadapWrapper = new UnitSiadapWrapper(unit, year);
+
+	request.setAttribute("employees", unitSiadapWrapper.getUnitEmployees(new Predicate() {
+
+	    @Override
+	    public boolean evaluate(Object arg0) {
+		PersonSiadapWrapper person = (PersonSiadapWrapper) arg0;
+		return person.getSiadap() != null && person.getSiadap().hasRelevantEvaluation();
+	    }
+
+	}));
+
+	return forward(request, "/module/siadap/harmonization/viewEvaluated.jsp");
     }
 }

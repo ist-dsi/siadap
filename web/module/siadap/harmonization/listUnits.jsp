@@ -10,8 +10,8 @@
 		<fr:slot name="unit.partyName"  key="label.unit" bundle="ORGANIZATION_RESOURCES" />
 		<fr:slot name="unit.acronym" key="label.acronym" bundle="ORGANIZATION_RESOURCES" />
 		<fr:slot name="relevantEvaluationPercentage"/>
-		<fr:slot name="totalPeople"/>
-		<fr:slot name="totalPeopleWithSiadap"/>
+		<fr:slot name="totalPeopleWorkingInUnit"/>
+		<fr:slot name="totalPeopleWithSiadapWorkingInUnit"/>
 	</fr:schema>
 	<fr:layout name="tabular">
 		<fr:property name="classes" value="tstyle2"/>
