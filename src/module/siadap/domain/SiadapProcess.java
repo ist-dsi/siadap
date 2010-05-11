@@ -15,7 +15,6 @@ import module.siadap.activities.Evaluation;
 import module.siadap.activities.Homologate;
 import module.siadap.activities.SubmitForObjectivesAcknowledge;
 import module.siadap.activities.ValidateEvaluation;
-import module.siadap.domain.scoring.SiadapCompetencesEvaluation;
 import module.siadap.domain.wrappers.PersonSiadapWrapper;
 import module.workflow.activities.ActivityInformation;
 import module.workflow.activities.WorkflowActivity;
@@ -52,8 +51,9 @@ public class SiadapProcess extends SiadapProcess_Base {
 
 	User currentUser = UserView.getCurrentUser();
 	Person possibleEvaluator = currentUser.getPerson();
+	Person evaluator = new PersonSiadapWrapper(evaluated, year).getEvaluator();
 
-	if (SiadapYearConfiguration.getSiadapYearConfiguration(year).getEvaluatorFor(evaluated) != possibleEvaluator) {
+	if (evaluator != possibleEvaluator) {
 	    throw new DomainException("error.onlyEvaluatorCanCreateSiadap");
 	}
 
@@ -92,9 +92,8 @@ public class SiadapProcess extends SiadapProcess_Base {
     @Override
     public boolean isAccessible(User user) {
 	Person accessor = user.getPerson();
-	return accessor == getSiadap().getEvaluated() || accessor == getSiadap().getEvaluator() ||
-
-	isResponsibleForHarmonization(accessor, getSiadap().getEvaluated());
+	return accessor == getSiadap().getEvaluated() || accessor == getSiadap().getEvaluator()
+		|| isResponsibleForHarmonization(accessor, getSiadap().getEvaluated());
     }
 
     private boolean isResponsibleForHarmonization(Person accessor, Person evaluated) {

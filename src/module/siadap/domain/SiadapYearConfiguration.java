@@ -16,7 +16,9 @@ public class SiadapYearConfiguration extends SiadapYearConfiguration_Base {
     public static final Double DEFAULT_OBJECTIVES_PONDERATION = 75.0;
     public static final Double DEFAULT_COMPETENCES_PONDERATION = 25.0;
     public static final Double MAXIMUM_HIGH_GRADE_QUOTA = 25.0;
-    public static final Double MAXIMUM_EXCELLENCY_GRADE_QUOTA = 1.25; // 5% of
+    public static final Double MAXIMUM_EXCELLENCY_GRADE_QUOTA = 5.0; // 1.25; //
+
+    // 5% of
 
     // the 25%
 
@@ -44,32 +46,6 @@ public class SiadapYearConfiguration extends SiadapYearConfiguration_Base {
 	    return configuration;
 	}
 	return new SiadapYearConfiguration(year, DEFAULT_OBJECTIVES_PONDERATION, DEFAULT_COMPETENCES_PONDERATION);
-    }
-
-    public Set<Person> getEvalutedFor(Person evaluator) {
-	Set<Person> people = new HashSet<Person>();
-
-	return people;
-    }
-
-    public Person getEvaluatorFor(Person evaluated) {
-	Person evaluator = null;
-
-	Collection<Party> parents = evaluated.getParents(getEvaluationRelation());
-	if (!parents.isEmpty()) {
-	    evaluator = (Person) parents.iterator().next();
-	} else {
-	    Collection<Party> workingPlaces = evaluated.getParents(getWorkingRelation());
-	    Unit workingUnit = (Unit) workingPlaces.iterator().next();
-	    Collection<Person> childPersons = workingUnit.getChildPersons(getEvaluationRelation());
-	    evaluator = childPersons.iterator().next();
-	}
-
-	return evaluator;
-    }
-
-    public Collection<Unit> getHarmozationUnitsFor(Person loggedPerson) {
-	return loggedPerson.getParentUnits(getHarmonizationResponsibleRelation());
     }
 
     public Siadap getSiadapFor(Person person, Integer year) {

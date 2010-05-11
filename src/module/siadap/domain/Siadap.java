@@ -9,6 +9,7 @@ import module.organization.domain.Person;
 import module.siadap.activities.AutoEvaluation;
 import module.siadap.activities.Evaluation;
 import module.siadap.domain.scoring.SiadapGlobalEvaluation;
+import module.siadap.domain.wrappers.PersonSiadapWrapper;
 
 import org.apache.commons.collections.Predicate;
 import org.joda.time.LocalDate;
@@ -146,8 +147,7 @@ public class Siadap extends Siadap_Base {
     }
 
     public Person getEvaluator() {
-	SiadapYearConfiguration configuration = SiadapYearConfiguration.getSiadapYearConfiguration(getYear());
-	return configuration.getEvaluatorFor(getEvaluated());
+	return new PersonSiadapWrapper(getEvaluated(), getYear()).getEvaluator();
     }
 
     public boolean isWithObjectivesFilled() {
@@ -186,6 +186,6 @@ public class Siadap extends Siadap_Base {
     }
 
     public boolean hasRelevantEvaluation() {
-	return isEvaluationDone() && getQualitativeEvaluation() == SiadapGlobalEvaluation.HIGH;
+	return isEvaluationDone() && SiadapGlobalEvaluation.HIGH.accepts(getTotalEvaluationScoring());
     }
 }

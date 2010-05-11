@@ -9,8 +9,13 @@ import java.util.List;
 
 import org.apache.commons.collections.Predicate;
 
+import module.organization.domain.AccountabilityType;
+import module.organization.domain.Party;
 import module.organization.domain.Person;
 import module.organization.domain.Unit;
+import module.organization.domain.predicates.PartyPredicate;
+import module.organization.domain.predicates.PartyPredicate.PartyByAccountabilityType;
+import module.organization.domain.predicates.PartyPredicate.PartyByPartyType;
 import module.siadap.domain.Siadap;
 import module.siadap.domain.SiadapYearConfiguration;
 import module.siadap.domain.scoring.SiadapGlobalEvaluation;
@@ -231,7 +236,14 @@ public class UnitSiadapWrapper implements Serializable {
     }
 
     private void getUnitEmployees(Unit unit, List<PersonSiadapWrapper> employees, boolean continueToSubunits, Predicate predicate) {
-	for (Person person : unit.getChildPersons(configuration.getWorkingRelation())) {
+
+	List<AccountabilityType> accountabilities = new ArrayList<AccountabilityType>();
+	accountabilities.add(configuration.getWorkingRelation());
+	accountabilities.add(configuration.getWorkingRelationWithNoQuota());
+	Collection<Person> children = unit.getChildren(new PartyPredicate.PartyByAccountabilityType(Person.class,
+		accountabilities));
+
+	for (Person person : children) {
 	    PersonSiadapWrapper personWrapper = new PersonSiadapWrapper(person, configuration.getYear());
 	    if (predicate == null || predicate.evaluate(personWrapper)) {
 		employees.add(personWrapper);

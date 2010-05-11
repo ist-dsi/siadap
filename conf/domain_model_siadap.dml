@@ -204,6 +204,14 @@ relation WorkingAccountabilityType {
 	.module.organization.domain.AccountabilityType playsRole workingRelation;
 }
 
+relation WorkingAccountabilityWithNoQuotaType {
+	SiadapYearConfiguration playsRole yearConfigurationsForWorkingRelationsWithNoQuota {
+		multiplicity *;
+	}
+	.module.organization.domain.AccountabilityType playsRole workingRelationWithNoQuota;
+}
+
+
 relation EvaluationAccountabilityType {
 	SiadapYearConfiguration playsRole yearConfigurationsForEvaluationRelations {
 		multiplicity *;

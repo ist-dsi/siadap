@@ -46,6 +46,17 @@
 			<fr:property name="sortBy" value="name" />
 			<fr:property name="saveOptions" value="true" />
 		</fr:slot>
+		
+		<fr:slot name="workingRelationWithNoQuota" layout="menu-select">
+			<fr:property name="providerClass"
+				value="module.organization.presentationTier.renderers.providers.AccountabilityTypesProvider" />
+			<fr:property name="choiceType"
+				value="module.organization.domain.AccountabilityType" />
+			<fr:property name="format" value="${name}" />
+			<fr:property name="sortBy" value="name" />
+			<fr:property name="saveOptions" value="true" />
+		</fr:slot>
+		
 		<fr:slot name="evaluationRelation" layout="menu-select">
 			<fr:property name="providerClass"
 				value="module.organization.presentationTier.renderers.providers.AccountabilityTypesProvider" />

@@ -57,14 +57,9 @@ public class SiadapManagement extends ContextBaseAction {
 
 	Person loggedPerson = UserView.getCurrentUser().getPerson();
 	int year = new LocalDate().getYear();
-	SiadapYearConfiguration configuration = SiadapYearConfiguration.getSiadapYearConfiguration(year);
+	PersonSiadapWrapper wrapper = new PersonSiadapWrapper(loggedPerson, year);
 
-	List<UnitSiadapWrapper> unitSiadapEvaluations = new ArrayList<UnitSiadapWrapper>();
-
-	for (Unit unit : configuration.getHarmozationUnitsFor(loggedPerson)) {
-	    unitSiadapEvaluations.add(new UnitSiadapWrapper(unit, year));
-	}
-	request.setAttribute("harmonizationUnits", unitSiadapEvaluations);
+	request.setAttribute("harmonizationUnits", wrapper.getHarmozationUnits());
 
 	return forward(request, "/module/siadap/harmonization/listUnits.jsp");
     }
@@ -74,16 +69,13 @@ public class SiadapManagement extends ContextBaseAction {
 	int year = new LocalDate().getYear();
 
 	Unit unit = getDomainObject(request, "unitId");
+	UnitSiadapWrapper wrapper = new UnitSiadapWrapper(unit, year);
 
-	request.setAttribute("currentUnit", new UnitSiadapWrapper(unit, year));
+	request.setAttribute("currentUnit", wrapper);
 
 	SiadapYearConfiguration configuration = SiadapYearConfiguration.getSiadapYearConfiguration(year);
 
-	List<PersonSiadapWrapper> peopleSiadapEvaluation = new ArrayList<PersonSiadapWrapper>();
-	for (Person person : unit.getChildPersons(configuration.getWorkingRelation())) {
-	    peopleSiadapEvaluation.add(new PersonSiadapWrapper(person, year));
-	}
-	request.setAttribute("people", peopleSiadapEvaluation);
+	request.setAttribute("people", wrapper.getUnitEmployees());
 
 	List<UnitSiadapWrapper> unitSiadapEvaluations = new ArrayList<UnitSiadapWrapper>();
 

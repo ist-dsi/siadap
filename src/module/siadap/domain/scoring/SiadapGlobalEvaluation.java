@@ -1,16 +1,23 @@
 package module.siadap.domain.scoring;
 
+import java.math.BigDecimal;
+
 import myorg.util.BundleUtil;
 import pt.ist.fenixWebFramework.rendererExtensions.util.IPresentableEnum;
 
 public enum SiadapGlobalEvaluation implements IPresentableEnum, IScoring {
 
-    HIGH(5), MEDIUM(3), LOW(1);
+    HIGH(5, new BigDecimal(4), new BigDecimal(5)), MEDIUM(3, new BigDecimal(2), new BigDecimal(3.999)), LOW(1, new BigDecimal(1),
+	    new BigDecimal(1.999));
 
     private int points;
+    private BigDecimal lowerBound;
+    private BigDecimal upperBound;
 
-    SiadapGlobalEvaluation(int points) {
+    SiadapGlobalEvaluation(int points, BigDecimal lowerBound, BigDecimal upperBound) {
 	this.points = points;
+	this.lowerBound = lowerBound;
+	this.upperBound = upperBound;
     }
 
     public int getPoints() {
@@ -20,5 +27,9 @@ public enum SiadapGlobalEvaluation implements IPresentableEnum, IScoring {
     @Override
     public String getLocalizedName() {
 	return BundleUtil.getStringFromResourceBundle("resources/SiadapResources", getClass().getName() + "." + name());
+    }
+
+    public boolean accepts(BigDecimal totalEvaluationScoring) {
+	return lowerBound.compareTo(totalEvaluationScoring) <= 0 && upperBound.compareTo(totalEvaluationScoring) >= 0;
     }
 }

@@ -2,8 +2,13 @@ package module.siadap.domain.wrappers;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
+import module.organization.domain.Party;
 import module.organization.domain.Person;
+import module.organization.domain.Unit;
 import module.siadap.domain.Siadap;
 import module.siadap.domain.SiadapYearConfiguration;
 import myorg.applicationTier.Authenticate.UserView;
@@ -53,7 +58,31 @@ public class PersonSiadapWrapper implements Serializable {
     }
 
     public Person getEvaluator() {
-	return this.configuration.getEvaluatorFor(getPerson());
+	Person evaluator = null;
+	Person evaluated = getPerson();
+
+	Collection<Party> parents = evaluated.getParents(configuration.getEvaluationRelation());
+	if (!parents.isEmpty()) {
+	    evaluator = (Person) parents.iterator().next();
+	} else {
+	    Collection<Party> workingPlaces = evaluated.getParents(configuration.getWorkingRelation());
+	    if (workingPlaces.isEmpty()) {
+		workingPlaces = evaluated.getParents(configuration.getWorkingRelationWithNoQuota());
+	    }
+	    Unit workingUnit = (Unit) workingPlaces.iterator().next();
+	    Collection<Person> childPersons = workingUnit.getChildPersons(configuration.getEvaluationRelation());
+	    evaluator = childPersons.iterator().next();
+	}
+
+	return evaluator;
+    }
+
+    public Collection<UnitSiadapWrapper> getHarmozationUnits() {
+	List<UnitSiadapWrapper> units = new ArrayList<UnitSiadapWrapper>();
+	for (Unit unit : getPerson().getParentUnits(configuration.getHarmonizationResponsibleRelation())) {
+	    units.add(new UnitSiadapWrapper(unit, getYear()));
+	}
+	return units;
     }
 
     public boolean isAccessibleToCurrentUser() {
@@ -65,7 +94,7 @@ public class PersonSiadapWrapper implements Serializable {
     }
 
     public boolean isCurrentUserAbleToEvaluate() {
-	return this.configuration.getEvaluatorFor(getPerson()) == UserView.getCurrentUser().getPerson();
+	return getEvaluator() == UserView.getCurrentUser().getPerson();
     }
 
     public boolean isCurrentUserAbleToCreateProcess() {

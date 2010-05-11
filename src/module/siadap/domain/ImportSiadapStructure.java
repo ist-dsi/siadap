@@ -16,6 +16,7 @@ import module.organization.domain.Unit;
 import myorg.domain.User;
 import myorg.domain.scheduler.ReadCustomTask;
 
+import org.apache.commons.lang.StringUtils;
 import org.joda.time.LocalDate;
 
 import pt.ist.expenditureTrackingSystem.domain.organization.CostCenter;
@@ -50,7 +51,7 @@ public class ImportSiadapStructure extends ReadCustomTask {
     @Override
     public void doIt() {
 	try {
-	    FileInputStream fstream = new FileInputStream("/Users/ghost/siadap-import/siadap-list-istid.csv");
+	    FileInputStream fstream = new FileInputStream("/Users/ghost/siadap-import/siadap-import-with-adist.csv");
 	    // Get the object of DataInputStream
 	    DataInputStream in = new DataInputStream(fstream);
 	    BufferedReader br = new BufferedReader(new InputStreamReader(in));
@@ -103,6 +104,7 @@ public class ImportSiadapStructure extends ReadCustomTask {
 	SiadapYearConfiguration configuration = SiadapYearConfiguration.getSiadapYearConfiguration(today.getYear());
 	AccountabilityType evaluationRelation = configuration.getEvaluationRelation();
 	AccountabilityType workingRelation = configuration.getWorkingRelation();
+	AccountabilityType workingRelationWithNoQuota = configuration.getWorkingRelationWithNoQuota();
 
 	for (Responsible responsible : responsibles) {
 	    Unit unit = responsible.getCenter().getUnit();
@@ -123,9 +125,16 @@ public class ImportSiadapStructure extends ReadCustomTask {
 
 	    for (Evaluator evaluator : evaluators) {
 		Person evaluatorPerson = evaluator.getUser().getPerson();
+		if (evaluatorPerson == null) {
+		    System.out.println("WTF: " + evaluator.getUser().getUsername());
+		}
+		if (evaluatorPerson.getParentUnits(evaluationRelation) == null) {
+		    System.out.println("WTF-relation for: " + evaluator.getUser().getUsername());
+		}
 		boolean isResponsible = evaluatorPerson.getParentUnits(evaluationRelation).contains(unit);
 		for (Evaluated evaluated : evaluator.evaluated) {
 		    User user = evaluated.getUser();
+		    boolean adist = evaluated.getAdist();
 		    if (user == null) {
 			System.out.println(evaluated.istId + " NO USER");
 			user = new User(evaluated.istId);
@@ -141,8 +150,11 @@ public class ImportSiadapStructure extends ReadCustomTask {
 				.getPartyTypeInstance());
 		    }
 
-		    if (!unit.getChildPersons(workingRelation).contains(evaluatedPerson)) {
+		    if (!adist && !unit.getChildPersons(workingRelation).contains(evaluatedPerson)) {
 			evaluatedPerson.addParent(unit, workingRelation, today, null);
+		    }
+		    if (adist && !unit.getChildPersons(workingRelationWithNoQuota).contains(evaluatedPerson)) {
+			evaluatedPerson.addParent(unit, workingRelationWithNoQuota, today, null);
 		    }
 		    if (!isResponsible) {
 			if (!evaluatorPerson.getChildPersons(evaluationRelation).contains(evaluatedPerson)) {
@@ -157,13 +169,20 @@ public class ImportSiadapStructure extends ReadCustomTask {
 
     private void processLine(String strLine) {
 	String[] values = strLine.split(",");
-	if (values.length != 3) {
+
+	if (values.length < 3 || values.length > 5) {
+	    System.out.println("skipped: " + strLine);
 	    return;
 	}
 	String cc = values[0].trim();
 	Integer ccNumber = Integer.valueOf(cc);
 	String evaluatorId = values[2].trim();
 	String evaluatedId = values[1].trim();
+	Boolean adist = values.length == 4 ? values[3].trim().equals("1") : false;
+
+	if (StringUtils.isEmpty(evaluatorId)) {
+	    return;
+	}
 
 	List<Evaluator> evaluators = avaliators.get(ccNumber);
 	if (evaluators == null) {
@@ -175,14 +194,14 @@ public class ImportSiadapStructure extends ReadCustomTask {
 	for (Evaluator evaluator : evaluators) {
 	    if (evaluator.match(evaluatorId)) {
 		added = true;
-		System.out.println("Adding existing evaluator " + evaluatorId + " for " + cc);
-		evaluator.addEvaluated(evaluatedId);
+		System.out.println("Adding existing evaluator " + evaluatorId + " for " + cc + "adist: " + adist);
+		evaluator.addEvaluated(evaluatedId, adist);
 	    }
 	}
 	if (!added) {
-	    System.out.println("New evaluator " + evaluatorId + " for " + cc);
+	    System.out.println("New evaluator " + evaluatorId + " for " + cc + " adist: " + adist);
 	    Evaluator evaluator = new Evaluator(evaluatorId);
-	    evaluator.addEvaluated(evaluatedId);
+	    evaluator.addEvaluated(evaluatedId, adist);
 	    evaluators.add(evaluator);
 	}
     }
@@ -196,8 +215,8 @@ public class ImportSiadapStructure extends ReadCustomTask {
 	    evaluated = new ArrayList<Evaluated>();
 	}
 
-	public void addEvaluated(String istId) {
-	    evaluated.add(new Evaluated(istId));
+	public void addEvaluated(String istId, Boolean adist) {
+	    evaluated.add(new Evaluated(istId, adist));
 	}
 
 	public boolean match(String istId) {
@@ -215,9 +234,15 @@ public class ImportSiadapStructure extends ReadCustomTask {
 
     public static class Evaluated {
 	String istId;
+	Boolean adist;
 
-	public Evaluated(String istId) {
+	public Evaluated(String istId, Boolean adist) {
 	    this.istId = istId.trim();
+	    this.adist = adist;
+	}
+
+	public boolean getAdist() {
+	    return adist;
 	}
 
 	public User getUser() {
