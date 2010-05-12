@@ -25,7 +25,7 @@ public class EvaluationActivityInformation extends ActivityInformation<SiadapPro
     @Override
     public void setProcess(SiadapProcess process) {
 	super.setProcess(process);
-	SiadapEvaluation evaluationData = process.getSiadap().getEvaliationData();
+	SiadapEvaluation evaluationData = process.getSiadap().getEvaluationData();
 	if (evaluationData != null) {
 	    setNoEvaluationJustification(evaluationData.getNoEvaluationJustification());
 	    setPersonalDevelopment(evaluationData.getPersonalDevelopment());

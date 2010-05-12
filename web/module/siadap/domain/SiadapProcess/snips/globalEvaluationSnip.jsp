@@ -11,6 +11,12 @@
 </logic:equal>
 
 <logic:equal name="process" property="siadap.evaluationDone" value="true">			
+	<logic:equal name="process" property="siadap.evaluationData.excellencyAward" value="true">
+		<div class="highlightBox">
+			<bean:message key="label.suggestedForExcellencyAward" bundle="SIADAP_RESOURCES"/>
+		</div>
+	</logic:equal>
+
 	<table class="tstyle2" style="width: 100%">
 		<tr>
 			<th>

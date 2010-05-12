@@ -17,8 +17,16 @@ public class Evaluation extends WorkflowActivity<SiadapProcess, EvaluationActivi
 
     @Override
     protected void process(EvaluationActivityInformation activityInformation) {
-	new SiadapEvaluation(activityInformation.getProcess().getSiadap(), activityInformation.getPersonalDevelopment(),
-		activityInformation.getTrainningNeeds());
+	SiadapEvaluation evaluationData = activityInformation.getProcess().getSiadap().getEvaluationData();
+	if (evaluationData == null) {
+	    new SiadapEvaluation(activityInformation.getProcess().getSiadap(), activityInformation.getEvaluationJustification(),
+		    activityInformation.getPersonalDevelopment(), activityInformation.getTrainningNeeds(), activityInformation
+			    .getExcellencyAward());
+	} else {
+	    evaluationData.edit(activityInformation.getEvaluationJustification(), activityInformation.getPersonalDevelopment(),
+		    activityInformation.getTrainningNeeds(), activityInformation.getExcellencyAward());
+	}
+
     }
 
     @Override

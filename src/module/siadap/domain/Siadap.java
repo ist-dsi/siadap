@@ -188,4 +188,8 @@ public class Siadap extends Siadap_Base {
     public boolean hasRelevantEvaluation() {
 	return isEvaluationDone() && SiadapGlobalEvaluation.HIGH.accepts(getTotalEvaluationScoring());
     }
+
+    public boolean isInadequate() {
+	return isEvaluationDone() && SiadapGlobalEvaluation.LOW.accepts(getTotalEvaluationScoring());
+    }
 }

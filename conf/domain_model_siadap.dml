@@ -147,12 +147,12 @@ relation SiadapSiadapEvaluationItems {
 
 relation SiadapAutoEvaluationSiadap {
 	Siadap playsRole siadap;
-	SiadapAutoEvaluation playsRole autoEvaliationData;
+	SiadapAutoEvaluation playsRole autoEvaluationData;
 }
 
 relation SiadapSiadapEvaluation {
 	Siadap playsRole siadap;
-	SiadapEvaluation playsRole evaliationData;
+	SiadapEvaluation playsRole evaluationData;
 }
 
 relation SiadapEvaluated {

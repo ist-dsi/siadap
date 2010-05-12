@@ -1,22 +1,28 @@
 package module.siadap.domain;
 
-import org.apache.commons.lang.StringUtils;
-
-import module.siadap.domain.scoring.SiadapGlobalEvaluation;
 import myorg.domain.exceptions.DomainException;
+
+import org.apache.commons.lang.StringUtils;
 
 public class SiadapEvaluation extends SiadapEvaluation_Base {
 
-    public SiadapEvaluation(Siadap siadap, String personalDevelopment, String trainningNeeds) {
+    public SiadapEvaluation(Siadap siadap, String evaluationJustification, String personalDevelopment, String trainningNeeds,
+	    Boolean excellencyAward) {
 	setSiadapRootModule(SiadapRootModule.getInstance());
 	setSiadap(siadap);
-	if (siadap.getQualitativeEvaluation() == SiadapGlobalEvaluation.LOW
-		&& (StringUtils.isEmpty(personalDevelopment) || StringUtils.isEmpty(trainningNeeds))) {
+	edit(evaluationJustification, personalDevelopment, trainningNeeds, excellencyAward);
+    }
+
+    public void edit(String evaluationJustification, String personalDevelopment, String trainningNeeds, Boolean excellencyAward) {
+	if (getSiadap().isInadequate() && (StringUtils.isEmpty(personalDevelopment) || StringUtils.isEmpty(trainningNeeds))) {
 
 	    throw new DomainException("error.siadapEvaluation.mustFillDataForBadEvaluation", DomainException
 		    .getResourceFor("resources/SiadapResources"));
 	}
+	setEvaluationJustification(evaluationJustification);
 	setPersonalDevelopment(personalDevelopment);
 	setTrainningNeeds(trainningNeeds);
+	setExcellencyAward(excellencyAward);
     }
+
 }

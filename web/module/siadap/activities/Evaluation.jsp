@@ -23,6 +23,11 @@
 	<strong><bean:message key="label.objectives"
 		bundle="SIADAP_RESOURCES" /></strong>:
 		<table id="objectives" class="tstyle2">
+		<tr>
+			<td></td>
+			<th><bean:message key="label.autoEvaluation" bundle="SIADAP_RESOURCES"/></th>
+			<th><bean:message key="label.evaluation" bundle="SIADAP_RESOURCES"/></th>
+		</tr>
 		<logic:iterate id="evaluation" name="siadap"
 			property="objectiveEvaluations">
 			<tr>
@@ -37,6 +42,11 @@
 	<strong><bean:message key="label.competences"
 		bundle="SIADAP_RESOURCES" /></strong>:
 	    <table id="competences" class="tstyle2">
+		<tr>
+			<td></td>
+			<th><bean:message key="label.autoEvaluation" bundle="SIADAP_RESOURCES"/></th>
+			<th><bean:message key="label.evaluation" bundle="SIADAP_RESOURCES"/></th>
+		</tr>
 		<logic:iterate id="competence" name="siadap"
 			property="competenceEvaluations">
 			<tr>
@@ -67,7 +77,11 @@
 		</fr:layout>
 	</fr:edit></div>
 
-
+	<p>
+	<a href="#" id="toggleMoreInfo"><bean:message key="label.evaluation.moreData" bundle="SIADAP_RESOURCES"/></a>
+	
+	<div id="moreInfo" style="display: inline">
+	
 	<div><strong><bean:message
 		key="label.personalDevelopment" bundle="SIADAP_RESOURCES" /></strong>
 	<p><fr:edit name="information" slot="personalDevelopment"
@@ -89,6 +103,9 @@
 		</fr:layout>
 	</fr:edit></p>
 	</div>
+	
+	</div>
+	</p>
 	
 	<html:submit styleClass="inputbutton">
 		<bean:message key="renderers.form.submit.name"
@@ -124,6 +141,10 @@
 		calculate();
 	});
 
+	$("#toggleMoreInfo").click(function() {
+		$("#moreInfo").slideToggle();
+	});
+	
 	function calculate() {
 		var objectives = 0;
 		var i = 0;
@@ -153,12 +174,21 @@
 		var text = formatString(message, [total, "<%= personName.toString() %>", getScoreLabel(total)]);
 
 		$("#value").empty().append("<span class=\"bold\">" + text + "</span>");
-				
+
+		if (total < 2) {	
+			$("#moreInfo").slideDown();
+			$("#toggleMoreInfo").hide();
+		}
+		else {
+			$("#moreInfo").slideUp();
+			$("#toggleMoreInfo").show();
+		}
+		
 		if (total < 4) {
 				$("input[name$=excellencyAward]").removeAttr('checked');
 				$("input[name$=excellencyAward]").attr('disabled','true');
 		}
-		if (total >= 4) {
+		else if (total >= 4) {
 			$("input[name$=excellencyAward]").removeAttr('disabled');
 		}
 	}
@@ -189,5 +219,6 @@
 		}
 	}
 
+	
 	calculate();
 </script>
