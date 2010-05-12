@@ -32,6 +32,7 @@ class Siadap {
 class SiadapEvaluation {
 	String evaluationJustification;	
 	String noEvaluationJustification;
+	Boolean excellencyAward;
 	String personalDevelopment;
 	String trainningNeeds;
 }

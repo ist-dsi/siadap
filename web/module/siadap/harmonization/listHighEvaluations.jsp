@@ -8,6 +8,13 @@
 	<bean:message key="label.viewHighGlobalEvaluations" bundle="SIADAP_RESOURCES"/>	
 </h2>
 
+<ul>
+	<li>
+		<html:link page="/siadapManagement.do?method=viewUnitHarmonizationData" paramId="unitId" paramName="unit" paramProperty="unit.externalId">
+		<bean:message key="link.back" bundle="MYORG_RESOURCES"/>
+		</html:link>
+	</li>
+</ul>
 <fr:view name="employees">
 
 	<fr:schema type="module.siadap.domain.wrappers.PersonSiadapWrapper" bundle="SIADAP_RESOURCES">

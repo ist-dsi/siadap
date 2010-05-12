@@ -1,5 +1,6 @@
 package module.siadap.presentationTier.actions;
 
+import java.sql.Wrapper;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -27,6 +28,17 @@ import pt.ist.fenixWebFramework.struts.annotations.Mapping;
 
 @Mapping(path = "/siadapManagement")
 public class SiadapManagement extends ContextBaseAction {
+
+    public final ActionForward prepareToCreateNewSiadapProcess(final ActionMapping mapping, final ActionForm form,
+	    final HttpServletRequest request, final HttpServletResponse response) throws Exception {
+
+	Person evaluator = UserView.getCurrentUser().getPerson();
+	PersonSiadapWrapper wrapper = new PersonSiadapWrapper(evaluator, new LocalDate().getYear());
+
+	request.setAttribute("peopleToEvaluate", wrapper.getPeopleToEvaluate());
+
+	return forward(request, "/module/siadap/prepareCreateSiadap.jsp");
+    }
 
     public final ActionForward createNewSiadapProcess(final ActionMapping mapping, final ActionForm form,
 	    final HttpServletRequest request, final HttpServletResponse response) throws Exception {
@@ -75,7 +87,8 @@ public class SiadapManagement extends ContextBaseAction {
 
 	SiadapYearConfiguration configuration = SiadapYearConfiguration.getSiadapYearConfiguration(year);
 
-	request.setAttribute("people", wrapper.getUnitEmployees());
+	request.setAttribute("people-withQuotas", wrapper.getUnitEmployeesWithQuotas(false));
+	request.setAttribute("people-withoutQuotas", wrapper.getUnitEmployeesWithoutQuotas(false));
 
 	List<UnitSiadapWrapper> unitSiadapEvaluations = new ArrayList<UnitSiadapWrapper>();
 
@@ -95,16 +108,17 @@ public class SiadapManagement extends ContextBaseAction {
 	Unit unit = getDomainObject(request, "unitId");
 	UnitSiadapWrapper unitSiadapWrapper = new UnitSiadapWrapper(unit, year);
 
+	request.setAttribute("unit", unitSiadapWrapper);
 	request.setAttribute("employees", unitSiadapWrapper.getUnitEmployees(new Predicate() {
 
 	    @Override
 	    public boolean evaluate(Object arg0) {
 		PersonSiadapWrapper person = (PersonSiadapWrapper) arg0;
-		return person.getSiadap() != null && person.getSiadap().hasRelevantEvaluation();
+		return person.getSiadap() != null && person.isQuotaAware() && person.getSiadap().hasRelevantEvaluation();
 	    }
 
 	}));
 
-	return forward(request, "/module/siadap/harmonization/viewEvaluated.jsp");
+	return forward(request, "/module/siadap/harmonization/listHighEvaluations.jsp");
     }
 }

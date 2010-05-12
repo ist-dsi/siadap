@@ -5,7 +5,7 @@
 <%@ taglib uri="/WEB-INF/fenix-renderers.tld" prefix="fr"%>
 
 
-<html:link page="/siadapManagement.do?method=createNewSiadapProcess">Criar Novo processo</html:link>
+<html:link page="/siadapManagement.do?method=prepareToCreateNewSiadapProcess">Criar Novo processo</html:link>
 |
 <html:link
 	page="/siadapManagement.do?method=createNewSiadapYearConfiguration">Criar configuração para o ano corrente</html:link>

@@ -2,6 +2,7 @@ package module.siadap.domain.wrappers;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.math.MathContext;
 import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -139,7 +140,7 @@ public class UnitSiadapWrapper implements Serializable {
 	}
 
 	return new BigDecimal(totalRelevantEvaluationsForUnit).divide(new BigDecimal(totalPeopleWorkingForUnit),
-		UnitSiadapWrapper.SCALE, RoundingMode.HALF_EVEN).multiply(new BigDecimal(100)).setScale(UnitSiadapWrapper.SCALE);
+		UnitSiadapWrapper.SCALE, RoundingMode.HALF_EVEN).multiply(new BigDecimal(100)).stripTrailingZeros();
     }
 
     public Collection<Person> getEvaluationResponsibles() {
@@ -225,21 +226,61 @@ public class UnitSiadapWrapper implements Serializable {
 	return getUnitEmployees(null);
     }
 
+    public List<PersonSiadapWrapper> getUnitEmployees(boolean continueToSubUnits) {
+	return getUnitEmployees(continueToSubUnits, null);
+    }
+
     public List<PersonSiadapWrapper> getUnitEmployees(Predicate predicate) {
 	return getUnitEmployees(true, predicate);
     }
 
     public List<PersonSiadapWrapper> getUnitEmployees(boolean continueToSubUnits, Predicate predicate) {
 	List<PersonSiadapWrapper> employees = new ArrayList<PersonSiadapWrapper>();
-	getUnitEmployees(getUnit(), employees, true, predicate);
-	return employees;
-    }
-
-    private void getUnitEmployees(Unit unit, List<PersonSiadapWrapper> employees, boolean continueToSubunits, Predicate predicate) {
-
 	List<AccountabilityType> accountabilities = new ArrayList<AccountabilityType>();
 	accountabilities.add(configuration.getWorkingRelation());
 	accountabilities.add(configuration.getWorkingRelationWithNoQuota());
+
+	getUnitEmployees(getUnit(), employees, continueToSubUnits, accountabilities, predicate);
+	return employees;
+    }
+
+    public List<PersonSiadapWrapper> getUnitEmployeesWithQuotas(boolean continueToSubUnits) {
+	return getUnitEmployeesWithQuotas(continueToSubUnits, null);
+    }
+
+    public List<PersonSiadapWrapper> getUnitEmployeesWithQuotas(Predicate predicate) {
+	return getUnitEmployeesWithQuotas(true, predicate);
+    }
+
+    public List<PersonSiadapWrapper> getUnitEmployeesWithQuotas(boolean continueToSubUnits, Predicate predicate) {
+	List<PersonSiadapWrapper> employees = new ArrayList<PersonSiadapWrapper>();
+	List<AccountabilityType> accountabilities = new ArrayList<AccountabilityType>();
+	accountabilities.add(configuration.getWorkingRelation());
+
+	getUnitEmployees(getUnit(), employees, continueToSubUnits, accountabilities, predicate);
+	return employees;
+    }
+
+    public List<PersonSiadapWrapper> getUnitEmployeesWithoutQuotas(boolean continueToSubUnits) {
+	return getUnitEmployeesWithoutQuotas(continueToSubUnits, null);
+    }
+
+    public List<PersonSiadapWrapper> getUnitEmployeesWithoutQuotas(Predicate predicate) {
+	return getUnitEmployeesWithoutQuotas(true, predicate);
+    }
+
+    public List<PersonSiadapWrapper> getUnitEmployeesWithoutQuotas(boolean continueToSubUnits, Predicate predicate) {
+	List<PersonSiadapWrapper> employees = new ArrayList<PersonSiadapWrapper>();
+	List<AccountabilityType> accountabilities = new ArrayList<AccountabilityType>();
+	accountabilities.add(configuration.getWorkingRelationWithNoQuota());
+
+	getUnitEmployees(getUnit(), employees, continueToSubUnits, accountabilities, predicate);
+	return employees;
+    }
+
+    private void getUnitEmployees(Unit unit, List<PersonSiadapWrapper> employees, boolean continueToSubunits,
+	    List<AccountabilityType> accountabilities, Predicate predicate) {
+
 	Collection<Person> children = unit.getChildren(new PartyPredicate.PartyByAccountabilityType(Person.class,
 		accountabilities));
 
@@ -252,8 +293,21 @@ public class UnitSiadapWrapper implements Serializable {
 
 	if (continueToSubunits) {
 	    for (Unit subUnit : unit.getChildUnits(configuration.getUnitRelations())) {
-		getUnitEmployees(subUnit, employees, continueToSubunits, predicate);
+		getUnitEmployees(subUnit, employees, continueToSubunits, accountabilities, predicate);
 	    }
 	}
+    }
+
+    @Override
+    public int hashCode() {
+	return getUnit().hashCode();
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+	if (obj instanceof UnitSiadapWrapper) {
+	    return ((UnitSiadapWrapper) obj).getUnit() == getUnit();
+	}
+	return false;
     }
 }

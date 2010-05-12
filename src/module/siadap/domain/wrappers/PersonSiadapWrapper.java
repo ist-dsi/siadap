@@ -4,8 +4,13 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
+import org.apache.commons.collections.Predicate;
+
+import module.organization.domain.AccountabilityType;
 import module.organization.domain.Party;
 import module.organization.domain.Person;
 import module.organization.domain.Unit;
@@ -107,11 +112,54 @@ public class PersonSiadapWrapper implements Serializable {
     }
 
     public UnitSiadapWrapper getWorkingUnit() {
-	return new UnitSiadapWrapper(getPerson().getParentUnits(configuration.getWorkingRelation()).iterator().next(),
-		configuration.getYear());
+	Collection<Unit> parentUnits = getPerson().getParentUnits(configuration.getWorkingRelation());
+	if (parentUnits.isEmpty()) {
+	    parentUnits = getPerson().getParentUnits(configuration.getWorkingRelationWithNoQuota());
+	}
+	return new UnitSiadapWrapper(parentUnits.iterator().next(), configuration.getYear());
+    }
+
+    public boolean isQuotaAware() {
+	return getPerson().getParentUnits(configuration.getWorkingRelationWithNoQuota()).isEmpty() ? true : false;
     }
 
     public boolean isResponsibleForHarmonization(Person accessor) {
 	return getWorkingUnit().isPersonResponsibleForHarmonization(accessor);
+    }
+
+    public Set<PersonSiadapWrapper> getPeopleToEvaluate() {
+	Set<PersonSiadapWrapper> people = new HashSet<PersonSiadapWrapper>();
+	final Person evaluator = getPerson();
+	final AccountabilityType evaluationRelation = configuration.getEvaluationRelation();
+
+	for (Person person : evaluator.getChildPersons(evaluationRelation)) {
+	    people.add(new PersonSiadapWrapper(person, getYear()));
+	}
+	for (Unit unit : evaluator.getParentUnits(evaluationRelation)) {
+	    people.addAll(new UnitSiadapWrapper(unit, getYear()).getUnitEmployees(new Predicate() {
+
+		@Override
+		public boolean evaluate(Object arg0) {
+		    PersonSiadapWrapper wrapper = (PersonSiadapWrapper) arg0;
+		    return wrapper.getEvaluator() == evaluator;
+		}
+
+	    }));
+	}
+	return people;
+
+    }
+
+    @Override
+    public int hashCode() {
+	return getPerson().hashCode();
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+	if (obj instanceof PersonSiadapWrapper) {
+	    return ((PersonSiadapWrapper) obj).getPerson() == getPerson();
+	}
+	return false;
     }
 }

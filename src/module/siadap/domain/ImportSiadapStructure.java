@@ -148,6 +148,7 @@ public class ImportSiadapStructure extends ReadCustomTask {
 			}
 			evaluatedPerson = Person.create(MultiLanguageString.i18n().add("pt", personName).finish(), Person
 				.getPartyTypeInstance());
+			evaluatedPerson.setUser(user);
 		    }
 
 		    if (!adist && !unit.getChildPersons(workingRelation).contains(evaluatedPerson)) {
