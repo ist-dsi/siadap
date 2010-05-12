@@ -4,13 +4,17 @@
 <%@ taglib uri="/WEB-INF/struts-logic.tld" prefix="logic"%>
 <%@ taglib uri="/WEB-INF/fenix-renderers.tld" prefix="fr"%>
 
-<bean:define id="processId" name="process" property="externalId"
+
+<%@page import="module.siadap.domain.SiadapYearConfiguration"%>
+<%@page import="myorg.util.BundleUtil"%><bean:define id="processId" name="process" property="externalId"
 	type="java.lang.String" />
 <bean:define id="name" name="information" property="activityName" />
 
 <bean:define id="siadap" name="information" property="process.siadap" />
+<bean:define id="personName" name="information" property="process.siadap.evaluated.partyName"/>
 
-<div class="dinline forminline"><fr:form
+<div class="dinline forminline">
+<fr:form
 	action='<%="/workflowProcessManagement.do?method=process&processId="
 								+ processId + "&activity=" + name%>'>
 
@@ -45,18 +49,14 @@
 	</table>
 
 	<p>
-	__ Propor desempenho excelente__: <fr:edit name="information" slot="excellencyAward" type="java.lang.String"/>
+		<bean:message key="label.propouseExcellencyAward" bundle="SIADAP_RESOURCES"/>: <fr:edit name="information" slot="excellencyAward" type="java.lang.String"/>
 	</p>
 	
 	<div id="value" class="highlightBox">
 
 	</div>
 	
-	<div><strong><bean:message
-		key="label.qualitativeEvaluation" bundle="SIADAP_RESOURCES" /></strong>:
-
-	<p><fr:edit name="siadap" slot="qualitativeEvaluation" /></p>
-
+	<div>
 	<strong><bean:message
 		key="label.qualitativeEvaluation.justification"
 		bundle="SIADAP_RESOURCES" /></strong>: <fr:edit name="information"
@@ -94,20 +94,32 @@
 		<bean:message key="renderers.form.submit.name"
 			bundle="RENDERER_RESOURCES" />
 	</html:submit>
-</fr:form> <fr:form
+</fr:form> 
+<fr:form
 	action='<%="/workflowProcessManagement.do?method=viewProcess&processId="
 								+ processId%>'>
 	<html:submit styleClass="inputbutton">
 		<bean:message key="renderers.form.cancel.name"
 			bundle="RENDERER_RESOURCES" />
 	</html:submit>
-</fr:form></div>
+</fr:form>
+
+</div>
 
 
 <script type="text/javascript">
-	var objectivesPonderation = 0.75;
-	var competencesPonderation = 0.25;
+	var objectivesPonderation = <%= SiadapYearConfiguration.DEFAULT_OBJECTIVES_PONDERATION %> / 100;
+	var competencesPonderation = <%= SiadapYearConfiguration.DEFAULT_COMPETENCES_PONDERATION %> / 100;
 
+	var highLabel="<bean:message key="module.siadap.domain.scoring.SiadapGlobalEvaluation.HIGH" bundle="SIADAP_RESOURCES"/>";
+	var mediumLabel="<bean:message key="module.siadap.domain.scoring.SiadapGlobalEvaluation.MEDIUM" bundle="SIADAP_RESOURCES"/>";
+	var lowLabel="<bean:message key="module.siadap.domain.scoring.SiadapGlobalEvaluation.LOW" bundle="SIADAP_RESOURCES"/>";
+
+	<%
+		String message = BundleUtil.getStringFromResourceBundle("resources.SiadapResources","label.evaluationLine");
+	%>
+	var message = "<%= message.toString() %>";
+			 
 	$("select").change( function() {
 		calculate();
 	});
@@ -138,8 +150,10 @@
 		competences = Math.round(competences * 1000) / 1000
 		var total = objectives + competences;
 		
-		$("#value").empty().append("<span class=\"bold\">" + total + "</span>");
+		var text = formatString(message, [total, "<%= personName.toString() %>", getScoreLabel(total)]);
 
+		$("#value").empty().append("<span class=\"bold\">" + text + "</span>");
+				
 		if (total < 4) {
 				$("input[name$=excellencyAward]").removeAttr('checked');
 				$("input[name$=excellencyAward]").attr('disabled','true');
@@ -149,6 +163,18 @@
 		}
 	}
 
+	function getScoreLabel(value) {
+		if (value >= 1 && value <2) {
+			return lowLabel;
+		}
+		if (value >= 2 && value <4) {
+			return mediumLabel;
+		}
+		if (value >= 4) {
+			return highLabel;
+		}
+	}
+	
 	function getPoints(value) {
 		if (value == "LOW") {
 			return 1;
