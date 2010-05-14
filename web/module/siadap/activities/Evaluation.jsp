@@ -80,7 +80,7 @@
 	<p>
 	<a href="#" id="toggleMoreInfo"><bean:message key="label.evaluation.moreData" bundle="SIADAP_RESOURCES"/></a>
 	
-	<div id="moreInfo" style="display: inline">
+	<div id="moreInfo" style="display: none">
 	
 	<div><strong><bean:message
 		key="label.personalDevelopment" bundle="SIADAP_RESOURCES" /></strong>
