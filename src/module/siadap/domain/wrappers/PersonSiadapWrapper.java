@@ -4,17 +4,22 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.TreeSet;
 
 import org.apache.commons.collections.Predicate;
+
+import pt.utl.ist.fenix.tools.util.i18n.MultiLanguageString;
 
 import module.organization.domain.AccountabilityType;
 import module.organization.domain.Party;
 import module.organization.domain.Person;
 import module.organization.domain.Unit;
 import module.siadap.domain.Siadap;
+import module.siadap.domain.SiadapProcess;
 import module.siadap.domain.SiadapYearConfiguration;
 import myorg.applicationTier.Authenticate.UserView;
 
@@ -62,24 +67,27 @@ public class PersonSiadapWrapper implements Serializable {
 	return this.configuration.getSiadapFor(getPerson(), getYear());
     }
 
-    public Person getEvaluator() {
+    public PersonSiadapWrapper getEvaluator() {
 	Person evaluator = null;
 	Person evaluated = getPerson();
 
 	Collection<Party> parents = evaluated.getParents(configuration.getEvaluationRelation());
-	if (!parents.isEmpty()) {
-	    evaluator = (Person) parents.iterator().next();
+	Party party = parents.isEmpty() ? null : parents.iterator().next();
+	if (party instanceof Person) {
+	    evaluator = (Person) party;
 	} else {
-	    Collection<Party> workingPlaces = evaluated.getParents(configuration.getWorkingRelation());
-	    if (workingPlaces.isEmpty()) {
-		workingPlaces = evaluated.getParents(configuration.getWorkingRelationWithNoQuota());
+	    if (getWorkingUnit() != null) {
+		Collection<Party> workingPlaces = evaluated.getParents(configuration.getWorkingRelation());
+		if (workingPlaces.isEmpty()) {
+		    workingPlaces = evaluated.getParents(configuration.getWorkingRelationWithNoQuota());
+		}
+		Unit workingUnit = (Unit) workingPlaces.iterator().next();
+		Collection<Person> childPersons = workingUnit.getChildPersons(configuration.getEvaluationRelation());
+		evaluator = childPersons.iterator().next();
 	    }
-	    Unit workingUnit = (Unit) workingPlaces.iterator().next();
-	    Collection<Person> childPersons = workingUnit.getChildPersons(configuration.getEvaluationRelation());
-	    evaluator = childPersons.iterator().next();
 	}
 
-	return evaluator;
+	return evaluator != null ? new PersonSiadapWrapper(evaluator, getYear()) : null;
     }
 
     public Collection<UnitSiadapWrapper> getHarmozationUnits() {
@@ -99,7 +107,7 @@ public class PersonSiadapWrapper implements Serializable {
     }
 
     public boolean isCurrentUserAbleToEvaluate() {
-	return getEvaluator() == UserView.getCurrentUser().getPerson();
+	return getEvaluator() != null && getEvaluator().getPerson() == UserView.getCurrentUser().getPerson();
     }
 
     public boolean isCurrentUserAbleToCreateProcess() {
@@ -116,7 +124,7 @@ public class PersonSiadapWrapper implements Serializable {
 	if (parentUnits.isEmpty()) {
 	    parentUnits = getPerson().getParentUnits(configuration.getWorkingRelationWithNoQuota());
 	}
-	return new UnitSiadapWrapper(parentUnits.iterator().next(), configuration.getYear());
+	return parentUnits.isEmpty() ? null : new UnitSiadapWrapper(parentUnits.iterator().next(), configuration.getYear());
     }
 
     public boolean isQuotaAware() {
@@ -141,13 +149,32 @@ public class PersonSiadapWrapper implements Serializable {
 		@Override
 		public boolean evaluate(Object arg0) {
 		    PersonSiadapWrapper wrapper = (PersonSiadapWrapper) arg0;
-		    return wrapper.getEvaluator() == evaluator;
+		    PersonSiadapWrapper evaluatorWrapper = wrapper.getEvaluator();
+		    return evaluatorWrapper != null && evaluatorWrapper.getPerson() == evaluator;
 		}
 
 	    }));
 	}
 	return people;
 
+    }
+
+    public Set<Siadap> getAllSiadaps() {
+	Set<Siadap> processes = new TreeSet<Siadap>(new Comparator<Siadap>() {
+
+	    @Override
+	    public int compare(Siadap o1, Siadap o2) {
+		return o1.getYear().compareTo(o2.getYear());
+	    }
+
+	});
+
+	processes.addAll(getPerson().getSiadapsAsEvaluated());
+	return processes;
+    }
+
+    public MultiLanguageString getName() {
+	return getPerson().getPartyName();
     }
 
     @Override

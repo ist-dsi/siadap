@@ -11,7 +11,7 @@ public class CreateCompetenceEvaluation extends WorkflowActivity<SiadapProcess, 
 
     @Override
     public boolean isActive(SiadapProcess process, User user) {
-	return process.getSiadap().getEvaluator().getUser() == user && process.getSiadap().getCompetenceEvaluations().isEmpty();
+	return process.getSiadap().getEvaluator().getPerson().getUser() == user && process.getSiadap().getCompetenceEvaluations().isEmpty();
     }
 
     @Override

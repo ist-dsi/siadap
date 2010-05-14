@@ -4,8 +4,9 @@
 <%@ taglib uri="/WEB-INF/struts-logic.tld" prefix="logic"%>
 <%@ taglib uri="/WEB-INF/fenix-renderers.tld" prefix="fr"%>
 
+<bean:define id="label" name="label"/>
 <h2>
-	<bean:message key="label.viewHighGlobalEvaluations" bundle="SIADAP_RESOURCES"/>	
+	<bean:message key="<%=  "label.viewGlobalEvaluations." + label %>" bundle="SIADAP_RESOURCES"/>	
 </h2>
 
 <ul>
@@ -18,8 +19,9 @@
 <fr:view name="employees">
 
 	<fr:schema type="module.siadap.domain.wrappers.PersonSiadapWrapper" bundle="SIADAP_RESOURCES">
-		<fr:slot name="person.partyName"  key="label.evaluated"/>
-		<fr:slot name="workingUnit.unit.partyName" key="label.unit" bundle="ORGANIZATION_RESOURCES" />
+		<fr:slot name="name"  key="label.evaluated"/>
+		<fr:slot name="workingUnit.name" key="label.unit" bundle="ORGANIZATION_RESOURCES" />
+		<fr:slot name="siadap.totalEvaluationScoring" key="label.totalEvaluationScoring"/>
 	</fr:schema>
 	<fr:layout name="tabular">
 		<fr:property name="classes" value="tstyle2"/>

@@ -146,7 +146,7 @@ public class Siadap extends Siadap_Base {
 	}
     }
 
-    public Person getEvaluator() {
+    public PersonSiadapWrapper getEvaluator() {
 	return new PersonSiadapWrapper(getEvaluated(), getYear()).getEvaluator();
     }
 
@@ -187,6 +187,10 @@ public class Siadap extends Siadap_Base {
 
     public boolean hasRelevantEvaluation() {
 	return isEvaluationDone() && SiadapGlobalEvaluation.HIGH.accepts(getTotalEvaluationScoring());
+    }
+
+    public boolean hasExcellencyAward() {
+	return isEvaluationDone() && getEvaluationData().getExcellencyAward();
     }
 
     public boolean isInadequate() {

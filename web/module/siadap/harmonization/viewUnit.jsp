@@ -61,7 +61,7 @@
 	</logic:equal>
 	
 	<p>
-	<html:link page="/siadapManagement.do?method=listHighGlobalEvaluations" paramName="currentUnit" paramProperty="unit.externalId" paramId="unitId"> <bean:message key="label.viewHighGlobalEvaluations" bundle="SIADAP_RESOURCES"/> </html:link> | <a href="#"> Ver desempenhos excelentes </a>
+	<html:link page="/siadapManagement.do?method=listHighGlobalEvaluations" paramName="currentUnit" paramProperty="unit.externalId" paramId="unitId"> <bean:message key="label.viewGlobalEvaluations.relevant" bundle="SIADAP_RESOURCES"/> </html:link> | <html:link page="/siadapManagement.do?method=listExcellencyGlobalEvaluations" paramName="currentUnit" paramProperty="unit.externalId" paramId="unitId"> <bean:message key="label.viewGlobalEvaluations.excellency" bundle="SIADAP_RESOURCES"/> </html:link>
 	</p>
 </logic:equal>
 
@@ -76,8 +76,8 @@
 			<fr:schema type="module.siadap.domain.wrappers.PersonSiadapWrapper" bundle="SIADAP_RESOURCES">
 				<fr:slot name="person.partyName" key="label.evaluated"/>
 				<fr:slot name="person.user.username" key="label.login.username" bundle="MYORG_RESOURCES"/>
-				<fr:slot name="evaluator.partyName" key="label.evaluator"/>
-				<fr:slot name="evaluator.user.username" key="label.login.username" bundle="MYORG_RESOURCES"/>
+				<fr:slot name="evaluator.name" key="label.evaluator"/>
+				<fr:slot name="evaluator.person.user.username" key="label.login.username" bundle="MYORG_RESOURCES"/>
 				<fr:slot name="totalEvaluationScoring" layout="null-as-label" key="label.totalEvaluationScoring">
 					<fr:property name="subLayout" value=""/>
 				</fr:slot>
@@ -118,8 +118,8 @@
 			<fr:schema type="module.siadap.domain.wrappers.PersonSiadapWrapper" bundle="SIADAP_RESOURCES">
 				<fr:slot name="person.partyName" key="label.evaluated"/>
 				<fr:slot name="person.user.username" key="label.login.username" bundle="MYORG_RESOURCES"/>
-				<fr:slot name="evaluator.partyName" key="label.evaluator"/>
-				<fr:slot name="evaluator.user.username" key="label.login.username" bundle="MYORG_RESOURCES"/>
+				<fr:slot name="evaluator.name" key="label.evaluator"/>
+				<fr:slot name="evaluator.person.user.username" key="label.login.username" bundle="MYORG_RESOURCES"/>
 				<fr:slot name="totalEvaluationScoring" layout="null-as-label" key="label.totalEvaluationScoring">
 					<fr:property name="subLayout" value=""/>
 				</fr:slot>

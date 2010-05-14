@@ -52,8 +52,10 @@ public class SiadapManagement extends ContextBaseAction {
     public final ActionForward manageSiadap(final ActionMapping mapping, final ActionForm form, final HttpServletRequest request,
 	    final HttpServletResponse response) throws Exception {
 
+	int year = new LocalDate().getYear();
+	request.setAttribute("person", new PersonSiadapWrapper(UserView.getCurrentUser().getPerson(), year));
 	request.setAttribute("siadaps", WorkflowProcess.getAllProcesses(SiadapProcess.class));
-	request.setAttribute("configuration", SiadapYearConfiguration.getSiadapYearConfiguration(new LocalDate().getYear()));
+	request.setAttribute("configuration", SiadapYearConfiguration.getSiadapYearConfiguration(year));
 	return forward(request, "/module/siadap/listSiadaps.jsp");
     }
 
@@ -62,18 +64,6 @@ public class SiadapManagement extends ContextBaseAction {
 
 	SiadapYearConfiguration.createNewSiadapYearConfiguration(new LocalDate().getYear());
 	return manageSiadap(mapping, form, request, response);
-    }
-
-    public final ActionForward evaluationHarmonization(final ActionMapping mapping, final ActionForm form,
-	    final HttpServletRequest request, final HttpServletResponse response) throws Exception {
-
-	Person loggedPerson = UserView.getCurrentUser().getPerson();
-	int year = new LocalDate().getYear();
-	PersonSiadapWrapper wrapper = new PersonSiadapWrapper(loggedPerson, year);
-
-	request.setAttribute("harmonizationUnits", wrapper.getHarmozationUnits());
-
-	return forward(request, "/module/siadap/harmonization/listUnits.jsp");
     }
 
     public final ActionForward viewUnitHarmonizationData(final ActionMapping mapping, final ActionForm form,
@@ -100,8 +90,7 @@ public class SiadapManagement extends ContextBaseAction {
 	return forward(request, "/module/siadap/harmonization/viewUnit.jsp");
     }
 
-    public final ActionForward listHighGlobalEvaluations(final ActionMapping mapping, final ActionForm form,
-	    final HttpServletRequest request, final HttpServletResponse response) throws Exception {
+    private final ActionForward listGlobalEvaluations(final HttpServletRequest request, Predicate predicate) throws Exception {
 
 	int year = new LocalDate().getYear();
 
@@ -109,7 +98,15 @@ public class SiadapManagement extends ContextBaseAction {
 	UnitSiadapWrapper unitSiadapWrapper = new UnitSiadapWrapper(unit, year);
 
 	request.setAttribute("unit", unitSiadapWrapper);
-	request.setAttribute("employees", unitSiadapWrapper.getUnitEmployees(new Predicate() {
+	request.setAttribute("employees", unitSiadapWrapper.getUnitEmployees(predicate));
+
+	return forward(request, "/module/siadap/harmonization/listEvaluations.jsp");
+    }
+
+    public final ActionForward listHighGlobalEvaluations(final ActionMapping mapping, final ActionForm form,
+	    final HttpServletRequest request, final HttpServletResponse response) throws Exception {
+	request.setAttribute("label", "relevant");
+	return listGlobalEvaluations(request, new Predicate() {
 
 	    @Override
 	    public boolean evaluate(Object arg0) {
@@ -117,8 +114,23 @@ public class SiadapManagement extends ContextBaseAction {
 		return person.getSiadap() != null && person.isQuotaAware() && person.getSiadap().hasRelevantEvaluation();
 	    }
 
-	}));
+	});
 
-	return forward(request, "/module/siadap/harmonization/listHighEvaluations.jsp");
+    }
+
+    public final ActionForward listExcellencyGlobalEvaluations(final ActionMapping mapping, final ActionForm form,
+	    final HttpServletRequest request, final HttpServletResponse response) throws Exception {
+
+	request.setAttribute("label", "excellency");
+	return listGlobalEvaluations(request, new Predicate() {
+
+	    @Override
+	    public boolean evaluate(Object arg0) {
+		PersonSiadapWrapper person = (PersonSiadapWrapper) arg0;
+		return person.getSiadap() != null && person.isQuotaAware() && person.getSiadap().hasExcellencyAward();
+	    }
+
+	});
+
     }
 }

@@ -10,6 +10,8 @@ import java.util.List;
 
 import org.apache.commons.collections.Predicate;
 
+import pt.utl.ist.fenix.tools.util.i18n.MultiLanguageString;
+
 import module.organization.domain.AccountabilityType;
 import module.organization.domain.Party;
 import module.organization.domain.Person;
@@ -104,20 +106,12 @@ public class UnitSiadapWrapper implements Serializable {
 	return people;
     }
 
-    public int getTotalRelevantEvaluationsForUnit() {
-	return getTotalRelevantEvaluationsForUnit(true);
-    }
-
-    public int getTotalRelevantEvaluationsForUnit(boolean continueToSubUnits) {
-	return getTotalRelevantEvaluationsForUnit(getUnit(), continueToSubUnits);
-    }
-
-    private int getTotalRelevantEvaluationsForUnit(Unit unit, boolean continueToSubUnits) {
+    private int getEvaluationsForUnit(Unit unit, boolean continueToSubUnits, Predicate predicate) {
 	int counter = 0;
 	for (Person person : unit.getChildPersons(configuration.getWorkingRelation())) {
 	    Siadap siadap = configuration.getSiadapFor(person, getYear());
 	    if (siadap != null) {
-		if (siadap.hasRelevantEvaluation()) {
+		if (predicate.evaluate(siadap)) {
 		    counter++;
 		}
 	    }
@@ -129,6 +123,46 @@ public class UnitSiadapWrapper implements Serializable {
 	}
 
 	return counter;
+    }
+
+    public int getTotalRelevantEvaluationsForUnit() {
+	return getTotalRelevantEvaluationsForUnit(true);
+    }
+
+    public int getTotalRelevantEvaluationsForUnit(boolean continueToSubUnits) {
+	return getTotalRelevantEvaluationsForUnit(getUnit(), continueToSubUnits);
+    }
+
+    private int getTotalRelevantEvaluationsForUnit(Unit unit, boolean continueToSubUnits) {
+	return getEvaluationsForUnit(unit, continueToSubUnits, new Predicate() {
+
+	    @Override
+	    public boolean evaluate(Object arg0) {
+		Siadap siadap = (Siadap) arg0;
+		return siadap.hasRelevantEvaluation();
+	    }
+
+	});
+    }
+
+    public int getTotalExcellencyEvaluationsForUnit() {
+	return getTotalExcellencyEvaluationsForUnit(true);
+    }
+
+    public int getTotalExcellencyEvaluationsForUnit(boolean continueToSubUnits) {
+	return getTotalExcellencyEvaluationsForUnit(getUnit(), continueToSubUnits);
+    }
+
+    private int getTotalExcellencyEvaluationsForUnit(Unit unit, boolean continueToSubUnits) {
+	return getEvaluationsForUnit(unit, continueToSubUnits, new Predicate() {
+
+	    @Override
+	    public boolean evaluate(Object arg0) {
+		Siadap siadap = (Siadap) arg0;
+		return siadap.hasExcellencyAward();
+	    }
+
+	});
     }
 
     public BigDecimal getRelevantEvaluationPercentage() {
@@ -173,9 +207,20 @@ public class UnitSiadapWrapper implements Serializable {
 	// to 1
     }
 
-    // TODO: implement this method after implementing excellency.
     public Integer getCurrentUsedExcellencyGradeQuota() {
-	return 0;
+	return getTotalExcellencyEvaluationsForUnit(getUnit(), true);
+    }
+
+    public BigDecimal getExcellencyEvaluationPercentage() {
+	int totalPeopleWorkingForUnit = getTotalPeopleWorkingInUnit(true);
+	int totalExcellencyEvaluationsForUnit = getCurrentUsedExcellencyGradeQuota();
+
+	if (totalExcellencyEvaluationsForUnit == 0) {
+	    return BigDecimal.ZERO;
+	}
+
+	return new BigDecimal(totalExcellencyEvaluationsForUnit).divide(new BigDecimal(totalPeopleWorkingForUnit),
+		UnitSiadapWrapper.SCALE, RoundingMode.HALF_EVEN).multiply(new BigDecimal(100)).stripTrailingZeros();
     }
 
     public Unit getHarmonizationUnit() {
@@ -296,6 +341,10 @@ public class UnitSiadapWrapper implements Serializable {
 		getUnitEmployees(subUnit, employees, continueToSubunits, accountabilities, predicate);
 	    }
 	}
+    }
+
+    public MultiLanguageString getName() {
+	return getUnit().getPartyName();
     }
 
     @Override

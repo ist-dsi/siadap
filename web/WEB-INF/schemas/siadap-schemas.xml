@@ -55,3 +55,13 @@
 		<property name="columns" value="50" />
 	</slot>
 </schema> 
+
+<schema name="view.UnitSiadapWrapper.name" bundle="SIADAP_RESOURCES"
+	type="module.siadap.domain.wrappers.UnitSiadapWrapper">
+	<slot name="name" />
+</schema>
+
+<schema name="view.PersonSiadapWrapper.name" bundle="SIADAP_RESOURCES"
+	type="module.siadap.domain.wrappers.PersonSiadapWrapper">
+	<slot name="name" />
+</schema>

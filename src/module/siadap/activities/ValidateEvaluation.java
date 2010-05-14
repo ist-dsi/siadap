@@ -14,7 +14,7 @@ public class ValidateEvaluation extends WorkflowActivity<SiadapProcess, Activity
     public boolean isActive(SiadapProcess process, User user) {
 	Siadap siadap = process.getSiadap();
 	// This has to be the CCA though
-	return siadap.getEvaluator().getUser() == user && siadap.isEvaluationDone() && siadap.getValidationDate() == null;
+	return siadap.getEvaluator().getPerson().getUser() == user && siadap.isEvaluationDone() && siadap.getValidationDate() == null;
     }
 
     @Override

@@ -51,9 +51,9 @@ public class SiadapProcess extends SiadapProcess_Base {
 
 	User currentUser = UserView.getCurrentUser();
 	Person possibleEvaluator = currentUser.getPerson();
-	Person evaluator = new PersonSiadapWrapper(evaluated, year).getEvaluator();
+	PersonSiadapWrapper evaluator = new PersonSiadapWrapper(evaluated, year).getEvaluator();
 
-	if (evaluator != possibleEvaluator) {
+	if (evaluator == null || evaluator.getPerson() != possibleEvaluator) {
 	    throw new DomainException("error.onlyEvaluatorCanCreateSiadap");
 	}
 
@@ -71,7 +71,7 @@ public class SiadapProcess extends SiadapProcess_Base {
 
     @Override
     public User getProcessCreator() {
-	return getSiadap().getEvaluator().getUser();
+	return getSiadap().getEvaluator().getPerson().getUser();
     }
 
     @Override
@@ -92,7 +92,7 @@ public class SiadapProcess extends SiadapProcess_Base {
     @Override
     public boolean isAccessible(User user) {
 	Person accessor = user.getPerson();
-	return accessor == getSiadap().getEvaluated() || accessor == getSiadap().getEvaluator()
+	return accessor == getSiadap().getEvaluated() || accessor == getSiadap().getEvaluator().getPerson()
 		|| isResponsibleForHarmonization(accessor, getSiadap().getEvaluated());
     }
 
