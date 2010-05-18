@@ -4,11 +4,23 @@
 <%@ taglib uri="/WEB-INF/struts-logic.tld" prefix="logic"%>
 <%@ taglib uri="/WEB-INF/fenix-renderers.tld" prefix="fr"%>
 
+<fr:edit id="searchPerson" name="bean" action="/siadapPersonnelManagement.do?method=viewPerson">
+<fr:schema type="myorg.util.VariantBean" bundle="SIADAP_RESOURCES">
+		<fr:slot name="domainObject" layout="autoComplete" key="label.party" bundle="ORGANIZATION_RESOURCES">
+        <fr:property name="labelField" value="partyName.content"/>
+		<fr:property name="format" value="${presentationName}"/>
+		<fr:property name="minChars" value="3"/>		
+		<fr:property name="args" value="provider=module.organization.presentationTier.renderers.providers.PersonAutoCompleteProvider"/>
+		<fr:property name="size" value="60"/>
+		<fr:validator name="pt.ist.fenixWebFramework.rendererExtensions.validators.RequiredAutoCompleteSelectionValidator">
+			<fr:property name="message" value="label.pleaseSelectOne.unit"/>
+			<fr:property name="bundle" value="EXPENDITURE_RESOURCES"/>
+			<fr:property name="key" value="true"/>
+		</fr:validator>
+	</fr:slot>
+	</fr:schema>	
+	<fr:layout name="tabular">
+		<fr:property name="classes" value="tstyle2"/>
+	</fr:layout>
+</fr:edit>
 
-<fr:view name="person">
-	<fr:schema type="module.siadap.domain.wrappers.PersonSiadapWrapper" bundle="SIADAP_RESOURCES">
-		<fr:slot name="name"/>
-		<fr:slot name="workingUnit.name"/>
-		<fr:slot name="evaluator.name"/>
-	</fr:schema>
-</fr:view>
