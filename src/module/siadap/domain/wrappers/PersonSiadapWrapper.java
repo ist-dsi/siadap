@@ -10,53 +10,37 @@ import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
-import org.apache.commons.collections.Predicate;
-
-import pt.utl.ist.fenix.tools.util.i18n.MultiLanguageString;
-
 import module.organization.domain.AccountabilityType;
 import module.organization.domain.Party;
 import module.organization.domain.Person;
 import module.organization.domain.Unit;
 import module.siadap.domain.Siadap;
-import module.siadap.domain.SiadapProcess;
-import module.siadap.domain.SiadapYearConfiguration;
 import myorg.applicationTier.Authenticate.UserView;
 
-public class PersonSiadapWrapper implements Serializable {
+import org.apache.commons.collections.Predicate;
+
+import pt.utl.ist.fenix.tools.util.i18n.MultiLanguageString;
+
+public class PersonSiadapWrapper extends PartyWrapper implements Serializable {
 
     private Person person;
-    private int year;
-    private SiadapYearConfiguration configuration;
 
     public PersonSiadapWrapper(Person person, int year) {
+	super(year);
 	this.person = person;
-	this.year = year;
-	this.configuration = SiadapYearConfiguration.getSiadapYearConfiguration(year);
     }
 
     public Person getPerson() {
-	return person;
+	return this.person;
     }
 
     public void setPerson(Person person) {
 	this.person = person;
     }
 
-    public int getYear() {
-	return year;
-    }
-
-    public void setYear(int year) {
-	this.year = year;
-    }
-
-    public SiadapYearConfiguration getConfiguration() {
-	return configuration;
-    }
-
-    public void setConfiguration(SiadapYearConfiguration configuration) {
-	this.configuration = configuration;
+    @Override
+    protected Party getParty() {
+	return this.person;
     }
 
     public boolean isEvaluationStarted() {
@@ -64,25 +48,25 @@ public class PersonSiadapWrapper implements Serializable {
     }
 
     public Siadap getSiadap() {
-	return this.configuration.getSiadapFor(getPerson(), getYear());
+	return getConfiguration().getSiadapFor(getPerson(), getYear());
     }
 
     public PersonSiadapWrapper getEvaluator() {
 	Person evaluator = null;
 	Person evaluated = getPerson();
 
-	Collection<Party> parents = evaluated.getParents(configuration.getEvaluationRelation());
+	Collection<Party> parents = evaluated.getParents(getConfiguration().getEvaluationRelation());
 	Party party = parents.isEmpty() ? null : parents.iterator().next();
 	if (party instanceof Person) {
 	    evaluator = (Person) party;
 	} else {
 	    if (getWorkingUnit() != null) {
-		Collection<Party> workingPlaces = evaluated.getParents(configuration.getWorkingRelation());
+		Collection<Party> workingPlaces = evaluated.getParents(getConfiguration().getWorkingRelation());
 		if (workingPlaces.isEmpty()) {
-		    workingPlaces = evaluated.getParents(configuration.getWorkingRelationWithNoQuota());
+		    workingPlaces = evaluated.getParents(getConfiguration().getWorkingRelationWithNoQuota());
 		}
 		Unit workingUnit = (Unit) workingPlaces.iterator().next();
-		Collection<Person> childPersons = workingUnit.getChildPersons(configuration.getEvaluationRelation());
+		Collection<Person> childPersons = workingUnit.getChildPersons(getConfiguration().getEvaluationRelation());
 		evaluator = childPersons.iterator().next();
 	    }
 	}
@@ -91,8 +75,13 @@ public class PersonSiadapWrapper implements Serializable {
     }
 
     public Collection<UnitSiadapWrapper> getHarmozationUnits() {
+	return getHarmozationUnits(true);
+    }
+
+    public Collection<UnitSiadapWrapper> getHarmozationUnits(boolean skipClosedAccountabilities) {
 	List<UnitSiadapWrapper> units = new ArrayList<UnitSiadapWrapper>();
-	for (Unit unit : getPerson().getParentUnits(configuration.getHarmonizationResponsibleRelation())) {
+
+	for (Unit unit : getParentUnits(getConfiguration().getHarmonizationResponsibleRelation())) {
 	    units.add(new UnitSiadapWrapper(unit, getYear()));
 	}
 	return units;
@@ -120,15 +109,16 @@ public class PersonSiadapWrapper implements Serializable {
     }
 
     public UnitSiadapWrapper getWorkingUnit() {
-	Collection<Unit> parentUnits = getPerson().getParentUnits(configuration.getWorkingRelation());
+	Collection<Unit> parentUnits = getParentUnits(getConfiguration().getWorkingRelation());
+
 	if (parentUnits.isEmpty()) {
-	    parentUnits = getPerson().getParentUnits(configuration.getWorkingRelationWithNoQuota());
+	    parentUnits = getParentUnits(getConfiguration().getWorkingRelationWithNoQuota());
 	}
-	return parentUnits.isEmpty() ? null : new UnitSiadapWrapper(parentUnits.iterator().next(), configuration.getYear());
+	return parentUnits.isEmpty() ? null : new UnitSiadapWrapper(parentUnits.iterator().next(), getConfiguration().getYear());
     }
 
     public boolean isQuotaAware() {
-	return getPerson().getParentUnits(configuration.getWorkingRelationWithNoQuota()).isEmpty() ? true : false;
+	return getParentUnits(getConfiguration().getWorkingRelationWithNoQuota()).isEmpty() ? true : false;
     }
 
     public boolean isResponsibleForHarmonization(Person accessor) {
@@ -137,8 +127,8 @@ public class PersonSiadapWrapper implements Serializable {
 
     public Set<PersonSiadapWrapper> getPeopleToEvaluate() {
 	Set<PersonSiadapWrapper> people = new HashSet<PersonSiadapWrapper>();
-	final Person evaluator = getPerson();
-	final AccountabilityType evaluationRelation = configuration.getEvaluationRelation();
+	final PersonSiadapWrapper evaluator = new PersonSiadapWrapper(getPerson(), getYear());
+	final AccountabilityType evaluationRelation = getConfiguration().getEvaluationRelation();
 
 	for (Person person : evaluator.getChildPersons(evaluationRelation)) {
 	    people.add(new PersonSiadapWrapper(person, getYear()));
@@ -150,7 +140,7 @@ public class PersonSiadapWrapper implements Serializable {
 		public boolean evaluate(Object arg0) {
 		    PersonSiadapWrapper wrapper = (PersonSiadapWrapper) arg0;
 		    PersonSiadapWrapper evaluatorWrapper = wrapper.getEvaluator();
-		    return evaluatorWrapper != null && evaluatorWrapper.getPerson() == evaluator;
+		    return evaluatorWrapper != null && evaluatorWrapper.equals(evaluator);
 		}
 
 	    }));
@@ -189,4 +179,5 @@ public class PersonSiadapWrapper implements Serializable {
 	}
 	return false;
     }
+
 }
