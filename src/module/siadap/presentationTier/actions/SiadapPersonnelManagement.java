@@ -1,5 +1,6 @@
 package module.siadap.presentationTier.actions;
 
+import java.io.Serializable;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Set;
@@ -45,8 +46,11 @@ public class SiadapPersonnelManagement extends ContextBaseAction {
 	VariantBean bean = getRenderedObject("searchPerson");
 	Person person = (Person) ((bean != null) ? bean.getDomainObject() : getDomainObject(request, "personId"));
 
-	request.setAttribute("person", new PersonSiadapWrapper(person, new LocalDate().getYear()));
+	int year = new LocalDate().getYear();
+	request.setAttribute("person", new PersonSiadapWrapper(person, year));
 	request.setAttribute("bean", new VariantBean());
+	request.setAttribute("changeWorkingUnit", new ChangeWorkingUnitBean(person, year));
+	request.setAttribute("changeEvaluator", new VariantBean());
 	return forward(request, "/module/siadap/management/editPerson.jsp");
     }
 
@@ -68,9 +72,7 @@ public class SiadapPersonnelManagement extends ContextBaseAction {
 	    }
 	}
 
-	request.setAttribute("person", new PersonSiadapWrapper(person, year));
-	request.setAttribute("bean", new VariantBean());
-	return forward(request, "/module/siadap/management/editPerson.jsp");
+	return viewPerson(mapping, form, request, response);
     }
 
     public final ActionForward addHarmonizationUnit(final ActionMapping mapping, final ActionForm form,
@@ -82,16 +84,92 @@ public class SiadapPersonnelManagement extends ContextBaseAction {
 	VariantBean bean = getRenderedObject("addHarmonizationUnit");
 	Person person = getDomainObject(request, "personId");
 
-	PersonSiadapWrapper personSiadapWrapper = new PersonSiadapWrapper(person, year);
 	UnitSiadapWrapper unitWrapper = new UnitSiadapWrapper((Unit) bean.getDomainObject(), year);
 
 	unitWrapper.addResponsibleForHarmonization(person);
 
-	request.setAttribute("person", personSiadapWrapper);
-	request.setAttribute("bean", bean);
 	RenderUtils.invalidateViewState("addHarmonizationUnit");
-
-	return forward(request, "/module/siadap/management/editPerson.jsp");
+	return viewPerson(mapping, form, request, response);
     }
 
+    public final ActionForward changeWorkingUnit(final ActionMapping mapping, final ActionForm form,
+	    final HttpServletRequest request, final HttpServletResponse response) throws Exception {
+
+	ChangeWorkingUnitBean bean = getRenderedObject("changeWorkingUnit");
+
+	int year = bean.getYear();
+	PersonSiadapWrapper personWrapper = new PersonSiadapWrapper(bean.getPerson(), year);
+	personWrapper.changeWorkingUnitTo(bean.getUnit(), bean.getWithQuotas());
+
+	return viewPerson(mapping, form, request, response);
+    }
+
+    public final ActionForward changeEvaluator(final ActionMapping mapping, final ActionForm form,
+	    final HttpServletRequest request, final HttpServletResponse response) throws Exception {
+
+	int year = new LocalDate().getYear();
+	Person newEvaluator = getRenderedObject("changeEvaluator");
+	PersonSiadapWrapper personWrapper = new PersonSiadapWrapper((Person) getDomainObject(request, "personId"), year);
+
+	personWrapper.changeEvaluatorTo(newEvaluator);
+
+	return viewPerson(mapping, form, request, response);
+    }
+
+    public final ActionForward removeCustomEvaluator(final ActionMapping mapping, final ActionForm form,
+	    final HttpServletRequest request, final HttpServletResponse response) throws Exception {
+
+	int year = new LocalDate().getYear();
+	PersonSiadapWrapper personWrapper = new PersonSiadapWrapper((Person) getDomainObject(request, "personId"), year);
+
+	personWrapper.removeCustomEvaluator();
+
+	return viewPerson(mapping, form, request, response);
+    }
+
+    public static class ChangeWorkingUnitBean implements Serializable {
+
+	private Person person;
+	private Boolean withQuotas;
+	private int year;
+	private Unit unit;
+
+	public ChangeWorkingUnitBean(Person person, int year) {
+	    this.person = person;
+	    this.year = year;
+	}
+
+	public Person getPerson() {
+	    return person;
+	}
+
+	public void setPerson(Person person) {
+	    this.person = person;
+	}
+
+	public Unit getUnit() {
+	    return unit;
+	}
+
+	public void setUnit(Unit unit) {
+	    this.unit = unit;
+	}
+
+	public int getYear() {
+	    return year;
+	}
+
+	public void setYear(int year) {
+	    this.year = year;
+	}
+
+	public void setWithQuotas(Boolean withQuotas) {
+	    this.withQuotas = withQuotas;
+	}
+
+	public Boolean getWithQuotas() {
+	    return withQuotas;
+	}
+
+    }
 }

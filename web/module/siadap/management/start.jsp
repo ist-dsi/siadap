@@ -6,7 +6,7 @@
 
 <fr:edit id="searchPerson" name="bean" action="/siadapPersonnelManagement.do?method=viewPerson">
 <fr:schema type="myorg.util.VariantBean" bundle="SIADAP_RESOURCES">
-		<fr:slot name="domainObject" layout="autoComplete" key="label.party" bundle="ORGANIZATION_RESOURCES">
+		<fr:slot name="domainObject" layout="autoComplete" key="label.person" bundle="ORGANIZATION_RESOURCES">
         <fr:property name="labelField" value="partyName.content"/>
 		<fr:property name="format" value="${presentationName}"/>
 		<fr:property name="minChars" value="3"/>		

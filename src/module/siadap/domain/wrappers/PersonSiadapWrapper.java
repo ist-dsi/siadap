@@ -10,14 +10,19 @@ import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
+import module.organization.domain.Accountability;
 import module.organization.domain.AccountabilityType;
 import module.organization.domain.Party;
 import module.organization.domain.Person;
 import module.organization.domain.Unit;
 import module.siadap.domain.Siadap;
+import module.siadap.domain.SiadapYearConfiguration;
 import myorg.applicationTier.Authenticate.UserView;
 
+import oracle.jdbc.ttc7.v8Odscrarr;
+
 import org.apache.commons.collections.Predicate;
+import org.joda.time.LocalDate;
 
 import pt.utl.ist.fenix.tools.util.i18n.MultiLanguageString;
 
@@ -53,21 +58,20 @@ public class PersonSiadapWrapper extends PartyWrapper implements Serializable {
 
     public PersonSiadapWrapper getEvaluator() {
 	Person evaluator = null;
-	Person evaluated = getPerson();
 
-	Collection<Party> parents = evaluated.getParents(getConfiguration().getEvaluationRelation());
-	Party party = parents.isEmpty() ? null : parents.iterator().next();
-	if (party instanceof Person) {
-	    evaluator = (Person) party;
+	Collection<Person> possibleCustomEvaluator = getParentPersons(getConfiguration().getEvaluationRelation());
+
+	if (!possibleCustomEvaluator.isEmpty()) {
+	    evaluator = possibleCustomEvaluator.iterator().next();
 	} else {
 	    if (getWorkingUnit() != null) {
-		Collection<Party> workingPlaces = evaluated.getParents(getConfiguration().getWorkingRelation());
-		if (workingPlaces.isEmpty()) {
-		    workingPlaces = evaluated.getParents(getConfiguration().getWorkingRelationWithNoQuota());
-		}
+		Collection<Unit> workingPlaces = getParentUnits(getConfiguration().getWorkingRelation(), getConfiguration()
+			.getWorkingRelationWithNoQuota());
 		Unit workingUnit = (Unit) workingPlaces.iterator().next();
 		Collection<Person> childPersons = workingUnit.getChildPersons(getConfiguration().getEvaluationRelation());
-		evaluator = childPersons.iterator().next();
+		if (!childPersons.isEmpty()) {
+		    evaluator = childPersons.iterator().next();
+		}
 	    }
 	}
 
@@ -109,11 +113,8 @@ public class PersonSiadapWrapper extends PartyWrapper implements Serializable {
     }
 
     public UnitSiadapWrapper getWorkingUnit() {
-	Collection<Unit> parentUnits = getParentUnits(getConfiguration().getWorkingRelation());
-
-	if (parentUnits.isEmpty()) {
-	    parentUnits = getParentUnits(getConfiguration().getWorkingRelationWithNoQuota());
-	}
+	Collection<Unit> parentUnits = getParentUnits(getConfiguration().getWorkingRelation(), getConfiguration()
+		.getWorkingRelationWithNoQuota());
 	return parentUnits.isEmpty() ? null : new UnitSiadapWrapper(parentUnits.iterator().next(), getConfiguration().getYear());
     }
 
@@ -180,4 +181,42 @@ public class PersonSiadapWrapper extends PartyWrapper implements Serializable {
 	return false;
     }
 
+    public void changeWorkingUnitTo(Unit unit, Boolean withQuotas) {
+	SiadapYearConfiguration configuration = getConfiguration();
+	LocalDate now = new LocalDate();
+	for (Accountability accountability : getParentAccountabilityTypes(configuration.getWorkingRelation(), configuration
+		.getWorkingRelationWithNoQuota())) {
+	    if (accountability.getEndDate() == null) {
+		accountability.editDates(accountability.getBeginDate(), now);
+	    }
+	}
+	unit.addChild(getPerson(), withQuotas ? configuration.getWorkingRelation() : configuration
+		.getWorkingRelationWithNoQuota(), now, null);
+    }
+
+    public void changeEvaluatorTo(Person newEvaluator) {
+	SiadapYearConfiguration configuration = getConfiguration();
+	LocalDate now = new LocalDate();
+	AccountabilityType evaluationRelation = configuration.getEvaluationRelation();
+	for (Accountability accountability : getParentAccountabilityTypes(evaluationRelation)) {
+	    if (accountability.getParent() instanceof Person && accountability.getEndDate() == null) {
+		accountability.editDates(accountability.getBeginDate(), now);
+	    }
+	}
+	newEvaluator.addChild(getPerson(), evaluationRelation, now, null);
+    }
+
+    public boolean isCustomEvaluatorDefined() {
+	return !getParentPersons(getConfiguration().getEvaluationRelation()).isEmpty();
+    }
+
+    public void removeCustomEvaluator() {
+	LocalDate now = new LocalDate();
+	AccountabilityType evaluationRelation = getConfiguration().getEvaluationRelation();
+	for (Accountability accountability : getParentAccountabilityTypes(evaluationRelation)) {
+	    if (accountability.getParent() instanceof Person && accountability.getEndDate() == null) {
+		accountability.editDates(accountability.getBeginDate(), now);
+	    }
+	}
+    }
 }

@@ -56,6 +56,23 @@ public abstract class PartyWrapper implements Serializable {
 	return units;
     }
 
+    protected List<Person> getParentPersons(AccountabilityType... types) {
+	return getParentPersons(new FilterAccountabilities(getYear(), true), types);
+    }
+
+    private List<Person> getParentPersons(Predicate predicate, AccountabilityType... types) {
+	List<Person> person = new ArrayList<Person>();
+	for (Accountability accountability : getParty().getParentAccountabilities(types)) {
+	    if (predicate == null || predicate.evaluate(accountability)) {
+		Party parent = accountability.getParent();
+		if (parent.isPerson()) {
+		    person.add(((Person) parent));
+		}
+	    }
+	}
+	return person;
+    }
+    
     protected List<Person> getChildPersons(AccountabilityType... types) {
 	return getChildPersons(new FilterAccountabilities(getYear(), true), types);
     }
@@ -88,6 +105,34 @@ public abstract class PartyWrapper implements Serializable {
 	    }
 	}
 	return units;
+    }
+
+    protected List<Accountability> getParentAccountabilityTypes(AccountabilityType... types) {
+	return getParentAccountabilityTypes(new FilterAccountabilities(getYear(), true), types);
+    }
+
+    protected List<Accountability> getParentAccountabilityTypes(Predicate predicate, AccountabilityType... types) {
+	List<Accountability> accountabilityTypes = new ArrayList<Accountability>();
+	for (Accountability accountability : getParty().getParentAccountabilities(types)) {
+	    if (predicate == null || predicate.evaluate(accountability)) {
+		accountabilityTypes.add(accountability);
+	    }
+	}
+	return accountabilityTypes;
+    }
+
+    protected List<Accountability> getChildAccountabilityTypes(AccountabilityType... types) {
+	return getChildAccountabilityTypes(new FilterAccountabilities(getYear(), true), types);
+    }
+
+    protected List<Accountability> getChildAccountabilityTypes(Predicate predicate, AccountabilityType... types) {
+	List<Accountability> accountabilityTypes = new ArrayList<Accountability>();
+	for (Accountability accountability : getParty().getChildrenAccountabilities(types)) {
+	    if (predicate == null || predicate.evaluate(accountability)) {
+		accountabilityTypes.add(accountability);
+	    }
+	}
+	return accountabilityTypes;
     }
 
     public static class FilterAccountabilities implements Predicate {

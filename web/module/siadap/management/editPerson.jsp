@@ -27,6 +27,86 @@
 </fr:view>
 </p>
 
+<a href="#" id="changeUnit"> <bean:message key="label.changeWorkingUnit" bundle="SIADAP_RESOURCES"/> </a> | <a href="#" id="changeEvaluator"> <bean:message key="label.changeEvaluator" bundle="SIADAP_RESOURCES"/> </a>
+
+<logic:equal name="person" property="customEvaluatorDefined" value="true">
+	| <html:link page="/siadapPersonnelManagement.do?method=removeCustomEvaluator" paramId="personId"  paramName="person"  paramProperty="person.externalId"><bean:message key="label.removeCustomEvaluator" bundle="SIADAP_RESOURCES"/> </html:link>
+</logic:equal>
+
+
+<div id="changeUnitDiv" style="display: none;">
+	<div class="highlightBox">
+	<fr:form action="<%= "/siadapPersonnelManagement.do?method=changeWorkingUnit&personId=" + personId %>">
+	<fr:edit id="changeWorkingUnit" name="changeWorkingUnit" visible="false"/>
+
+	<fr:edit id="changeWorkingUnit1" name="changeWorkingUnit" slot="unit" >
+	
+	<fr:layout name="autoComplete">
+		<fr:property name="classes" value="tstyle2"/>
+		<fr:property name="labelField" value="partyName.content"/>
+		<fr:property name="format" value="${presentationName}"/>
+		<fr:property name="minChars" value="3"/>		
+		<fr:property name="args" value="provider=module.organization.presentationTier.renderers.providers.UnitAutoCompleteProvider"/>
+		<fr:property name="size" value="60"/>
+		<fr:validator name="pt.ist.fenixWebFramework.rendererExtensions.validators.RequiredAutoCompleteSelectionValidator">
+			<fr:property name="message" value="label.pleaseSelectOne.unit"/>
+			<fr:property name="bundle" value="EXPENDITURE_RESOURCES"/>
+			<fr:property name="key" value="true"/>
+		</fr:validator>
+	</fr:layout>
+</fr:edit>
+
+	Contabiliza para as quotas: <fr:edit id="changeWorkingUnit2" name="changeWorkingUnit" slot="withQuotas" >
+	<fr:layout name="autoComplete">
+		<fr:property name="classes" value="tstyle2"/>
+	</fr:layout>
+	</fr:edit>
+	
+	<html:submit styleClass="inputbutton"><bean:message key="renderers.form.submit.name" bundle="RENDERER_RESOURCES"/></html:submit>
+</fr:form>
+	</div>
+</div>
+
+<div id="changeEvaluatorDiv" style="display: none;" >
+	<div class="highlightBox">
+	
+	<fr:form action="<%= "/siadapPersonnelManagement.do?method=changeEvaluator&personId=" + personId %>">
+	
+	<fr:edit id="changeEvaluator" name="changeEvaluator" slot="domainObject">
+	<fr:layout name="autoComplete">
+		<fr:property name="labelField" value="partyName.content"/>
+		<fr:property name="format" value="${presentationName}"/>
+		<fr:property name="minChars" value="3"/>		
+		<fr:property name="args" value="provider=module.organization.presentationTier.renderers.providers.PersonAutoCompleteProvider"/>
+		<fr:property name="size" value="60"/>
+		<fr:validator name="pt.ist.fenixWebFramework.rendererExtensions.validators.RequiredAutoCompleteSelectionValidator">
+			<fr:property name="message" value="label.pleaseSelectOne.unit"/>
+			<fr:property name="bundle" value="EXPENDITURE_RESOURCES"/>
+			<fr:property name="key" value="true"/>
+		</fr:validator>
+		</fr:layout>
+	</fr:edit>
+	<html:submit styleClass="inputbutton"><bean:message key="renderers.form.submit.name" bundle="RENDERER_RESOURCES"/></html:submit>
+</fr:form>
+
+	
+	
+		
+	</div>
+</div>
+
+<script type="text/javascript">
+	$("#changeUnit").click(function() {
+		$("#changeEvaluatorDiv").hide();
+		$("#changeUnitDiv").slideToggle();
+	});
+
+	$("#changeEvaluator").click(function() {
+		$("#changeEvaluatorDiv").slideToggle();
+		$("#changeUnitDiv").hide();
+	});
+</script>
+
 <logic:notEmpty name="person" property="peopleToEvaluate"> 
 	<p>
 		<strong> <bean:message key="label.responsibleForEvaluationOf" bundle="SIADAP_RESOURCES"/>: </strong>
@@ -78,9 +158,11 @@
 </logic:notEmpty>
 
 
+<p>
+<strong><bean:message key="label.addHarmonizationResponsability" bundle="SIADAP_RESOURCES"/></strong>
 <fr:edit id="addHarmonizationUnit" name="bean" action="<%= "/siadapPersonnelManagement.do?method=addHarmonizationUnit&personId=" + personId %>">
 	<fr:schema type="myorg.util.VariantBean" bundle="SIADAP_RESOURCES">
-		<fr:slot name="domainObject" layout="autoComplete" key="label.party" bundle="ORGANIZATION_RESOURCES">
+		<fr:slot name="domainObject" layout="autoComplete" key="label.unit" bundle="ORGANIZATION_RESOURCES">
         <fr:property name="labelField" value="partyName.content"/>
 		<fr:property name="format" value="${presentationName}"/>
 		<fr:property name="minChars" value="3"/>		
@@ -97,3 +179,4 @@
 		<fr:property name="classes" value="tstyle2"/>
 	</fr:layout>
 </fr:edit>
+</p>
