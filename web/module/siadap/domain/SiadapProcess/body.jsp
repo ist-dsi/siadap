@@ -11,6 +11,14 @@
 	</div>
 </logic:equal>
 
+<logic:equal name="process" property="siadap.autoEvaluationIntervalFinished" value="true">
+	<logic:equal name="process" property="siadap.autoEvaliationDone" value="false">
+		<div class="highlightBox mtop05 mbottom15">
+			<bean:message key="label.info.evaluatedFailedToDoAutoEvaluation" bundle="SIADAP_RESOURCES"/>
+		</div>
+	</logic:equal>
+</logic:equal>
+
 <strong><bean:message key="label.results"
 	bundle="SIADAP_RESOURCES" />:</strong>
 

@@ -4,6 +4,8 @@
 <%@ taglib uri="/WEB-INF/struts-logic.tld" prefix="logic"%>
 <%@ taglib uri="/WEB-INF/fenix-renderers.tld" prefix="fr"%>
 
+<bean:define id="unitName" name="currentUnit" property="unit.partyName"/>
+
 <h2>
 	<fr:view name="currentUnit" property="unit.partyName"/>
 </h2>
@@ -62,7 +64,18 @@
 	
 	<p>
 	<html:link page="/siadapManagement.do?method=listHighGlobalEvaluations" paramName="currentUnit" paramProperty="unit.externalId" paramId="unitId"> <bean:message key="label.viewGlobalEvaluations.relevant" bundle="SIADAP_RESOURCES"/> </html:link> | <html:link page="/siadapManagement.do?method=listExcellencyGlobalEvaluations" paramName="currentUnit" paramProperty="unit.externalId" paramId="unitId"> <bean:message key="label.viewGlobalEvaluations.excellency" bundle="SIADAP_RESOURCES"/> </html:link>
-	</p>
+    | <html:link styleId="terminateHarmonization"  page="/siadapManagement.do?method=terminateHarmonization" paramName="currentUnit" paramProperty="unit.externalId" paramId="unitId">
+			<bean:message key="label.terminateHarmonization" bundle="SIADAP_RESOURCES"/>
+		</html:link>
+	</p>	
+	
+ <script src="<%= request.getContextPath() + "/javaScript/jquery.alerts.js"%>" type="text/javascript"></script> 
+ <script src="<%= request.getContextPath() + "/javaScript/alertHandlers.js"%>" type="text/javascript"></script> 
+ <script type="text/javascript"> 
+   linkConfirmationHook('terminateHarmonization', '<bean:message key="label.terminateHarmonization.confirmationMessage" bundle="SIADAP_RESOURCES" arg0="<%= unitName.toString() %>"/>','<bean:message key="label.terminateHarmonization" bundle="SIADAP_RESOURCES"/>'); 
+ </script> 
+	
+	
 </logic:equal>
 
 

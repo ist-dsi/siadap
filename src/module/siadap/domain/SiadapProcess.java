@@ -13,6 +13,7 @@ import module.siadap.activities.CreateObjectiveEvaluation;
 import module.siadap.activities.EditObjectiveEvaluation;
 import module.siadap.activities.Evaluation;
 import module.siadap.activities.Homologate;
+import module.siadap.activities.RecogniseExcellencyAward;
 import module.siadap.activities.SubmitForObjectivesAcknowledge;
 import module.siadap.activities.ValidateEvaluation;
 import module.siadap.domain.wrappers.PersonSiadapWrapper;
@@ -44,6 +45,7 @@ public class SiadapProcess extends SiadapProcess_Base {
 	activities.add(new AcknowledgeHomologation());
 	activities.add(new EditObjectiveEvaluation());
 	activities.add(new SubmitForObjectivesAcknowledge());
+	activities.add(new RecogniseExcellencyAward());
     }
 
     public SiadapProcess(Integer year, Person evaluated) {
@@ -58,7 +60,7 @@ public class SiadapProcess extends SiadapProcess_Base {
 	}
 
 	setSiadap(new Siadap(year, evaluated));
-	setProcessNumber("S" + SiadapRootModule.getInstance().getNumberAndIncrement());
+	setProcessNumber("S" + year + "/" + evaluated.getUser().getUsername());
 
 	new LabelLog(this, currentUser, this.getClass().getName() + ".creation", "resources/SiadapResources",
 		evaluated.getName(), year.toString());
@@ -100,4 +102,9 @@ public class SiadapProcess extends SiadapProcess_Base {
 	PersonSiadapWrapper wrapper = new PersonSiadapWrapper(evaluated, getSiadap().getYear());
 	return wrapper.isResponsibleForHarmonization(accessor);
     }
+
+    public void markAsHarmonized() {
+	new LabelLog(this, UserView.getCurrentUser(), "label.terminateHarmonization", "resources/SiadapResources");
+    }
+
 }

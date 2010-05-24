@@ -1,14 +1,6 @@
 package module.siadap.domain;
 
-import java.math.BigDecimal;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Set;
-
-import module.organization.domain.Party;
 import module.organization.domain.Person;
-import module.organization.domain.Unit;
-import module.siadap.domain.scoring.SiadapGlobalEvaluation;
 import pt.ist.fenixWebFramework.services.Service;
 
 public class SiadapYearConfiguration extends SiadapYearConfiguration_Base {

@@ -6,24 +6,22 @@ import module.workflow.activities.ActivityInformation;
 import module.workflow.activities.WorkflowActivity;
 import myorg.domain.User;
 
-import org.joda.time.LocalDate;
-
-public class ValidateEvaluation extends WorkflowActivity<SiadapProcess, ActivityInformation<SiadapProcess>> {
+public class RecogniseExcellencyAward extends WorkflowActivity<SiadapProcess, ActivityInformation<SiadapProcess>> {
 
     @Override
     public boolean isActive(SiadapProcess process, User user) {
 	Siadap siadap = process.getSiadap();
 	// This has to be the CCA though
-	return siadap.getEvaluator().getPerson().getUser() == user && siadap.getHarmonizationDate() != null
-		&& siadap.getValidationDate() == null;
+	return siadap.getEvaluator().getPerson().getUser() == user && siadap.getValidationDate() != null
+		&& siadap.getEvaluationData().getExcellencyAward() && siadap.getAcknowledgeValidationDate() == null;
     }
 
     @Override
     protected void process(ActivityInformation<SiadapProcess> activityInformation) {
-	activityInformation.getProcess().getSiadap().setValidationDate(new LocalDate());
+	activityInformation.getProcess().getSiadap().getEvaluationData().setExcellencyAwardRecognized(Boolean.TRUE);
     }
 
-    @Override
+     @Override
     public String getUsedBundle() {
 	return "resources/SiadapResources";
     }

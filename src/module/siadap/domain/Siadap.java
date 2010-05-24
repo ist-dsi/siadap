@@ -10,9 +10,14 @@ import module.siadap.activities.AutoEvaluation;
 import module.siadap.activities.Evaluation;
 import module.siadap.domain.scoring.SiadapGlobalEvaluation;
 import module.siadap.domain.wrappers.PersonSiadapWrapper;
+import module.workflow.domain.LabelLog;
+import myorg.applicationTier.Authenticate.UserView;
 
 import org.apache.commons.collections.Predicate;
+import org.joda.time.Interval;
 import org.joda.time.LocalDate;
+
+import pt.ist.fenixWebFramework.services.Service;
 
 public class Siadap extends Siadap_Base {
 
@@ -110,11 +115,11 @@ public class Siadap extends Siadap_Base {
     }
 
     public Double getObjectivesPonderation() {
-	return SiadapYearConfiguration.getSiadapYearConfiguration(getYear()).getObjectivesPonderation();
+	return getSiadapYearConfiguration().getObjectivesPonderation();
     }
 
     public Double getCompetencesPonderation() {
-	return SiadapYearConfiguration.getSiadapYearConfiguration(getYear()).getCompetencesPonderation();
+	return getSiadapYearConfiguration().getCompetencesPonderation();
     }
 
     public List<SiadapEvaluationItem> getCurrentEvaluationItems() {
@@ -195,5 +200,37 @@ public class Siadap extends Siadap_Base {
 
     public boolean isInadequate() {
 	return isEvaluationDone() && SiadapGlobalEvaluation.LOW.accepts(getTotalEvaluationScoring());
+    }
+
+    public SiadapYearConfiguration getSiadapYearConfiguration() {
+	return SiadapYearConfiguration.getSiadapYearConfiguration(getYear());
+    }
+
+    public Interval getAutoEvaluationInterval() {
+	SiadapYearConfiguration configuration = getSiadapYearConfiguration();
+	LocalDate begin = configuration.getAutoEvaluationBegin();
+	LocalDate end = configuration.getAutoEvaluationEnd();
+	return new Interval(begin.toDateMidnight(), end.toDateMidnight());
+    }
+
+    public Interval getEvaluationInterval() {
+	SiadapYearConfiguration configuration = getSiadapYearConfiguration();
+	LocalDate begin = configuration.getEvaluationBegin();
+	LocalDate end = configuration.getEvaluationEnd();
+	return new Interval(begin.toDateMidnight(), end.toDateMidnight());
+    }
+
+    public boolean isAutoEvaluationIntervalFinished() {
+	return getAutoEvaluationInterval().isBeforeNow();
+    }
+
+    public boolean isEvaluationIntevarlFinished() {
+	return getEvaluationInterval().isBeforeNow();
+    }
+
+    @Service
+    public void markAsHarmonized(LocalDate harmonizationDate) {
+	setHarmonizationDate(harmonizationDate);
+	getProcess().markAsHarmonized();
     }
 }

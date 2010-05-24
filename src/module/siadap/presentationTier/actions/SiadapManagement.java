@@ -9,6 +9,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import module.organization.domain.Person;
 import module.organization.domain.Unit;
+import module.siadap.domain.Siadap;
 import module.siadap.domain.SiadapProcess;
 import module.siadap.domain.SiadapYearConfiguration;
 import module.siadap.domain.wrappers.PersonSiadapWrapper;
@@ -131,6 +132,22 @@ public class SiadapManagement extends ContextBaseAction {
 	    }
 
 	});
+    }
 
+    public final ActionForward terminateHarmonization(final ActionMapping mapping, final ActionForm form,
+	    final HttpServletRequest request, final HttpServletResponse response) throws Exception {
+
+	Unit unit = getDomainObject(request, "unitId");
+	LocalDate localDate = new LocalDate();
+	UnitSiadapWrapper wrapper = new UnitSiadapWrapper(unit, localDate.getYear());
+	for (PersonSiadapWrapper person : wrapper.getUnitEmployees(true)) {
+
+	    Siadap siadap = person.getSiadap();
+	    if (siadap != null) {
+		siadap.markAsHarmonized(localDate);
+	    }
+	}
+
+	return viewUnitHarmonizationData(mapping, form, request, response);
     }
 }

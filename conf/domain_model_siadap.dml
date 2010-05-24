@@ -13,6 +13,10 @@ class SiadapYearConfiguration {
 	int year;
 	Double objectivesPonderation;
 	Double competencesPonderation;	
+	LocalDate autoEvaluationBegin;
+	LocalDate autoEvaluationEnd;
+	LocalDate evaluationBegin;
+	LocalDate evaluationEnd;
 }
 
 class SiadapProcess extends .module.workflow.domain.WorkflowProcess {
@@ -22,6 +26,7 @@ class Siadap {
 	Integer year;
 	Integer currentObjectiveVersion;
 	LocalDate requestedAcknowledgeDate;
+	LocalDate harmonizationDate;
 	LocalDate validationDate;
 	LocalDate acknowledgeValidationDate;
 	LocalDate homologationDate;
@@ -33,6 +38,7 @@ class SiadapEvaluation {
 	String evaluationJustification;	
 	String noEvaluationJustification;
 	Boolean excellencyAward;
+	Boolean excellencyAwardRecognized;
 	String personalDevelopment;
 	String trainningNeeds;
 }

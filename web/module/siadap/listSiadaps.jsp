@@ -81,6 +81,10 @@
 			</fr:validator>
 		</fr:slot>
 
+		<fr:slot name="autoEvaluationBegin" layout="picker"/>
+		<fr:slot name="autoEvaluationEnd" layout="picker"/>
+		<fr:slot name="evaluationBegin" layout="picker"/>
+		<fr:slot name="evaluationEnd" layout="picker"/>
 	</fr:schema>
 
 	<fr:layout name="tabular">

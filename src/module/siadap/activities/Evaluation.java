@@ -12,7 +12,8 @@ public class Evaluation extends WorkflowActivity<SiadapProcess, EvaluationActivi
     @Override
     public boolean isActive(SiadapProcess process, User user) {
 	Siadap siadap = process.getSiadap();
-	return siadap.getEvaluator().getPerson().getUser() == user && siadap.getValidationDate() == null && siadap.isAutoEvaliationDone();
+	return siadap.getEvaluator().getPerson().getUser() == user && siadap.getValidationDate() == null
+		&& siadap.isEvaluatedWithKnowledgeOfObjectives() && siadap.getEvaluationInterval().containsNow();
     }
 
     @Override
