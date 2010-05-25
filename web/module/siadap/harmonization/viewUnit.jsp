@@ -10,6 +10,15 @@
 	<fr:view name="currentUnit" property="unit.partyName"/>
 </h2>
 
+
+<logic:messagesPresent property="message" message="true">
+	<div class="error1">
+		<html:messages id="errorMessage" property="message" message="true"> 
+			<span><fr:view name="errorMessage"/></span>
+		</html:messages>
+	</div>
+</logic:messagesPresent>
+
 <bean:define id="unitId" name="currentUnit" property="unit.externalId"/>
 
 <logic:present name="currentUnit" property="superiorUnit">

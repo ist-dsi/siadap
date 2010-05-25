@@ -238,5 +238,4 @@ relation HarmonizationForUnitIsTerminated {
 	.module.organization.domain.Unit playsRole harmonizationClosedUnits {
 		multiplicity *;
 	}
-
 }

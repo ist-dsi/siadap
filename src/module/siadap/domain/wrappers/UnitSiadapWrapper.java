@@ -15,6 +15,7 @@ import module.organization.domain.Person;
 import module.organization.domain.Unit;
 import module.siadap.domain.Siadap;
 import module.siadap.domain.SiadapYearConfiguration;
+import myorg.domain.exceptions.DomainException;
 import myorg.util.BundleUtil;
 
 import org.apache.commons.collections.Predicate;
@@ -364,6 +365,42 @@ public class UnitSiadapWrapper extends PartyWrapper implements Serializable {
 	}
     }
 
+    public List<UnitSiadapWrapper> getSubHarmonizationUnits() {
+	List<UnitSiadapWrapper> unitWrappers = new ArrayList<UnitSiadapWrapper>();
+	fillSubHarmonizationUnits(this, getConfiguration(), unitWrappers);
+	return unitWrappers;
+    }
+
+    private void fillSubHarmonizationUnits(UnitSiadapWrapper wrapper, SiadapYearConfiguration configuration,
+	    List<UnitSiadapWrapper> wrappers) {
+	AccountabilityType unitRelation = configuration.getUnitRelations();
+	AccountabilityType harmonizationResponsibleRelation = configuration.getHarmonizationResponsibleRelation();
+	int year = configuration.getYear();
+
+	for (Unit unit : wrapper.getChildUnits(unitRelation)) {
+	    UnitSiadapWrapper unitSiadapWrapper = new UnitSiadapWrapper(unit, year);
+	    if (!unitSiadapWrapper.getChildPersons(harmonizationResponsibleRelation).isEmpty()) {
+		wrappers.add(unitSiadapWrapper);
+	    }
+	    fillSubHarmonizationUnits(unitSiadapWrapper, configuration, wrappers);
+	}
+
+    }
+
+    public UnitSiadapWrapper getTopHarmonizationUnit() {
+	SiadapYearConfiguration configuration = getConfiguration();
+	AccountabilityType unitRelation = configuration.getUnitRelations();
+	List<Unit> parentUnits = getParentUnits(unitRelation);
+	if (parentUnits.isEmpty()) {
+	    return null;
+	} else {
+	    int year = configuration.getYear();
+	    UnitSiadapWrapper topUnit = new UnitSiadapWrapper(parentUnits.iterator().next(), year);
+	    return new UnitSiadapWrapper(topUnit.getHarmonizationUnit(), year);
+	}
+
+    }
+
     public boolean isHarmonizationFinished() {
 	return getConfiguration().getHarmonizationClosedUnits().contains(getUnit());
     }
@@ -387,11 +424,22 @@ public class UnitSiadapWrapper extends PartyWrapper implements Serializable {
 
     @Service
     public void finishHarmonization() {
+	for (UnitSiadapWrapper wrapper : getSubHarmonizationUnits()) {
+	    if (!wrapper.isHarmonizationFinished()) {
+		throw new DomainException("error.tryingToFinishHarmonizationWithSubHarmonizationOpen", DomainException
+			.getResourceFor("resources/SiadapResources"), getName().getContent(), wrapper.getName().getContent());
+	    }
+	}
 	getConfiguration().addHarmonizationClosedUnits(getUnit());
     }
 
     @Service
     public void reOpenHarmonization() {
+	UnitSiadapWrapper topHarmonization = getTopHarmonizationUnit();
+	if (topHarmonization != null && topHarmonization.isHarmonizationFinished()) {
+	    throw new DomainException("error.unableToReopenTopUnitHasAlreadyFinishedHarmonization", DomainException
+		    .getResourceFor("resources/SiadapResources"), getName().getContent(), topHarmonization.getName().getContent());
+	}
 	getConfiguration().removeHarmonizationClosedUnits(getUnit());
     }
 

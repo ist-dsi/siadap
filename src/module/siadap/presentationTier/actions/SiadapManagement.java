@@ -17,6 +17,7 @@ import module.siadap.domain.wrappers.UnitSiadapWrapper;
 import module.workflow.domain.WorkflowProcess;
 import module.workflow.presentationTier.actions.ProcessManagement;
 import myorg.applicationTier.Authenticate.UserView;
+import myorg.domain.exceptions.DomainException;
 import myorg.presentationTier.actions.ContextBaseAction;
 
 import org.apache.commons.collections.Predicate;
@@ -139,16 +140,21 @@ public class SiadapManagement extends ContextBaseAction {
 
 	Unit unit = getDomainObject(request, "unitId");
 	LocalDate localDate = new LocalDate();
-	UnitSiadapWrapper wrapper = new UnitSiadapWrapper(unit, localDate.getYear());
-	for (PersonSiadapWrapper person : wrapper.getUnitEmployees(true)) {
 
-	    Siadap siadap = person.getSiadap();
-	    if (siadap != null) {
-		siadap.markAsHarmonized(localDate);
+	UnitSiadapWrapper wrapper = new UnitSiadapWrapper(unit, localDate.getYear());
+	try {
+	    wrapper.finishHarmonization();
+	    for (PersonSiadapWrapper person : wrapper.getUnitEmployees(true)) {
+
+		Siadap siadap = person.getSiadap();
+		if (siadap != null) {
+		    siadap.markAsHarmonized(localDate);
+		}
 	    }
+	} catch (DomainException e) {
+	    addLocalizedMessage(request, e.getLocalizedMessage());
 	}
 
-	wrapper.finishHarmonization();
 	return viewUnitHarmonizationData(mapping, form, request, response);
     }
 
@@ -158,15 +164,19 @@ public class SiadapManagement extends ContextBaseAction {
 	Unit unit = getDomainObject(request, "unitId");
 	LocalDate localDate = new LocalDate();
 	UnitSiadapWrapper wrapper = new UnitSiadapWrapper(unit, localDate.getYear());
-	for (PersonSiadapWrapper person : wrapper.getUnitEmployees(true)) {
+	try {
+	    wrapper.reOpenHarmonization();
 
-	    Siadap siadap = person.getSiadap();
-	    if (siadap != null) {
-		siadap.removeHarmonizationMark();
+	    for (PersonSiadapWrapper person : wrapper.getUnitEmployees(true)) {
+
+		Siadap siadap = person.getSiadap();
+		if (siadap != null) {
+		    siadap.removeHarmonizationMark();
+		}
 	    }
+	} catch (DomainException e) {
+	    addLocalizedMessage(request, e.getLocalizedMessage());
 	}
-
-	wrapper.reOpenHarmonization();
 	return viewUnitHarmonizationData(mapping, form, request, response);
     }
 }
