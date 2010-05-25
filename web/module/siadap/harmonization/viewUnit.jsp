@@ -36,7 +36,7 @@
 				<fr:property name="eachSchema" value="organization.domain.Person.view.short"/>
 				<fr:property name="htmlSeparator" value=", "/>
 			</fr:slot>
-			<fr:slot name="totalPeopleWorkingInUnitDescriptionString" key="label.totalEvaluated"/>
+			<fr:slot name="totalPeopleWorkingInUnitDescriptionString" key="label.totalEvaluatedCurrentUnit"/>
 			<fr:slot name="highGradeQuota" />
 			<fr:slot name="currentUsedHighGradeQuota"/>
 			<fr:slot name="relevantEvaluationPercentage"/>

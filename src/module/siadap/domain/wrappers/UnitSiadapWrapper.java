@@ -48,7 +48,7 @@ public class UnitSiadapWrapper extends PartyWrapper implements Serializable {
     }
 
     public String getTotalPeopleWorkingInUnitDescriptionString() {
-	return getTotalPeopleWorkingInUnitDescriptionString(true);
+	return getTotalPeopleWorkingInUnitDescriptionString(false);
     }
 
     public String getTotalPeopleWorkingInUnitDescriptionString(boolean continueToSubUnits) {
@@ -86,7 +86,7 @@ public class UnitSiadapWrapper extends PartyWrapper implements Serializable {
 	people += childPersons.size();
 	if (continueToSubUnit) {
 	    for (Unit subUnit : wrapper.getChildUnits(getConfiguration().getUnitRelations())) {
-		people += getTotalPeopleWorkingInUnit(subUnit, continueToSubUnit);
+		people += getTotalPeopleWorkingInUnit(subUnit, continueToSubUnit, workingRelations);
 	    }
 	}
 	return people;
