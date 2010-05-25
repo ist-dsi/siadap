@@ -29,19 +29,20 @@
 			<fr:slot name="unit.partyName" key="label.unit" bundle="ORGANIZATION_RESOURCES"/>
 			<fr:slot name="harmonizationUnit" key="label.harmonizationUnit" layout="null-as-label">
 				<fr:property name="subLayout" value="values"/>
-				<fr:property name="subSchema" value="module.organization.domain.Unit.view.short.name"/>
+				<fr:property name="subSchema" value="module.organization.domain.Party.view.short.name"/>
 			</fr:slot>
 			<fr:slot name="evaluationResponsibles" key="label.unitResponsibles" layout="flowLayout">
 				<fr:property name="eachLayout" value="values"/>
 				<fr:property name="eachSchema" value="organization.domain.Person.view.short"/>
 				<fr:property name="htmlSeparator" value=", "/>
 			</fr:slot>
-			<fr:slot name="totalPeopleWorkingInUnit" />
+			<fr:slot name="totalPeopleWorkingInUnitDescriptionString" key="label.totalEvaluated"/>
 			<fr:slot name="highGradeQuota" />
 			<fr:slot name="currentUsedHighGradeQuota"/>
 			<fr:slot name="relevantEvaluationPercentage"/>
 			<fr:slot name="excellencyGradeQuota"/>
 			<fr:slot name="currentUsedExcellencyGradeQuota"/>
+			<fr:slot name="excellencyEvaluationPercentage"/>
 		</fr:schema>
 		<fr:layout name="tabular">
 			<fr:property name="columnClasses" value="aright,,"/>
@@ -175,7 +176,8 @@
 				<fr:slot name="unit.partyName" key="label.unit" bundle="ORGANIZATION_RESOURCES" />
 				<fr:slot name="unit.acronym" key="label.acronym" bundle="ORGANIZATION_RESOURCES"/>
 				<fr:slot name="relevantEvaluationPercentage"/>
-				<fr:slot name="totalPeopleWorkingInUnit"/>
+				<fr:slot name="excellencyEvaluationPercentage"/>
+				<fr:slot name="totalPeopleWorkingInUnitIncludingNoQuotaPeople" key="label.totalEvaluated"/>
 				<fr:slot name="totalPeopleWithSiadapWorkingInUnit"/>
 			</fr:schema>
 			<fr:layout name="tabular">

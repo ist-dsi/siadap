@@ -174,7 +174,7 @@
 				<fr:slot name="unit.acronym" key="label.acronym" bundle="ORGANIZATION_RESOURCES" />
 				<fr:slot name="relevantEvaluationPercentage"/>
 				<fr:slot name="excellencyEvaluationPercentage"/>
-				<fr:slot name="totalPeopleWorkingInUnit"/>
+				<fr:slot name="totalPeopleWorkingInUnitIncludingNoQuotaPeople" key="label.totalEvaluated"/>
 				<fr:slot name="totalPeopleWithSiadapWorkingInUnit"/>
 			</fr:schema>
 			<fr:layout name="tabular">

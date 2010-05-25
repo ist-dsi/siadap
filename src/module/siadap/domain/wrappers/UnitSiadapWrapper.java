@@ -13,9 +13,9 @@ import module.organization.domain.AccountabilityType;
 import module.organization.domain.Party;
 import module.organization.domain.Person;
 import module.organization.domain.Unit;
-import module.organization.domain.predicates.PartyPredicate;
 import module.siadap.domain.Siadap;
 import module.siadap.domain.SiadapYearConfiguration;
+import myorg.util.BundleUtil;
 
 import org.apache.commons.collections.Predicate;
 import org.joda.time.LocalDate;
@@ -46,20 +46,45 @@ public class UnitSiadapWrapper extends PartyWrapper implements Serializable {
 	return this.unit;
     }
 
+    public String getTotalPeopleWorkingInUnitDescriptionString() {
+	return getTotalPeopleWorkingInUnitDescriptionString(true);
+    }
+
+    public String getTotalPeopleWorkingInUnitDescriptionString(boolean continueToSubUnits) {
+	Integer peopleWithQuotas = getTotalPeopleWorkingInUnit(continueToSubUnits);
+	int peopleWithNoQuotas = getTotalPeopleWorkingInUnit(getUnit(), continueToSubUnits, getConfiguration()
+		.getWorkingRelationWithNoQuota());
+
+	return BundleUtil.getFormattedStringFromResourceBundle("resources/SiadapResources",
+		"label.totalWorkingPeopleInUnit.description", String.valueOf(peopleWithQuotas + peopleWithNoQuotas), String
+			.valueOf(peopleWithQuotas), String.valueOf(peopleWithNoQuotas));
+    }
+
     public int getTotalPeopleWorkingInUnit() {
 	return getTotalPeopleWorkingInUnit(true);
     }
 
-    public int getTotalPeopleWorkingInUnit(boolean continueToSubUnits) {
-	return getTotalPeopleWorkingInUnit(getUnit(), continueToSubUnits);
+    public int getTotalPeopleWorkingInUnitIncludingNoQuotaPeople() {
+	return getTotalPeopleWorkingInUnitIncludingNoQuotaPeople(true);
     }
 
-    private int getTotalPeopleWorkingInUnit(Unit unit, boolean continueToSubUnit) {
+    public int getTotalPeopleWorkingInUnitIncludingNoQuotaPeople(boolean continueToSubUnits) {
+	SiadapYearConfiguration configuration = getConfiguration();
+	return getTotalPeopleWorkingInUnit(getUnit(), continueToSubUnits, configuration.getWorkingRelation(), configuration
+		.getWorkingRelationWithNoQuota());
+    }
+
+    public int getTotalPeopleWorkingInUnit(boolean continueToSubUnits) {
+	return getTotalPeopleWorkingInUnit(getUnit(), continueToSubUnits, getConfiguration().getWorkingRelation());
+    }
+
+    private int getTotalPeopleWorkingInUnit(Unit unit, boolean continueToSubUnit, AccountabilityType... workingRelations) {
 	int people = 0;
-	Collection<Person> childPersons = unit.getChildPersons(getConfiguration().getWorkingRelation());
+	UnitSiadapWrapper wrapper = new UnitSiadapWrapper(unit, getYear());
+	Collection<Person> childPersons = wrapper.getChildPersons(workingRelations);
 	people += childPersons.size();
 	if (continueToSubUnit) {
-	    for (Unit subUnit : unit.getChildUnits(getConfiguration().getUnitRelations())) {
+	    for (Unit subUnit : wrapper.getChildUnits(getConfiguration().getUnitRelations())) {
 		people += getTotalPeopleWorkingInUnit(subUnit, continueToSubUnit);
 	    }
 	}
