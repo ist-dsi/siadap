@@ -107,4 +107,8 @@ public class SiadapProcess extends SiadapProcess_Base {
 	new LabelLog(this, UserView.getCurrentUser(), "label.terminateHarmonization", "resources/SiadapResources");
     }
 
+    public void removeHarmonizationMark() {
+	new LabelLog(this, UserView.getCurrentUser(), "label.reOpenHarmonization", "resources/SiadapResources");
+    }
+
 }

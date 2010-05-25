@@ -65,9 +65,16 @@
 	
 	<p>
 	<html:link page="/siadapManagement.do?method=listHighGlobalEvaluations" paramName="currentUnit" paramProperty="unit.externalId" paramId="unitId"> <bean:message key="label.viewGlobalEvaluations.relevant" bundle="SIADAP_RESOURCES"/> </html:link> | <html:link page="/siadapManagement.do?method=listExcellencyGlobalEvaluations" paramName="currentUnit" paramProperty="unit.externalId" paramId="unitId"> <bean:message key="label.viewGlobalEvaluations.excellency" bundle="SIADAP_RESOURCES"/> </html:link>
+    <logic:equal name="currentUnit" property="harmonizationFinished" value="false">
     | <html:link styleId="terminateHarmonization"  page="/siadapManagement.do?method=terminateHarmonization" paramName="currentUnit" paramProperty="unit.externalId" paramId="unitId">
 			<bean:message key="label.terminateHarmonization" bundle="SIADAP_RESOURCES"/>
 		</html:link>
+	</logic:equal>
+	 <logic:equal name="currentUnit" property="harmonizationFinished" value="true">
+    | <html:link styleId="reOpenHarmonization"  page="/siadapManagement.do?method=reOpenHarmonization" paramName="currentUnit" paramProperty="unit.externalId" paramId="unitId">
+			<bean:message key="label.reOpenHarmonization" bundle="SIADAP_RESOURCES"/>
+		</html:link>
+	</logic:equal>
 	</p>	
 	
  <script src="<%= request.getContextPath() + "/javaScript/jquery.alerts.js"%>" type="text/javascript"></script> 

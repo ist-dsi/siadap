@@ -148,6 +148,25 @@ public class SiadapManagement extends ContextBaseAction {
 	    }
 	}
 
+	wrapper.finishHarmonization();
+	return viewUnitHarmonizationData(mapping, form, request, response);
+    }
+
+    public final ActionForward reOpenHarmonization(final ActionMapping mapping, final ActionForm form,
+	    final HttpServletRequest request, final HttpServletResponse response) throws Exception {
+
+	Unit unit = getDomainObject(request, "unitId");
+	LocalDate localDate = new LocalDate();
+	UnitSiadapWrapper wrapper = new UnitSiadapWrapper(unit, localDate.getYear());
+	for (PersonSiadapWrapper person : wrapper.getUnitEmployees(true)) {
+
+	    Siadap siadap = person.getSiadap();
+	    if (siadap != null) {
+		siadap.removeHarmonizationMark();
+	    }
+	}
+
+	wrapper.reOpenHarmonization();
 	return viewUnitHarmonizationData(mapping, form, request, response);
     }
 }

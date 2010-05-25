@@ -233,4 +233,10 @@ public class Siadap extends Siadap_Base {
 	setHarmonizationDate(harmonizationDate);
 	getProcess().markAsHarmonized();
     }
+
+    @Service
+    public void removeHarmonizationMark() {
+	setHarmonizationDate(null);
+	getProcess().removeHarmonizationMark();
+    }
 }

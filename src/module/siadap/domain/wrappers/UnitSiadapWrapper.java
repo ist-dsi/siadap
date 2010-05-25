@@ -20,6 +20,7 @@ import myorg.util.BundleUtil;
 import org.apache.commons.collections.Predicate;
 import org.joda.time.LocalDate;
 
+import pt.ist.fenixWebFramework.services.Service;
 import pt.utl.ist.fenix.tools.util.i18n.MultiLanguageString;
 
 public class UnitSiadapWrapper extends PartyWrapper implements Serializable {
@@ -363,6 +364,10 @@ public class UnitSiadapWrapper extends PartyWrapper implements Serializable {
 	}
     }
 
+    public boolean isHarmonizationFinished() {
+	return getConfiguration().getHarmonizationClosedUnits().contains(getUnit());
+    }
+
     public MultiLanguageString getName() {
 	return getUnit().getPartyName();
     }
@@ -379,4 +384,15 @@ public class UnitSiadapWrapper extends PartyWrapper implements Serializable {
 	}
 	return false;
     }
+
+    @Service
+    public void finishHarmonization() {
+	getConfiguration().addHarmonizationClosedUnits(getUnit());
+    }
+
+    @Service
+    public void reOpenHarmonization() {
+	getConfiguration().removeHarmonizationClosedUnits(getUnit());
+    }
+
 }

@@ -232,3 +232,11 @@ relation SiadapTopUnit {
 	}
 	.module.organization.domain.Unit playsRole siadapStructureTopUnit;
 }
+
+relation HarmonizationForUnitIsTerminated {
+	SiadapYearConfiguration playsRole yearConfigurationForClosedUnits;
+	.module.organization.domain.Unit playsRole harmonizationClosedUnits {
+		multiplicity *;
+	}
+
+}
