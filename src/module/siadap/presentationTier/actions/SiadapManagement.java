@@ -179,4 +179,26 @@ public class SiadapManagement extends ContextBaseAction {
 	}
 	return viewUnitHarmonizationData(mapping, form, request, response);
     }
+
+    public final ActionForward ccaSplashScreen(final ActionMapping mapping, final ActionForm form,
+	    final HttpServletRequest request, final HttpServletResponse response) throws Exception {
+
+	int year = new LocalDate().getYear();
+	request.setAttribute("harmonizationUnits", SiadapYearConfiguration.getAllHarmonizationUnitsFor(year));
+
+	return forward(request, "/module/siadap/cca/listHarmonizationUnits.jsp");
+    }
+
+    public final ActionForward validateHarmonizationData(final ActionMapping mapping, final ActionForm form,
+	    final HttpServletRequest request, final HttpServletResponse response) throws Exception {
+
+	int year = new LocalDate().getYear();
+	Unit unit = getDomainObject(request, "unitId");
+
+	UnitSiadapWrapper unitSiadapWrapper = new UnitSiadapWrapper(unit, year);
+	request.setAttribute("unit", unitSiadapWrapper);
+	request.setAttribute("employees", unitSiadapWrapper.getUnitEmployees(true));
+	return forward(request, "/module/siadap/cca/validateHarmonizationUnits.jsp");
+    }
+
 }

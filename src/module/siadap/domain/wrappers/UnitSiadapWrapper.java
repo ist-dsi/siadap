@@ -190,7 +190,11 @@ public class UnitSiadapWrapper extends PartyWrapper implements Serializable {
     }
 
     public Collection<Person> getEvaluationResponsibles() {
-	return getUnit().getChildPersons(getConfiguration().getEvaluationRelation());
+	return getChildPersons(getConfiguration().getEvaluationRelation());
+    }
+
+    public Collection<Person> getHarmonizationResponsibles() {
+	return getChildPersons(getConfiguration().getHarmonizationResponsibleRelation());
     }
 
     public Integer getHighGradeQuota() {

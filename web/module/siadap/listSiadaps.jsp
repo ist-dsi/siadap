@@ -12,6 +12,14 @@
 	page="/siadapPersonnelManagement.do?method=start">
 	Gerir Estrutura
 </html:link>
+|
+
+<html:link 
+	page="/siadapManagement.do?method=ccaSplashScreen">
+	CCA splash
+</html:link>
+
+
 
 <logic:present name="configuration">
 <fr:edit name="configuration"

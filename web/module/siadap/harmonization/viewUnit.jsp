@@ -40,7 +40,12 @@
 				<fr:property name="subLayout" value="values"/>
 				<fr:property name="subSchema" value="module.organization.domain.Party.view.short.name"/>
 			</fr:slot>
-			<fr:slot name="evaluationResponsibles" key="label.unitResponsibles" layout="flowLayout">
+			<fr:slot name="evaluationResponsibles" key="label.unitEvaluationResponsibles" layout="flowLayout">
+				<fr:property name="eachLayout" value="values"/>
+				<fr:property name="eachSchema" value="organization.domain.Person.view.short"/>
+				<fr:property name="htmlSeparator" value=", "/>
+			</fr:slot>
+			<fr:slot name="harmonizationResponsibles" key="label.unitHarmonizationResponsibles" layout="flowLayout">
 				<fr:property name="eachLayout" value="values"/>
 				<fr:property name="eachSchema" value="organization.domain.Person.view.short"/>
 				<fr:property name="htmlSeparator" value=", "/>

@@ -1,6 +1,11 @@
 package module.siadap.domain;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import module.organization.domain.Person;
+import module.organization.domain.Unit;
+import module.siadap.domain.wrappers.UnitSiadapWrapper;
 import pt.ist.fenixWebFramework.services.Service;
 
 public class SiadapYearConfiguration extends SiadapYearConfiguration_Base {
@@ -49,4 +54,13 @@ public class SiadapYearConfiguration extends SiadapYearConfiguration_Base {
 	return null;
     }
 
+    public static List<UnitSiadapWrapper> getAllHarmonizationUnitsFor(Integer year) {
+	SiadapYearConfiguration configuration = getSiadapYearConfiguration(year);
+	UnitSiadapWrapper unitSiadapWrapper = new UnitSiadapWrapper(configuration.getSiadapStructureTopUnit(), year);
+	List<UnitSiadapWrapper> harmonizationUnits = unitSiadapWrapper.getSubHarmonizationUnits();
+	if (unitSiadapWrapper.isResponsibleForHarmonization()) {
+	    harmonizationUnits.add(0, unitSiadapWrapper);
+	}
+	return harmonizationUnits;
+    }
 }
