@@ -219,4 +219,9 @@ public class PersonSiadapWrapper extends PartyWrapper implements Serializable {
 	    }
 	}
     }
+
+    public Boolean getProcessValidation() {
+	Siadap siadap = getSiadap();
+	return siadap != null ? siadap.getValidated() : null;
+    }
 }

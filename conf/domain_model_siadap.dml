@@ -27,11 +27,11 @@ class Siadap {
 	Integer currentObjectiveVersion;
 	LocalDate requestedAcknowledgeDate;
 	LocalDate harmonizationDate;
-	LocalDate validationDate;
 	LocalDate acknowledgeValidationDate;
 	LocalDate homologationDate;
 	LocalDate acknowledgeHomologationDate;
 	SiadapGlobalEvaluation qualitativeEvaluation;
+	Boolean validated;
 }
 
 class SiadapEvaluation {

@@ -6,8 +6,6 @@ import module.workflow.activities.ActivityInformation;
 import module.workflow.activities.WorkflowActivity;
 import myorg.domain.User;
 
-import org.joda.time.LocalDate;
-
 public class ValidateEvaluation extends WorkflowActivity<SiadapProcess, ActivityInformation<SiadapProcess>> {
 
     @Override
@@ -15,12 +13,12 @@ public class ValidateEvaluation extends WorkflowActivity<SiadapProcess, Activity
 	Siadap siadap = process.getSiadap();
 	// This has to be the CCA though
 	return siadap.getEvaluator().getPerson().getUser() == user && siadap.getHarmonizationDate() != null
-		&& siadap.getValidationDate() == null;
+		&& siadap.getValidated() == null;
     }
 
     @Override
     protected void process(ActivityInformation<SiadapProcess> activityInformation) {
-	activityInformation.getProcess().getSiadap().setValidationDate(new LocalDate());
+	activityInformation.getProcess().getSiadap().setValidated(Boolean.TRUE);
     }
 
     @Override

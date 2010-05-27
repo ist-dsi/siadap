@@ -12,7 +12,7 @@ public class RecogniseExcellencyAward extends WorkflowActivity<SiadapProcess, Ac
     public boolean isActive(SiadapProcess process, User user) {
 	Siadap siadap = process.getSiadap();
 	// This has to be the CCA though
-	return siadap.getEvaluator().getPerson().getUser() == user && siadap.getValidationDate() != null
+	return siadap.getEvaluator().getPerson().getUser() == user && siadap.getValidated() != null
 		&& siadap.getEvaluationData().getExcellencyAward() && siadap.getAcknowledgeValidationDate() == null;
     }
 
@@ -21,7 +21,7 @@ public class RecogniseExcellencyAward extends WorkflowActivity<SiadapProcess, Ac
 	activityInformation.getProcess().getSiadap().getEvaluationData().setExcellencyAwardRecognized(Boolean.TRUE);
     }
 
-     @Override
+    @Override
     public String getUsedBundle() {
 	return "resources/SiadapResources";
     }

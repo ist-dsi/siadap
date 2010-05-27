@@ -12,6 +12,9 @@
 	<fr:slot name="person.user.username" key="label.login.username" bundle="MYORG_RESOURCES"/>
 	<fr:slot name="evaluator.name" key="label.evaluator"/>
 	<fr:slot name="evaluator.person.user.username" key="label.login.username" bundle="MYORG_RESOURCES"/>
+	<fr:slot name="processValidation" layout="null-as-label" key="label.validated">
+		<fr:property name="subLayout" value="boolean-icon"/>
+	</fr:slot>
 	<fr:slot name="totalEvaluationScoring" layout="null-as-label" key="label.totalEvaluationScoring">
 		<fr:property name="subLayout" value=""/>
 	</fr:slot>
