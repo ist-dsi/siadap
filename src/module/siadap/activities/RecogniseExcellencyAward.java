@@ -13,7 +13,7 @@ public class RecogniseExcellencyAward extends WorkflowActivity<SiadapProcess, Ac
 	Siadap siadap = process.getSiadap();
 	// This has to be the CCA though
 	return siadap.getEvaluator().getPerson().getUser() == user && siadap.getValidated() != null
-		&& siadap.getEvaluationData().getExcellencyAward() && siadap.getAcknowledgeValidationDate() == null;
+		&& siadap.isSuggestedForExcellencyAward() && siadap.getAcknowledgeValidationDate() == null;
     }
 
     @Override
