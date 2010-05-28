@@ -15,11 +15,16 @@
 |
 
 <html:link 
-	page="/siadapManagement.do?method=ccaSplashScreen">
+	page="/siadapManagement.do?method=manageHarmonizationUnitsForMode&mode=processValidation">
 	CCA splash
 </html:link>
 
+| 
 
+<html:link 
+	page="/siadapManagement.do?method=manageHarmonizationUnitsForMode&mode=homologationDone">
+	Homologation splash
+</html:link>
 
 <logic:present name="configuration">
 <fr:edit name="configuration"

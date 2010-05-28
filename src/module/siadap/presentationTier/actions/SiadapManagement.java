@@ -180,25 +180,28 @@ public class SiadapManagement extends ContextBaseAction {
 	return viewUnitHarmonizationData(mapping, form, request, response);
     }
 
-    public final ActionForward ccaSplashScreen(final ActionMapping mapping, final ActionForm form,
+    public final ActionForward manageHarmonizationUnitsForMode(final ActionMapping mapping, final ActionForm form,
 	    final HttpServletRequest request, final HttpServletResponse response) throws Exception {
 
 	int year = new LocalDate().getYear();
 	request.setAttribute("harmonizationUnits", SiadapYearConfiguration.getAllHarmonizationUnitsFor(year));
-
-	return forward(request, "/module/siadap/cca/listHarmonizationUnits.jsp");
+	String mode = request.getParameter("mode");
+	request.setAttribute("mode", mode);
+	return forward(request, "/module/siadap/bulkManagement/listHarmonizationUnits.jsp");
     }
 
-    public final ActionForward validateHarmonizationData(final ActionMapping mapping, final ActionForm form,
+    public final ActionForward harmonizationData(final ActionMapping mapping, final ActionForm form,
 	    final HttpServletRequest request, final HttpServletResponse response) throws Exception {
 
 	int year = new LocalDate().getYear();
 	Unit unit = getDomainObject(request, "unitId");
+	String mode = request.getParameter("mode");
 
 	UnitSiadapWrapper unitSiadapWrapper = new UnitSiadapWrapper(unit, year);
 	request.setAttribute("unit", unitSiadapWrapper);
 	request.setAttribute("employees", unitSiadapWrapper.getUnitEmployees(true));
-	return forward(request, "/module/siadap/cca/validateHarmonizationUnits.jsp");
+	request.setAttribute("mode", mode);
+	return forward(request, "/module/siadap/bulkManagement/operateOverHarmonizationUnits.jsp");
     }
 
 }

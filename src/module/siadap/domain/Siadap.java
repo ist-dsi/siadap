@@ -10,8 +10,6 @@ import module.siadap.activities.AutoEvaluation;
 import module.siadap.activities.Evaluation;
 import module.siadap.domain.scoring.SiadapGlobalEvaluation;
 import module.siadap.domain.wrappers.PersonSiadapWrapper;
-import module.workflow.domain.LabelLog;
-import myorg.applicationTier.Authenticate.UserView;
 
 import org.apache.commons.collections.Predicate;
 import org.joda.time.Interval;
@@ -238,5 +236,14 @@ public class Siadap extends Siadap_Base {
     public void removeHarmonizationMark() {
 	setHarmonizationDate(null);
 	getProcess().removeHarmonizationMark();
+    }
+
+    public boolean isHomologated() {
+	return getHomologationDate() != null;
+    }
+
+    public boolean isSuggestedForExcellencyAward() {
+	SiadapEvaluation evaluationData = getEvaluationData();
+	return evaluationData != null && evaluationData.getExcellencyAwardRecognized() == Boolean.TRUE;
     }
 }

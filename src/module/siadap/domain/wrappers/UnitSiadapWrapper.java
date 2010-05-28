@@ -391,6 +391,25 @@ public class UnitSiadapWrapper extends PartyWrapper implements Serializable {
 
     }
 
+    public List<UnitSiadapWrapper> getAllChildUnits() {
+	List<UnitSiadapWrapper> unitWrappers = new ArrayList<UnitSiadapWrapper>();
+	fillAllChildUnits(this, getConfiguration(), unitWrappers);
+	return unitWrappers;
+    }
+
+    private void fillAllChildUnits(UnitSiadapWrapper wrapper, SiadapYearConfiguration configuration,
+	    List<UnitSiadapWrapper> wrappers) {
+	AccountabilityType unitRelation = configuration.getUnitRelations();
+	int year = configuration.getYear();
+
+	for (Unit unit : wrapper.getChildUnits(unitRelation)) {
+	    UnitSiadapWrapper unitSiadapWrapper = new UnitSiadapWrapper(unit, year);
+	    wrappers.add(unitSiadapWrapper);
+	    fillAllChildUnits(unitSiadapWrapper, configuration, wrappers);
+	}
+
+    }
+
     public UnitSiadapWrapper getTopHarmonizationUnit() {
 	SiadapYearConfiguration configuration = getConfiguration();
 	AccountabilityType unitRelation = configuration.getUnitRelations();
@@ -407,6 +426,17 @@ public class UnitSiadapWrapper extends PartyWrapper implements Serializable {
 
     public boolean isHarmonizationFinished() {
 	return getConfiguration().getHarmonizationClosedUnits().contains(getUnit());
+    }
+
+    public boolean isWithAllSiadapsFilled(boolean checkForUsersWithoutSiadap) {
+	for (Person person : getChildPersons(getConfiguration().getWorkingRelation(), getConfiguration()
+		.getWorkingRelationWithNoQuota())) {
+	    Siadap siadap = new PersonSiadapWrapper(person, getYear()).getSiadap();
+	    if ((siadap == null && checkForUsersWithoutSiadap) || (siadap != null && !siadap.isEvaluationDone())) {
+		return false;
+	    }
+	}
+	return true;
     }
 
     public MultiLanguageString getName() {
@@ -431,6 +461,12 @@ public class UnitSiadapWrapper extends PartyWrapper implements Serializable {
 	for (UnitSiadapWrapper wrapper : getSubHarmonizationUnits()) {
 	    if (!wrapper.isHarmonizationFinished()) {
 		throw new DomainException("error.tryingToFinishHarmonizationWithSubHarmonizationOpen", DomainException
+			.getResourceFor("resources/SiadapResources"), getName().getContent(), wrapper.getName().getContent());
+	    }
+	}
+	for (UnitSiadapWrapper wrapper : getAllChildUnits()) {
+	    if (!wrapper.isWithAllSiadapsFilled(false)) {
+		throw new DomainException("error.tryingToFinishHarmonizationWithSiadapProcessYetToBeEvaluated", DomainException
 			.getResourceFor("resources/SiadapResources"), getName().getContent(), wrapper.getName().getContent());
 	    }
 	}

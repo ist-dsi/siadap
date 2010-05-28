@@ -224,4 +224,9 @@ public class PersonSiadapWrapper extends PartyWrapper implements Serializable {
 	Siadap siadap = getSiadap();
 	return siadap != null ? siadap.getValidated() : null;
     }
+
+    public Boolean getHomologationDone() {
+	Siadap siadap = getSiadap();
+	return siadap != null ? siadap.isHomologated() : null;
+    }
 }

@@ -8,6 +8,8 @@
 	<bean:message key="label.harmonizationUnits" bundle="SIADAP_RESOURCES"/>
 </h2>
 
+<bean:define id="mode" name="mode"/>
+
 <fr:view name="harmonizationUnits">
 	<fr:schema type="module.siadap.domain.wrappers.UnitSiadapWrapper" bundle="SIADAP_RESOURCES">
 			<fr:slot name="unit.partyName"  key="label.unit" bundle="ORGANIZATION_RESOURCES" />
@@ -17,7 +19,7 @@
 	</fr:schema>
 	<fr:layout name="tabular">
 		<fr:property name="classes" value="tstyle2"/>
-		<fr:property name="link(view)" value="/siadapManagement.do?method=validateHarmonizationData"/>
+		<fr:property name="link(view)" value="<%= "/siadapManagement.do?method=harmonizationData&mode=" + mode.toString()%>"/>
 		<fr:property name="bundle(view)" value="MYORG_RESOURCES"/>
 		<fr:property name="key(view)" value="link.view"/>
 		<fr:property name="param(view)" value="unit.externalId/unitId"/>
