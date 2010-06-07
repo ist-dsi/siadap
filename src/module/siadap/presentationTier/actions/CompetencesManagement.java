@@ -20,7 +20,7 @@ import myorg.presentationTier.actions.ContextBaseAction;
 public class CompetencesManagement extends ContextBaseAction {
 
     public ActionForward manageCompetences(final ActionMapping mapping, final ActionForm form, final HttpServletRequest request,
-	    final HttpServletResponse response) throws Exception {
+	    final HttpServletResponse response) {
 	SiadapRootModule rootModule = SiadapRootModule.getInstance();
 	request.setAttribute("competenceTypes", rootModule.getCompetenceTypes());
 	request.setAttribute("siadapRoot", rootModule);
@@ -28,7 +28,7 @@ public class CompetencesManagement extends ContextBaseAction {
     }
 
     public ActionForward prepareCompetenceTypeCreation(final ActionMapping mapping, final ActionForm form,
-	    final HttpServletRequest request, final HttpServletResponse response) throws Exception {
+	    final HttpServletRequest request, final HttpServletResponse response) {
 
 	CompetenceTypeBean competenceTypeBean = new CompetenceTypeBean();
 	request.setAttribute("bean", competenceTypeBean);
@@ -37,7 +37,7 @@ public class CompetencesManagement extends ContextBaseAction {
     }
 
     public ActionForward createCompetenceType(final ActionMapping mapping, final ActionForm form,
-	    final HttpServletRequest request, final HttpServletResponse response) throws Exception {
+	    final HttpServletRequest request, final HttpServletResponse response) {
 
 	CompetenceTypeBean competenceTypeBean = getRenderedObject("bean");
 	CompetenceType.createNewCompetenceType(competenceTypeBean.getName());
@@ -46,7 +46,7 @@ public class CompetencesManagement extends ContextBaseAction {
     }
 
     public ActionForward prepareCompetenceCreation(final ActionMapping mapping, final ActionForm form,
-	    final HttpServletRequest request, final HttpServletResponse response) throws Exception {
+	    final HttpServletRequest request, final HttpServletResponse response) {
 
 	CompetenceType competenceType = getDomainObject(request, "competenceTypeId");
 	CompetenceBean competenceBean = new CompetenceBean(competenceType);
@@ -57,7 +57,7 @@ public class CompetencesManagement extends ContextBaseAction {
     }
 
     public ActionForward createCompetence(final ActionMapping mapping, final ActionForm form, final HttpServletRequest request,
-	    final HttpServletResponse response) throws Exception {
+	    final HttpServletResponse response) {
 
 	CompetenceBean competenceBean = getRenderedObject("bean");
 	Competence.createNewCompetence(competenceBean.getCompetenceType(), competenceBean.getName(), competenceBean
@@ -65,4 +65,15 @@ public class CompetencesManagement extends ContextBaseAction {
 
 	return manageCompetences(mapping, form, request, response);
     }
+
+    public ActionForward showCompetences(final ActionMapping mapping, final ActionForm form, final HttpServletRequest request,
+	    final HttpServletResponse response) {
+
+	CompetenceType competenceType = getDomainObject(request, "competenceTypeId");
+	request.setAttribute("type", competenceType);
+
+	return forward(request, "/module/siadap/competences/listCompetences.jsp");
+
+    }
+
 }
