@@ -12,8 +12,9 @@ public class Evaluation extends WorkflowActivity<SiadapProcess, EvaluationActivi
     @Override
     public boolean isActive(SiadapProcess process, User user) {
 	Siadap siadap = process.getSiadap();
-	return siadap.getEvaluator().getPerson().getUser() == user && siadap.getValidated() == null
-		&& siadap.isEvaluatedWithKnowledgeOfObjectives() && siadap.getEvaluationInterval().containsNow();
+	return !siadap.isWithSkippedEvaluation() && siadap.getEvaluator().getPerson().getUser() == user
+		&& siadap.getValidated() == null && siadap.isEvaluatedWithKnowledgeOfObjectives()
+		&& siadap.getEvaluationInterval().containsNow();
     }
 
     @Override
@@ -28,6 +29,11 @@ public class Evaluation extends WorkflowActivity<SiadapProcess, EvaluationActivi
 		    activityInformation.getTrainningNeeds(), activityInformation.getExcellencyAward());
 	}
 
+    }
+
+    @Override
+    public boolean isConfirmationNeeded(SiadapProcess process) {
+	return process.getSiadap().isEvaluatedWithKnowledgeOfObjectives();
     }
 
     @Override

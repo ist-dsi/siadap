@@ -47,10 +47,13 @@ public class SiadapPersonnelManagement extends ContextBaseAction {
 	Person person = (Person) ((bean != null) ? bean.getDomainObject() : getDomainObject(request, "personId"));
 
 	int year = new LocalDate().getYear();
-	request.setAttribute("person", new PersonSiadapWrapper(person, year));
+	PersonSiadapWrapper personSiadapWrapper = new PersonSiadapWrapper(person, year);
+
+	request.setAttribute("person", personSiadapWrapper);
 	request.setAttribute("bean", new VariantBean());
 	request.setAttribute("changeWorkingUnit", new ChangeWorkingUnitBean(person, year));
 	request.setAttribute("changeEvaluator", new VariantBean());
+	request.setAttribute("history", personSiadapWrapper.getAccountabilitiesHistory());
 	return forward(request, "/module/siadap/management/editPerson.jsp");
     }
 

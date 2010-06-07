@@ -4,6 +4,7 @@ import org.joda.time.LocalDate;
 
 import module.siadap.domain.Siadap;
 import module.siadap.domain.SiadapProcess;
+import module.siadap.domain.SiadapYearConfiguration;
 import module.workflow.activities.ActivityInformation;
 import module.workflow.activities.WorkflowActivity;
 import myorg.domain.User;
@@ -13,9 +14,9 @@ public class Homologate extends WorkflowActivity<SiadapProcess, ActivityInformat
     @Override
     public boolean isActive(SiadapProcess process, User user) {
 	Siadap siadap = process.getSiadap();
-	// This has to be done by whom? CCA?
-	return siadap.getEvaluator().getPerson().getUser() == user && siadap.getAcknowledgeValidationDate() != null
-		&& siadap.getHomologationDate() == null;
+
+	return siadap.getSiadapYearConfiguration().isPersonResponsibleForHomologation(user.getPerson())
+		&& siadap.getAcknowledgeValidationDate() != null && siadap.getHomologationDate() == null;
     }
 
     @Override

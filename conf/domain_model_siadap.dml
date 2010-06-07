@@ -12,7 +12,9 @@ class SiadapRootModule {
 class SiadapYearConfiguration {
 	int year;
 	Double objectivesPonderation;
-	Double competencesPonderation;	
+	Double competencesPonderation;
+	LocalDate objectiveSpecificationBegin;
+	LocalDate objectiveSpecificationEnd;	
 	LocalDate autoEvaluationBegin;
 	LocalDate autoEvaluationEnd;
 	LocalDate evaluationBegin;
@@ -236,6 +238,20 @@ relation SiadapTopUnit {
 relation HarmonizationForUnitIsTerminated {
 	SiadapYearConfiguration playsRole yearConfigurationForClosedUnits;
 	.module.organization.domain.Unit playsRole harmonizationClosedUnits {
+		multiplicity *;
+	}
+}
+
+relation CCAMembers {
+	SiadapYearConfiguration playsRole siadapYearConfigurationForCCAMembers;
+	.module.organization.domain.Person playsRole ccaMembers {
+		multiplicity *;
+	}
+}
+
+relation HomologationMembers {
+	SiadapYearConfiguration playsRole siadapYearConfigurationForHomologationMembers;
+	.module.organization.domain.Person playsRole homologationMembers {
 		multiplicity *;
 	}
 }

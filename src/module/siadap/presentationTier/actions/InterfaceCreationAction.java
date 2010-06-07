@@ -31,8 +31,16 @@ public class InterfaceCreationAction extends BaseAction {
 
 	ActionNode.createActionNode(virtualHost, homeNode, "/competencesManagement", "manageCompetences",
 		"resources.SiadapResources", "link.siadap.compentencesManagement", UserGroup.getInstance());
+	
+	ActionNode.createActionNode(virtualHost, homeNode, "/siadapManagement", "showConfiguration",
+		"resources.SiadapResources", "link.siadap.showConfiguration", UserGroup.getInstance());
+	
+	ActionNode.createActionNode(virtualHost, homeNode, "/siadapPersonnelManagement", "start",
+		"resources.SiadapResources", "link.siadap.structureManagement", UserGroup.getInstance());
+	
 	return forwardToMuneConfiguration(request, virtualHost, node);
 
+	
     }
 
 }

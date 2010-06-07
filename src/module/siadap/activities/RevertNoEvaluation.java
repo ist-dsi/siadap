@@ -6,19 +6,18 @@ import module.workflow.activities.ActivityInformation;
 import module.workflow.activities.WorkflowActivity;
 import myorg.domain.User;
 
-public class ValidateEvaluation extends WorkflowActivity<SiadapProcess, ActivityInformation<SiadapProcess>> {
+public class RevertNoEvaluation extends WorkflowActivity<SiadapProcess, ActivityInformation<SiadapProcess>> {
 
     @Override
     public boolean isActive(SiadapProcess process, User user) {
 	Siadap siadap = process.getSiadap();
-
-	return siadap.getSiadapYearConfiguration().isPersonMemberOfCCA(user.getPerson()) && siadap.getHarmonizationDate() != null
-		&& siadap.getValidated() == null;
+	return siadap.isWithSkippedEvaluation() && siadap.getEvaluator().getPerson().getUser() == user
+		&& siadap.getValidated() == null && siadap.getEvaluationInterval().containsNow();
     }
 
     @Override
     protected void process(ActivityInformation<SiadapProcess> activityInformation) {
-	activityInformation.getProcess().getSiadap().setValidated(Boolean.TRUE);
+	activityInformation.getProcess().getSiadap().getEvaluationData().setNoEvaluationJustification(null);
     }
 
     @Override

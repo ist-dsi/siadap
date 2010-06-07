@@ -19,8 +19,6 @@ import module.siadap.domain.Siadap;
 import module.siadap.domain.SiadapYearConfiguration;
 import myorg.applicationTier.Authenticate.UserView;
 
-import oracle.jdbc.ttc7.v8Odscrarr;
-
 import org.apache.commons.collections.Predicate;
 import org.joda.time.LocalDate;
 
@@ -228,5 +226,38 @@ public class PersonSiadapWrapper extends PartyWrapper implements Serializable {
     public Boolean getHomologationDone() {
 	Siadap siadap = getSiadap();
 	return siadap != null ? siadap.isHomologated() : null;
+    }
+
+    public boolean isCCAMember() {
+	return getConfiguration().getCcaMembers().contains(getPerson());
+    }
+
+    public boolean isHomologationMember() {
+	return getConfiguration().getHomologationMembers().contains(getPerson());
+    }
+
+    public Set<Accountability> getAccountabilitiesHistory() {
+	Person person = getPerson();
+	Set<Accountability> history = new TreeSet<Accountability>(new Comparator<Accountability>() {
+
+	    @Override
+	    public int compare(Accountability o1, Accountability o2) {
+		int compareBegin = o1.getBeginDate().compareTo(o2.getBeginDate());
+		LocalDate endDate = o1.getEndDate();
+		LocalDate endDate2 = o2.getEndDate();
+		return compareBegin != 0 ? compareBegin : endDate != null && endDate2 != null ? o1.getEndDate().compareTo(
+			o2.getEndDate()) : endDate == null && endDate2 != null ? 1 : endDate2 == null && endDate != null ? -1
+			: o1.getExternalId().compareTo(o2.getExternalId());
+	    }
+
+	});
+	int year = getYear();
+	for (SiadapYearConfiguration configuration = SiadapYearConfiguration.getSiadapYearConfiguration(year); configuration != null; configuration = SiadapYearConfiguration
+		.getSiadapYearConfiguration(--year)) {
+	    history.addAll(person.getParentAccountabilities(configuration.getWorkingRelation(), configuration
+		    .getWorkingRelationWithNoQuota()));
+	}
+
+	return history;
     }
 }

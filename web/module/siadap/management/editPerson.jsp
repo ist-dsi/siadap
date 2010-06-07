@@ -4,6 +4,8 @@
 <%@ taglib uri="/WEB-INF/struts-logic.tld" prefix="logic"%>
 <%@ taglib uri="/WEB-INF/fenix-renderers.tld" prefix="fr"%>
 
+<h2><bean:message key="link.siadap.structureManagement" bundle="SIADAP_RESOURCES"/></h2>
+
 <bean:define id="personId" name="person" property="person.externalId"/>
 
 <p>
@@ -15,6 +17,7 @@
 			<fr:property name="subLayout" value="values"/>
 			<fr:property name="subSchema" value="view.UnitSiadapWrapper.name"/>
 		</fr:slot>
+		<fr:slot name="quotaAware" key="label.evaluationForQuotas"/> 
 		<fr:slot name="evaluator" layout="null-as-label" key="label.evaluator">
 			<fr:property name="subLayout" value="values"/>
 			<fr:property name="subSchema" value="view.PersonSiadapWrapper.name"/>
@@ -88,9 +91,6 @@
 	</fr:edit>
 	<html:submit styleClass="inputbutton"><bean:message key="renderers.form.submit.name" bundle="RENDERER_RESOURCES"/></html:submit>
 </fr:form>
-
-	
-	
 		
 	</div>
 </div>
@@ -180,3 +180,16 @@
 	</fr:layout>
 </fr:edit>
 </p>
+
+<strong> <bean:message key="label.history" bundle="SIADAP_RESOURCES"/>: </strong>
+ 
+<fr:view name="history">
+	<fr:schema type="module.organization.domain.Accountability" bundle="ORGANIZATION_RESOURCES">
+		<fr:slot name="beginDate" key="label.begin" />
+		<fr:slot name="endDate" key="label.end"/>
+		<fr:slot name="parent.partyName" key="label.unit"/>
+	</fr:schema>
+	<fr:layout name="tabular">
+		<fr:property name="classes" value="tstyle2"/>
+	</fr:layout>
+</fr:view>

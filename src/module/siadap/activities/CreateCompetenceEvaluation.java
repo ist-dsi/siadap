@@ -2,6 +2,7 @@ package module.siadap.activities;
 
 import module.siadap.domain.Competence;
 import module.siadap.domain.CompetenceEvaluation;
+import module.siadap.domain.Siadap;
 import module.siadap.domain.SiadapProcess;
 import module.workflow.activities.ActivityInformation;
 import module.workflow.activities.WorkflowActivity;
@@ -11,7 +12,10 @@ public class CreateCompetenceEvaluation extends WorkflowActivity<SiadapProcess, 
 
     @Override
     public boolean isActive(SiadapProcess process, User user) {
-	return process.getSiadap().getEvaluator().getPerson().getUser() == user && process.getSiadap().getCompetenceEvaluations().isEmpty();
+	Siadap siadap = process.getSiadap();
+	return !siadap.isObjectiveSpecificationIntervalFinished()
+		&& siadap.getEvaluator().getPerson().getUser() == user
+		&& siadap.getCompetenceEvaluations().isEmpty();
     }
 
     @Override

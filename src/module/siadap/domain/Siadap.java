@@ -12,6 +12,7 @@ import module.siadap.domain.scoring.SiadapGlobalEvaluation;
 import module.siadap.domain.wrappers.PersonSiadapWrapper;
 
 import org.apache.commons.collections.Predicate;
+import org.apache.commons.lang.StringUtils;
 import org.joda.time.Interval;
 import org.joda.time.LocalDate;
 
@@ -218,12 +219,23 @@ public class Siadap extends Siadap_Base {
 	return new Interval(begin.toDateMidnight(), end.toDateMidnight());
     }
 
+    public Interval getObjectiveSpecificationInterval() {
+	SiadapYearConfiguration configuration = getSiadapYearConfiguration();
+	LocalDate begin = configuration.getObjectiveSpecificationBegin();
+	LocalDate end = configuration.getObjectiveSpecificationEnd();
+	return new Interval(begin.toDateMidnight(), end.toDateMidnight());
+    }
+
     public boolean isAutoEvaluationIntervalFinished() {
 	return getAutoEvaluationInterval().isBeforeNow();
     }
 
-    public boolean isEvaluationIntevarlFinished() {
+    public boolean isEvaluationIntervalFinished() {
 	return getEvaluationInterval().isBeforeNow();
+    }
+
+    public boolean isObjectiveSpecificationIntervalFinished() {
+	return getObjectiveSpecificationInterval().isBeforeNow();
     }
 
     @Service
@@ -245,5 +257,10 @@ public class Siadap extends Siadap_Base {
     public boolean isSuggestedForExcellencyAward() {
 	SiadapEvaluation evaluationData = getEvaluationData();
 	return evaluationData != null && evaluationData.getExcellencyAwardRecognized() == Boolean.TRUE;
+    }
+
+    public boolean isWithSkippedEvaluation() {
+	SiadapEvaluation evaluationData = getEvaluationData();
+	return evaluationData != null && !StringUtils.isEmpty(evaluationData.getNoEvaluationJustification());
     }
 }

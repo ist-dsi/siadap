@@ -49,8 +49,63 @@
 	</fr:view>
 </p>
 
-<strong><bean:message key="label.overalEvaluation" bundle="SIADAP_RESOURCES"/>:</strong>
-<p>
-	<bean:define id="siadap" name="process" property="siadap" toScope="request"/>
-	<jsp:include page="snips/globalEvaluationSnip.jsp" flush="true"/>
-</p>
+<logic:equal name="process" property="siadap.withSkippedEvaluation" value="false">
+	<strong><bean:message key="label.overalEvaluation" bundle="SIADAP_RESOURCES"/>:</strong>
+	<p>
+		<bean:define id="siadap" name="process" property="siadap" toScope="request"/>
+		<jsp:include page="snips/globalEvaluationSnip.jsp" flush="true"/>
+	</p>
+</logic:equal>
+
+<logic:equal name="process" property="siadap.evaluationDone" value="true">
+
+<logic:equal name="process" property="siadap.withSkippedEvaluation" value="false">
+
+	
+	<p>
+		<strong>
+			<bean:message key="label.evaluationJustification" bundle="SIADAP_RESOURCES"/>:
+		</strong>
+		<bean:define id="justification" name="process" property="siadap.evaluationData.evaluationJustification"/>
+		<p>
+			<logic:notEmpty name="justification">
+				<fr:view name="process" property="siadap.evaluationData.evaluationJustification"/>
+			</logic:notEmpty>
+			<logic:empty name="justification">
+				<em><bean:message key="label.noJustification" bundle="SIADAP_RESOURCES"/></em>
+			</logic:empty>
+		</p>
+	</p>
+
+	<logic:notEmpty name="process" property="siadap.evaluationData.personalDevelopment">
+		<p>
+			<strong>
+				<bean:message key="label.personalDevelopment" bundle="SIADAP_RESOURCES"/>:
+			</strong>
+			<p>
+			<fr:view name="process" property="siadap.evaluationData.personalDevelopment"/>
+			</p>
+		</p>
+	</logic:notEmpty>
+	
+	
+	<logic:notEmpty name="process" property="siadap.evaluationData.trainningNeeds">
+		<strong>
+			<bean:message key="label.trainningNeeds" bundle="SIADAP_RESOURCES"/>:
+		</strong>
+		<p>
+			<fr:view name="process" property="siadap.evaluationData.trainningNeeds"/>
+		</p>
+	</logic:notEmpty>
+	
+</logic:equal>
+</logic:equal>
+
+<logic:equal name="process" property="siadap.withSkippedEvaluation" value="true">
+	<p>
+		<strong><bean:message key="label.noEvaluationJustification" bundle="SIADAP_RESOURCES"/>:</strong>
+		<p>
+			<fr:view name="process" property="siadap.evaluationData.noEvaluationJustification"/>
+		</p>
+	</p>
+</logic:equal>

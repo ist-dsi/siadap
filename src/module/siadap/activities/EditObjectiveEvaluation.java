@@ -1,6 +1,6 @@
 package module.siadap.activities;
 
-import pt.ist.expenditureTrackingSystem.domain.acquisitions.AcquisitionProcessStateType;
+import module.siadap.domain.Siadap;
 import module.siadap.domain.SiadapProcess;
 import module.workflow.activities.ActivityInformation;
 import module.workflow.activities.WorkflowActivity;
@@ -10,7 +10,9 @@ public class EditObjectiveEvaluation extends WorkflowActivity<SiadapProcess, Edi
 
     @Override
     public boolean isActive(SiadapProcess process, User user) {
-	return !process.hasBeenExecuted(AutoEvaluation.class) && process.getSiadap().getEvaluator().getPerson().getUser() == user;
+	Siadap siadap = process.getSiadap();
+	return !siadap.isObjectiveSpecificationIntervalFinished() && !process.hasBeenExecuted(AutoEvaluation.class)
+		&& siadap.getEvaluator().getPerson().getUser() == user;
     }
 
     @Override

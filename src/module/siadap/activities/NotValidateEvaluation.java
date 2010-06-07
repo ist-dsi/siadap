@@ -11,8 +11,7 @@ public class NotValidateEvaluation extends WorkflowActivity<SiadapProcess, Activ
     @Override
     public boolean isActive(SiadapProcess process, User user) {
 	Siadap siadap = process.getSiadap();
-	// This has to be the CCA though
-	return siadap.getEvaluator().getPerson().getUser() == user && siadap.getHarmonizationDate() != null
+	return siadap.getSiadapYearConfiguration().isPersonMemberOfCCA(user.getPerson()) && siadap.getHarmonizationDate() != null
 		&& siadap.getValidated() == null;
     }
 

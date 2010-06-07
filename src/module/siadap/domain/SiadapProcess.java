@@ -13,8 +13,10 @@ import module.siadap.activities.CreateObjectiveEvaluation;
 import module.siadap.activities.EditObjectiveEvaluation;
 import module.siadap.activities.Evaluation;
 import module.siadap.activities.Homologate;
+import module.siadap.activities.NoEvaluation;
 import module.siadap.activities.NotValidateEvaluation;
 import module.siadap.activities.RecogniseExcellencyAward;
+import module.siadap.activities.RevertNoEvaluation;
 import module.siadap.activities.SubmitForObjectivesAcknowledge;
 import module.siadap.activities.ValidateEvaluation;
 import module.siadap.domain.wrappers.PersonSiadapWrapper;
@@ -48,6 +50,8 @@ public class SiadapProcess extends SiadapProcess_Base {
 	activities.add(new SubmitForObjectivesAcknowledge());
 	activities.add(new RecogniseExcellencyAward());
 	activities.add(new NotValidateEvaluation());
+	activities.add(new NoEvaluation());
+	activities.add(new RevertNoEvaluation());
     }
 
     public SiadapProcess(Integer year, Person evaluated) {
