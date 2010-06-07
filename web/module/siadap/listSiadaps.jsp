@@ -4,18 +4,6 @@
 <%@ taglib uri="/WEB-INF/struts-logic.tld" prefix="logic"%>
 <%@ taglib uri="/WEB-INF/fenix-renderers.tld" prefix="fr"%>
 
-<html:link 
-	page="/siadapManagement.do?method=manageHarmonizationUnitsForMode&mode=processValidation">
-	CCA splash
-</html:link>
-
-| 
-
-<html:link 
-	page="/siadapManagement.do?method=manageHarmonizationUnitsForMode&mode=homologationDone">
-	Homologation splash
-</html:link>
-
 <h2> SIADAP </h2>
 
 <p>

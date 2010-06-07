@@ -29,18 +29,26 @@ public class InterfaceCreationAction extends BaseAction {
 	final Node homeNode = ActionNode.createActionNode(virtualHost, node, "/siadapManagement", "manageSiadap",
 		"resources.SiadapResources", "link.siadapManagement", AnyoneGroup.getInstance());
 
+	ActionNode.createActionNode(virtualHost, homeNode, "/siadapManagement", "manageSiadap",
+		"resources.SiadapResources", "link.siadap.start", UserGroup.getInstance());
+
 	ActionNode.createActionNode(virtualHost, homeNode, "/competencesManagement", "manageCompetences",
 		"resources.SiadapResources", "link.siadap.compentencesManagement", UserGroup.getInstance());
-	
-	ActionNode.createActionNode(virtualHost, homeNode, "/siadapManagement", "showConfiguration",
-		"resources.SiadapResources", "link.siadap.showConfiguration", UserGroup.getInstance());
-	
-	ActionNode.createActionNode(virtualHost, homeNode, "/siadapPersonnelManagement", "start",
-		"resources.SiadapResources", "link.siadap.structureManagement", UserGroup.getInstance());
-	
+
+	ActionNode.createActionNode(virtualHost, homeNode, "/siadapManagement", "showConfiguration", "resources.SiadapResources",
+		"link.siadap.showConfiguration", UserGroup.getInstance());
+
+	ActionNode.createActionNode(virtualHost, homeNode, "/siadapPersonnelManagement", "start", "resources.SiadapResources",
+		"link.siadap.structureManagement", UserGroup.getInstance());
+
+	ActionNode.createActionNode(virtualHost, homeNode, "/siadapManagement", "manageHarmonizationUnitsForMode&mode=processValidation", "resources.SiadapResources",
+		"link.siadap.validationProcedure", UserGroup.getInstance());
+
+	ActionNode.createActionNode(virtualHost, homeNode, "/siadapManagement", "manageHarmonizationUnitsForMode&mode=homologationDone", "resources.SiadapResources",
+		"link.siadap.homologationProcedure", UserGroup.getInstance());
+
 	return forwardToMuneConfiguration(request, virtualHost, node);
 
-	
     }
 
 }

@@ -18,8 +18,7 @@
 		<fr:slot name="evaluator.name" key="label.evaluator" />
 		<fr:slot name="evaluator.person.user.username"
 			key="label.login.username" bundle="MYORG_RESOURCES" />
-		<fr:slot name="<%=slot.toString()%>" layout="null-as-label"
-			key="label.validated">
+		<fr:slot name="<%=slot.toString()%>" layout="null-as-label">
 			<fr:property name="subLayout" value="boolean-icon" />
 		</fr:slot>
 		<fr:slot name="totalEvaluationScoring" layout="null-as-label"
