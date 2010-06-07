@@ -15,7 +15,6 @@ import module.siadap.activities.Evaluation;
 import module.siadap.activities.Homologate;
 import module.siadap.activities.NoEvaluation;
 import module.siadap.activities.NotValidateEvaluation;
-import module.siadap.activities.RecogniseExcellencyAward;
 import module.siadap.activities.RevertNoEvaluation;
 import module.siadap.activities.SubmitForObjectivesAcknowledge;
 import module.siadap.activities.ValidateEvaluation;
@@ -48,7 +47,6 @@ public class SiadapProcess extends SiadapProcess_Base {
 	activities.add(new AcknowledgeHomologation());
 	activities.add(new EditObjectiveEvaluation());
 	activities.add(new SubmitForObjectivesAcknowledge());
-	activities.add(new RecogniseExcellencyAward());
 	activities.add(new NotValidateEvaluation());
 	activities.add(new NoEvaluation());
 	activities.add(new RevertNoEvaluation());

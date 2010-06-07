@@ -256,7 +256,7 @@ public class Siadap extends Siadap_Base {
 
     public boolean isSuggestedForExcellencyAward() {
 	SiadapEvaluation evaluationData = getEvaluationData();
-	return evaluationData != null && evaluationData.getExcellencyAwardRecognized() == Boolean.TRUE;
+	return evaluationData != null && evaluationData.getExcellencyAward() == Boolean.TRUE;
     }
 
     public boolean isWithSkippedEvaluation() {

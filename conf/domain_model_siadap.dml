@@ -40,7 +40,6 @@ class SiadapEvaluation {
 	String evaluationJustification;	
 	String noEvaluationJustification;
 	Boolean excellencyAward;
-	Boolean excellencyAwardRecognized;
 	String personalDevelopment;
 	String trainningNeeds;
 }
