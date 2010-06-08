@@ -97,9 +97,11 @@ public class SiadapProcess extends SiadapProcess_Base {
 
     @Override
     public boolean isAccessible(User user) {
-	Person accessor = user.getPerson();
-	return accessor == getSiadap().getEvaluated() || accessor == getSiadap().getEvaluator().getPerson()
-		|| isResponsibleForHarmonization(accessor, getSiadap().getEvaluated());
+	Person person = user.getPerson();
+	SiadapYearConfiguration configuration = getSiadap().getSiadapYearConfiguration();
+	return person == getSiadap().getEvaluated() || person == getSiadap().getEvaluator().getPerson()
+		|| isResponsibleForHarmonization(person, getSiadap().getEvaluated()) || configuration.isPersonMemberOfCCA(person)
+		|| configuration.isPersonResponsibleForHomologation(person);
     }
 
     private boolean isResponsibleForHarmonization(Person accessor, Person evaluated) {
