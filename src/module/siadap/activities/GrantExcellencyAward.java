@@ -11,7 +11,9 @@ public class GrantExcellencyAward extends WorkflowActivity<SiadapProcess, Activi
     @Override
     public boolean isActive(SiadapProcess process, User user) {
 	Siadap siadap = process.getSiadap();
-	return siadap.getSiadapYearConfiguration().isPersonMemberOfCCA(user.getPerson()) && siadap.isEvaluationDone();
+	return siadap.getSiadapYearConfiguration().isPersonMemberOfCCA(user.getPerson())
+		&& Boolean.TRUE.equals(siadap.getValidated())
+		&& !Boolean.TRUE.equals(siadap.getEvaluationData().getExcellencyAward());
     }
 
     @Override
