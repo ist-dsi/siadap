@@ -1,7 +1,10 @@
 package module.siadap.activities;
 
+import module.organization.domain.Person;
 import module.siadap.domain.Siadap;
 import module.siadap.domain.SiadapProcess;
+import module.siadap.domain.wrappers.PersonSiadapWrapper;
+import module.siadap.domain.wrappers.UnitSiadapWrapper;
 import module.workflow.activities.ActivityInformation;
 import module.workflow.activities.WorkflowActivity;
 import myorg.domain.User;
@@ -19,6 +22,19 @@ public class GrantExcellencyAward extends WorkflowActivity<SiadapProcess, Activi
     @Override
     public boolean isUserAwarenessNeeded(SiadapProcess process) {
 	return false;
+    }
+
+    @Override
+    public boolean isConfirmationNeeded(SiadapProcess process) {
+	Siadap siadap = process.getSiadap();
+	int year = siadap.getSiadapYearConfiguration().getYear();
+	Person person = siadap.getEvaluated();
+	PersonSiadapWrapper wrapper = new PersonSiadapWrapper(person, year);
+	UnitSiadapWrapper workingUnit = new UnitSiadapWrapper(wrapper.getWorkingUnit().getHarmonizationUnit(), year);
+	int usedQuota = workingUnit.getCurrentUsedExcellencyGradeQuota();
+	int totalQuota = workingUnit.getExcellencyGradeQuota();
+	return usedQuota + 1 > totalQuota;
+
     }
 
     @Override
