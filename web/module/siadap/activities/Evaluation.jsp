@@ -166,10 +166,11 @@
 		var competences = Math.round(competences / i * 1000) / 1000
 
 		objectives = objectives * objectivesPonderation;
-		objectives = Math.round(objectives * 1000) / 1000
+		objectives = Math.round(objectives * 1000) / 1000;
 		competences = competences * competencesPonderation;
-		competences = Math.round(competences * 1000) / 1000
+		competences = Math.round(competences * 1000) / 1000;
 		var total = objectives + competences;
+		total = Math.round(total * 1000) / 1000;
 		
 		var text = formatString(message, [total, "<%= personName.toString() %>", getScoreLabel(total)]);
 
