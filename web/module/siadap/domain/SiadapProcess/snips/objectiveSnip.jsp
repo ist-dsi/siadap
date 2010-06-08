@@ -10,7 +10,27 @@
 
 <bean:define id="objectiveOID" name="objectiveEvaluation" property="externalId" type="java.lang.String"/>
 
-<div>
+<bean:define id="classToApply" value=""/>
+
+<logic:equal name="process" property="currentUserEvaluated" value="true">
+	<logic:notPresent name="objectiveEvaluation" property="acknowledgeDate"> 
+		<bean:define id="classToApply" value="highlightBox"/>
+	</logic:notPresent>
+</logic:equal>
+
+<div class="<%= classToApply %>"/>
+	<logic:notPresent name="objectiveEvaluation" property="acknowledgeDate"> 
+		<logic:equal name="process" property="currentUserEvaluated" value="true">
+			<logic:notEmpty name="objectiveEvaluation" property="justificationForModification">
+				<p>
+					<strong>
+						<bean:message key="label.justificationForModification" bundle="SIADAP_RESOURCES"/>:
+					</strong> 
+					<fr:view name="objectiveEvaluation" property="justificationForModification"/>
+				</p>
+			</logic:notEmpty>
+		</logic:equal>
+	</logic:notPresent>
 <table class="tstyle2 width100pc">
 	<wf:isActive processName="process" activityName="EditObjectiveEvaluation" scope="request">
 	<tr>
