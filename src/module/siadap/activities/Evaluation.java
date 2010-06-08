@@ -33,7 +33,8 @@ public class Evaluation extends WorkflowActivity<SiadapProcess, EvaluationActivi
 
     @Override
     public boolean isConfirmationNeeded(SiadapProcess process) {
-	return process.getSiadap().isEvaluatedWithKnowledgeOfObjectives();
+	Siadap siadap = process.getSiadap();
+	return !siadap.isAutoEvaliationDone() && !siadap.isAutoEvaluationIntervalFinished();
     }
 
     @Override
