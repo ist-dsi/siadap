@@ -66,12 +66,10 @@
 		<strong>
 			<bean:message key="label.evaluationJustification" bundle="SIADAP_RESOURCES"/>:
 		</strong>
-		<bean:define id="justification" name="process" property="siadap.evaluationData.evaluationJustification"/>
-		<p>
-			<logic:notEmpty name="justification">
+			<logic:notEmpty name="process" property="siadap.evaluationData.evaluationJustification">
 				<fr:view name="process" property="siadap.evaluationData.evaluationJustification"/>
 			</logic:notEmpty>
-			<logic:empty name="justification">
+			<logic:empty name="process" property="siadap.evaluationData.evaluationJustification">
 				<em><bean:message key="label.noJustification" bundle="SIADAP_RESOURCES"/></em>
 			</logic:empty>
 		</p>
