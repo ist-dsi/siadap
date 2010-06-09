@@ -8,8 +8,12 @@ import java.util.List;
 import module.organization.domain.Person;
 import module.siadap.activities.AutoEvaluation;
 import module.siadap.activities.Evaluation;
+import module.siadap.domain.scoring.IScoring;
 import module.siadap.domain.scoring.SiadapGlobalEvaluation;
 import module.siadap.domain.wrappers.PersonSiadapWrapper;
+import module.workflow.activities.ActivityException;
+import myorg.domain.exceptions.DomainException;
+import myorg.util.BundleUtil;
 
 import org.apache.commons.collections.Predicate;
 import org.apache.commons.lang.StringUtils;
@@ -80,7 +84,12 @@ public class Siadap extends Siadap_Base {
 
 	BigDecimal result = new BigDecimal(0);
 	for (SiadapEvaluationItem evaluation : evaluations) {
-	    result = result.add(new BigDecimal(evaluation.getItemEvaluation().getPoints()));
+	    IScoring itemEvaluation = evaluation.getItemEvaluation();
+	    if (itemEvaluation == null) {
+		throw new DomainException("error.siadapEvaluation.mustFillAllItems", DomainException
+			.getResourceFor("resources/SiadapResources"));
+	    }
+	    result = result.add(new BigDecimal(itemEvaluation.getPoints()));
 	}
 
 	return result.divide(new BigDecimal(evaluations.size()), Siadap.PRECISION, Siadap.ROUND_MODE);

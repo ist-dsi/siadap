@@ -2,10 +2,14 @@ package module.siadap.activities;
 
 import module.siadap.domain.Siadap;
 import module.siadap.domain.SiadapEvaluation;
+import module.siadap.domain.SiadapEvaluationItem;
 import module.siadap.domain.SiadapProcess;
+import module.workflow.activities.ActivityException;
 import module.workflow.activities.ActivityInformation;
 import module.workflow.activities.WorkflowActivity;
 import myorg.domain.User;
+import myorg.domain.exceptions.DomainException;
+import myorg.util.BundleUtil;
 
 public class Evaluation extends WorkflowActivity<SiadapProcess, EvaluationActivityInformation> {
 
@@ -19,16 +23,22 @@ public class Evaluation extends WorkflowActivity<SiadapProcess, EvaluationActivi
 
     @Override
     protected void process(EvaluationActivityInformation activityInformation) {
-	SiadapEvaluation evaluationData = activityInformation.getProcess().getSiadap().getEvaluationData();
+	Siadap siadap = activityInformation.getProcess().getSiadap();
+	SiadapEvaluation evaluationData = siadap.getEvaluationData();
 	if (evaluationData == null) {
-	    new SiadapEvaluation(activityInformation.getProcess().getSiadap(), activityInformation.getEvaluationJustification(),
-		    activityInformation.getPersonalDevelopment(), activityInformation.getTrainningNeeds(), activityInformation
-			    .getExcellencyAward());
+	    new SiadapEvaluation(siadap, activityInformation.getEvaluationJustification(), activityInformation
+		    .getPersonalDevelopment(), activityInformation.getTrainningNeeds(), activityInformation.getExcellencyAward());
 	} else {
 	    evaluationData.edit(activityInformation.getEvaluationJustification(), activityInformation.getPersonalDevelopment(),
 		    activityInformation.getTrainningNeeds(), activityInformation.getExcellencyAward());
 	}
 
+	for (SiadapEvaluationItem item : siadap.getCurrentEvaluationItems()) {
+	    if (item.getItemEvaluation() == null) {
+		throw new ActivityException(BundleUtil.getStringFromResourceBundle(getUsedBundle(),
+			"error.siadapEvaluation.mustFillAllItems"), getLocalizedName());
+	    }
+	}
     }
 
     @Override

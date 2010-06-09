@@ -1,10 +1,7 @@
 package module.siadap.activities;
 
-import org.apache.commons.lang.StringUtils;
-
 import module.siadap.domain.SiadapEvaluation;
 import module.siadap.domain.SiadapProcess;
-import module.siadap.domain.scoring.SiadapGlobalEvaluation;
 import module.workflow.activities.ActivityInformation;
 import module.workflow.activities.WorkflowActivity;
 import module.workflow.domain.WorkflowProcess;
@@ -78,11 +75,10 @@ public class EvaluationActivityInformation extends ActivityInformation<SiadapPro
 
     @Override
     public boolean hasAllneededInfo() {
-	return isForwardedFromInput()
-		&& (getProcess().getSiadap().getQualitativeEvaluation() != SiadapGlobalEvaluation.LOW || (!StringUtils
-			.isEmpty(getPersonalDevelopment())
-			&& !StringUtils.isEmpty(getTrainningNeeds()) && !StringUtils.isEmpty(getEvaluationJustification())))
-		&& (getProcess().getSiadap().getQualitativeEvaluation() != SiadapGlobalEvaluation.HIGH || !StringUtils
-			.isEmpty(getEvaluationJustification()));
+	/*
+	 * The verifications from the code are done in the
+	 * module.siadap.domain.SiadapEvaluation.edit(...) method
+	 */
+	return isForwardedFromInput();
     }
 }

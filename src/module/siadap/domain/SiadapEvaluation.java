@@ -20,10 +20,16 @@ public class SiadapEvaluation extends SiadapEvaluation_Base {
     }
 
     public void edit(String evaluationJustification, String personalDevelopment, String trainningNeeds, Boolean excellencyAward) {
-	if (getSiadap().isInadequate() && (StringUtils.isEmpty(personalDevelopment) || StringUtils.isEmpty(trainningNeeds))) {
+	Siadap siadap = getSiadap();
+	if (siadap.isInadequate() && (StringUtils.isEmpty(personalDevelopment) || StringUtils.isEmpty(trainningNeeds))) {
 
 	    throw new DomainException("error.siadapEvaluation.mustFillDataForBadEvaluation", DomainException
 		    .getResourceFor("resources/SiadapResources"));
+	}
+	if ((siadap.isInadequate() || siadap.hasRelevantEvaluation()) && StringUtils.isEmpty(evaluationJustification)) {
+	    throw new DomainException("error.siadapEvaluation.mustFillEvaluationJustification", DomainException
+		    .getResourceFor("resources/SiadapResources"));
+
 	}
 	setEvaluationJustification(evaluationJustification);
 	setPersonalDevelopment(personalDevelopment);
