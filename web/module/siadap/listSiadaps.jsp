@@ -9,6 +9,7 @@
 <p>
 
 <strong> <bean:message key="label.myData" bundle="SIADAP_RESOURCES"/> </strong>
+<logic:present name="person">
 <fr:view name="person">
 	<fr:schema type="module.siadap.domain.wrappers.PersonSiadapWrapper" bundle="SIADAP_RESOURCES">
 		<fr:slot name="name" key="label.name " bundle="ORGANIZATION_RESOURCES"/>
@@ -27,7 +28,8 @@
 	</fr:layout>
 </fr:view>
 </p>
- 
+</logic:present>
+
 <div class="infobox">
 	<bean:message key="label.data.owners.warning" bundle="SIADAP_RESOURCES"/>
 </div>

@@ -59,8 +59,10 @@ public class SiadapManagement extends ContextBaseAction {
 	    final HttpServletResponse response) {
 
 	int year = new LocalDate().getYear();
-	request.setAttribute("person", new PersonSiadapWrapper(UserView.getCurrentUser().getPerson(), year));
-	request.setAttribute("siadaps", WorkflowProcess.getAllProcesses(SiadapProcess.class));
+	if (SiadapYearConfiguration.getSiadapYearConfiguration(year) != null) {
+	    request.setAttribute("person", new PersonSiadapWrapper(UserView.getCurrentUser().getPerson(), year));
+	    request.setAttribute("siadaps", WorkflowProcess.getAllProcesses(SiadapProcess.class));
+	}
 	return forward(request, "/module/siadap/listSiadaps.jsp");
     }
 
