@@ -36,9 +36,12 @@ public class SiadapManagement extends ContextBaseAction {
 	    final HttpServletRequest request, final HttpServletResponse response) {
 
 	Person evaluator = UserView.getCurrentUser().getPerson();
-	PersonSiadapWrapper wrapper = new PersonSiadapWrapper(evaluator, new LocalDate().getYear());
+	int year = new LocalDate().getYear();
 
-	request.setAttribute("peopleToEvaluate", wrapper.getPeopleToEvaluate());
+	if (SiadapYearConfiguration.getSiadapYearConfiguration(year) != null) {
+	    PersonSiadapWrapper wrapper = new PersonSiadapWrapper(evaluator, year);
+	    request.setAttribute("peopleToEvaluate", wrapper.getPeopleToEvaluate());
+	}
 
 	return forward(request, "/module/siadap/prepareCreateSiadap.jsp");
     }
