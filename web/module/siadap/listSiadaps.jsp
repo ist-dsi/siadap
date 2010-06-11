@@ -28,7 +28,6 @@
 	</fr:layout>
 </fr:view>
 </p>
-</logic:present>
 
 <div class="infobox">
 	<bean:message key="label.data.owners.warning" bundle="SIADAP_RESOURCES"/>
@@ -105,3 +104,4 @@
 		</fr:view>
 	</p>
 </logic:notEmpty>
+</logic:present>
