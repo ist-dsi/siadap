@@ -22,6 +22,7 @@
 <strong><bean:message key="label.results"
 	bundle="SIADAP_RESOURCES" />:</strong>
 
+
 <logic:iterate id="objective" name="process"
 	property="siadap.objectiveEvaluations" indexId="i">
 	<bean:define id="index" value="<%=String.valueOf(i + 1)%>"
@@ -107,3 +108,4 @@
 		</p>
 	</p>
 </logic:equal>
+

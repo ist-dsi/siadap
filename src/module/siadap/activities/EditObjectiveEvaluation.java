@@ -17,9 +17,8 @@ public class EditObjectiveEvaluation extends WorkflowActivity<SiadapProcess, Edi
 
     @Override
     protected void process(EditObjectiveEvaluationActivityInformation activityInformation) {
-	activityInformation.getEvaluation().edit(activityInformation.getObjective(),
-		activityInformation.getMeasurementIndicator(), activityInformation.getSuperationCriteria(),
-		activityInformation.getJustification(), activityInformation.getType());
+	activityInformation.getEvaluation().edit(activityInformation.getObjective(), activityInformation.getJustification(),
+		activityInformation.getType());
     }
 
     @Override
@@ -40,5 +39,10 @@ public class EditObjectiveEvaluation extends WorkflowActivity<SiadapProcess, Edi
     @Override
     protected String[] getArgumentsDescription(EditObjectiveEvaluationActivityInformation activityInformation) {
 	return new String[] { activityInformation.getObjective(), activityInformation.getJustification() };
+    }
+    
+    @Override
+    public boolean isDefaultInputInterfaceUsed() {
+	return false;
     }
 }

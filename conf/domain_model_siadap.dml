@@ -66,14 +66,18 @@ class SiadapEvaluationItem {
 
 class ObjectiveEvaluation extends SiadapEvaluationItem {
 	String objective;	
-	String measurementIndicator;
-	String superationCriteria;
 	String justificationForModification;
 	Integer fromVersion;
 	Integer untilVersion;
+	SiadapEvaluationObjectivesType type;
+}
+
+class ObjectiveEvaluationIndicator {
+	String measurementIndicator;
+	String superationCriteria;
+	BigDecimal ponderationFactor;
 	SiadapObjectivesEvaluation autoEvaluation;
 	SiadapObjectivesEvaluation evaluation;
-	SiadapEvaluationObjectivesType type;
 }
 
 class CompetenceEvaluation extends SiadapEvaluationItem {
@@ -253,3 +257,18 @@ relation HomologationMembers {
 		multiplicity *;
 	}
 }
+
+relation ObjectiveEvaluationObjectiveEvaluationIndicator {
+	ObjectiveEvaluation playsRole objectiveEvaluation;
+	ObjectiveEvaluationIndicator playsRole indicators {
+		multiplicity *;
+	}
+}
+
+relation ObjectiveEvaluationIndicatorSiadapRootModule {
+	SiadapRootModule playsRole siadapRootModule;
+	ObjectiveEvaluationIndicator playsRole indicators {
+		multiplicity *;
+	}
+}	
+

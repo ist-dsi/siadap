@@ -32,20 +32,53 @@
 		</logic:equal>
 	</logic:notPresent>
 <table class="tstyle2 width100pc">
-	<wf:isActive processName="process" activityName="EditObjectiveEvaluation" scope="request">
+
 	<tr>
-		<td colspan="5">
-				<wf:activityLink id="<%= "edit-" + objectiveOID %>" processName="process" activityName="EditObjectiveEvaluation" scope="request" paramName0="evaluation" paramValue0="<%= objectiveOID %>">
-						<bean:message key="link.edit" bundle="MYORG_RESOURCES"/>
-				</wf:activityLink>			
+		<td colspan="5" class="aleft">
+				<strong><bean:message key="label.type" bundle="SIADAP_RESOURCES"/></strong>: <fr:view name="objectiveEvaluation" property="type" type="module.siadap.domain.SiadapEvaluationObjectivesType"/>
+				<wf:isActive processName="process" activityName="EditObjectiveEvaluation" scope="request">		
+					<span>
+					<wf:activityLink id="<%= "edit-" + objectiveOID %>" processName="process" activityName="EditObjectiveEvaluation" scope="request" paramName0="evaluation" paramValue0="<%= objectiveOID %>">
+							<bean:message key="link.edit" bundle="MYORG_RESOURCES"/>
+					</wf:activityLink>	
+					</span>
+				</wf:isActive>			
 		</td>
 	</tr>
-	</wf:isActive>	
+	
+	<bean:size id="indicatorsCount" name="objectiveEvaluation" property="indicators"/>
 	
 	<tr>
-		<th rowspan="4" valign="middle" style="width: 3%">
-			<fr:view name="index"/>
+	<th rowspan="<%= (indicatorsCount * 2) + 1 %>" valign="middle" style="width: 3%">
+		<fr:view name="index"/>
+	</th>
+	<th> <bean:message key="label.objective" bundle="SIADAP_RESOURCES"/> </th>
+	<td class="aleft" colspan="3"> <fr:view name="objectiveEvaluation" property="objective"/></td>
+	</tr>
+	<logic:iterate id="indicator" name="objectiveEvaluation" property="indicators">
+		<tr>
+		<th> <bean:message key="label.measurementIndicator" bundle="SIADAP_RESOURCES"/> </th>
+		<th> <bean:message key="label.superationCriteria" bundle="SIADAP_RESOURCES"/> </th>
+		<th style="width: 15%">
+			<strong><bean:message key="label.autoEvaluation" bundle="SIADAP_RESOURCES"/></strong>
 		</th>
+		<th  style="width: 15%"> 
+		<strong>	<bean:message key="label.evaluation" bundle="SIADAP_RESOURCES"/></strong>
+		</th>
+		</tr>
+		<tr>
+			<td class="aleft"> <fr:view name="indicator" property="measurementIndicator"/>	</td>
+			<td class="aleft"> <fr:view name="indicator" property="superationCriteria"/>	</td>
+			<td valign="middle">
+				<fr:view name="indicator" property="autoEvaluation" type="module.siadap.domain.scoring.SiadapObjectivesEvaluation"/>
+			</td>
+			<td valign="middle">
+				<fr:view name="indicator" property="evaluation" type="module.siadap.domain.scoring.SiadapObjectivesEvaluation"/>
+			</td> 
+		</tr>
+	</logic:iterate>
+	<%-- 
+	<tr>
 		<th style="width: 10%"> <bean:message key="label.objective" bundle="SIADAP_RESOURCES"/> </th>
 		<td style="width: 57%" class="aleft"> <fr:view name="objectiveEvaluation" property="objective"/>	</td>
 		<th style="width: 15%">
@@ -73,5 +106,8 @@
 		<th> <bean:message key="label.type" bundle="SIADAP_RESOURCES"/> </th>
 		<td class="aleft"> <fr:view name="objectiveEvaluation" property="type" type="module.siadap.domain.SiadapEvaluationObjectivesType"/>	</td>
 	</tr>
+	--%>
+	
+	
 </table>
 </div>

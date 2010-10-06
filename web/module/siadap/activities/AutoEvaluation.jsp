@@ -19,9 +19,17 @@
 			property="process.siadap.objectiveEvaluations"
 			type="module.siadap.domain.ObjectiveEvaluation">
 			<tr>
-				<th><fr:view name="evaluation" property="objective" /></th>
-				<td><fr:edit name="evaluation" slot="autoEvaluation" /></td>
+				<th colspan="2"><fr:view name="evaluation" property="objective" /></th>
 			</tr>
+			<logic:iterate id="indicator" name="evaluation" property="indicators">
+				<tr>
+				<th>
+					<fr:view name="indicator" property="measurementIndicator"/>
+				</th>	
+				<td><fr:edit name="indicator" slot="autoEvaluation" /></td>
+				</tr>
+			</logic:iterate>
+			
 		</logic:iterate>
 	</table>
 

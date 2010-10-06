@@ -28,11 +28,13 @@ import module.workflow.domain.WorkflowProcess;
 import myorg.applicationTier.Authenticate.UserView;
 import myorg.domain.User;
 import myorg.domain.exceptions.DomainException;
+import myorg.util.ClassNameBundle;
 
 import org.joda.time.LocalDate;
 
 import pt.ist.fenixWebFramework.services.Service;
 
+@ClassNameBundle(bundle = "resources/SiadapResources", key = "label.process.siadap")
 public class SiadapProcess extends SiadapProcess_Base {
 
     private static List<WorkflowActivity<SiadapProcess, ? extends ActivityInformation<SiadapProcess>>> activities = new ArrayList<WorkflowActivity<SiadapProcess, ? extends ActivityInformation<SiadapProcess>>>();
@@ -127,5 +129,10 @@ public class SiadapProcess extends SiadapProcess_Base {
 
     public boolean isCurrentUserEvaluated() {
 	return isUserEvaluated(UserView.getCurrentUser());
+    }
+
+    @Override
+    public boolean isTicketSupportAvailable() {
+	return false;
     }
 }

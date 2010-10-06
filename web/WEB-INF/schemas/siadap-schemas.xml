@@ -1,24 +1,3 @@
-<schema name="activityInformation.CreateObjectiveEvaluation"
-	bundle="SIADAP_RESOURCES"
-	type="module.siadap.activities.CreateObjectiveEvaluationActivityInformation">
-	<slot name="objective" layout="longText"
-		validator="pt.ist.fenixWebFramework.renderers.validators.RequiredValidator">
-		<property name="rows" value="3" />
-		<property name="columns" value="50" />
-	</slot>
-	<slot name="measurementIndicator" layout="longText"
-		validator="pt.ist.fenixWebFramework.renderers.validators.RequiredValidator">
-		<property name="rows" value="3" />
-		<property name="columns" value="50" />
-	</slot>
-	<slot name="superationCriteria" layout="longText"
-		validator="pt.ist.fenixWebFramework.renderers.validators.RequiredValidator">
-		<property name="rows" value="3" />
-		<property name="columns" value="50" />
-	</slot>
-	<slot name="type"/>
-</schema>
-
 <schema name="activityInformation.CreateCompetenceEvaluation"
 	bundle="SIADAP_RESOURCES"
 	type="module.siadap.activities.CreateCompetenceEvaluationActivityInformation">
@@ -44,17 +23,6 @@
 		<property name="format" value="${description}" />
 	</slot>
 </schema>
-
-<schema name="activityInformation.EditObjectiveEvaluation"
-	bundle="SIADAP_RESOURCES" extends="activityInformation.CreateObjectiveEvaluation"
-	type="module.siadap.activities.EditObjectiveEvaluationActivityInformation">
-	<remove name="type"/>
-	<slot name="justification" layout="longText"
-		validator="pt.ist.fenixWebFramework.renderers.validators.RequiredValidator">
-		<property name="rows" value="3" />
-		<property name="columns" value="50" />
-	</slot>
-</schema> 
 
 <schema name="activityInformation.NoEvaluation"
 	bundle="SIADAP_RESOURCES" 

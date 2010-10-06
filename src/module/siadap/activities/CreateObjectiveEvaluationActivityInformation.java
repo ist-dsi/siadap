@@ -1,5 +1,10 @@
 package module.siadap.activities;
 
+import java.io.Serializable;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
+
 import module.siadap.domain.Siadap;
 import module.siadap.domain.SiadapEvaluationObjectivesType;
 import module.siadap.domain.SiadapProcess;
@@ -13,13 +18,74 @@ public class CreateObjectiveEvaluationActivityInformation extends ActivityInform
 
     private Siadap siadap;
     private String objective;
-    private String measurementIndicator;
-    private String superationCriteria;
     private SiadapEvaluationObjectivesType type;
+    private List<ObjectiveIndicator> indicators;
+
+    public static class ObjectiveIndicator implements Serializable {
+	String measurementIndicator;
+	String superationCriteria;
+	BigDecimal ponderationFactor;
+
+	public ObjectiveIndicator(String measurementIndicator, String superationCriteria, BigDecimal ponderationFactor) {
+	    super();
+	    setMeasurementIndicator(measurementIndicator);
+	    setSuperationCriteria(superationCriteria);
+	    setPonderationFactor(ponderationFactor);
+	}
+
+	public BigDecimal getPonderationFactor() {
+	    return ponderationFactor;
+	}
+
+	public void setPonderationFactor(BigDecimal ponderationFactor) {
+	    this.ponderationFactor = ponderationFactor;
+	}
+
+	public String getMeasurementIndicator() {
+	    return measurementIndicator;
+	}
+
+	public void setMeasurementIndicator(String measurementIndicator) {
+	    this.measurementIndicator = measurementIndicator;
+	}
+
+	public String getSuperationCriteria() {
+	    return superationCriteria;
+	}
+
+	public void setSuperationCriteria(String superationCriteria) {
+	    this.superationCriteria = superationCriteria;
+	}
+
+	public boolean isFilled() {
+	    return !StringUtils.isEmpty(measurementIndicator) && !StringUtils.isEmpty(superationCriteria);
+	}
+    }
 
     public CreateObjectiveEvaluationActivityInformation(SiadapProcess process,
 	    WorkflowActivity<? extends WorkflowProcess, ? extends ActivityInformation> activity) {
+	this(process, activity, true);
+    }
+
+    protected CreateObjectiveEvaluationActivityInformation(SiadapProcess process,
+	    WorkflowActivity<? extends WorkflowProcess, ? extends ActivityInformation> activity, boolean addIndicator) {
 	super(process, activity);
+	indicators = new ArrayList<ObjectiveIndicator>();
+	if (addIndicator) {
+	    addNewIndicator();
+	}
+    }
+
+    public void addNewIndicator() {
+	indicators.add(new ObjectiveIndicator(null, null, indicators.size() == 0 ? BigDecimal.ONE : null));
+    }
+
+    protected void addNewIndicator(String measurementIndicator, String superationCriteria, BigDecimal ponderationFactor) {
+	indicators.add(new ObjectiveIndicator(measurementIndicator, superationCriteria, ponderationFactor));
+    }
+
+    public void removeIndicator(int i) {
+	indicators.remove(i);
     }
 
     @Override
@@ -44,22 +110,6 @@ public class CreateObjectiveEvaluationActivityInformation extends ActivityInform
 	this.objective = objective;
     }
 
-    public String getMeasurementIndicator() {
-	return measurementIndicator;
-    }
-
-    public void setMeasurementIndicator(String measurementIndicator) {
-	this.measurementIndicator = measurementIndicator;
-    }
-
-    public String getSuperationCriteria() {
-	return superationCriteria;
-    }
-
-    public void setSuperationCriteria(String superationCriteria) {
-	this.superationCriteria = superationCriteria;
-    }
-
     public SiadapEvaluationObjectivesType getType() {
 	return type;
     }
@@ -68,10 +118,25 @@ public class CreateObjectiveEvaluationActivityInformation extends ActivityInform
 	this.type = type;
     }
 
-    @Override
-    public boolean hasAllneededInfo() {
-	return getSiadap() != null && !StringUtils.isEmpty(getObjective()) && !StringUtils.isEmpty(getMeasurementIndicator())
-		&& !StringUtils.isEmpty(getSuperationCriteria()) && getType() != null;
+    public List<ObjectiveIndicator> getIndicators() {
+	return this.indicators;
     }
 
+    @Override
+    public boolean hasAllneededInfo() {
+	return getSiadap() != null && !StringUtils.isEmpty(getObjective()) && indicatorsFilled() && getType() != null;
+    }
+
+    private boolean indicatorsFilled() {
+	if (indicators.size() == 0) {
+	    return false;
+	} else {
+	    for (ObjectiveIndicator indicator : indicators) {
+		if (!indicator.isFilled()) {
+		    return false;
+		}
+	    }
+	}
+	return true;
+    }
 }

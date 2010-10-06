@@ -89,7 +89,7 @@ public class Siadap extends Siadap_Base {
 		throw new DomainException("error.siadapEvaluation.mustFillAllItems", DomainException
 			.getResourceFor("resources/SiadapResources"));
 	    }
-	    result = result.add(new BigDecimal(itemEvaluation.getPoints()));
+	    result = result.add(itemEvaluation.getPoints());
 	}
 
 	return result.divide(new BigDecimal(evaluations.size()), Siadap.PRECISION, Siadap.ROUND_MODE);

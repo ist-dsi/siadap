@@ -1,5 +1,7 @@
 package module.siadap.domain.scoring;
 
+import java.math.BigDecimal;
+
 import myorg.util.BundleUtil;
 import pt.ist.fenixWebFramework.rendererExtensions.util.IPresentableEnum;
 
@@ -7,13 +9,13 @@ public enum SiadapCompetencesEvaluation implements IPresentableEnum, IScoring {
 
     HIGH(5), MEDIUM(3), LOW(1);
 
-    private int points;
+    private BigDecimal points;
 
     SiadapCompetencesEvaluation(int points) {
-	this.points = points;
+	this.points = new BigDecimal(points);
     }
 
-    public int getPoints() {
+    public BigDecimal getPoints() {
 	return points;
     }
 

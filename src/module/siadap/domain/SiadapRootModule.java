@@ -4,8 +4,11 @@ import java.util.HashSet;
 import java.util.Set;
 
 import module.organization.domain.Unit;
+import module.workflow.presentationTier.ProcessNodeSelectionMapper;
+import module.workflow.widgets.ProcessListWidget;
 import myorg.domain.ModuleInitializer;
 import myorg.domain.MyOrg;
+import myorg.domain.contents.Node;
 import pt.ist.fenixWebFramework.services.Service;
 
 public class SiadapRootModule extends SiadapRootModule_Base implements ModuleInitializer {
@@ -34,8 +37,6 @@ public class SiadapRootModule extends SiadapRootModule_Base implements ModuleIni
 
     @Override
     public void init(MyOrg root) {
-	// TODO Auto-generated method stub
-
     }
 
     @Service

@@ -1,5 +1,6 @@
 package module.siadap.activities;
 
+import module.siadap.activities.CreateObjectiveEvaluationActivityInformation.ObjectiveIndicator;
 import module.siadap.domain.ObjectiveEvaluation;
 import module.siadap.domain.Siadap;
 import module.siadap.domain.SiadapProcess;
@@ -18,8 +19,13 @@ public class CreateObjectiveEvaluation extends WorkflowActivity<SiadapProcess, C
 
     @Override
     protected void process(CreateObjectiveEvaluationActivityInformation activityInformation) {
-	new ObjectiveEvaluation(activityInformation.getSiadap(), activityInformation.getObjective(), activityInformation
-		.getMeasurementIndicator(), activityInformation.getSuperationCriteria(), activityInformation.getType());
+	ObjectiveEvaluation objectiveEvaluation = new ObjectiveEvaluation(activityInformation.getSiadap(), activityInformation
+		.getObjective(), activityInformation.getType());
+
+	for (ObjectiveIndicator indicator : activityInformation.getIndicators()) {
+	    objectiveEvaluation.addObjectiveIndicator(indicator.getMeasurementIndicator(), indicator.getSuperationCriteria(),
+		    indicator.getPonderationFactor());
+	}
     }
 
     @Override
@@ -30,5 +36,10 @@ public class CreateObjectiveEvaluation extends WorkflowActivity<SiadapProcess, C
     @Override
     public String getUsedBundle() {
 	return "resources/SiadapResources";
+    }
+
+    @Override
+    public boolean isDefaultInputInterfaceUsed() {
+	return false;
     }
 }

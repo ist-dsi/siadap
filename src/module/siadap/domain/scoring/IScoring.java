@@ -1,6 +1,8 @@
 package module.siadap.domain.scoring;
 
+import java.math.BigDecimal;
+
 public interface IScoring {
 
-    public int getPoints();
+    public BigDecimal getPoints();
 }

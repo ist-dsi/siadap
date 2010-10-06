@@ -10,17 +10,17 @@ public enum SiadapGlobalEvaluation implements IPresentableEnum, IScoring {
     HIGH(5, new BigDecimal(4), new BigDecimal(5)), MEDIUM(3, new BigDecimal(2), new BigDecimal(3.999)), LOW(1, new BigDecimal(1),
 	    new BigDecimal(1.999));
 
-    private int points;
+    private BigDecimal points;
     private BigDecimal lowerBound;
     private BigDecimal upperBound;
 
     SiadapGlobalEvaluation(int points, BigDecimal lowerBound, BigDecimal upperBound) {
-	this.points = points;
+	this.points = new BigDecimal(points);
 	this.lowerBound = lowerBound;
 	this.upperBound = upperBound;
     }
 
-    public int getPoints() {
+    public BigDecimal getPoints() {
 	return points;
     }
 

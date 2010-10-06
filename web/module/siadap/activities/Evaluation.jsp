@@ -22,23 +22,29 @@
 
 	<strong><bean:message key="label.objectives"
 		bundle="SIADAP_RESOURCES" /></strong>:
-		<table id="objectives" class="tstyle2">
-		<tr>
-			<td></td>
-			<th><bean:message key="label.autoEvaluation" bundle="SIADAP_RESOURCES"/></th>
-			<th><bean:message key="label.evaluation" bundle="SIADAP_RESOURCES"/></th>
-		</tr>
-		<logic:iterate id="evaluation" name="siadap"
-			property="objectiveEvaluations">
+
+<table class="tstyle2">
+		<logic:iterate id="evaluation" name="information"
+			property="process.siadap.objectiveEvaluations"
+			type="module.siadap.domain.ObjectiveEvaluation">
 			<tr>
-				<td><fr:view name="evaluation" property="objective" /></td>
-				<td><fr:view name="evaluation" property="autoEvaluation"
-					type="module.siadap.domain.scoring.SiadapObjectivesEvaluation" /></td>
-				<td><fr:edit name="evaluation" slot="evaluation" /></td>
+				<th colspan="3"><fr:view name="evaluation" property="objective" /></th>
 			</tr>
+			<logic:iterate id="indicator" name="evaluation" property="indicators">
+				<tr>
+				<th>
+					<fr:view name="indicator" property="measurementIndicator"/>
+				</th>	
+				<td><fr:view name="indicator" property="autoEvaluation"
+					type="module.siadap.domain.scoring.SiadapObjectivesEvaluation" /></td>
+				<td><fr:edit name="indicator" slot="evaluation" /></td>
+				</tr>
+			</logic:iterate>
+			
 		</logic:iterate>
 	</table>
-
+	
+	
 	<strong><bean:message key="label.competences"
 		bundle="SIADAP_RESOURCES" /></strong>:
 	    <table id="competences" class="tstyle2">

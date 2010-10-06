@@ -3,6 +3,7 @@ package module.siadap.activities;
 import org.apache.commons.lang.StringUtils;
 
 import module.siadap.domain.ObjectiveEvaluation;
+import module.siadap.domain.ObjectiveEvaluationIndicator;
 import module.siadap.domain.SiadapProcess;
 import module.workflow.activities.ActivityInformation;
 import module.workflow.activities.WorkflowActivity;
@@ -15,15 +16,17 @@ public class EditObjectiveEvaluationActivityInformation extends CreateObjectiveE
 
     public EditObjectiveEvaluationActivityInformation(SiadapProcess process,
 	    WorkflowActivity<? extends WorkflowProcess, ? extends ActivityInformation> activity) {
-	super(process, activity);
+	super(process, activity, false);
     }
 
     public void setEvaluation(ObjectiveEvaluation evaluation) {
 	this.evaluation = evaluation;
 	setObjective(evaluation.getObjective());
-	setMeasurementIndicator(evaluation.getMeasurementIndicator());
-	setSuperationCriteria(evaluation.getSuperationCriteria());
 	setType(evaluation.getType());
+	for (ObjectiveEvaluationIndicator indicator : evaluation.getIndicators()) {
+	    addNewIndicator(indicator.getMeasurementIndicator(), indicator.getSuperationCriteria(), indicator
+		    .getPonderationFactor());
+	}
     }
 
     public ObjectiveEvaluation getEvaluation() {
