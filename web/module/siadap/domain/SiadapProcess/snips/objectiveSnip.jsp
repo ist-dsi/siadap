@@ -34,7 +34,7 @@
 <table class="tstyle2 width100pc">
 
 	<tr>
-		<td colspan="5" class="aleft">
+		<td colspan="6" class="aleft">
 				<strong><bean:message key="label.type" bundle="SIADAP_RESOURCES"/></strong>: <fr:view name="objectiveEvaluation" property="type" type="module.siadap.domain.SiadapEvaluationObjectivesType"/>
 				<wf:isActive processName="process" activityName="EditObjectiveEvaluation" scope="request">		
 					<span>
@@ -53,7 +53,7 @@
 		<fr:view name="index"/>
 	</th>
 	<th> <bean:message key="label.objective" bundle="SIADAP_RESOURCES"/> </th>
-	<td class="aleft" colspan="3"> <fr:view name="objectiveEvaluation" property="objective"/></td>
+	<td class="aleft" colspan="4"> <fr:view name="objectiveEvaluation" property="objective"/></td>
 	</tr>
 	<logic:iterate id="indicator" name="objectiveEvaluation" property="indicators">
 		<tr>
@@ -65,6 +65,9 @@
 		<th  style="width: 15%"> 
 		<strong>	<bean:message key="label.evaluation" bundle="SIADAP_RESOURCES"/></strong>
 		</th>
+		<th  style="width: 15%"> 
+		<strong>	<bean:message key="label.ponderationFactor" bundle="SIADAP_RESOURCES"/></strong>
+		</th>
 		</tr>
 		<tr>
 			<td class="aleft"> <fr:view name="indicator" property="measurementIndicator"/>	</td>
@@ -74,6 +77,9 @@
 			</td>
 			<td valign="middle">
 				<fr:view name="indicator" property="evaluation" type="module.siadap.domain.scoring.SiadapObjectivesEvaluation"/>
+			</td> 
+			<td valign="middle">
+				<fr:view name="indicator" property="ponderationFactor" type="java.math.BigDecimal"/>
 			</td> 
 		</tr>
 	</logic:iterate>
