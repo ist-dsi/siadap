@@ -130,7 +130,7 @@ public class UnitSiadapWrapper extends PartyWrapper implements Serializable {
 	}
 	if (continueToSubUnits) {
 	    for (Unit subUnit : unit.getChildUnits(getConfiguration().getUnitRelations())) {
-		counter += getTotalRelevantEvaluationsForUnit(subUnit, continueToSubUnits);
+		counter += getEvaluationsForUnit(subUnit, continueToSubUnits,predicate);
 	    }
 	}
 
