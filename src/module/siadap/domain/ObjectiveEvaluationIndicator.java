@@ -30,4 +30,10 @@ public class ObjectiveEvaluationIndicator extends ObjectiveEvaluationIndicator_B
 	return getEvaluation().getPoints().multiply(getPonderationFactor());
     }
 
+    public void delete() {
+	removeObjectiveEvaluation();
+	removeSiadapRootModule();
+	super.deleteDomainObject();
+    }
+
 }

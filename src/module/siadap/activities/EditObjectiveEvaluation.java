@@ -1,5 +1,8 @@
 package module.siadap.activities;
 
+import module.siadap.activities.CreateObjectiveEvaluationActivityInformation.ObjectiveIndicator;
+import module.siadap.domain.ObjectiveEvaluation;
+import module.siadap.domain.ObjectiveEvaluationIndicator;
 import module.siadap.domain.Siadap;
 import module.siadap.domain.SiadapProcess;
 import module.workflow.activities.ActivityInformation;
@@ -17,8 +20,12 @@ public class EditObjectiveEvaluation extends WorkflowActivity<SiadapProcess, Edi
 
     @Override
     protected void process(EditObjectiveEvaluationActivityInformation activityInformation) {
-	activityInformation.getEvaluation().edit(activityInformation.getObjective(), activityInformation.getJustification(),
-		activityInformation.getType());
+	ObjectiveEvaluation evaluation = activityInformation.getEvaluation().edit(activityInformation.getObjective(),
+		activityInformation.getJustification(), activityInformation.getType());
+	for (ObjectiveIndicator indicator : activityInformation.getIndicators()) {
+	    evaluation.addObjectiveIndicator(indicator.getMeasurementIndicator(), indicator.getSuperationCriteria(), indicator
+		    .getPonderationFactor());
+	}
     }
 
     @Override
@@ -40,7 +47,7 @@ public class EditObjectiveEvaluation extends WorkflowActivity<SiadapProcess, Edi
     protected String[] getArgumentsDescription(EditObjectiveEvaluationActivityInformation activityInformation) {
 	return new String[] { activityInformation.getObjective(), activityInformation.getJustification() };
     }
-    
+
     @Override
     public boolean isDefaultInputInterfaceUsed() {
 	return false;
