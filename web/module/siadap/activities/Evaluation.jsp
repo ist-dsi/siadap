@@ -23,11 +23,11 @@
 	<strong><bean:message key="label.objectives"
 		bundle="SIADAP_RESOURCES" /></strong>:
 
-<table class="tstyle2">
+<table id="objectives" class="tstyle2">
 		<logic:iterate id="evaluation" name="information"
 			property="process.siadap.objectiveEvaluations"
 			type="module.siadap.domain.ObjectiveEvaluation">
-			<tr>
+			<tr name="evaluationObjective">
 				<th colspan="3"><fr:view name="evaluation" property="objective" /></th>
 			</tr>
 			<logic:iterate id="indicator" name="evaluation" property="indicators">
@@ -37,7 +37,8 @@
 				</th>	
 				<td><fr:view name="indicator" property="autoEvaluation"
 					type="module.siadap.domain.scoring.SiadapObjectivesEvaluation" /></td>
-				<td><fr:edit name="indicator" slot="evaluation" /></td>
+				<bean:define id="ponderation" name="indicator" property="ponderationFactor"/>
+				<td name="<%= ponderation %>"><fr:edit name="indicator" slot="evaluation" /></td>
 				</tr>
 			</logic:iterate>
 			
@@ -153,12 +154,12 @@
 	
 	function calculate() {
 		var objectives = 0;
-		var i = 0;
+		var i = $("tr[name=evaluationObjective]").length
 		var competences = 0;
 
 		$("#objectives select").each( function(index, value) {
-			objectives += getPoints(value.value);
-			i++;
+			var ponderationFactorOfObjective = $(this).parent("td").attr('name');
+			objectives += getPoints(value.value) * ponderationFactorOfObjective;
 		});
 
 		var objectives = Math.round(objectives / i * 1000) / 1000

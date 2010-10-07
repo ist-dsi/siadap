@@ -89,7 +89,7 @@
 		$("input[id^=remove-]").click(function() {
 			var form = $("#form");
 			var index = $(this).attr('id').substring(7);
-			form.attr('action',$("#removeIndicatoronvers").attr('href'));
+			form.attr('action',$("#removeIndicator").attr('href'));
 			$("#form > input[name=removeIndex]").attr('value',index);
 			form.submit();
 		});
