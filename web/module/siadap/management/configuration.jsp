@@ -87,6 +87,7 @@
 		<fr:slot name="autoEvaluationEnd" layout="picker"/>
 		<fr:slot name="evaluationBegin" layout="picker"/>
 		<fr:slot name="evaluationEnd" layout="picker"/>
+		<fr:slot name="lockHarmonizationOnQuota"/>
 	</fr:schema>
 
 	<fr:layout name="tabular">

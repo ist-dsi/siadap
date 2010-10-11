@@ -27,6 +27,7 @@ public class SiadapYearConfiguration extends SiadapYearConfiguration_Base {
 	setObjectivesPonderation(objectivesPonderation);
 	setCompetencesPonderation(competencesPonderation);
 	setSiadapRootModule(SiadapRootModule.getInstance());
+	setLockHarmonizationOnQuota(Boolean.FALSE);
     }
 
     public static SiadapYearConfiguration getSiadapYearConfiguration(Integer year) {
@@ -104,5 +105,9 @@ public class SiadapYearConfiguration extends SiadapYearConfiguration_Base {
 
     public boolean isCurrentUserResponsibleForHomologation() {
 	return isPersonResponsibleForHomologation(UserView.getCurrentUser().getPerson());
+    }
+
+    public List<ExcedingQuotaProposal> getSuggestionsForUnit(Unit unit, ExceddingQuotaSuggestionType type) {
+	return new UnitSiadapWrapper(unit, getYear()).getExcedingQuotaProposalSuggestions(type);
     }
 }

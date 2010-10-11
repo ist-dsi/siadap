@@ -8,6 +8,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import module.organization.domain.Person;
 import module.organization.domain.Unit;
+import module.siadap.domain.ExcedingQuotaProposal;
 import module.siadap.domain.Siadap;
 import module.siadap.domain.SiadapProcess;
 import module.siadap.domain.SiadapYearConfiguration;
@@ -254,6 +255,42 @@ public class SiadapManagement extends ContextBaseAction {
 	request.setAttribute("employees", unitSiadapWrapper.getUnitEmployees(true));
 	request.setAttribute("mode", mode);
 	return forward(request, "/module/siadap/bulkManagement/operateOverHarmonizationUnits.jsp");
+    }
+
+    public final ActionForward prepareAddExcedingQuotaSuggestion(final ActionMapping mapping, final ActionForm form,
+	    final HttpServletRequest request, final HttpServletResponse response) {
+
+	Unit unit = getDomainObject(request, "unitId");
+	SiadapSuggestionBean bean = new SiadapSuggestionBean();
+	bean.setUnit(unit);
+
+	request.setAttribute("bean", bean);
+	return forward(request, "/module/siadap/bulkManagement/addSuggestionToUnit.jsp");
+    }
+
+    public final ActionForward addExcedingQuotaSuggestion(final ActionMapping mapping, final ActionForm form,
+	    final HttpServletRequest request, final HttpServletResponse response) {
+
+	int year = new LocalDate().getYear();
+	SiadapSuggestionBean bean = getRenderedObject("bean");
+	Unit unit = bean.getUnit();
+
+	UnitSiadapWrapper unitSiadapWrapper = new UnitSiadapWrapper(unit, year);
+	unitSiadapWrapper.addExcedingQuotaProposalSuggestion(bean.getPerson(), bean.getType());
+
+	request.setAttribute("unit", unitSiadapWrapper);
+	request.setAttribute("employees", unitSiadapWrapper.getUnitEmployees(true));
+
+	return viewUnitHarmonizationData(mapping, form, request, response);
+    }
+
+    public final ActionForward removeExcedingQuotaSuggestion(final ActionMapping mapping, final ActionForm form,
+	    final HttpServletRequest request, final HttpServletResponse response) {
+
+	ExcedingQuotaProposal proposal = getDomainObject(request,"proposalId");
+	proposal.delete();
+	
+	return viewUnitHarmonizationData(mapping, form, request, response);
     }
 
 }

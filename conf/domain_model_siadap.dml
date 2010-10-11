@@ -4,6 +4,7 @@ enum module.siadap.domain.scoring.SiadapObjectivesEvaluation as SiadapObjectives
 enum module.siadap.domain.scoring.SiadapCompetencesEvaluation as SiadapCompetencesEvaluation;
 enum module.siadap.domain.scoring.SiadapGlobalEvaluation as SiadapGlobalEvaluation;
 enum module.siadap.domain.SiadapEvaluationObjectivesType as SiadapEvaluationObjectivesType;
+enum module.siadap.domain.ExceddingQuotaSuggestionType as ExceddingQuotaSuggestionType;
 
 class SiadapRootModule {
 	Integer number;
@@ -19,6 +20,7 @@ class SiadapYearConfiguration {
 	LocalDate autoEvaluationEnd;
 	LocalDate evaluationBegin;
 	LocalDate evaluationEnd;
+	Boolean lockHarmonizationOnQuota;
 }
 
 class SiadapProcess extends .module.workflow.domain.WorkflowProcess {
@@ -93,6 +95,11 @@ class Competence {
 
 class CompetenceType {
 	String name;
+}
+
+class ExcedingQuotaProposal {
+	ExceddingQuotaSuggestionType suggestionType;
+	Integer proposalOrder;
 }
 
 relation SiadapModuleRootMyOrg {
@@ -271,4 +278,33 @@ relation ObjectiveEvaluationIndicatorSiadapRootModule {
 		multiplicity *;
 	}
 }	
+
+relation ExcedingQuotaProposalSiadapYearConfiguration {
+	ExcedingQuotaProposal playsRole excedingQuotasProposals {
+		multiplicity *;
+	}
+	SiadapYearConfiguration playsRole yearConfiguration;
+}
+
+relation ExcedingQuotaProposalPerson {
+	ExcedingQuotaProposal playsRole excedingQuotasProposals {
+		multiplicity *;
+	}
+	.module.organization.domain.Person playsRole suggestion;
+}
+
+relation ExcedingQuotaProposalUnit {
+	ExcedingQuotaProposal playsRole excedingQuotasProposals {
+		multiplicity *;
+	}
+	.module.organization.domain.Unit playsRole unit;
+}
+
+relation ExcedingQuotaProposalRootModule {
+	ExcedingQuotaProposal playsRole excedingQuotasProposals {
+		multiplicity *;
+	}
+	SiadapRootModule playsRole siadapRootModule;
+}
+
 

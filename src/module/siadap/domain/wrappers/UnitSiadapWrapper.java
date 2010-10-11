@@ -6,13 +6,18 @@ import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
 
 import module.organization.domain.Accountability;
 import module.organization.domain.AccountabilityType;
 import module.organization.domain.Party;
 import module.organization.domain.Person;
 import module.organization.domain.Unit;
+import module.siadap.domain.ExceddingQuotaSuggestionType;
+import module.siadap.domain.ExcedingQuotaProposal;
 import module.siadap.domain.Siadap;
 import module.siadap.domain.SiadapYearConfiguration;
 import myorg.domain.exceptions.DomainException;
@@ -130,7 +135,7 @@ public class UnitSiadapWrapper extends PartyWrapper implements Serializable {
 	}
 	if (continueToSubUnits) {
 	    for (Unit subUnit : unit.getChildUnits(getConfiguration().getUnitRelations())) {
-		counter += getEvaluationsForUnit(subUnit, continueToSubUnits,predicate);
+		counter += getEvaluationsForUnit(subUnit, continueToSubUnits, predicate);
 	    }
 	}
 
@@ -458,6 +463,12 @@ public class UnitSiadapWrapper extends PartyWrapper implements Serializable {
 
     @Service
     public void finishHarmonization() {
+	SiadapYearConfiguration configuration = SiadapYearConfiguration.getSiadapYearConfiguration(getYear());
+	if (configuration.getLockHarmonizationOnQuota() && isAboveQuotas()) {
+	    throw new DomainException("error.canOnlyCloseHarmonizationWhenQuotasDoNotExceedValues", DomainException
+		    .getResourceFor("resources/SiadapResources"));
+	}
+
 	for (UnitSiadapWrapper wrapper : getSubHarmonizationUnits()) {
 	    if (!wrapper.isHarmonizationFinished()) {
 		throw new DomainException("error.tryingToFinishHarmonizationWithSubHarmonizationOpen", DomainException
@@ -483,4 +494,45 @@ public class UnitSiadapWrapper extends PartyWrapper implements Serializable {
 	getConfiguration().removeHarmonizationClosedUnits(getUnit());
     }
 
+    public List<ExcedingQuotaProposal> getExcedingQuotaProposalSuggestions() {
+	return getExcedingQuotaProposalSuggestions(null);
+    }
+
+    public List<ExcedingQuotaProposal> getExcedingQuotaProposalSuggestions(ExceddingQuotaSuggestionType type) {
+	int year = getYear();
+	List<ExcedingQuotaProposal> list = new ArrayList<ExcedingQuotaProposal>();
+	for (ExcedingQuotaProposal suggestion : getUnit().getExcedingQuotasProposals()) {
+	    if (suggestion.getYear() == year && (type == null || suggestion.getSuggestionType() == type)) {
+		list.add(suggestion);
+	    }
+	}
+	return list;
+    }
+
+    @Service
+    public void addExcedingQuotaProposalSuggestion(Person person, ExceddingQuotaSuggestionType type) {
+	new ExcedingQuotaProposal(getConfiguration(), person, getUnit(), type);
+    }
+
+    public List<ExcedingQuotaProposal> getOrderedExcedingQuotaProposalSuggestionsForHighEvaluation() {
+	return getOrderedExcedingQuotaProposalSuggestions(ExceddingQuotaSuggestionType.HIGH_SUGGESTION);
+    }
+
+    public List<ExcedingQuotaProposal> getOrderedExcedingQuotaProposalSuggestionsForExcellencyAward() {
+	return getOrderedExcedingQuotaProposalSuggestions(ExceddingQuotaSuggestionType.EXCELLENCY_SUGGESTION);
+    }
+
+    public List<ExcedingQuotaProposal> getOrderedExcedingQuotaProposalSuggestions(ExceddingQuotaSuggestionType type) {
+
+	List<ExcedingQuotaProposal> list = getExcedingQuotaProposalSuggestions(type);
+	Collections.sort(list, new Comparator<ExcedingQuotaProposal>() {
+
+	    @Override
+	    public int compare(ExcedingQuotaProposal o1, ExcedingQuotaProposal o2) {
+		return o1.getProposalOrder().compareTo(o2.getProposalOrder());
+	    }
+
+	});
+	return list;
+    }
 }

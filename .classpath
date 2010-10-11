@@ -25,10 +25,8 @@
 	<classpathentry kind="lib" path="/myorg/web/WEB-INF/lib/db-ojb-1.0.0.jar"/>
 	<classpathentry kind="lib" path="/myorg/web/WEB-INF/lib/expenditures-stubs.jar"/>
 	<classpathentry kind="lib" path="/myorg/web/WEB-INF/lib/fenix-framework-r46762.jar" sourcepath="/fenix-framework"/>
-	<classpathentry kind="lib" path="/myorg/web/WEB-INF/lib/fenix-framework-remote-plugin.jar"/>
 	<classpathentry kind="lib" path="/myorg/web/WEB-INF/lib/fenix-framework-search-plugin.jar" sourcepath="/lucene-fenixframework-plugin"/>
 	<classpathentry kind="lib" path="/myorg/web/WEB-INF/lib/fenix-tools.jar" sourcepath="/fenix-tools"/>
-	<classpathentry kind="lib" path="/myorg/web/WEB-INF/lib/fenix-web-framework-r46357.jar"/>
 	<classpathentry kind="lib" path="/myorg/web/WEB-INF/lib/htmlentities.jar"/>
 	<classpathentry kind="lib" path="/myorg/web/WEB-INF/lib/iText-2.1.3.jar"/>
 	<classpathentry kind="lib" path="/myorg/web/WEB-INF/lib/jasperreports-3.1.0-javaflow.jar"/>
@@ -67,5 +65,7 @@
 	<classpathentry kind="lib" path="/myorg/lib/jaxb-impl.jar"/>
 	<classpathentry kind="lib" path="/myorg/lib/jaxb-xjc.jar"/>
 	<classpathentry kind="lib" path="/myorg/lib/servlet-api-2.3.jar"/>
+	<classpathentry kind="lib" path="/myorg/web/WEB-INF/lib/fenix-framework-r46749.jar"/>
+	<classpathentry kind="lib" path="/myorg/web/WEB-INF/lib/fenix-web-framework-r47708.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

@@ -5,6 +5,7 @@
 <%@ taglib uri="/WEB-INF/fenix-renderers.tld" prefix="fr"%>
 
 <bean:define id="unitName" name="currentUnit" property="unit.partyName"/>
+<bean:define id="unitId" name="currentUnit" property="unit.externalId"/>
 
 <h2>
 	<fr:view name="currentUnit" property="unit.partyName"/>
@@ -83,6 +84,9 @@
     | <html:link styleId="terminateHarmonization"  page="/siadapManagement.do?method=terminateHarmonization" paramName="currentUnit" paramProperty="unit.externalId" paramId="unitId">
 			<bean:message key="label.terminateHarmonization" bundle="SIADAP_RESOURCES"/>
 		</html:link>
+	| <html:link  page="/siadapManagement.do?method=prepareAddExcedingQuotaSuggestion" paramName="currentUnit" paramProperty="unit.externalId" paramId="unitId">
+			<bean:message key="label.addExcedingQuotaSuggestion" bundle="SIADAP_RESOURCES"/>
+	  </html:link>
 	</logic:equal>
 	 <logic:equal name="currentUnit" property="harmonizationFinished" value="true">
     | <html:link styleId="reOpenHarmonization"  page="/siadapManagement.do?method=reOpenHarmonization" paramName="currentUnit" paramProperty="unit.externalId" paramId="unitId">
@@ -99,7 +103,6 @@
 	
 	
 </logic:equal>
-
 
 <logic:notEmpty name="people-withQuotas">
 	<strong>
@@ -182,6 +185,50 @@
 			</fr:layout>
 		</fr:view>
 	</p>
+</logic:notEmpty>
+
+<bean:define id="highQuotaSuggestions" name="currentUnit" property="orderedExcedingQuotaProposalSuggestionsForHighEvaluation"/>
+
+<logic:notEmpty name="highQuotaSuggestions">
+	<strong> <bean:message key="label.listSuggestionForExcedingQuota.high" bundle="SIADAP_RESOURCES"/>: </strong>
+	
+	<fr:view name="highQuotaSuggestions">
+		<fr:schema type="module.siadap.domain.ExcedingQuotaProposal" bundle="SIADAP_RESOURCES">
+			<fr:slot name="proposalOrder"/>
+			<fr:slot name="suggestion.presentationName" key="label.suggestion"/>
+		</fr:schema>
+		<fr:layout name="tabular">
+			<fr:property name="classes" value="tstyle2"/>
+			<fr:property name="link(delete)" value='<%= "/siadapManagement.do?method=removeExcedingQuotaSuggestion&unitId=" + unitId.toString() %>' />
+			<fr:property name="bundle(delete)" value="MYORG_RESOURCES"/>
+			<fr:property name="key(delete)" value="link.delete"/>
+			<fr:property name="param(delete)" value="externalId/proposalId"/>
+			<fr:property name="order(delete)" value="1"/>
+		</fr:layout>
+	</fr:view>
+</logic:notEmpty>
+
+<bean:define id="excellencyQuotaSuggestions" name="currentUnit" property="orderedExcedingQuotaProposalSuggestionsForExcellencyAward"/>
+
+<logic:notEmpty name="excellencyQuotaSuggestions">
+
+	<strong> <bean:message key="label.listSuggestionForExcedingQuota.excellency" bundle="SIADAP_RESOURCES"/>: </strong>
+	
+	<fr:view name="excellencyQuotaSuggestions">
+		<fr:schema type="module.siadap.domain.ExcedingQuotaProposal" bundle="SIADAP_RESOURCES">
+			<fr:slot name="proposalOrder"/>
+			<fr:slot name="suggestion.presentationName" key="label.suggestion"/>
+		</fr:schema>
+		<fr:layout name="tabular">
+			<fr:property name="classes" value="tstyle2"/>
+			<fr:property name="link(delete)" value='<%= "/siadapManagement.do?method=removeExcedingQuotaSuggestion&unitId=" + unitId.toString() %>' />
+			<fr:property name="bundle(delete)" value="MYORG_RESOURCES"/>
+			<fr:property name="key(delete)" value="link.delete"/>
+			<fr:property name="param(delete)" value="externalId/proposalId"/>
+			<fr:property name="order(delete)" value="1"/>
+		</fr:layout>
+	</fr:view>
+
 </logic:notEmpty>
 
 <logic:notEmpty name="subUnits">
