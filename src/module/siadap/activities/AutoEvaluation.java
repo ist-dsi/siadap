@@ -6,6 +6,7 @@ import module.siadap.domain.SiadapProcess;
 import module.workflow.activities.ActivityInformation;
 import module.workflow.activities.WorkflowActivity;
 import myorg.domain.User;
+import myorg.util.BundleUtil;
 
 public class AutoEvaluation extends WorkflowActivity<SiadapProcess, AutoEvaluationActivityInformation> {
 
@@ -26,6 +27,7 @@ public class AutoEvaluation extends WorkflowActivity<SiadapProcess, AutoEvaluati
     public String getUsedBundle() {
 	return "resources/SiadapResources";
     }
+
 
     @Override
     public ActivityInformation getActivityInformation(SiadapProcess process) {

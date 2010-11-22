@@ -51,7 +51,7 @@ public class ImportSiadapStructure extends ReadCustomTask {
     @Override
     public void doIt() {
 	try {
-	    FileInputStream fstream = new FileInputStream("/Users/ghost/siadap-import/siadap-import-with-adist.csv");
+	    FileInputStream fstream = new FileInputStream("/home/joantune/CIIST-Wspace/siadap-import-with-adist.csv");
 	    // Get the object of DataInputStream
 	    DataInputStream in = new DataInputStream(fstream);
 	    BufferedReader br = new BufferedReader(new InputStreamReader(in));

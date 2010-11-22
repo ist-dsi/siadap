@@ -16,7 +16,7 @@
 	
 	<fr:edit id="activityBean" name="information" visible="false" />
 
-	<fr:edit name="information">
+	<fr:edit id="information" name="information">
 		<fr:schema type="module.siadap.activities.CreateObjectiveEvaluationActivityInformation" bundle="SIADAP_RESOURCES">
 			<fr:slot name="objective" layout="longText"
 					validator="pt.ist.fenixWebFramework.renderers.validators.RequiredValidator">
@@ -30,11 +30,12 @@
 			<fr:property name="columnClasses" value=",,tderror"/>
 			<fr:property name="requiredMarkShown" value="true"/>
 		</fr:layout>
+		<fr:destination name="invalid" path='<%="/workflowProcessManagement.do?method=process&processId=" + processId + "&activity=" + name%>' />
 	</fr:edit>
 
 	 <logic:iterate id="indicator" name="information" property="indicators" indexId="counter">
 		<table>
-		<tr><td><strong>Indicator</strong> <logic:greaterThan name="counter" value="0">
+		<tr><td><strong><bean:message bundle="SIADAP_RESOURCES" key="label.indicator"/></strong> <logic:greaterThan name="counter" value="0">
 	 			<input id='<%= "remove-" + counter %>' type="button" value="-"/>
 	 		</logic:greaterThan>
 	 		</td></tr>
@@ -61,12 +62,12 @@
 			<fr:property name="columnClasses" value=",,tderror"/>
 			<fr:property name="requiredMarkShown" value="true"/>
 	 	</fr:layout>
+		<fr:destination name="invalid" path='<%="/workflowProcessManagement.do?method=process&processId=" + processId + "&activity=" + name%>' />
 	 	</fr:edit>
 	 	</td>
 	 	</tr>
 	 	</table>
 	 </logic:iterate>
-		
 	<input id="addNewIndicator" type="button" value="+"/>
 
 	<html:submit styleClass="inputbutton"><bean:message key="renderers.form.submit.name" bundle="RENDERER_RESOURCES"/></html:submit>

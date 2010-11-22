@@ -5,13 +5,13 @@
 <%@ taglib uri="/WEB-INF/fenix-renderers.tld" prefix="fr" %>
 
 <h2>
-	<fr:view name="bean" property="competenceType"/>
+	<fr:view name="bean" property="competenceType" key="label.competenceType"/>
 </h2>
 
 <fr:edit id="bean" name="bean" action="/competencesManagement.do?method=createCompetence">
 	<fr:schema bundle="SIADAP_RESOURCES" type="module.siadap.domain.dto.CompetenceBean">
-		<fr:slot name="name">
-			<fr:property name="size" value="50" key="label.competence.name"/>
+		<fr:slot name="name" key="label.competence.name">
+			<fr:property name="size" value="50" />
 		</fr:slot>
 		<fr:slot name="description" layout="longText">
 			<fr:property name="rows" value="3" />

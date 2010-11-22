@@ -5,13 +5,13 @@
 <%@ taglib uri="/WEB-INF/fenix-renderers.tld" prefix="fr" %>
 
 <html:link page="/competencesManagement.do?method=prepareCompetenceTypeCreation">
-	<bean:message key="label.createNewCompetence" bundle="SIADAP_RESOURCES"/>
+	<bean:message key="label.createNewCompetenceType" bundle="SIADAP_RESOURCES"/>
 </html:link>
 
 <p>
 	<fr:view name="competenceTypes">
 		<fr:schema bundle="SIADAP_RESOURCES" type="module.siadap.domain.CompetenceType">
-			<fr:slot name="name" key="label.name" bundle="MYORG_RESOURCES"/>
+			<fr:slot name="name" key="label.name" bundle="SIADAP_RESOURCES"/>
 			<fr:slot name="competencesCount" key="label.competencesNumbers" bundle="SIADAP_RESOURCES"/>
 		</fr:schema>
 		<fr:layout name="tabular">

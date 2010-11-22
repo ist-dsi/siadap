@@ -18,7 +18,7 @@
 	action="/siadapManagement.do?method=manageSiadap">
 	<fr:schema type="module.siadap.domain.SiadapYearConfiguration"
 		bundle="SIADAP_RESOURCES">
-		<fr:slot name="unitRelations" layout="menu-select">
+		<fr:slot name="unitRelations" layout="menu-select" key="label.config.unitRelations">
 			<fr:property name="providerClass"
 				value="module.organization.presentationTier.renderers.providers.AccountabilityTypesProvider" />
 			<fr:property name="choiceType"
@@ -27,7 +27,7 @@
 			<fr:property name="sortBy" value="name" />
 			<fr:property name="saveOptions" value="true" />
 		</fr:slot>
-		<fr:slot name="harmonizationResponsibleRelation" layout="menu-select">
+		<fr:slot name="harmonizationResponsibleRelation" layout="menu-select" key="label.config.harmonizationResponsibleRelation">
 			<fr:property name="providerClass"
 				value="module.organization.presentationTier.renderers.providers.AccountabilityTypesProvider" />
 			<fr:property name="choiceType"
@@ -37,7 +37,7 @@
 			<fr:property name="saveOptions" value="true" />
 		</fr:slot>
 
-		<fr:slot name="workingRelation" layout="menu-select">
+		<fr:slot name="workingRelation" layout="menu-select" key="label.config.workingRelation">
 			<fr:property name="providerClass"
 				value="module.organization.presentationTier.renderers.providers.AccountabilityTypesProvider" />
 			<fr:property name="choiceType"
@@ -47,7 +47,7 @@
 			<fr:property name="saveOptions" value="true" />
 		</fr:slot>
 		
-		<fr:slot name="workingRelationWithNoQuota" layout="menu-select">
+		<fr:slot name="workingRelationWithNoQuota" layout="menu-select" key="label.config.workingRelationWithNoQuota">
 			<fr:property name="providerClass"
 				value="module.organization.presentationTier.renderers.providers.AccountabilityTypesProvider" />
 			<fr:property name="choiceType"
@@ -57,7 +57,7 @@
 			<fr:property name="saveOptions" value="true" />
 		</fr:slot>
 		
-		<fr:slot name="evaluationRelation" layout="menu-select">
+		<fr:slot name="evaluationRelation" layout="menu-select" key="label.config.evaluationRelation">
 			<fr:property name="providerClass"
 				value="module.organization.presentationTier.renderers.providers.AccountabilityTypesProvider" />
 			<fr:property name="choiceType"
@@ -66,7 +66,7 @@
 			<fr:property name="sortBy" value="name" />
 			<fr:property name="saveOptions" value="true" />
 		</fr:slot>
-		<fr:slot name="siadapStructureTopUnit" layout="autoComplete">
+		<fr:slot name="siadapStructureTopUnit" layout="autoComplete" key="label.config.siadapStructureTopUnit">
 			<fr:property name="labelField" value="partyName.content" />
 			<fr:property name="format" value="${presentationName}" />
 			<fr:property name="minChars" value="3" />
@@ -81,13 +81,13 @@
 			</fr:validator>
 		</fr:slot>
 
-		<fr:slot name="objectiveSpecificationBegin" layout="picker"/>
-		<fr:slot name="objectiveSpecificationEnd" layout="picker"/>
+		<fr:slot name="objectiveSpecificationBegin" layout="picker" key="label.config.objectiveSpecificationBegin"/>
+		<fr:slot name="objectiveSpecificationEnd" layout="picker" key="label.config.objectiveSpecificationEnd"/>
 		<fr:slot name="autoEvaluationBegin" layout="picker"/>
 		<fr:slot name="autoEvaluationEnd" layout="picker"/>
 		<fr:slot name="evaluationBegin" layout="picker"/>
 		<fr:slot name="evaluationEnd" layout="picker"/>
-		<fr:slot name="lockHarmonizationOnQuota"/>
+		<fr:slot name="lockHarmonizationOnQuota" key="label.config.lockHarmonizationOnQuota"/>
 	</fr:schema>
 
 	<fr:layout name="tabular">

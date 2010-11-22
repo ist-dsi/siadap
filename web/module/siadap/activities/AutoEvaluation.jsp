@@ -1,14 +1,18 @@
+<%@page import="myorg.util.BundleUtil"%>
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html"%>
 <%@ taglib uri="/WEB-INF/struts-bean.tld" prefix="bean"%>
 <%@ taglib uri="/WEB-INF/struts-logic.tld" prefix="logic"%>
 <%@ taglib uri="/WEB-INF/fenix-renderers.tld" prefix="fr"%>
 
+<script src="<%= request.getContextPath() + "/javaScript/alertHandlers.js"%>" type="text/javascript"></script>
+<script src="<%= request.getContextPath() + "/javaScript/jquery.alerts.js"%>" type="text/javascript"></script>
+
 <bean:define id="processId" name="process" property="externalId"
 	type="java.lang.String" />
 <bean:define id="name" name="information" property="activityName" />
 
-<div class="dinline forminline"><fr:form
+<div class="dinline forminline"><fr:form id="auto-evaluation-input"
 	action='<%="/workflowProcessManagement.do?method=process&processId=" + processId + "&activity=" + name%>'>
 
 	<fr:edit id="activityBean" name="information" visible="false" />
@@ -176,11 +180,28 @@
 		</fr:layout>
 	</fr:edit></p>
 	</div>
-	<html:submit styleClass="inputbutton">
+	<%
+	String message = "$.alerts.overlayOpacity= 0.4; "
+	 +"$.alerts.overlayColor= '#333'; jConfirm('"+BundleUtil.getStringFromResourceBundle("resources/SiadapResources","activity.confirmation.module.siadap.activities.AutoEvaluationMessage")+"', '"+BundleUtil.getStringFromResourceBundle("resources/SiadapResources","activity.confirmation.module.siadap.activities.AutoEvaluationTitle")+"',function(userInput) {"+
+        "if (userInput) {"+ 
+        "$('#auto-evaluation-input').submit(); }"+
+        "return false;"+
+        "});"+
+        "return false;";
+        %>
+	<html:submit onclick="<%=message%>" styleClass="inputbutton">
 		<bean:message key="renderers.form.submit.name"
 			bundle="RENDERER_RESOURCES" />
 	</html:submit>
-</fr:form> <fr:form
+</fr:form> 
+<script>
+    $(document).ready(function() {
+        $("<div class=\"dinline forminline\"><form id='" + 'auto-evaluation-input' + "form' action='" + 'teste' + "' method=\"post\"'></form></div>").insertBefore("#" + 'auto-evaluation-input'); 
+    });
+
+</script>
+
+<fr:form
 	action='<%="/workflowProcessManagement.do?method=viewProcess&processId=" + processId%>'>
 	<html:submit styleClass="inputbutton">
 		<bean:message key="renderers.form.cancel.name"
