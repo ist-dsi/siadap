@@ -7,6 +7,8 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 
+import pt.ist.fenixWebFramework.renderers.components.state.ViewState;
+import pt.ist.fenixWebFramework.renderers.utils.RenderUtils;
 import pt.ist.fenixWebFramework.struts.annotations.Mapping;
 
 import module.siadap.domain.Competence;
@@ -75,5 +77,6 @@ public class CompetencesManagement extends ContextBaseAction {
 	return forward(request, "/module/siadap/competences/listCompetences.jsp");
 
     }
+
 
 }

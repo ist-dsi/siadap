@@ -10,6 +10,7 @@ import module.siadap.activities.AcknowledgeHomologation;
 import module.siadap.activities.AutoEvaluation;
 import module.siadap.activities.CreateCompetenceEvaluation;
 import module.siadap.activities.CreateObjectiveEvaluation;
+import module.siadap.activities.EditCompetenceEvaluation;
 import module.siadap.activities.EditObjectiveEvaluation;
 import module.siadap.activities.Evaluation;
 import module.siadap.activities.GrantExcellencyAward;
@@ -42,6 +43,7 @@ public class SiadapProcess extends SiadapProcess_Base {
     static {
 	activities.add(new CreateObjectiveEvaluation());
 	activities.add(new CreateCompetenceEvaluation());
+	activities.add(new EditCompetenceEvaluation());
 	activities.add(new AcknowledgeEvaluationObjectives());
 	activities.add(new AutoEvaluation());
 	activities.add(new Evaluation());

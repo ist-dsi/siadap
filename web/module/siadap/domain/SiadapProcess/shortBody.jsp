@@ -9,5 +9,4 @@
   
 <div>
 	<bean:message key="label.userEvaluationProcess" bundle="SIADAP_RESOURCES" arg0="<%= evaluatedName %>" arg1="<%= year.toString() %>"/>
-	TESTE
 </div>

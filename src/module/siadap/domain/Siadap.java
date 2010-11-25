@@ -163,6 +163,52 @@ public class Siadap extends Siadap_Base {
 	return new PersonSiadapWrapper(getEvaluated(), getYear()).getEvaluator();
     }
 
+    public boolean hasAnyCompetencesSet() {
+	if (!hasAnySiadapEvaluationItems())
+	    return false;
+	ArrayList<SiadapEvaluationItem> evaluationItems = new ArrayList<SiadapEvaluationItem>(getSiadapEvaluationItems());
+	for (SiadapEvaluationItem siadapEvaluationItem : evaluationItems) {
+	    if (siadapEvaluationItem instanceof CompetenceEvaluation)
+		return true;
+	}
+	return false;
+    }
+
+    /**
+     * 
+     * @return the CompetenceType associated with this process or null if it
+     *         hasn't been set yet
+     * @author João André Pereira Antunes (joao.antunes@tagus.ist.utl.pt)
+     */
+    public CompetenceType getCompetenceType() {
+	if (!hasAnySiadapEvaluationItems())
+	    return null;
+	ArrayList<SiadapEvaluationItem> evaluationItems = new ArrayList<SiadapEvaluationItem>(getSiadapEvaluationItems());
+	for (SiadapEvaluationItem siadapEvaluationItem : evaluationItems) {
+	    if (siadapEvaluationItem instanceof CompetenceEvaluation)
+		return ((CompetenceEvaluation) siadapEvaluationItem).getCompetence().getCompetenceType();
+	}
+	return null;
+    }
+
+
+    /**
+     * @return An ArrayList with the competences attributed to this Siadap
+     *         process. If it has none set it will return an empty ArrayList
+     * @author João André Pereira Antunes (joao.antunes@tagus.ist.utl.pt)
+     */
+    public ArrayList<Competence> getCompetences() {
+	ArrayList<Competence> arrayCompetences = new ArrayList<Competence>();
+	if (!hasAnySiadapEvaluationItems())
+	    return arrayCompetences;
+	ArrayList<SiadapEvaluationItem> evaluationItems = new ArrayList<SiadapEvaluationItem>(getSiadapEvaluationItems());
+	for (SiadapEvaluationItem siadapEvaluationItem : evaluationItems) {
+	    if (siadapEvaluationItem instanceof CompetenceEvaluation)
+		arrayCompetences.add(((CompetenceEvaluation) siadapEvaluationItem).getCompetence());
+	}
+	return arrayCompetences;
+    }
+
     public boolean isWithObjectivesFilled() {
 	int competencesCounter = 0;
 	int efficiencyObjectives = 0;

@@ -8,6 +8,9 @@
 		<property name="sortBy" value="name" />
 	</slot>
 	<slot name="competences" layout="option-select">
+		<validator class="pt.ist.fenixWebFramework.renderers.validators.RequiredNrItemsValidator">
+            <property name="nrRequiredItems" value="6"/>
+		</validator>
 		<property name="providerClass"
 			value="module.siadap.presentationTier.renderers.providers.CompetencesForCompetenceType" />
 		<property name="sortBy" value="number" />

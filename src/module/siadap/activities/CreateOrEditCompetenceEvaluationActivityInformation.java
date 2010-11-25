@@ -11,16 +11,19 @@ import module.workflow.activities.ActivityInformation;
 import module.workflow.activities.WorkflowActivity;
 import module.workflow.domain.WorkflowProcess;
 
-public class CreateCompetenceEvaluationActivityInformation extends ActivityInformation<SiadapProcess> implements
+public class CreateOrEditCompetenceEvaluationActivityInformation extends ActivityInformation<SiadapProcess> implements
 	ContainsCompetenceType {
 
     private Siadap siadap;
     private CompetenceType competenceType;
     private List<Competence> competences;
+    private boolean inputDisplayed = false;
 
-    public CreateCompetenceEvaluationActivityInformation(SiadapProcess process,
+    public CreateOrEditCompetenceEvaluationActivityInformation(SiadapProcess process,
 	    WorkflowActivity<? extends WorkflowProcess, ? extends ActivityInformation> activity) {
 	super(process, activity);
+	setCompetences(process.getSiadap().getCompetences());
+	setCompetenceType(process.getSiadap().getCompetenceType());
     }
 
     @Override
@@ -55,8 +58,16 @@ public class CreateCompetenceEvaluationActivityInformation extends ActivityInfor
 
     @Override
     public boolean hasAllneededInfo() {
-	return getSiadap() != null && getCompetences() != null && getCompetenceType() != null
+	return getInputDisplayed() && getSiadap() != null && getCompetences() != null && getCompetenceType() != null
 		&& getCompetences().size() >= Siadap.MINIMUM_COMPETENCES_NUMBER;
+    }
+
+    public void setInputDisplayed(boolean inputDisplayed) {
+	this.inputDisplayed = inputDisplayed;
+    }
+
+    public boolean getInputDisplayed() {
+	return inputDisplayed;
     }
 
 }

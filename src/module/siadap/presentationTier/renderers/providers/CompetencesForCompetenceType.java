@@ -19,6 +19,7 @@ public class CompetencesForCompetenceType implements DataProvider {
 
     @Override
     public Object provide(Object arg0, Object arg1) {
+
 	ContainsCompetenceType someObject = (ContainsCompetenceType) arg0;
 	CompetenceType competenceType = someObject.getCompetenceType();
 	return competenceType != null ? competenceType.getCompetences() : Collections.emptyList();

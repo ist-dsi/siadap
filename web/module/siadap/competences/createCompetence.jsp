@@ -5,7 +5,7 @@
 <%@ taglib uri="/WEB-INF/fenix-renderers.tld" prefix="fr" %>
 
 <h2>
-	<fr:view name="bean" property="competenceType" key="label.competenceType"/>
+	<fr:view name="bean" property="competenceType" />
 </h2>
 
 <fr:edit id="bean" name="bean" action="/competencesManagement.do?method=createCompetence">

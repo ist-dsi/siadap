@@ -3,6 +3,7 @@
 <%@ taglib uri="/WEB-INF/struts-bean.tld" prefix="bean"%>
 <%@ taglib uri="/WEB-INF/struts-logic.tld" prefix="logic"%>
 <%@ taglib uri="/WEB-INF/fenix-renderers.tld" prefix="fr"%>
+<%@ taglib uri="/WEB-INF/workflow.tld" prefix="wf"%>
 
 
 <logic:equal name="process" property="siadap.evaluatedWithKnowledgeOfObjectives" value="false">
@@ -44,6 +45,14 @@
 
 <h4><bean:message key="label.competences"
 	bundle="SIADAP_RESOURCES" />:</h4>
+	<%-- link to allow to edit the competences--%>
+	<wf:isActive processName="process" activityName="EditCompetenceEvaluation" scope="request">		
+					<span>
+					<wf:activityLink id="editCompetences" processName="process" activityName="EditCompetenceEvaluation" scope="request" >
+							<bean:message key="link.edit" bundle="MYORG_RESOURCES"/>
+					</wf:activityLink>	
+					</span>
+				</wf:isActive>	
 <p>
 	<fr:view name="process" property="siadap.competenceEvaluations">
 		<fr:schema bundle="SIADAP_RESOURCES"
