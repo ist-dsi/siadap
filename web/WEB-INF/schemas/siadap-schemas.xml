@@ -1,6 +1,6 @@
 <schema name="activityInformation.CreateCompetenceEvaluation"
 	bundle="SIADAP_RESOURCES"
-	type="module.siadap.activities.CreateCompetenceEvaluationActivityInformation">
+	type="module.siadap.activities.CreateOrEditCompetenceEvaluationActivityInformation">
 	<slot name="competenceType" layout="menu-select-postback">
 		<property name="providerClass"
 			value="module.siadap.presentationTier.renderers.providers.CompetenceTypeProvider" />
