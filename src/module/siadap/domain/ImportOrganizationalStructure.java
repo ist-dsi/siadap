@@ -1,11 +1,10 @@
 package module.siadap.domain;
 
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 
 import org.joda.time.LocalDate;
 
+import module.siadap.domain.*;
 import pt.ist.fenixWebFramework.services.ServiceManager;
 import pt.ist.fenixWebFramework.services.ServicePredicate;
 import pt.ist.fenixframework.pstm.AbstractDomainObject;
@@ -79,6 +78,7 @@ public class ImportOrganizationalStructure extends ReadCustomTask {
 	    }
 
 	});
+	out.println("Job done!");
     }
 
     public void doUnit(Unit unit, HashSet<UnitPair> units) {
