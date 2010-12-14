@@ -29,6 +29,7 @@ class SiadapProcess extends .module.workflow.domain.WorkflowProcess {
 class Siadap {
 	Integer year;
 	Integer currentObjectiveVersion;
+	Boolean evaluatedOnlyByCompetences;
 	LocalDate requestedAcknowledgeDate;
 	LocalDate harmonizationDate;
 	LocalDate acknowledgeValidationDate;

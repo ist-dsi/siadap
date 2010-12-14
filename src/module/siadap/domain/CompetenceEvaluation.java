@@ -34,4 +34,10 @@ public class CompetenceEvaluation extends CompetenceEvaluation_Base {
 	deleteDomainObject();
     }
 
+	@Override
+	public boolean isValid() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
 }

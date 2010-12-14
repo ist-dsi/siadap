@@ -16,12 +16,18 @@ public abstract class SiadapEvaluationItem extends SiadapEvaluationItem_Base {
 	}
 
     };
+    
 
     public SiadapEvaluationItem() {
 	super();
 	setWhenCreated(new DateTime());
 	setSiadapRootModule(SiadapRootModule.getInstance());
     }
+    
+    /**
+     * @return true if the SiadapEvaluationItem is valid, false otherwise
+     */
+    public abstract boolean isValid();
 
     public abstract IScoring getItemEvaluation();
 
