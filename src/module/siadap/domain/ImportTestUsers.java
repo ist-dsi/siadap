@@ -30,7 +30,12 @@ public class ImportTestUsers extends WriteCustomTask {
 					"ist24877\n" + // Nuno Cunha Rolo
 					"ist23932\n" + // Miguel Coimbra
 					"ist22752\n" + // Fátima Novais
-					"ist24252"); // Dulce Cunha
+					"ist24252\n" +// Dulce Cunha
+					//DT
+					"ist23470\n" +//José Manuel Riscado
+					"ist22757\n" + //Maria Salomé Louro
+					"ist22234\n" + //Paula Sequeira
+					"ist24229"); //Ana Cristina Oliveira 
 
 	@Override
 	protected void doService() {
