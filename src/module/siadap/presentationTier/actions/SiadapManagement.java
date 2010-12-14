@@ -17,7 +17,11 @@ import module.siadap.domain.wrappers.UnitSiadapWrapper;
 import module.workflow.domain.WorkflowProcess;
 import module.workflow.presentationTier.actions.ProcessManagement;
 import myorg.applicationTier.Authenticate.UserView;
+import myorg.domain.MyOrg;
+import myorg.domain.contents.ActionNode;
 import myorg.domain.exceptions.DomainException;
+import myorg.domain.groups.NamedGroup;
+import myorg.domain.groups.PersistentGroup;
 import myorg.presentationTier.actions.ContextBaseAction;
 import myorg.util.VariantBean;
 
@@ -82,6 +86,9 @@ public class SiadapManagement extends ContextBaseAction {
 	SiadapYearConfiguration configuration = getDomainObject(request, "configurationId");
 	VariantBean bean = getRenderedObject("ccaMember");
 	configuration.addCcaMembers(((Person) bean.getDomainObject()));
+	//add them also to the unique (for now TODO) group 
+	SiadapYearConfiguration.getCcaMembersGroup().addUsers(((Person) bean.getDomainObject()).getUser());
+	//TODO  make the nodes access list to be updated  
 	RenderUtils.invalidateViewState("ccaMember");
 	return showConfiguration(mapping, form, request, response);
     }
@@ -92,6 +99,9 @@ public class SiadapManagement extends ContextBaseAction {
 	SiadapYearConfiguration configuration = getDomainObject(request, "configurationId");
 	VariantBean bean = getRenderedObject("homologationMember");
 	configuration.addHomologationMembers(((Person) bean.getDomainObject()));
+	//add them also to the unique (for now TODO) group 
+	SiadapYearConfiguration.getHomologationMembersGroup().addUsers(((Person) bean.getDomainObject()).getUser());
+	//TODO  make the nodes access list to be updated  
 	RenderUtils.invalidateViewState("homologationMember");
 	return showConfiguration(mapping, form, request, response);
     }
@@ -102,6 +112,8 @@ public class SiadapManagement extends ContextBaseAction {
 	SiadapYearConfiguration configuration = getDomainObject(request, "configurationId");
 	Person person = getDomainObject(request, "personId");
 	configuration.removeCcaMembers(person);
+	//remove them from the persistent group as well
+	SiadapYearConfiguration.getCcaMembersGroup().removeUsers(person.getUser());
 	return showConfiguration(mapping, form, request, response);
     }
 
@@ -111,6 +123,8 @@ public class SiadapManagement extends ContextBaseAction {
 	SiadapYearConfiguration configuration = getDomainObject(request, "configurationId");
 	Person person = getDomainObject(request, "personId");
 	configuration.removeHomologationMembers(person);
+	//remove them from the persistent group as well
+	SiadapYearConfiguration.getHomologationMembersGroup().removeUsers(person.getUser());
 	return showConfiguration(mapping, form, request, response);
     }
 

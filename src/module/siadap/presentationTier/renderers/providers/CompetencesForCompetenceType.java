@@ -10,6 +10,7 @@ public class CompetencesForCompetenceType implements DataProvider {
 
     public static interface ContainsCompetenceType {
 	public CompetenceType getCompetenceType();
+	public Boolean getEvaluatedOnlyByCompetences();
     }
 
     @Override
@@ -22,7 +23,8 @@ public class CompetencesForCompetenceType implements DataProvider {
 
 	ContainsCompetenceType someObject = (ContainsCompetenceType) arg0;
 	CompetenceType competenceType = someObject.getCompetenceType();
-	return competenceType != null ? competenceType.getCompetences() : Collections.emptyList();
+	Boolean evaluatedOnlyByCompetences = someObject.getEvaluatedOnlyByCompetences();
+	return (competenceType != null && evaluatedOnlyByCompetences != null) ? competenceType.getCompetences() : Collections.emptyList();
     }
 
 }
