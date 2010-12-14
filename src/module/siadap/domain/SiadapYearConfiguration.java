@@ -7,6 +7,9 @@ import module.organization.domain.Person;
 import module.organization.domain.Unit;
 import module.siadap.domain.wrappers.UnitSiadapWrapper;
 import myorg.applicationTier.Authenticate.UserView;
+import myorg.domain.MyOrg;
+import myorg.domain.groups.NamedGroup;
+import myorg.domain.groups.PersistentGroup;
 import pt.ist.fenixWebFramework.security.User;
 import pt.ist.fenixWebFramework.services.Service;
 
@@ -16,6 +19,65 @@ public class SiadapYearConfiguration extends SiadapYearConfiguration_Base {
     public static final Double DEFAULT_COMPETENCES_PONDERATION = 25.0;
     public static final Double MAXIMUM_HIGH_GRADE_QUOTA = 25.0;
     public static final Double MAXIMUM_EXCELLENCY_GRADE_QUOTA = 5.0; // 1.25; //
+    
+    private static final String CCA_MEMBERS_GROUPNAME = "CCA Members";
+    private static final String HOMOLOGATION_MEMBERS_GROUPNAME = "Homologation Members";
+    
+    private static NamedGroup ccaMembersGroup;
+    public static NamedGroup getCcaMembersGroup() {
+    	initGroups();
+		return ccaMembersGroup;
+	}
+
+	public static NamedGroup getHomologationMembersGroup() {
+		initGroups();
+		return homologationMembersGroup;
+	}
+
+	private static NamedGroup homologationMembersGroup;
+    private static boolean groupsInitialized = false;
+    
+    private static void initGroups() {
+    	if (groupsInitialized)
+    		return;
+    	//get the ccaMembersGroup
+    	for (PersistentGroup group : MyOrg.getInstance().getPersistentGroups()) {
+    		if (group instanceof NamedGroup)
+    		{
+    			if (((NamedGroup) group).getName().equals(CCA_MEMBERS_GROUPNAME))
+    			{
+    				ccaMembersGroup = (NamedGroup) group;
+    			}
+    		}
+		}
+    	//let us create the group if we haven't found it
+    	if (ccaMembersGroup == null)
+    		createCCAMembersGroup();
+    	
+    	//get the homologationMembersGroup
+    	for (PersistentGroup group : MyOrg.getInstance().getPersistentGroups()) {
+    		if (group instanceof NamedGroup)
+    		{
+    			if (((NamedGroup) group).getName().equals(CCA_MEMBERS_GROUPNAME))
+    			{
+    				homologationMembersGroup = (NamedGroup) group;
+    			}
+    		}
+		}
+    	//let us create the group if we haven't found it
+    	if (homologationMembersGroup == null)
+    		createHomologationMembersGroup();
+    }
+    
+    @Service
+    private static void createHomologationMembersGroup() {
+    	homologationMembersGroup = new NamedGroup(HOMOLOGATION_MEMBERS_GROUPNAME);
+	}
+
+	@Service
+    private static void createCCAMembersGroup() {
+    		ccaMembersGroup = new NamedGroup(CCA_MEMBERS_GROUPNAME);
+    }
 
     // 5% of
 

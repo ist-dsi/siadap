@@ -3,16 +3,20 @@ package module.siadap.presentationTier.actions;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import module.siadap.domain.SiadapYearConfiguration;
+import myorg.domain.RoleType;
 import myorg.domain.VirtualHost;
 import myorg.domain.contents.ActionNode;
 import myorg.domain.contents.Node;
 import myorg.domain.groups.AnyoneGroup;
+import myorg.domain.groups.Role;
 import myorg.domain.groups.UserGroup;
 import myorg.presentationTier.actions.BaseAction;
 
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
+import org.joda.time.DateTime;
 
 import pt.ist.fenixWebFramework.servlets.functionalities.CreateNodeAction;
 import pt.ist.fenixWebFramework.struts.annotations.Mapping;
@@ -33,21 +37,24 @@ public class InterfaceCreationAction extends BaseAction {
 		"link.siadap.start", UserGroup.getInstance());
 
 	ActionNode.createActionNode(virtualHost, homeNode, "/competencesManagement", "manageCompetences",
-		"resources.SiadapResources", "link.siadap.compentencesManagement", UserGroup.getInstance());
+		"resources.SiadapResources", "link.siadap.compentencesManagement", Role.getRole(RoleType.MANAGER));
 
 	ActionNode.createActionNode(virtualHost, homeNode, "/siadapManagement", "showConfiguration", "resources.SiadapResources",
-		"link.siadap.showConfiguration", UserGroup.getInstance());
+		"link.siadap.showConfiguration",  Role.getRole(RoleType.MANAGER));
 
+	//use the static group TODO alter this	
 	ActionNode.createActionNode(virtualHost, homeNode, "/siadapPersonnelManagement", "start", "resources.SiadapResources",
-		"link.siadap.structureManagement", UserGroup.getInstance());
+		"link.siadap.structureManagement", SiadapYearConfiguration.getCcaMembersGroup());
 
+	//use the static group TODO alter this	
 	ActionNode.createActionNode(virtualHost, homeNode, "/siadapManagement",
 		"manageHarmonizationUnitsForMode&mode=processValidation", "resources.SiadapResources",
-		"link.siadap.validationProcedure", UserGroup.getInstance());
+		"link.siadap.validationProcedure", SiadapYearConfiguration.getCcaMembersGroup());
 
+	//use the static group TODO alter this	
 	ActionNode.createActionNode(virtualHost, homeNode, "/siadapManagement",
 		"manageHarmonizationUnitsForMode&mode=homologationDone", "resources.SiadapResources",
-		"link.siadap.homologationProcedure", UserGroup.getInstance());
+		"link.siadap.homologationProcedure", SiadapYearConfiguration.getHomologationMembersGroup());
 
 	return forwardToMuneConfiguration(request, virtualHost, node);
 
