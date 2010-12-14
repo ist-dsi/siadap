@@ -47,3 +47,6 @@
 
 	</fr:layout>
 </fr:view></p>
+<jsp:include page="/module/siadap/tracFeedBackSnip.jsp">	
+   <jsp:param name="href" value="https://fenix-ashes.ist.utl.pt/trac/siadap/report/18" />	
+</jsp:include>

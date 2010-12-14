@@ -208,3 +208,7 @@
 			bundle="RENDERER_RESOURCES" />
 	</html:submit>
 </fr:form></div>
+
+<jsp:include page="/module/siadap/tracFeedBackSnip.jsp">	
+   <jsp:param name="href" value="https://fenix-ashes.ist.utl.pt/trac/siadap/report/9" />	
+</jsp:include>

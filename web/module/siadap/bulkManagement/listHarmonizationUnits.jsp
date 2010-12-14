@@ -26,3 +26,6 @@
 		<fr:property name="order(view)" value="1"/>
 	</fr:layout>	
 </fr:view>
+<jsp:include page="/module/siadap/tracFeedBackSnip.jsp">	
+   <jsp:param name="href" value="https://fenix-ashes.ist.utl.pt/trac/siadap/report/17" />	
+</jsp:include>

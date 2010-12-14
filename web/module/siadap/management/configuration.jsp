@@ -167,4 +167,6 @@
 </fr:edit>
 
 </logic:present>
-
+<jsp:include page="/module/siadap/tracFeedBackSnip.jsp">	
+   <jsp:param name="href" value="https://fenix-ashes.ist.utl.pt/trac/siadap/report/12" />	
+</jsp:include>

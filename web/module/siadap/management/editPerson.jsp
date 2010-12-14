@@ -193,3 +193,7 @@
 		<fr:property name="classes" value="tstyle2"/>
 	</fr:layout>
 </fr:view>
+<jsp:include page="/module/siadap/tracFeedBackSnip.jsp">	
+   <jsp:param name="href" value="https://fenix-ashes.ist.utl.pt/trac/siadap/report/16" />	
+</jsp:include>
+
