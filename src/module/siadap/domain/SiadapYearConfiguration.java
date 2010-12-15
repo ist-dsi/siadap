@@ -59,7 +59,7 @@ public class SiadapYearConfiguration extends SiadapYearConfiguration_Base {
     	for (PersistentGroup group : MyOrg.getInstance().getPersistentGroups()) {
     		if (group instanceof NamedGroup)
     		{
-    			if (((NamedGroup) group).getName().equals(CCA_MEMBERS_GROUPNAME))
+    			if (((NamedGroup) group).getName().equals(HOMOLOGATION_MEMBERS_GROUPNAME))
     			{
     				homologationMembersGroup = (NamedGroup) group;
     			}

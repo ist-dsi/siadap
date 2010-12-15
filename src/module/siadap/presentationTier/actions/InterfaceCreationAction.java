@@ -9,6 +9,7 @@ import myorg.domain.VirtualHost;
 import myorg.domain.contents.ActionNode;
 import myorg.domain.contents.Node;
 import myorg.domain.groups.AnyoneGroup;
+import myorg.domain.groups.PersistentGroup;
 import myorg.domain.groups.Role;
 import myorg.domain.groups.UserGroup;
 import myorg.presentationTier.actions.BaseAction;
@@ -33,6 +34,9 @@ public class InterfaceCreationAction extends BaseAction {
 	final Node homeNode = ActionNode.createActionNode(virtualHost, node, "/siadapManagement", "manageSiadap",
 		"resources.SiadapResources", "link.siadapManagement", UserGroup.getInstance());
 
+	PersistentGroup managerGroup = Role.getRole(RoleType.MANAGER);
+
+
 	ActionNode.createActionNode(virtualHost, homeNode, "/siadapManagement", "manageSiadap", "resources.SiadapResources",
 		"link.siadap.start", UserGroup.getInstance());
 
@@ -40,7 +44,7 @@ public class InterfaceCreationAction extends BaseAction {
 		"resources.SiadapResources", "link.siadap.compentencesManagement", Role.getRole(RoleType.MANAGER));
 
 	ActionNode.createActionNode(virtualHost, homeNode, "/siadapManagement", "showConfiguration", "resources.SiadapResources",
-		"link.siadap.showConfiguration",  Role.getRole(RoleType.MANAGER));
+		"link.siadap.showConfiguration",  managerGroup);
 
 	//use the static group TODO alter this	
 	ActionNode.createActionNode(virtualHost, homeNode, "/siadapPersonnelManagement", "start", "resources.SiadapResources",
