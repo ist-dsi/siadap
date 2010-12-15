@@ -6,6 +6,9 @@
 
 <h2> SIADAP </h2>
 
+<div class="infobox">
+	<bean:message key="siadap.more.info" bundle="SIADAP_RESOURCES"/> <html:link target="_blank"  href="http://drh.ist.utl.pt/html/avaliacao/naodocente/"> <bean:message key="siadap.more.info.link" bundle="SIADAP_RESOURCES"/></html:link>
+</div>
 <p>
 
 <strong> <bean:message key="label.myData" bundle="SIADAP_RESOURCES"/> </strong>
