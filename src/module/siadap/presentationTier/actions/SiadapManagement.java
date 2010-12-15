@@ -32,6 +32,7 @@ import org.apache.struts.action.ActionMapping;
 import org.joda.time.LocalDate;
 
 import pt.ist.fenixWebFramework.renderers.utils.RenderUtils;
+import pt.ist.fenixWebFramework.services.Service;
 import pt.ist.fenixWebFramework.struts.annotations.Mapping;
 
 @Mapping(path = "/siadapManagement")
@@ -87,7 +88,7 @@ public class SiadapManagement extends ContextBaseAction {
 	VariantBean bean = getRenderedObject("ccaMember");
 	configuration.addCcaMembers(((Person) bean.getDomainObject()));
 	//add them also to the unique (for now TODO) group 
-	SiadapYearConfiguration.getCcaMembersGroup().addUsers(((Person) bean.getDomainObject()).getUser());
+	SiadapYearConfiguration.addCCAMember(((Person) bean.getDomainObject()).getUser());
 	//TODO  make the nodes access list to be updated  
 	RenderUtils.invalidateViewState("ccaMember");
 	return showConfiguration(mapping, form, request, response);
@@ -100,7 +101,7 @@ public class SiadapManagement extends ContextBaseAction {
 	VariantBean bean = getRenderedObject("homologationMember");
 	configuration.addHomologationMembers(((Person) bean.getDomainObject()));
 	//add them also to the unique (for now TODO) group 
-	SiadapYearConfiguration.getHomologationMembersGroup().addUsers(((Person) bean.getDomainObject()).getUser());
+	SiadapYearConfiguration.addHomologationMember(((Person) bean.getDomainObject()).getUser());
 	//TODO  make the nodes access list to be updated  
 	RenderUtils.invalidateViewState("homologationMember");
 	return showConfiguration(mapping, form, request, response);
@@ -113,7 +114,7 @@ public class SiadapManagement extends ContextBaseAction {
 	Person person = getDomainObject(request, "personId");
 	configuration.removeCcaMembers(person);
 	//remove them from the persistent group as well
-	SiadapYearConfiguration.getCcaMembersGroup().removeUsers(person.getUser());
+	SiadapYearConfiguration.removeCCAMember(person.getUser());
 	return showConfiguration(mapping, form, request, response);
     }
 
@@ -124,7 +125,7 @@ public class SiadapManagement extends ContextBaseAction {
 	Person person = getDomainObject(request, "personId");
 	configuration.removeHomologationMembers(person);
 	//remove them from the persistent group as well
-	SiadapYearConfiguration.getHomologationMembersGroup().removeUsers(person.getUser());
+	SiadapYearConfiguration.removeHomologationMember(person.getUser());
 	return showConfiguration(mapping, form, request, response);
     }
 

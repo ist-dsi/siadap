@@ -8,9 +8,9 @@ import module.organization.domain.Unit;
 import module.siadap.domain.wrappers.UnitSiadapWrapper;
 import myorg.applicationTier.Authenticate.UserView;
 import myorg.domain.MyOrg;
+import myorg.domain.User;
 import myorg.domain.groups.NamedGroup;
 import myorg.domain.groups.PersistentGroup;
-import pt.ist.fenixWebFramework.security.User;
 import pt.ist.fenixWebFramework.services.Service;
 
 public class SiadapYearConfiguration extends SiadapYearConfiguration_Base {
@@ -24,6 +24,7 @@ public class SiadapYearConfiguration extends SiadapYearConfiguration_Base {
     private static final String HOMOLOGATION_MEMBERS_GROUPNAME = "Homologation Members";
     
     private static NamedGroup ccaMembersGroup;
+    
     public static NamedGroup getCcaMembersGroup() {
     	initGroups();
 		return ccaMembersGroup;
@@ -78,7 +79,30 @@ public class SiadapYearConfiguration extends SiadapYearConfiguration_Base {
     private static void createCCAMembersGroup() {
     		ccaMembersGroup = new NamedGroup(CCA_MEMBERS_GROUPNAME);
     }
+	
+	@Service
+	public static void addCCAMember(User user)
+	{
+		getCcaMembersGroup().addUsers(user);
+	}
+	@Service
+	public static void addHomologationMember(User user)
+	{
+		getHomologationMembersGroup().addUsers(user);
+	}
+	
+	@Service
+	public static void removeHomologationMember(User user)
+	{
+		getHomologationMembersGroup().removeUsers(user);
+	}
 
+	@Service
+	public static void removeCCAMember(User user)
+	{
+		getCcaMembersGroup().removeUsers(user);
+		
+	}
     // 5% of
 
     // the 25%
