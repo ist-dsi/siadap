@@ -6,11 +6,25 @@
 
 <h2> SIADAP </h2>
 
+<%-- The year chooser: --%>
+<fr:form action="/siadapManagement.do?method=manageSiadap">
+	<fr:edit name="siadapYearWrapper" nested="true">
+		<fr:schema bundle="SIADAP" type="module.siadap.domain.wrappers.SiadapYearWrapper">
+			<fr:slot name="siadapYearConfiguration" bundle="SIADAP_RESOURCES" layout="menu-select-postback" key="siadap.start.siadapYearChoice">
+					<fr:property name="providerClass" value="module.siadap.presentationTier.renderers.providers.SiadapYearConfigurationsFromExisting"/>
+					<fr:property name="format" value="${year}" />
+					<fr:property name="nullOptionHidden" value="true"/>
+					<%-- 
+					<fr:property name="eachSchema" value="module.siadap.presentationTier.renderers.providers.SiadapYearConfigurationsFromExisting.year"/>
+					--%>
+			</fr:slot>
+		</fr:schema>
+	</fr:edit>
+</fr:form>  
 <div class="infobox">
 	<bean:message key="siadap.more.info" bundle="SIADAP_RESOURCES"/> <html:link target="_blank"  href="http://drh.ist.utl.pt/html/avaliacao/naodocente/"> <bean:message key="siadap.more.info.link" bundle="SIADAP_RESOURCES"/></html:link>
 </div>
 <p>
-
 <strong> <bean:message key="label.myData" bundle="SIADAP_RESOURCES"/> </strong>
 <logic:present name="person">
 <fr:view name="person">

@@ -12,7 +12,7 @@
 			<property name="falseLabel" value="siadap.false.no"/>
 			<property name="trueLabel" value="siadap.true.yes"/>
 		</slot>
-		</schema>
+</schema>
 		
 <schema name="view.competence.name" bundle="SIADAP_RESOURCES"
 	type="module.siadap.domain.Competence">
