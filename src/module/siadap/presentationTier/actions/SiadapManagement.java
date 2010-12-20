@@ -70,18 +70,19 @@ public class SiadapManagement extends ContextBaseAction {
 			final ActionForm form, final HttpServletRequest request,
 			final HttpServletResponse response) {
 
-		SiadapYearWrapper siadapYearWrapper = (SiadapYearWrapper) request
-				.getAttribute("siadapYearWrapper");
+		SiadapYearWrapper siadapYearWrapper = (SiadapYearWrapper) getRenderedObject();
 		if (siadapYearWrapper == null) {
 			int year = new LocalDate().getYear();
 			siadapYearWrapper = new SiadapYearWrapper(year);
 		}
+		RenderUtils.invalidateViewState();
+		request.setAttribute("siadapYearWrapper", siadapYearWrapper);
 		SiadapYearConfiguration siadapYearConfiguration = siadapYearWrapper
 				.getSiadapYearConfiguration();
-		request.setAttribute("siadapYearWrapper", siadapYearWrapper);
 		if (siadapYearConfiguration != null) {
-			request.setAttribute("person", new PersonSiadapWrapper(UserView
-					.getCurrentUser().getPerson(), siadapYearConfiguration.getYear()));
+			request.setAttribute("person",
+					new PersonSiadapWrapper(UserView.getCurrentUser()
+							.getPerson(), siadapYearConfiguration.getYear()));
 			request.setAttribute("siadaps",
 					WorkflowProcess.getAllProcesses(SiadapProcess.class));
 		}
@@ -91,9 +92,16 @@ public class SiadapManagement extends ContextBaseAction {
 	public final ActionForward showConfiguration(final ActionMapping mapping,
 			final ActionForm form, final HttpServletRequest request,
 			final HttpServletResponse response) {
-		int year = new LocalDate().getYear();
-		request.setAttribute("configuration",
-				SiadapYearConfiguration.getSiadapYearConfiguration(year));
+		SiadapYearWrapper siadapYearWrapper = (SiadapYearWrapper) getRenderedObject();
+		if (siadapYearWrapper == null) {
+			int year = new LocalDate().getYear();
+			siadapYearWrapper = new SiadapYearWrapper(year);
+		}
+		RenderUtils.invalidateViewState();
+		request.setAttribute("siadapYearWrapper", siadapYearWrapper);
+		SiadapYearConfiguration siadapYearConfiguration = siadapYearWrapper
+				.getSiadapYearConfiguration();
+		request.setAttribute("configuration", siadapYearConfiguration);
 		request.setAttribute("addCCAMember", new VariantBean());
 		request.setAttribute("addHomologationMember", new VariantBean());
 		return forward(request, "/module/siadap/management/configuration.jsp");

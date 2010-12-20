@@ -4,11 +4,30 @@
 <%@ taglib uri="/WEB-INF/struts-logic.tld" prefix="logic"%>
 <%@ taglib uri="/WEB-INF/fenix-renderers.tld" prefix="fr"%>
 
+<%-- The year chooser: --%>
+<fr:form action="/siadapManagement.do?method=showConfiguration">
+	<fr:edit id="siadapYearWrapper" name="siadapYearWrapper" nested="true">
+		<fr:schema bundle="SIADAP" type="module.siadap.domain.wrappers.SiadapYearWrapper">
+			<fr:slot name="chosenYear" bundle="SIADAP_RESOURCES" layout="menu-select-postback" key="siadap.start.siadapYearChoice">
+					<fr:property name="providerClass" value="module.siadap.presentationTier.renderers.providers.SiadapYearsFromExistingSiadapCfgPlusOne"/>
+					<%-- 
+					<fr:property name="format" value="${year}" />
+					--%>
+					<fr:property name="nullOptionHidden" value="true"/>
+					<%-- 
+					<fr:property name="eachSchema" value="module.siadap.presentationTier.renderers.providers.SiadapYearConfigurationsFromExisting.year"/>
+					--%>
+			</fr:slot>
+		</fr:schema>
+		<fr:destination name="postBack" path="/siadapManagement.do?method=showConfiguration"/>
+	</fr:edit>
+</fr:form>  
+
 <logic:notPresent name="configuration"> 
 	<html:link page="/siadapManagement.do?method=createNewSiadapYearConfiguration">
 		<bean:message key="label.create.currentYearConfiguration" bundle="SIADAP_RESOURCES"/>
 	</html:link>
-|</logic:notPresent>
+</logic:notPresent>
 
 
 <logic:present name="configuration">
