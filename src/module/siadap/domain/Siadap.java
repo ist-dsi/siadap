@@ -29,7 +29,7 @@ public class Siadap extends Siadap_Base {
 
 	public static final int MINIMUM_EFICIENCY_OBJECTIVES_NUMBER = 1;
 	public static final int MINIMUM_PERFORMANCE_OBJECTIVES_NUMBER = 1;
-	public static final int MINIMUM_INOVATION_OBJECTIVES_NUMBER = 1;
+	public static final int MINIMUM_QUALITY_OBJECTIVES_NUMBER = 1;
 
 	public static final int MINIMUM_COMPETENCES_WITH_OBJ_EVAL_NUMBER = 6;
 
@@ -234,7 +234,7 @@ public class Siadap extends Siadap_Base {
 		int competencesCounter = 0;
 		int efficiencyObjectives = 0;
 		int performanceObjectives = 0;
-		int inovationObjectives = 0;
+		int qualityObjectives = 0;
 
 		Integer currentObjectiveVersion = getCurrentObjectiveVersion();
 
@@ -254,8 +254,8 @@ public class Siadap extends Siadap_Base {
 					case PERFORMANCE:
 						performanceObjectives++;
 						break;
-					case INOVATION:
-						inovationObjectives++;
+					case QUALITY:
+						qualityObjectives++;
 						break;
 					}
 				}
@@ -264,7 +264,7 @@ public class Siadap extends Siadap_Base {
 		return hasAllNeededCompetences() 		
 				&& efficiencyObjectives >= MINIMUM_EFICIENCY_OBJECTIVES_NUMBER
 				&& performanceObjectives >= MINIMUM_PERFORMANCE_OBJECTIVES_NUMBER
-				&& inovationObjectives >= MINIMUM_INOVATION_OBJECTIVES_NUMBER;
+				&& qualityObjectives >= MINIMUM_QUALITY_OBJECTIVES_NUMBER;
 	}
 
 	public boolean hasAllNeededCompetences()

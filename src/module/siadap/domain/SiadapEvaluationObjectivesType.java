@@ -5,7 +5,7 @@ import pt.ist.fenixWebFramework.rendererExtensions.util.IPresentableEnum;
 
 public enum SiadapEvaluationObjectivesType implements IPresentableEnum {
 
-    EFICIENCY, PERFORMANCE, INOVATION;
+    EFICIENCY, PERFORMANCE, QUALITY;
 
     @Override
     public String getLocalizedName() {
