@@ -20,24 +20,30 @@ public class CreateObjectiveEvaluationActivityInformation extends ActivityInform
     private String objective;
     private SiadapEvaluationObjectivesType type;
     private List<ObjectiveIndicator> indicators;
+    
+    private static Integer HUNDRED_PERCENT = new Integer(100);
 
     public static class ObjectiveIndicator implements Serializable {
 	String measurementIndicator;
 	String superationCriteria;
-	BigDecimal ponderationFactor;
+	Integer ponderationFactor;
 
-	public ObjectiveIndicator(String measurementIndicator, String superationCriteria, BigDecimal ponderationFactor) {
+	public ObjectiveIndicator(String measurementIndicator, String superationCriteria, Integer ponderationFactor) {
 	    super();
 	    setMeasurementIndicator(measurementIndicator);
 	    setSuperationCriteria(superationCriteria);
 	    setPonderationFactor(ponderationFactor);
 	}
 
-	public BigDecimal getPonderationFactor() {
+	public Integer getPonderationFactor() {
 	    return ponderationFactor;
 	}
+	
+    public BigDecimal getBigDecimalPonderationFactor() {
+    	return new BigDecimal(getPonderationFactor()).divide(new BigDecimal(100));
+    }
 
-	public void setPonderationFactor(BigDecimal ponderationFactor) {
+	public void setPonderationFactor(Integer ponderationFactor) {
 	    this.ponderationFactor = ponderationFactor;
 	}
 
@@ -77,16 +83,17 @@ public class CreateObjectiveEvaluationActivityInformation extends ActivityInform
     }
 
     public void addNewIndicator() {
-	indicators.add(new ObjectiveIndicator(null, null, indicators.size() == 0 ? BigDecimal.ONE : null));
+	indicators.add(new ObjectiveIndicator(null, null, indicators.size() == 0 ? HUNDRED_PERCENT : null));
     }
 
     protected void addNewIndicator(String measurementIndicator, String superationCriteria, BigDecimal ponderationFactor) {
-	indicators.add(new ObjectiveIndicator(measurementIndicator, superationCriteria, ponderationFactor));
+	indicators.add(new ObjectiveIndicator(measurementIndicator, superationCriteria, new Integer(ponderationFactor.multiply(new BigDecimal(100)).intValue())));
     }
 
     public void removeIndicator(int i) {
 	indicators.remove(i);
     }
+    
 
     @Override
     public void setProcess(SiadapProcess process) {
