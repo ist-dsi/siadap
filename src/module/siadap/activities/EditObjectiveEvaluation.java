@@ -24,7 +24,7 @@ public class EditObjectiveEvaluation extends WorkflowActivity<SiadapProcess, Edi
 		activityInformation.getJustification(), activityInformation.getType());
 	for (ObjectiveIndicator indicator : activityInformation.getIndicators()) {
 	    evaluation.addObjectiveIndicator(indicator.getMeasurementIndicator(), indicator.getSuperationCriteria(), indicator
-		    .getPonderationFactor());
+		    .getBigDecimalPonderationFactor());
 	}
     }
 

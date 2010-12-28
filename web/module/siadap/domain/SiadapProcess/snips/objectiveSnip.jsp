@@ -79,7 +79,13 @@
 				<fr:view name="indicator" property="evaluation" type="module.siadap.domain.scoring.SiadapObjectivesEvaluation"/>
 			</td> 
 			<td valign="middle">
-				<fr:view name="indicator" property="ponderationFactor" type="java.math.BigDecimal"/>
+			<fr:view name="indicator" type="module.siadap.domain.ObjectiveEvaluationIndicator" layout="values">
+					<fr:schema bundle="SIADAP_RESOURCES" type="module.siadap.domain.ObjectiveEvaluation">
+						<fr:slot name="ponderationFactor" layout="decimal-format">
+				 			<fr:property name="format" value="###.##%"/>
+						</fr:slot>
+					</fr:schema>
+				</fr:view>
 			</td> 
 		</tr>
 	</logic:iterate>
