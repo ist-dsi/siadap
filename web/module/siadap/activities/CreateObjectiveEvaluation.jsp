@@ -23,7 +23,7 @@
 			<fr:property name="rows" value="3" />
 			<fr:property name="columns" value="50" />
 		</fr:slot>
-		<fr:slot name="type"/>	
+		<fr:slot name="type" validator="pt.ist.fenixWebFramework.renderers.validators.RequiredValidator"/>	
 		</fr:schema>
 		<fr:layout name="tabular">
 			<fr:property name="classes" value="form"/>
@@ -35,8 +35,10 @@
 
 	 <logic:iterate id="indicator" name="information" property="indicators" indexId="counter">
 		<table>
-		<tr><td><strong><bean:message bundle="SIADAP_RESOURCES" key="label.indicator"/></strong> <logic:greaterThan name="counter" value="0">
-	 			<input id='<%= "remove-" + counter %>' type="button" value="-"/>
+		<tr><td><strong><bean:message bundle="SIADAP_RESOURCES" key="label.indicator"/> <%=counter+1%></strong> 
+			<logic:greaterThan name="counter" value="0">
+				<p style="text-align:right;"><a id='<%= "remove-" + counter %>' href="#"><bean:message  bundle="SIADAP_RESOURCES" key="activity.CreateOrEditObjectiveEvaluation.indicator.remove"/></a></p>
+	 			<input id='<%= "remove-" + counter %>' type="hidden" value="-"/>
 	 		</logic:greaterThan>
 	 		</td></tr>
 		<tr>
@@ -53,8 +55,11 @@
 					<fr:property name="rows" value="3" />
 					<fr:property name="columns" value="50" />
 				</fr:slot>
-				<fr:slot name="ponderationFactor"
-					validator="pt.ist.fenixWebFramework.renderers.validators.RequiredValidator">
+				<fr:slot name="ponderationFactor" key="label.ponderationFactor.inPercentage"
+					validator="pt.ist.fenixWebFramework.renderers.validators.RequiredValidator" help="activity.CreateOrEditObjectiveEvaluation.ponderationFactor.help">
+					<fr:property name="maxLength" value="3"/>
+					<fr:property name="size" value="3"/>
+					<fr:validator name="pt.ist.fenixWebFramework.renderers.validators.NumberValidator"/>
 				</fr:slot>
 			</fr:schema>
 	 	<fr:layout name="tabular">
@@ -68,7 +73,24 @@
 	 	</tr>
 	 	</table>
 	 </logic:iterate>
-	<input id="addNewIndicator" type="button" value="+"/>
+	 <%--	Style for the hovering tooltip:  --%>
+	 <style>
+		div.tooltip div.tooltipText {
+		top: -95px;
+		left: -200px;
+		}
+	</style>
+	 <%--	hovering tooltip stuff:  --%>
+	 <div style="text-align: right;">
+	   <div onmouseover="document.getElementById('adicionarDiv').className='tooltip tooltipOpen';" onmouseout="document.getElementById('adicionarDiv').className='tooltip tooltipClosed';" id="adicionarDiv" class="tooltip tooltipClosed">
+			<a id='addNewIndicator' href="#"><bean:message bundle="SIADAP_RESOURCES" key="activity.CreateOrEditObjectiveEvaluation.indicator.add"/></a>
+            <div class="tooltipText">
+            	<bean:message bundle="SIADAP_RESOURCES" key="activity.CreateOrEditObjectiveEvaluation.indicator.add.explanation"/>
+            </div>
+            <script type="text/javascript">document.getElementById('adicionarDiv').className='tooltip tooltipClosed';</script>
+        </div>
+     </div>
+	<input id="addNewIndicator" type="hidden" value="+"/>
 
 	<html:submit styleClass="inputbutton"><bean:message key="renderers.form.submit.name" bundle="RENDERER_RESOURCES"/></html:submit>
 </fr:form>
@@ -83,7 +105,7 @@
 	
 	<script type="text/javascript">
 
-		$("input[id^=remove-]").click(function() {
+		$("a[id^=remove-]").click(function() {
 			var form = $("#form");
 			var index = $(this).attr('id').substring(7);
 			form.attr('action',$("#removeIndicator").attr('href'));
