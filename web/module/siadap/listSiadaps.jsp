@@ -23,9 +23,6 @@
 		</fr:schema>
 	</fr:edit>
 </fr:form>  
-ANO: 
-<fr:view name="siadapYearWrapper" property="chosenYear"/>
-
 <div class="infobox">
 	<bean:message key="siadap.more.info" bundle="SIADAP_RESOURCES"/> <html:link target="_blank"  href="http://drh.ist.utl.pt/html/avaliacao/naodocente/"> <bean:message key="siadap.more.info.link" bundle="SIADAP_RESOURCES"/></html:link>
 </div>
