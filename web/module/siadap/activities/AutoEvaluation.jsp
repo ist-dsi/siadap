@@ -132,6 +132,8 @@
 				layout="radio-select">
 				<fr:property name="classes" value="liinline" />
 				<fr:property name="saveOptions" value="true" />
+				<fr:property name="nullOptionBundle" value="SIADAP_RESOURCES"/>
+				<fr:property name="nullOptionKey" value="label.nullRadioOption"/>
 				<fr:property name="providerClass"
 					value="module.siadap.presentationTier.renderers.providers.FactorScaleProvider" />
 			</fr:slot>
