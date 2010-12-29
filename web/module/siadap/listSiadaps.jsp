@@ -1,3 +1,5 @@
+<%@page import="module.siadap.domain.wrappers.PersonSiadapWrapper"%>
+<%@page import="module.organization.domain.Person"%>
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html"%>
 <%@ taglib uri="/WEB-INF/struts-bean.tld" prefix="bean"%>
@@ -74,6 +76,8 @@
  </p>
  </logic:notEmpty>
  
+ <bean:define id="personJava" name="person"/>
+ 
 <logic:notEmpty name="person" property="peopleToEvaluate"> 
 	<p>
 		<strong> <bean:message key="label.responsibleForEvaluationOf" bundle="SIADAP_RESOURCES"/>: </strong>
@@ -96,6 +100,11 @@
 				</logic:lessThan>
 			</logic:iterate>
 		</table>
+		<bean:size id="nrOfPersonsToEvaluate" name="person" property="peopleToEvaluate"/>
+		<logic:greaterThan name="nrOfPersonsToEvaluate" value="5">
+				<i><bean:message bundle="SIADAP_RESOURCES" key="label.shown5ofX" arg0="<%=String.valueOf(((PersonSiadapWrapper) personJava).getPeopleToEvaluate().size())%>" /></i>
+				<br/><br/>
+		</logic:greaterThan>
 		
 		<html:link page="/siadapManagement.do?method=prepareToCreateNewSiadapProcess"> <bean:message key="label.viewAllEvaluated" bundle="SIADAP_RESOURCES"/> </html:link>
 	</p>
