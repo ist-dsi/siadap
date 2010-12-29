@@ -56,6 +56,7 @@ public class CreateCompetenceEvaluation
 			new CompetenceEvaluation(activityInformation.getSiadap(),
 					competence);
 		}
+		activityInformation.getSiadap().setEvaluatedOnlyByCompetences(activityInformation.getEvaluatedOnlyByCompetences());
 	}
 
 	@Override

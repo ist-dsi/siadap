@@ -47,6 +47,7 @@ public class EditCompetenceEvaluation extends
 	for (Competence competence : competencesToAdd) {
 	    new CompetenceEvaluation(activityInformation.getSiadap(), competence);
 	}
+		activityInformation.getSiadap().setEvaluatedOnlyByCompetences(activityInformation.getEvaluatedOnlyByCompetences());
     }
 
     @Override
