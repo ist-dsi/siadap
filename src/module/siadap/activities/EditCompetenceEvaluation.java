@@ -54,6 +54,13 @@ public class EditCompetenceEvaluation extends
     public ActivityInformation<SiadapProcess> getActivityInformation(SiadapProcess process) {
 	return new CreateOrEditCompetenceEvaluationActivityInformation(process, this);
     }
+    
+    @Override
+    protected boolean shouldLogActivity(CreateOrEditCompetenceEvaluationActivityInformation activityInformation) {
+    	if (activityInformation.getProcess().getSiadap().getObjectivesAndCompetencesSealedDate() != null)
+    		return true;
+    	else return false;
+    }
 
     @Override
     public boolean isVisible() {

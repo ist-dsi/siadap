@@ -30,6 +30,8 @@ class Siadap {
 	Integer year;
 	Integer currentObjectiveVersion;
 	Boolean evaluatedOnlyByCompetences;
+	LocalDate objectivesAndCompetencesSealedDate;
+	LocalDate autoEvaluationSealedDate;
 	LocalDate requestedAcknowledgeDate;
 	LocalDate harmonizationDate;
 	LocalDate acknowledgeValidationDate;

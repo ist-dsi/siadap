@@ -8,18 +8,23 @@ import module.workflow.activities.ActivityInformation;
 import module.workflow.activities.WorkflowActivity;
 import myorg.domain.User;
 
-public class SubmitForObjectivesAcknowledge extends WorkflowActivity<SiadapProcess, ActivityInformation<SiadapProcess>> {
+public class SealObjectivesAndCompetences extends WorkflowActivity<SiadapProcess, ActivityInformation<SiadapProcess>> {
 
     @Override
     public boolean isActive(SiadapProcess process, User user) {
 	Siadap siadap = process.getSiadap();
 	return user == siadap.getEvaluator().getPerson().getUser() && siadap.isWithObjectivesFilled()
-		&& siadap.getRequestedAcknowledgeDate() == null && siadap.getObjectivesAndCompetencesSealedDate() != null;
+		&& siadap.getObjectivesAndCompetencesSealedDate() == null;
     }
 
     @Override
     protected void process(ActivityInformation<SiadapProcess> activityInformation) {
-	activityInformation.getProcess().getSiadap().setRequestedAcknowledgeDate(new LocalDate());
+	activityInformation.getProcess().getSiadap().setObjectivesAndCompetencesSealedDate(new LocalDate());
+    }
+
+    @Override
+    public boolean isConfirmationNeeded(SiadapProcess process) {
+    	return true;
     }
 
     @Override

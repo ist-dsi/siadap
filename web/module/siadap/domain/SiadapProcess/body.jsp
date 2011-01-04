@@ -1,3 +1,4 @@
+<%@page import="module.siadap.domain.SiadapProcess"%>
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html"%>
 <%@ taglib uri="/WEB-INF/struts-bean.tld" prefix="bean"%>
@@ -5,7 +6,15 @@
 <%@ taglib uri="/WEB-INF/fenix-renderers.tld" prefix="fr"%>
 <%@ taglib uri="/WEB-INF/workflow.tld" prefix="wf"%>
 
-
+<%-- Showing only the objectives and competences if we are the evaluator or they have been sealed --%>
+<%-- A simple definition to be able to use the process on the Java code --%>
+<bean:define id="processJava" name="process"/>
+<bean:define id="user" name="USER_SESSION_ATTRIBUTE" property="user"/>
+<% SiadapProcess siadapProcess = (SiadapProcess) request.getAttribute("process");
+boolean showObjectivesAndCompetences = siadapProcess.getSiadap().getObjectivesAndCompetencesSealedDate() != null || siadapProcess.getSiadap().getEvaluator().getPerson().getUser().equals(user);
+request.setAttribute("showObjectivesAndCompetences", showObjectivesAndCompetences);
+%>
+<logic:equal name="showObjectivesAndCompetences" value="true">
 <logic:equal name="process" property="siadap.evaluatedWithKnowledgeOfObjectives" value="false">
 	<div class="highlightBox mtop05 mbottom15">
 		<bean:message key="label.info.objectivesNotKownToEvaluated" bundle="SIADAP_RESOURCES"/>
@@ -24,15 +33,14 @@
 	bundle="SIADAP_RESOURCES" />:</h3>
 
 
-<logic:iterate id="objective" name="process"
-	property="siadap.objectiveEvaluations" indexId="i">
-	<bean:define id="index" value="<%=String.valueOf(i + 1)%>"
-		toScope="request" />
-	<bean:define id="objectiveEvaluation" name="objective"
-		toScope="request" />
-	<p><jsp:include page="snips/objectiveSnip.jsp" flush="true" /></p>
-</logic:iterate>
-
+	<logic:iterate id="objective" name="process"
+		property="siadap.objectiveEvaluations" indexId="i">
+		<bean:define id="index" value="<%=String.valueOf(i + 1)%>"
+			toScope="request" />
+		<bean:define id="objectiveEvaluation" name="objective"
+			toScope="request" />
+		<p><jsp:include page="snips/objectiveSnip.jsp" flush="true" /></p>
+	</logic:iterate>
 
 <%--  The self evaluation with the justification for the objectives --%>
 <logic:notEmpty name="process" property="siadap.autoEvaluationData" >
@@ -173,6 +181,13 @@
 		</p>
 	</p>
 </logic:equal>
+
+<%-- End of condition if the objectives and competences should show or not --%>
+</logic:equal>
+
+<logic:notEqual name="showObjectivesAndCompetences" value="true">
+<p><bean:message bundle="SIADAP_RESOURCES" key="label.objectivesAndCompetencesNotSealedYet"/></p>
+</logic:notEqual>
 <jsp:include page="/module/siadap/tracFeedBackSnip.jsp">	
    <jsp:param name="href" value="https://fenix-ashes.ist.utl.pt/trac/siadap/report/20" />	
 </jsp:include>

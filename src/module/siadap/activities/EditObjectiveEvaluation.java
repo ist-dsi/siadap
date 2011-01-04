@@ -32,6 +32,13 @@ public class EditObjectiveEvaluation extends WorkflowActivity<SiadapProcess, Edi
     public ActivityInformation<SiadapProcess> getActivityInformation(SiadapProcess process) {
 	return new EditObjectiveEvaluationActivityInformation(process, this);
     }
+    
+    @Override
+    protected boolean shouldLogActivity(EditObjectiveEvaluationActivityInformation activityInformation) {
+    	if (activityInformation.getProcess().getSiadap().getObjectivesAndCompetencesSealedDate() != null)
+    		return true;
+    	else return false;
+    }
 
     @Override
     public boolean isVisible() {

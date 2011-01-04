@@ -19,6 +19,7 @@ import module.siadap.activities.NoEvaluation;
 import module.siadap.activities.NotValidateEvaluation;
 import module.siadap.activities.RevertNoEvaluation;
 import module.siadap.activities.RevokeExcellencyAward;
+import module.siadap.activities.SealObjectivesAndCompetences;
 import module.siadap.activities.SubmitForObjectivesAcknowledge;
 import module.siadap.activities.ValidateEvaluation;
 import module.siadap.domain.wrappers.PersonSiadapWrapper;
@@ -30,9 +31,6 @@ import myorg.applicationTier.Authenticate.UserView;
 import myorg.domain.User;
 import myorg.domain.exceptions.DomainException;
 import myorg.util.ClassNameBundle;
-
-import org.joda.time.LocalDate;
-
 import pt.ist.fenixWebFramework.services.Service;
 
 @ClassNameBundle(bundle = "resources/SiadapResources", key = "label.process.siadap")
@@ -44,6 +42,7 @@ public class SiadapProcess extends SiadapProcess_Base {
 	activities.add(new CreateObjectiveEvaluation());
 	activities.add(new CreateCompetenceEvaluation());
 	activities.add(new EditCompetenceEvaluation());
+	activities.add(new SealObjectivesAndCompetences());
 	activities.add(new AcknowledgeEvaluationObjectives());
 	activities.add(new AutoEvaluation());
 	activities.add(new Evaluation());
@@ -99,8 +98,8 @@ public class SiadapProcess extends SiadapProcess_Base {
     }
 
     @Service
-    public static SiadapProcess createNewProcess(Person evaluated) {
-	return new SiadapProcess(new LocalDate().getYear(), evaluated);
+    public static SiadapProcess createNewProcess(Person evaluated, Integer year) {
+	return new SiadapProcess(year, evaluated);
     }
 
     @Override

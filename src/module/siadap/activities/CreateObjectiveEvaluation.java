@@ -1,7 +1,5 @@
 package module.siadap.activities;
 
-import java.math.BigDecimal;
-
 import module.siadap.activities.CreateObjectiveEvaluationActivityInformation.ObjectiveIndicator;
 import module.siadap.domain.ObjectiveEvaluation;
 import module.siadap.domain.Siadap;
@@ -28,6 +26,14 @@ public class CreateObjectiveEvaluation extends WorkflowActivity<SiadapProcess, C
 	    objectiveEvaluation.addObjectiveIndicator(indicator.getMeasurementIndicator(), indicator.getSuperationCriteria(),
 		   indicator.getBigDecimalPonderationFactor());
 	}
+    }
+
+    @Override
+    protected boolean shouldLogActivity(CreateObjectiveEvaluationActivityInformation activityInformation) {
+	if (activityInformation.getProcess().getSiadap().getObjectivesAndCompetencesSealedDate() != null)
+	    return true;
+	else
+	    return false;
     }
 
     @Override

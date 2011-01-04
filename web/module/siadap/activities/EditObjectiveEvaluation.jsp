@@ -4,6 +4,8 @@
 <%@ taglib uri="/WEB-INF/struts-logic.tld" prefix="logic"%>
 <%@ taglib uri="/WEB-INF/fenix-renderers.tld" prefix="fr"%>
 
+<jsp:include page="CreateObjectiveEvaluation.jsp"/>
+<%-- 
 <bean:define id="processId" name="process" property="externalId"
 	type="java.lang.String" />
 <bean:define id="name" name="information" property="activityName" />
@@ -23,11 +25,13 @@
 			<fr:property name="rows" value="3" />
 			<fr:property name="columns" value="50" />
 		</fr:slot>
-		<fr:slot name="justification" layout="longText"
-		validator="pt.ist.fenixWebFramework.renderers.validators.RequiredValidator">
-		<fr:property name="rows" value="3" />
-		<fr:property name="columns" value="50" />
-		</fr:slot>
+		<logic:equal name="employJustification" value="true">
+			<fr:slot name="justification" layout="longText"
+			validator="pt.ist.fenixWebFramework.renderers.validators.RequiredValidator">
+				<fr:property name="rows" value="3" />
+				<fr:property name="columns" value="50" />
+			</fr:slot>
+		</logic:equal>
 		</fr:schema>
 		<fr:layout name="tabular">
 			<fr:property name="classes" value="form"/>
@@ -75,14 +79,14 @@
 	 	</tr>
 	 	</table>
 	 </logic:iterate>
-	 <%--	Style for the hovering tooltip:  --%>
+	 <%--	Style for the hovering tooltip:  
 	 <style>
 		div.tooltip div.tooltipText {
-		top: -95px;
-		left: -200px;
+		top: 20px;
+		left: -219px;
 		}
 	</style>
-	 <%--	hovering tooltip stuff:  --%>
+	 <%--	hovering tooltip stuff:  
 	 <div style="text-align: right;">
 	   <div onmouseover="document.getElementById('adicionarDiv').className='tooltip tooltipOpen';" onmouseout="document.getElementById('adicionarDiv').className='tooltip tooltipClosed';" id="adicionarDiv" class="tooltip tooltipClosed">
 			<a id='addNewIndicator' href="#"><bean:message bundle="SIADAP_RESOURCES" key="activity.CreateOrEditObjectiveEvaluation.indicator.add"/></a>
@@ -125,3 +129,4 @@
 <jsp:include page="/module/siadap/tracFeedBackSnip.jsp">	
    <jsp:param name="href" value="https://fenix-ashes.ist.utl.pt/trac/siadap/report/11" />	
 </jsp:include>
+--%>

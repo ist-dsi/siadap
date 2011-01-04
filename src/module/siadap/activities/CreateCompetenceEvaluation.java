@@ -48,15 +48,18 @@ public class CreateCompetenceEvaluation
 		} else
 			nrRequiredItems = Integer.MAX_VALUE;
 		if (activityInformation.getCompetences().size() < nrRequiredItems) {
-			throw new DomainException("renderers.validator.invalid.nrCompetences",
-					ResourceBundle.getBundle("resources/SiadapResources", Language.getLocale()),
+			throw new DomainException(
+					"renderers.validator.invalid.nrCompetences",
+					ResourceBundle.getBundle("resources/SiadapResources",
+							Language.getLocale()),
 					Integer.toString(nrRequiredItems));
 		}
 		for (Competence competence : activityInformation.getCompetences()) {
 			new CompetenceEvaluation(activityInformation.getSiadap(),
 					competence);
 		}
-		activityInformation.getSiadap().setEvaluatedOnlyByCompetences(activityInformation.getEvaluatedOnlyByCompetences());
+		activityInformation.getSiadap().setEvaluatedOnlyByCompetences(
+				activityInformation.getEvaluatedOnlyByCompetences());
 	}
 
 	@Override
@@ -64,6 +67,16 @@ public class CreateCompetenceEvaluation
 			SiadapProcess process) {
 		return new CreateOrEditCompetenceEvaluationActivityInformation(process,
 				this);
+	}
+
+	@Override
+	protected boolean shouldLogActivity(
+			CreateOrEditCompetenceEvaluationActivityInformation activityInformation) {
+		if (activityInformation.getProcess().getSiadap()
+				.getObjectivesAndCompetencesSealedDate() != null)
+			return true;
+		else
+			return false;
 	}
 
 	@Override
