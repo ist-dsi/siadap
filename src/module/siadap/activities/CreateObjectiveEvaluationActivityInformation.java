@@ -19,7 +19,7 @@ public class CreateObjectiveEvaluationActivityInformation extends ActivityInform
     private Siadap siadap;
     private String objective;
     private SiadapEvaluationObjectivesType type;
-    private List<ObjectiveIndicator> indicators;
+    private final List<ObjectiveIndicator> indicators;
     
     private static Integer HUNDRED_PERCENT = new Integer(100);
 
@@ -134,7 +134,7 @@ public class CreateObjectiveEvaluationActivityInformation extends ActivityInform
 	return getSiadap() != null && !StringUtils.isEmpty(getObjective()) && indicatorsFilled() && getType() != null;
     }
 
-    private boolean indicatorsFilled() {
+    protected boolean indicatorsFilled() {
 	if (indicators.size() == 0) {
 	    return false;
 	} else {

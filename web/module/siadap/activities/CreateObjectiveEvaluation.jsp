@@ -1,3 +1,5 @@
+<%@page import="module.siadap.activities.EditObjectiveEvaluationActivityInformation"%>
+<%@page import="module.workflow.activities.ActivityInformation"%>
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html"%>
 <%@ taglib uri="/WEB-INF/struts-bean.tld" prefix="bean"%>
@@ -23,7 +25,22 @@
 			<fr:property name="rows" value="3" />
 			<fr:property name="columns" value="50" />
 		</fr:slot>
-		<fr:slot name="type" validator="pt.ist.fenixWebFramework.renderers.validators.RequiredValidator"/>	
+		<logic:present name="employJustification">
+			<logic:equal name="employJustification" value="true">
+				<fr:slot name="justification" layout="longText"
+				validator="pt.ist.fenixWebFramework.renderers.validators.RequiredValidator">
+					<fr:property name="rows" value="3" />
+					<fr:property name="columns" value="50" />
+				</fr:slot>
+			</logic:equal>
+		</logic:present>
+		<% ActivityInformation ai = (ActivityInformation) request.getAttribute("information"); 
+		boolean shouldTypeBeEditable = ai instanceof EditObjectiveEvaluationActivityInformation ? false : true;
+		request.setAttribute("shouldTypeBeEditable", shouldTypeBeEditable);
+		%>
+		<logic:equal name="shouldTypeBeEditable" value="true">
+			<fr:slot name="type" validator="pt.ist.fenixWebFramework.renderers.validators.RequiredValidator"/>	
+		</logic:equal>
 		</fr:schema>
 		<fr:layout name="tabular">
 			<fr:property name="classes" value="form"/>
@@ -76,8 +93,8 @@
 	 <%--	Style for the hovering tooltip:  --%>
 	 <style>
 		div.tooltip div.tooltipText {
-		top: -95px;
-		left: -200px;
+		top: 20px;
+		left: -219;
 		}
 	</style>
 	 <%--	hovering tooltip stuff:  --%>

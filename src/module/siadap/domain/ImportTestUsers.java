@@ -18,6 +18,10 @@ public class ImportTestUsers extends WriteCustomTask {
 	private static final String testUsersListString = new String(
 	// Managers:
 			"ist154457\n" + // João Antunes (eu)
+					//DEC Civil:
+					"ist12603" + //Vitor Leitão
+					//DEM Mecãnica:
+					"ist12889" + //Miguel Ayala Botto
 					// CIIST:
 					"ist24698\n" + // Rita Wahl
 					"ist22619\n" + // Paula César
