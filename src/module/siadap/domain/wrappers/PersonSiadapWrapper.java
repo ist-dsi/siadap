@@ -65,7 +65,7 @@ public class PersonSiadapWrapper extends PartyWrapper implements Serializable {
 	    if (getWorkingUnit() != null) {
 		Collection<Unit> workingPlaces = getParentUnits(getConfiguration().getWorkingRelation(), getConfiguration()
 			.getWorkingRelationWithNoQuota());
-		Unit workingUnit = (Unit) workingPlaces.iterator().next();
+		Unit workingUnit = workingPlaces.iterator().next();
 		Collection<Person> childPersons = workingUnit.getChildPersons(getConfiguration().getEvaluationRelation());
 		if (!childPersons.isEmpty()) {
 		    evaluator = childPersons.iterator().next();
@@ -125,6 +125,9 @@ public class PersonSiadapWrapper extends PartyWrapper implements Serializable {
     }
 
     public Set<PersonSiadapWrapper> getPeopleToEvaluate() {
+	//if no configuration has been set for the current year, we retrieve null!
+	if (SiadapYearConfiguration.getSiadapYearConfiguration(Integer.valueOf(getYear())) == null)
+	    return null;
 	Set<PersonSiadapWrapper> people = new HashSet<PersonSiadapWrapper>();
 	final PersonSiadapWrapper evaluator = new PersonSiadapWrapper(getPerson(), getYear());
 	final AccountabilityType evaluationRelation = getConfiguration().getEvaluationRelation();

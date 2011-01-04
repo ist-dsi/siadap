@@ -28,9 +28,10 @@
 <div class="infobox">
 	<bean:message key="siadap.more.info" bundle="SIADAP_RESOURCES"/> <html:link target="_blank"  href="http://drh.ist.utl.pt/html/avaliacao/naodocente/"> <bean:message key="siadap.more.info.link" bundle="SIADAP_RESOURCES"/></html:link>
 </div>
+<logic:present name="person">
 <p>
 <strong> <bean:message key="label.myData" bundle="SIADAP_RESOURCES"/> </strong>
-<logic:present name="person">
+</p>
 <fr:view name="person">
 	<fr:schema type="module.siadap.domain.wrappers.PersonSiadapWrapper" bundle="SIADAP_RESOURCES">
 		<fr:slot name="name" key="label.name " bundle="ORGANIZATION_RESOURCES"/>
@@ -48,7 +49,6 @@
 		<fr:property name="columnClasses" value="aright,aleft,"/>
 	</fr:layout>
 </fr:view>
-</p>
 
 <div class="infobox">
 	<bean:message key="label.data.owners.warning" bundle="SIADAP_RESOURCES"/>
@@ -81,7 +81,7 @@
 <logic:notEmpty name="person" property="peopleToEvaluate"> 
 	<p>
 		<strong> <bean:message key="label.responsibleForEvaluationOf" bundle="SIADAP_RESOURCES"/>: </strong>
-		
+	</p>
 		<table class="tstyle2">
 			<tr>
 			<th>
@@ -94,8 +94,8 @@
 			<logic:iterate id="evaluated" name="person" property="peopleToEvaluate" indexId="index">
 				<logic:lessThan name="index" value="5">
 					<tr>
-						<td><fr:view name="evaluated" property="name"/>
-						<td><fr:view name="evaluated" property="workingUnit.name"/>
+						<td><fr:view name="evaluated" property="name"/></td>
+						<td><fr:view name="evaluated" property="workingUnit.name"/></td>
 					</tr>
 				</logic:lessThan>
 			</logic:iterate>
@@ -106,8 +106,7 @@
 				<br/><br/>
 		</logic:greaterThan>
 		
-		<html:link page="/siadapManagement.do?method=prepareToCreateNewSiadapProcess"> <bean:message key="label.viewAllEvaluated" bundle="SIADAP_RESOURCES"/> </html:link>
-	</p>
+		<html:link page="/siadapManagement.do?method=prepareToCreateNewSiadapProcess" paramId="year" paramName="person" paramProperty="year"> <bean:message key="label.viewAllEvaluated" bundle="SIADAP_RESOURCES"/> </html:link>
 </logic:notEmpty>
 <logic:notEmpty name="person" property="harmozationUnits">
 	<p>
@@ -133,6 +132,9 @@
 	</p>
 </logic:notEmpty>
 </logic:present>
+<logic:notPresent name="person">
+<strong><bean:message bundle="SIADAP_RESOURCES" key="label.noconfiguration"/> <a href="mailto:suporte@ist.utl.pt" ><bean:message bundle="SIADAP_RESOURCES" key="label.here" /></a></strong>
+</logic:notPresent>
 <jsp:include page="/module/siadap/tracFeedBackSnip.jsp">	
    <jsp:param name="href" value="https://fenix-ashes.ist.utl.pt/trac/siadap/report/13" />	
 </jsp:include>
