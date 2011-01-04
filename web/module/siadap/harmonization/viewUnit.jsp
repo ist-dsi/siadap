@@ -22,13 +22,15 @@
 
 <bean:define id="unitId" name="currentUnit" property="unit.externalId"/>
 
+<bean:define id="year" name="currentUnit" property="year"/>
+
 <logic:present name="currentUnit" property="superiorUnit">
 <bean:define id="superiorUnit" name="currentUnit" property="superiorUnit" type="module.organization.domain.Unit"/>
 
 <strong>
 	<bean:message key="label.superiorUnit" bundle="SIADAP_RESOURCES"/>:
 </strong>
-	<html:link page="/siadapManagement.do?method=viewUnitHarmonizationData" paramId="unitId" paramName="superiorUnit" paramProperty="externalId">		
+	<html:link page="<%="/siadapManagement.do?method=viewUnitHarmonizationData&year=" + year.toString()%>" paramId="unitId" paramName="superiorUnit" paramProperty="externalId">		
 		<fr:view name="superiorUnit" property="partyName"/>
 	</html:link>
 </logic:present>
@@ -79,12 +81,12 @@
 	</logic:equal>
 	
 	<p>
-	<html:link page="/siadapManagement.do?method=listHighGlobalEvaluations" paramName="currentUnit" paramProperty="unit.externalId" paramId="unitId"> <bean:message key="label.viewGlobalEvaluations.relevant" bundle="SIADAP_RESOURCES"/> </html:link> | <html:link page="/siadapManagement.do?method=listExcellencyGlobalEvaluations" paramName="currentUnit" paramProperty="unit.externalId" paramId="unitId"> <bean:message key="label.viewGlobalEvaluations.excellency" bundle="SIADAP_RESOURCES"/> </html:link>
+	<html:link page="<%="/siadapManagement.do?method=listHighGlobalEvaluations&year=" + year.toString()%>" paramName="currentUnit" paramProperty="unit.externalId" paramId="unitId"> <bean:message key="label.viewGlobalEvaluations.relevant" bundle="SIADAP_RESOURCES"/> </html:link> | <html:link page="<%= "/siadapManagement.do?method=listExcellencyGlobalEvaluations&year=" + year.toString()%>" paramName="currentUnit" paramProperty="unit.externalId" paramId="unitId"> <bean:message key="label.viewGlobalEvaluations.excellency" bundle="SIADAP_RESOURCES"/> </html:link>
     <logic:equal name="currentUnit" property="harmonizationFinished" value="false">
     | <html:link styleId="terminateHarmonization"  page="/siadapManagement.do?method=terminateHarmonization" paramName="currentUnit" paramProperty="unit.externalId" paramId="unitId">
 			<bean:message key="label.terminateHarmonization" bundle="SIADAP_RESOURCES"/>
 		</html:link>
-	| <html:link  page="/siadapManagement.do?method=prepareAddExcedingQuotaSuggestion" paramName="currentUnit" paramProperty="unit.externalId" paramId="unitId">
+	| <html:link  page="<%="/siadapManagement.do?method=prepareAddExcedingQuotaSuggestion&year=" + year.toString()%>" paramName="currentUnit" paramProperty="unit.externalId" paramId="unitId">
 			<bean:message key="label.addExcedingQuotaSuggestion" bundle="SIADAP_RESOURCES"/>
 	  </html:link>
 	</logic:equal>
@@ -138,7 +140,7 @@
 				<fr:property name="visibleIf(viewProcess)" value="accessibleToCurrentUser"/>
 				
 				<fr:property name="sortParameter" value="sortByQuotas"/>
-       			<fr:property name="sortUrl" value="<%= "/siadapManagement.do?method=viewUnitHarmonizationData&unitId=" + unitId %>"/>
+       			<fr:property name="sortUrl" value="<%= "/siadapManagement.do?method=viewUnitHarmonizationData&unitId=" + unitId + "&year=" + year.toString()%>"/>
 			    <fr:property name="sortBy" value="<%= request.getParameter("sortByQuotas") == null ? "person.partyName=asc" : request.getParameter("sortByQuotas") %>"/>
 				
 			</fr:layout>
@@ -180,7 +182,7 @@
 				<fr:property name="visibleIf(viewProcess)" value="accessibleToCurrentUser"/>
 				
 				<fr:property name="sortParameter" value="sortByNoQuotas"/>
-       			<fr:property name="sortUrl" value="<%= "/siadapManagement.do?method=viewUnitHarmonizationData&unitId=" + unitId %>"/>
+       			<fr:property name="sortUrl" value="<%= "/siadapManagement.do?method=viewUnitHarmonizationData&unitId=" + unitId + "&year=" + year.toString()%>"/>
 			    <fr:property name="sortBy" value="<%= request.getParameter("sortByNoQuotas") == null ? "person.partyName=asc" : request.getParameter("sortByNoQuotas") %>"/>
 			</fr:layout>
 		</fr:view>
@@ -250,7 +252,7 @@
 			</fr:schema>
 			<fr:layout name="tabular">
 				<fr:property name="classes" value="tstyle2"/>
-				<fr:property name="link(view)" value="/siadapManagement.do?method=viewUnitHarmonizationData"/>
+				<fr:property name="link(view)" value="<%="/siadapManagement.do?method=viewUnitHarmonizationData&year=" + year.toString() %>"/>
 				<fr:property name="bundle(view)" value="MYORG_RESOURCES"/>
 				<fr:property name="key(view)" value="link.view"/>
 				<fr:property name="param(view)" value="unit.externalId/unitId"/>

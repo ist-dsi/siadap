@@ -10,6 +10,24 @@
 
 <bean:define id="mode" name="mode"/>
 
+<%-- The year chooser: --%>
+<fr:form action="/siadapManagement.do?method=manageHarmonizationUnitsForMode">
+	<fr:edit name="siadapYearWrapper" nested="true">
+		<fr:schema bundle="SIADAP" type="module.siadap.domain.wrappers.SiadapYearWrapper">
+			<fr:slot name="chosenYear" bundle="SIADAP_RESOURCES" layout="menu-select-postback" key="siadap.start.siadapYearChoice">
+					<fr:property name="providerClass" value="module.siadap.presentationTier.renderers.providers.SiadapYearsFromExistingSiadapConfigurations"/>
+					<%-- 
+					<fr:property name="format" value="${year}" />
+					--%>
+					<fr:property name="nullOptionHidden" value="true"/>
+					<%-- 
+					<fr:property name="eachSchema" value="module.siadap.presentationTier.renderers.providers.SiadapYearConfigurationsFromExisting.year"/>
+					--%>
+			</fr:slot>
+		</fr:schema>
+	</fr:edit>
+</fr:form>  
+
 <fr:view name="harmonizationUnits">
 	<fr:schema type="module.siadap.domain.wrappers.UnitSiadapWrapper" bundle="SIADAP_RESOURCES">
 			<fr:slot name="unit.partyName"  key="label.unit" bundle="ORGANIZATION_RESOURCES" />

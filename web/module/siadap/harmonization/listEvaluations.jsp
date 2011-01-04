@@ -9,9 +9,11 @@
 	<bean:message key="<%=  "label.viewGlobalEvaluations." + label %>" bundle="SIADAP_RESOURCES"/>	
 </h2>
 
+<bean:define id="year" name="unit" property="year"  />
+
 <ul>
 	<li>
-		<html:link page="/siadapManagement.do?method=viewUnitHarmonizationData" paramId="unitId" paramName="unit" paramProperty="unit.externalId">
+		<html:link page="<%="/siadapManagement.do?method=viewUnitHarmonizationData&year=" + year.toString()%>" paramId="unitId" paramName="unit" paramProperty="unit.externalId">
 		<bean:message key="link.back" bundle="MYORG_RESOURCES"/>
 		</html:link>
 	</li>

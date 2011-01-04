@@ -6,6 +6,8 @@
 
 <bean:define id="unitId" name="unit" property="unit.externalId" />
 
+<<bean:define id="year" name="unit" property="year"/>
+
 <h2><fr:view name="unit" property="name" /></h2>
 <bean:define id="slot" name="mode" />
 
@@ -40,7 +42,7 @@
 
 		<fr:property name="sortParameter" value="sortBy" />
 		<fr:property name="sortUrl"
-			value="<%="/siadapManagement.do?method=harmonizationData&unitId=" + unitId + "&mode=" + slot.toString()%>" />
+			value="<%="/siadapManagement.do?method=harmonizationData&unitId=" + unitId + "&mode=" + slot.toString() + "&year=" + year.toString()%>" />
 		<fr:property name="sortBy"
 			value="<%=request.getParameter("sortBy") == null ? "person.partyName=asc" : request
 			    .getParameter("sortBy")%>" />

@@ -12,6 +12,8 @@ public class SiadapSuggestionBean implements Serializable {
     private Unit unit;
     private ExceddingQuotaSuggestionType type;
 
+    private Integer year;
+
     public SiadapSuggestionBean() {
 
     }
@@ -39,5 +41,14 @@ public class SiadapSuggestionBean implements Serializable {
     public void setType(ExceddingQuotaSuggestionType type) {
 	this.type = type;
     }
+
+    public void setYear(Integer year) {
+	this.year = year;
+    }
+
+    public Integer getYear() {
+	return year;
+    }
+
 
 }

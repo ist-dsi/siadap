@@ -109,6 +109,8 @@
 		<html:link page="/siadapManagement.do?method=prepareToCreateNewSiadapProcess" paramId="year" paramName="person" paramProperty="year"> <bean:message key="label.viewAllEvaluated" bundle="SIADAP_RESOURCES"/> </html:link>
 </logic:notEmpty>
 <logic:notEmpty name="person" property="harmozationUnits">
+<%-- Defining the year here so that it can be more easily passed on the links below that use it --%>
+<bean:define id="year" name="siadapYearWrapper" property="chosenYear"/>
 	<p>
 		<strong> <bean:message key="label.responsifleForHarmonizationOf" bundle="SIADAP_RESOURCES"/>: </strong>
 		<fr:view name="person" property="harmozationUnits">
@@ -122,7 +124,7 @@
 			</fr:schema>
 			<fr:layout name="tabular">
 				<fr:property name="classes" value="tstyle2"/>
-				<fr:property name="link(view)" value="/siadapManagement.do?method=viewUnitHarmonizationData"/>
+				<fr:property name="link(view)" value="<%="/siadapManagement.do?method=viewUnitHarmonizationData&year=" + year.toString() %>"/>
 				<fr:property name="bundle(view)" value="MYORG_RESOURCES"/>
 				<fr:property name="key(view)" value="link.view"/>
 				<fr:property name="param(view)" value="unit.externalId/unitId"/>

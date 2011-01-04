@@ -78,7 +78,6 @@ public class SiadapManagement extends ContextBaseAction {
 		siadapYearWrapper = new SiadapYearWrapper(yearsWithConfigs.get(yearsWithConfigs.size() - 1));
 	    }
 	}
-	RenderUtils.invalidateViewState();
 	request.setAttribute("siadapYearWrapper", siadapYearWrapper);
 	SiadapYearConfiguration siadapYearConfiguration = siadapYearWrapper.getSiadapYearConfiguration();
 	if (siadapYearConfiguration != null) {
@@ -162,7 +161,8 @@ public class SiadapManagement extends ContextBaseAction {
 
     public final ActionForward viewUnitHarmonizationData(final ActionMapping mapping, final ActionForm form,
 	    final HttpServletRequest request, final HttpServletResponse response) {
-	int year = new LocalDate().getYear();
+
+	int year = Integer.parseInt(request.getParameter("year"));
 
 	Unit unit = getDomainObject(request, "unitId");
 	UnitSiadapWrapper wrapper = new UnitSiadapWrapper(unit, year);
@@ -186,8 +186,7 @@ public class SiadapManagement extends ContextBaseAction {
 
     private final ActionForward listGlobalEvaluations(final HttpServletRequest request, Predicate predicate) {
 
-	int year = new LocalDate().getYear();
-
+	int year = Integer.parseInt(request.getParameter("year"));
 	Unit unit = getDomainObject(request, "unitId");
 	UnitSiadapWrapper unitSiadapWrapper = new UnitSiadapWrapper(unit, year);
 
@@ -275,8 +274,21 @@ public class SiadapManagement extends ContextBaseAction {
     public final ActionForward manageHarmonizationUnitsForMode(final ActionMapping mapping, final ActionForm form,
 	    final HttpServletRequest request, final HttpServletResponse response) {
 
-	int year = new LocalDate().getYear();
-	request.setAttribute("harmonizationUnits", SiadapYearConfiguration.getAllHarmonizationUnitsFor(year));
+	SiadapYearWrapper siadapYearWrapper = (SiadapYearWrapper) getRenderedObject("siadapYearWrapper");
+	if (siadapYearWrapper == null) {
+	    ArrayList<Integer> yearsWithConfigs = SiadapYearsFromExistingSiadapConfigurations.getYearsWithExistingConfigs();
+	    if (yearsWithConfigs.contains(new Integer(new LocalDate().getYear()))) {
+		int year = new LocalDate().getYear();
+		siadapYearWrapper = new SiadapYearWrapper(year);
+	    } else {
+		siadapYearWrapper = new SiadapYearWrapper(yearsWithConfigs.get(yearsWithConfigs.size() - 1));
+	    }
+	}
+	RenderUtils.invalidateViewState();
+
+	request.setAttribute("siadapYearWrapper", siadapYearWrapper);
+	request.setAttribute("harmonizationUnits",
+		SiadapYearConfiguration.getAllHarmonizationUnitsFor(siadapYearWrapper.getChosenYear()));
 	String mode = request.getParameter("mode");
 	request.setAttribute("mode", mode);
 	return forward(request, "/module/siadap/bulkManagement/listHarmonizationUnits.jsp");
@@ -285,7 +297,7 @@ public class SiadapManagement extends ContextBaseAction {
     public final ActionForward harmonizationData(final ActionMapping mapping, final ActionForm form,
 	    final HttpServletRequest request, final HttpServletResponse response) {
 
-	int year = new LocalDate().getYear();
+	int year = Integer.parseInt(request.getParameter("year"));
 	Unit unit = getDomainObject(request, "unitId");
 	String mode = request.getParameter("mode");
 
@@ -302,6 +314,7 @@ public class SiadapManagement extends ContextBaseAction {
 	Unit unit = getDomainObject(request, "unitId");
 	SiadapSuggestionBean bean = new SiadapSuggestionBean();
 	bean.setUnit(unit);
+	bean.setYear(Integer.parseInt(request.getParameter("year")));
 
 	request.setAttribute("bean", bean);
 	return forward(request, "/module/siadap/bulkManagement/addSuggestionToUnit.jsp");
@@ -310,7 +323,7 @@ public class SiadapManagement extends ContextBaseAction {
     public final ActionForward addExcedingQuotaSuggestion(final ActionMapping mapping, final ActionForm form,
 	    final HttpServletRequest request, final HttpServletResponse response) {
 
-	int year = new LocalDate().getYear();
+	int year = Integer.parseInt(request.getParameter("year"));
 	SiadapSuggestionBean bean = getRenderedObject("bean");
 	Unit unit = bean.getUnit();
 
