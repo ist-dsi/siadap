@@ -1,6 +1,7 @@
 package module.siadap.presentationTier.actions;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Set;
@@ -14,7 +15,9 @@ import module.organization.domain.Person;
 import module.organization.domain.Unit;
 import module.siadap.domain.SiadapYearConfiguration;
 import module.siadap.domain.wrappers.PersonSiadapWrapper;
+import module.siadap.domain.wrappers.SiadapYearWrapper;
 import module.siadap.domain.wrappers.UnitSiadapWrapper;
+import module.siadap.presentationTier.renderers.providers.SiadapYearsFromExistingSiadapConfigurations;
 import myorg.applicationTier.Authenticate.UserView;
 import myorg.presentationTier.actions.ContextBaseAction;
 import myorg.util.VariantBean;
@@ -33,6 +36,17 @@ public class SiadapPersonnelManagement extends ContextBaseAction {
     public final ActionForward start(final ActionMapping mapping, final ActionForm form, final HttpServletRequest request,
 	    final HttpServletResponse response) throws Exception {
 
+	SiadapYearWrapper siadapYearWrapper = (SiadapYearWrapper) getRenderedObject("siadapYearWrapper");
+	if (siadapYearWrapper == null) {
+	    ArrayList<Integer> yearsWithConfigs = SiadapYearsFromExistingSiadapConfigurations.getYearsWithExistingConfigs();
+	    if (yearsWithConfigs.contains(new Integer(new LocalDate().getYear()))) {
+		int year = new LocalDate().getYear();
+		siadapYearWrapper = new SiadapYearWrapper(year);
+	    } else {
+		siadapYearWrapper = new SiadapYearWrapper(yearsWithConfigs.get(yearsWithConfigs.size() - 1));
+	    }
+	}
+	request.setAttribute("siadapYearWrapper", siadapYearWrapper);
 	VariantBean bean = new VariantBean();
 	request.setAttribute("bean", bean);
 
@@ -46,7 +60,7 @@ public class SiadapPersonnelManagement extends ContextBaseAction {
 	VariantBean bean = getRenderedObject("searchPerson");
 	Person person = (Person) ((bean != null) ? bean.getDomainObject() : getDomainObject(request, "personId"));
 
-	int year = new LocalDate().getYear();
+	int year = Integer.parseInt(request.getParameter("year"));
 	PersonSiadapWrapper personSiadapWrapper = new PersonSiadapWrapper(person, year);
 
 	request.setAttribute("person", personSiadapWrapper);

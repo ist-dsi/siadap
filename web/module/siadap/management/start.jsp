@@ -6,7 +6,27 @@
 
 <h2><bean:message key="link.siadap.structureManagement" bundle="SIADAP_RESOURCES"/></h2>
 
-<fr:edit id="searchPerson" name="bean" action="/siadapPersonnelManagement.do?method=viewPerson">
+<%-- The year chooser: --%>
+<fr:form action="/siadapPersonnelManagement.do?method=start">
+	<fr:edit name="siadapYearWrapper" nested="true">
+		<fr:schema bundle="SIADAP" type="module.siadap.domain.wrappers.SiadapYearWrapper">
+			<fr:slot name="chosenYear" bundle="SIADAP_RESOURCES" layout="menu-select-postback" key="siadap.start.siadapYearChoice">
+					<fr:property name="providerClass" value="module.siadap.presentationTier.renderers.providers.SiadapYearsFromExistingSiadapConfigurations"/>
+					<%-- 
+					<fr:property name="format" value="${year}" />
+					--%>
+					<fr:property name="nullOptionHidden" value="true"/>
+					<%-- 
+					<fr:property name="eachSchema" value="module.siadap.presentationTier.renderers.providers.SiadapYearConfigurationsFromExisting.year"/>
+					--%>
+			</fr:slot>
+		</fr:schema>
+	</fr:edit>
+</fr:form>  
+
+<bean:define id="year" name="siadapYearWrapper" property="chosenYear"/>
+
+<fr:edit id="searchPerson" name="bean" action="<%="/siadapPersonnelManagement.do?method=viewPerson&year=" + year.toString()%>" >
 <fr:schema type="myorg.util.VariantBean" bundle="SIADAP_RESOURCES">
 		<fr:slot name="domainObject" layout="autoComplete" key="label.person" bundle="ORGANIZATION_RESOURCES">
         <fr:property name="labelField" value="partyName.content"/>
