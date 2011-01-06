@@ -4,9 +4,15 @@
 <%@ taglib uri="/WEB-INF/struts-logic.tld" prefix="logic"%>
 <%@ taglib uri="/WEB-INF/fenix-renderers.tld" prefix="fr"%>
 
-<h2><bean:message key="link.siadap.structureManagement" bundle="SIADAP_RESOURCES"/></h2>
+<bean:define id="year" name="person" property="year"/>
+
+<h2><bean:message key="link.siadap.structureManagement.forAGivenYear" arg0="<%=year.toString()%>" bundle="SIADAP_RESOURCES"/></h2>
 
 <bean:define id="personId" name="person" property="person.externalId"/>
+
+	<html:messages id="message" message="true" bundle="SIADAP_RESOURCES">
+		<p><span class="error0"><bean:write name="message" /></span></p>
+	</html:messages>
 
 <p>
 
@@ -33,13 +39,13 @@
 <a href="#" id="changeUnit"> <bean:message key="label.changeWorkingUnit" bundle="SIADAP_RESOURCES"/> </a> | <a href="#" id="changeEvaluator"> <bean:message key="label.changeEvaluator" bundle="SIADAP_RESOURCES"/> </a>
 
 <logic:equal name="person" property="customEvaluatorDefined" value="true">
-	| <html:link page="/siadapPersonnelManagement.do?method=removeCustomEvaluator" paramId="personId"  paramName="person"  paramProperty="person.externalId"><bean:message key="label.removeCustomEvaluator" bundle="SIADAP_RESOURCES"/> </html:link>
+	| <html:link page="<%="/siadapPersonnelManagement.do?method=removeCustomEvaluator&year=" + year.toString()%>" paramId="personId"  paramName="person"  paramProperty="person.externalId"><bean:message key="label.removeCustomEvaluator" bundle="SIADAP_RESOURCES"/> </html:link>
 </logic:equal>
 
 
 <div id="changeUnitDiv" style="display: none;">
 	<div class="highlightBox">
-	<fr:form action="<%= "/siadapPersonnelManagement.do?method=changeWorkingUnit&personId=" + personId %>">
+	<fr:form action="<%= "/siadapPersonnelManagement.do?method=changeWorkingUnit&personId=" + personId + "&year=" + year.toString() %>">
 	<fr:edit id="changeWorkingUnit" name="changeWorkingUnit" visible="false"/>
 
 	<fr:edit id="changeWorkingUnit1" name="changeWorkingUnit" slot="unit" >
@@ -65,6 +71,10 @@
 	</fr:layout>
 	</fr:edit>
 	
+	Data da alteração: <fr:edit id="changeWorkingUnit3" name="changeWorkingUnit" slot="dateOfChange" >
+	<fr:layout name="picker"/>
+	</fr:edit>
+	
 	<html:submit styleClass="inputbutton"><bean:message key="renderers.form.submit.name" bundle="RENDERER_RESOURCES"/></html:submit>
 </fr:form>
 	</div>
@@ -73,9 +83,11 @@
 <div id="changeEvaluatorDiv" style="display: none;" >
 	<div class="highlightBox">
 	
-	<fr:form action="<%= "/siadapPersonnelManagement.do?method=changeEvaluator&personId=" + personId %>">
+	<fr:form action="<%= "/siadapPersonnelManagement.do?method=changeEvaluator&personId=" + personId + "&year=" + year.toString() %>">
 	
-	<fr:edit id="changeEvaluator" name="changeEvaluator" slot="domainObject">
+	<fr:edit id="changeEvaluator" name="changeEvaluator" visible="false"/>
+	
+	<fr:edit id="changeEvaluator1" name="changeEvaluator" slot="evaluator">
 	<fr:layout name="autoComplete">
 		<fr:property name="labelField" value="partyName.content"/>
 		<fr:property name="format" value="${presentationName}"/>
@@ -89,6 +101,11 @@
 		</fr:validator>
 		</fr:layout>
 	</fr:edit>
+	
+	Data da alteração: <fr:edit id="changeEvaluator1" name="changeEvaluator" slot="dateOfChange" >
+	<fr:layout name="picker"/>
+	</fr:edit>
+	
 	<html:submit styleClass="inputbutton"><bean:message key="renderers.form.submit.name" bundle="RENDERER_RESOURCES"/></html:submit>
 </fr:form>
 		
@@ -126,7 +143,7 @@
 					<tr>
 						<td><fr:view name="evaluated" property="name"/>
 						<td><fr:view name="evaluated" property="workingUnit.name"/>
-						<td><html:link page="<%= "/siadapPersonnelManagement.do?method=viewPerson&personId=" + evalutedId %>"> Ver avaliado </html:link></td>
+						<td><html:link page="<%= "/siadapPersonnelManagement.do?method=viewPerson&personId=" + evalutedId + "&year=" + year.toString()%>"> Ver avaliado </html:link></td>
 					</tr>
 			</logic:iterate>
 		</table>		
@@ -147,7 +164,7 @@
 			</fr:schema>
 			<fr:layout name="tabular">
 				<fr:property name="classes" value="tstyle2"/>
-				<fr:property name="link(terminate)" value="<%=  "/siadapPersonnelManagement.do?method=terminateUnitHarmonization&personId=" + personId %>"/>
+				<fr:property name="link(terminate)" value="<%=  "/siadapPersonnelManagement.do?method=terminateUnitHarmonization&personId=" + personId + "&year=" + year.toString()%>"/>
 				<fr:property name="bundle(terminate)" value="MYORG_RESOURCES"/>
 				<fr:property name="key(terminate)" value="link.remove"/>
 				<fr:property name="param(terminate)" value="unit.externalId/unitId"/>
@@ -160,7 +177,7 @@
 
 <p>
 <strong><bean:message key="label.addHarmonizationResponsability" bundle="SIADAP_RESOURCES"/></strong>
-<fr:edit id="addHarmonizationUnit" name="bean" action="<%= "/siadapPersonnelManagement.do?method=addHarmonizationUnit&personId=" + personId %>">
+<fr:edit id="addHarmonizationUnit" name="bean" action="<%= "/siadapPersonnelManagement.do?method=addHarmonizationUnit&personId=" + personId + "&year=" + year.toString() %>">
 	<fr:schema type="myorg.util.VariantBean" bundle="SIADAP_RESOURCES">
 		<fr:slot name="domainObject" layout="autoComplete" key="label.unit" bundle="ORGANIZATION_RESOURCES">
         <fr:property name="labelField" value="partyName.content"/>
@@ -178,6 +195,7 @@
 	<fr:layout name="tabular">
 		<fr:property name="classes" value="tstyle2"/>
 	</fr:layout>
+	<fr:destination name="cancel" path="/siadapPersonnelManagement.do?method=start" />
 </fr:edit>
 </p>
 

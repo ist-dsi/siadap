@@ -18,6 +18,7 @@ import module.organization.domain.Unit;
 import module.siadap.domain.Siadap;
 import module.siadap.domain.SiadapYearConfiguration;
 import myorg.applicationTier.Authenticate.UserView;
+import myorg.domain.exceptions.DomainException;
 
 import org.apache.commons.collections.Predicate;
 import org.joda.time.LocalDate;
@@ -182,29 +183,61 @@ public class PersonSiadapWrapper extends PartyWrapper implements Serializable {
 	return false;
     }
 
-    public void changeWorkingUnitTo(Unit unit, Boolean withQuotas) {
+    /**
+     * Verifies that the given date is indeed within the {@link #getYear()}
+     * year. If it isn't, it will throw a DomainException
+     * 
+     * @param dateToVerify
+     *            the date to verify
+     */
+    private void verifyDate(LocalDate dateToVerify)
+ {
+	if (dateToVerify.getYear() != getYear())
+	{
+	    throw new DomainException("manage.workingUnitOrEvaluator.invalid.date",
+		    DomainException.getResourceFor("resources/SiadapResources"), String.valueOf(getYear()));
+	}
+    }
+
+    public void changeWorkingUnitTo(Unit unit, Boolean withQuotas, LocalDate dateOfChange) {
+	verifyDate(dateOfChange);
 	SiadapYearConfiguration configuration = getConfiguration();
-	LocalDate now = new LocalDate();
 	for (Accountability accountability : getParentAccountabilityTypes(configuration.getWorkingRelation(), configuration
 		.getWorkingRelationWithNoQuota())) {
 	    if (accountability.getEndDate() == null) {
-		accountability.editDates(accountability.getBeginDate(), now);
+		accountability.editDates(accountability.getBeginDate(), dateOfChange);
 	    }
 	}
 	unit.addChild(getPerson(), withQuotas ? configuration.getWorkingRelation() : configuration
-		.getWorkingRelationWithNoQuota(), now, null);
+.getWorkingRelationWithNoQuota(), dateOfChange,
+		null);
     }
 
+    // use the version that allows a date instead (may not apply to all of the
+    // cases. If so, please delete the Deprecated tag)
+    @Deprecated
+    public void changeWorkingUnitTo(Unit unit, Boolean withQuotas) {
+	changeWorkingUnitTo(unit, withQuotas, new LocalDate());
+    }
+
+    // use the version that allows a date instead (may not apply to all of the
+    // cases. If so, please delete the Deprecated tag)
+    @Deprecated
     public void changeEvaluatorTo(Person newEvaluator) {
+	changeEvaluatorTo(newEvaluator, new LocalDate());
+    }
+
+    public void changeEvaluatorTo(Person newEvaluator, LocalDate dateOfChange) {
+	verifyDate(dateOfChange);
 	SiadapYearConfiguration configuration = getConfiguration();
-	LocalDate now = new LocalDate();
 	AccountabilityType evaluationRelation = configuration.getEvaluationRelation();
 	for (Accountability accountability : getParentAccountabilityTypes(evaluationRelation)) {
 	    if (accountability.getParent() instanceof Person && accountability.getEndDate() == null) {
-		accountability.editDates(accountability.getBeginDate(), now);
+		accountability.editDates(accountability.getBeginDate(), dateOfChange);
 	    }
 	}
-	newEvaluator.addChild(getPerson(), evaluationRelation, now, null);
+	newEvaluator.addChild(getPerson(), evaluationRelation, dateOfChange, null);
+
     }
 
     public boolean isCustomEvaluatorDefined() {

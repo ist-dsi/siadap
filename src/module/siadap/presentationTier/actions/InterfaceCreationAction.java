@@ -8,7 +8,6 @@ import myorg.domain.RoleType;
 import myorg.domain.VirtualHost;
 import myorg.domain.contents.ActionNode;
 import myorg.domain.contents.Node;
-import myorg.domain.groups.AnyoneGroup;
 import myorg.domain.groups.PersistentGroup;
 import myorg.domain.groups.Role;
 import myorg.domain.groups.UserGroup;
@@ -17,7 +16,6 @@ import myorg.presentationTier.actions.BaseAction;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
-import org.joda.time.DateTime;
 
 import pt.ist.fenixWebFramework.servlets.functionalities.CreateNodeAction;
 import pt.ist.fenixWebFramework.struts.annotations.Mapping;
@@ -48,7 +46,7 @@ public class InterfaceCreationAction extends BaseAction {
 
 	//use the static group TODO alter this	
 	ActionNode.createActionNode(virtualHost, homeNode, "/siadapPersonnelManagement", "start", "resources.SiadapResources",
-		"link.siadap.structureManagement", SiadapYearConfiguration.getCcaMembersGroup());
+		"link.siadap.structureManagement", managerGroup);
 
 	//use the static group TODO alter this	
 	ActionNode.createActionNode(virtualHost, homeNode, "/siadapManagement",

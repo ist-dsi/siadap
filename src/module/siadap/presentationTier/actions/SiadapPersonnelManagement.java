@@ -19,6 +19,7 @@ import module.siadap.domain.wrappers.SiadapYearWrapper;
 import module.siadap.domain.wrappers.UnitSiadapWrapper;
 import module.siadap.presentationTier.renderers.providers.SiadapYearsFromExistingSiadapConfigurations;
 import myorg.applicationTier.Authenticate.UserView;
+import myorg.domain.exceptions.DomainException;
 import myorg.presentationTier.actions.ContextBaseAction;
 import myorg.util.VariantBean;
 
@@ -66,7 +67,7 @@ public class SiadapPersonnelManagement extends ContextBaseAction {
 	request.setAttribute("person", personSiadapWrapper);
 	request.setAttribute("bean", new VariantBean());
 	request.setAttribute("changeWorkingUnit", new ChangeWorkingUnitBean(person, year));
-	request.setAttribute("changeEvaluator", new VariantBean());
+	request.setAttribute("changeEvaluator", new ChangeEvaluatorBean());
 	request.setAttribute("history", personSiadapWrapper.getAccountabilitiesHistory());
 	return forward(request, "/module/siadap/management/editPerson.jsp");
     }
@@ -75,7 +76,7 @@ public class SiadapPersonnelManagement extends ContextBaseAction {
 	    final HttpServletRequest request, final HttpServletResponse response) throws Exception {
 
 	LocalDate now = new LocalDate();
-	int year = now.getYear();
+	int year = Integer.parseInt(request.getParameter("year"));
 	Unit unit = getDomainObject(request, "unitId");
 	Person person = getDomainObject(request, "personId");
 
@@ -95,8 +96,7 @@ public class SiadapPersonnelManagement extends ContextBaseAction {
     public final ActionForward addHarmonizationUnit(final ActionMapping mapping, final ActionForm form,
 	    final HttpServletRequest request, final HttpServletResponse response) throws Exception {
 
-	LocalDate now = new LocalDate();
-	int year = now.getYear();
+	int year = Integer.parseInt(request.getParameter("year"));
 
 	VariantBean bean = getRenderedObject("addHarmonizationUnit");
 	Person person = getDomainObject(request, "personId");
@@ -114,9 +114,13 @@ public class SiadapPersonnelManagement extends ContextBaseAction {
 
 	ChangeWorkingUnitBean bean = getRenderedObject("changeWorkingUnit");
 
-	int year = bean.getYear();
+	int year = Integer.parseInt(request.getParameter("year"));
 	PersonSiadapWrapper personWrapper = new PersonSiadapWrapper(bean.getPerson(), year);
-	personWrapper.changeWorkingUnitTo(bean.getUnit(), bean.getWithQuotas());
+	try {
+	personWrapper.changeWorkingUnitTo(bean.getUnit(), bean.getWithQuotas(), bean.getDateOfChange());
+	} catch (DomainException e) {
+	    addMessage(request, e.getKey(), e.getArgs());
+	}
 
 	return viewPerson(mapping, form, request, response);
     }
@@ -124,11 +128,15 @@ public class SiadapPersonnelManagement extends ContextBaseAction {
     public final ActionForward changeEvaluator(final ActionMapping mapping, final ActionForm form,
 	    final HttpServletRequest request, final HttpServletResponse response) throws Exception {
 
-	int year = new LocalDate().getYear();
-	Person newEvaluator = getRenderedObject("changeEvaluator");
+	int year = Integer.parseInt(request.getParameter("year"));
+	ChangeEvaluatorBean changeEvaluatorBean = getRenderedObject("changeEvaluator");
 	PersonSiadapWrapper personWrapper = new PersonSiadapWrapper((Person) getDomainObject(request, "personId"), year);
 
-	personWrapper.changeEvaluatorTo(newEvaluator);
+	try {
+	    personWrapper.changeEvaluatorTo(changeEvaluatorBean.getEvaluator(), changeEvaluatorBean.getDateOfChange());
+	} catch (DomainException e) {
+	    addMessage(request, e.getKey(), e.getArgs());
+	}
 
 	return viewPerson(mapping, form, request, response);
     }
@@ -136,12 +144,35 @@ public class SiadapPersonnelManagement extends ContextBaseAction {
     public final ActionForward removeCustomEvaluator(final ActionMapping mapping, final ActionForm form,
 	    final HttpServletRequest request, final HttpServletResponse response) throws Exception {
 
-	int year = new LocalDate().getYear();
+	int year = Integer.parseInt(request.getParameter("year"));
 	PersonSiadapWrapper personWrapper = new PersonSiadapWrapper((Person) getDomainObject(request, "personId"), year);
 
 	personWrapper.removeCustomEvaluator();
 
 	return viewPerson(mapping, form, request, response);
+    }
+
+    public static class ChangeEvaluatorBean implements Serializable {
+	private Person evaluator;
+	private LocalDate dateOfChange;
+
+	public ChangeEvaluatorBean() {
+	    this.dateOfChange = new LocalDate();
+	}
+
+	public void setEvaluator(Person person) {
+	    this.evaluator = person;
+	}
+
+	public Person getEvaluator() {
+	    return evaluator;
+	}
+	public void setDateOfChange(LocalDate dateOfChange) {
+	    this.dateOfChange = dateOfChange;
+	}
+	public LocalDate getDateOfChange() {
+	    return dateOfChange;
+	}
     }
 
     public static class ChangeWorkingUnitBean implements Serializable {
@@ -150,10 +181,12 @@ public class SiadapPersonnelManagement extends ContextBaseAction {
 	private Boolean withQuotas;
 	private int year;
 	private Unit unit;
+	private LocalDate dateOfChange;
 
 	public ChangeWorkingUnitBean(Person person, int year) {
 	    this.person = person;
 	    this.year = year;
+	    this.dateOfChange = new LocalDate();
 	}
 
 	public Person getPerson() {
@@ -186,6 +219,14 @@ public class SiadapPersonnelManagement extends ContextBaseAction {
 
 	public Boolean getWithQuotas() {
 	    return withQuotas;
+	}
+
+	public void setDateOfChange(LocalDate dateOfChange) {
+	    this.dateOfChange = dateOfChange;
+	}
+
+	public LocalDate getDateOfChange() {
+	    return dateOfChange;
 	}
 
     }
