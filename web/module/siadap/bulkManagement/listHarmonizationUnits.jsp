@@ -12,7 +12,7 @@
 
 <%-- The year chooser: --%>
 <fr:form action="/siadapManagement.do?method=manageHarmonizationUnitsForMode">
-	<fr:edit name="siadapYearWrapper" nested="true">
+	<fr:edit id="siadapYearWrapper" name="siadapYearWrapper" nested="true">
 		<fr:schema bundle="SIADAP" type="module.siadap.domain.wrappers.SiadapYearWrapper">
 			<fr:slot name="chosenYear" bundle="SIADAP_RESOURCES" layout="menu-select-postback" key="siadap.start.siadapYearChoice">
 					<fr:property name="providerClass" value="module.siadap.presentationTier.renderers.providers.SiadapYearsFromExistingSiadapConfigurations"/>
