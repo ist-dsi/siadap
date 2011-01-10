@@ -15,7 +15,7 @@
 			<fr:slot name="person.user.username" key="label.login.username" bundle="MYORG_RESOURCES"/>
 			<fr:slot name="workingUnit.unit.partyName" key="label.unit" bundle="ORGANIZATION_RESOURCES"/>
 			<fr:slot name="quotaAware" key="label.quotaAware"/>
-			<fr:slot name="currentProcessState" key="label.state"/>
+			<fr:slot name="currentProcessState" key="label.state" bundle="SIADAP_RESOURCES" />
 		</fr:schema>
 		<fr:layout name="tabular-sortable">
 			<fr:property name="classes" value="tstyle2"/>
@@ -39,6 +39,19 @@
 		    <fr:property name="sortBy" value="<%= request.getParameter("sortBy") == null ? "person.partyName=asc" : request.getParameter("sortBy") %>"/>
 		</fr:layout>
 </fr:view>
+<h3><bean:message bundle="SIADAP_RESOURCES" key="label.state.legend" /></h3>
+<ul>
+  <li><bean:message bundle="SIADAP_RESOURCES" key="siadap.state.evaluation.not.going.to.be.done.explanation"/></li>
+  <li><bean:message bundle="SIADAP_RESOURCES" key="siadap.state.incomplete.objectives.or.competences.explanation"/></li>
+  <li><bean:message bundle="SIADAP_RESOURCES" key="siadap.state.not.created.explanation"/></li>
+  <li><bean:message bundle="SIADAP_RESOURCES" key="siadap.state.not.evaluted.yet.explanation"/></li>
+  <li><bean:message bundle="SIADAP_RESOURCES" key="siadap.state.not.sealed.explanation"/></li>
+  <li><bean:message bundle="SIADAP_RESOURCES" key="siadap.state.not.submitted.for.acknowledgement.explanation"/></li>
+  <li><bean:message bundle="SIADAP_RESOURCES" key="siadap.state.unimplemented.explanation"/></li>
+  <li><bean:message bundle="SIADAP_RESOURCES" key="siadap.state.waiting.evaluation.objectives.acknowledgement.explanation"/></li>
+  <li><bean:message bundle="SIADAP_RESOURCES" key="siadap.state.waiting.self.evaluation.explanation"/></li>
+</ul>
+
 <jsp:include page="/module/siadap/tracFeedBackSnip.jsp">	
    <jsp:param name="href" value="https://fenix-ashes.ist.utl.pt/trac/siadap/report/21" />	
 </jsp:include>
