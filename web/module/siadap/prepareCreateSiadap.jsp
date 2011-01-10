@@ -15,6 +15,7 @@
 			<fr:slot name="person.user.username" key="label.login.username" bundle="MYORG_RESOURCES"/>
 			<fr:slot name="workingUnit.unit.partyName" key="label.unit" bundle="ORGANIZATION_RESOURCES"/>
 			<fr:slot name="quotaAware" key="label.quotaAware"/>
+			<fr:slot name="currentProcessState" key="label.state"/>
 		</fr:schema>
 		<fr:layout name="tabular-sortable">
 			<fr:property name="classes" value="tstyle2"/>
