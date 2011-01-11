@@ -26,7 +26,7 @@ public class ImportTestUsers extends WriteCustomTask {
 					"ist24698\n" + // Rita Wahl
 					"ist22619\n" + // Paula César
 					"ist12048\n" + // Fernando Mira da Silva
-					"ist126733\n" + // Fernando Oliveira
+					"ist138407\n" + // Fernando Oliveira
 					"ist24421\n" + // Miguel Cabeça
 					"ist13499\n" + // Carlos Ribeiro
 					"ist22159\n" + //Carlos Manuel Martins
