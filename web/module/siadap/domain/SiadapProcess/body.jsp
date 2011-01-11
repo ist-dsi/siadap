@@ -12,13 +12,17 @@
 <bean:define id="user" name="USER_SESSION_ATTRIBUTE" property="user"/>
 <% SiadapProcess siadapProcess = (SiadapProcess) request.getAttribute("process");
 boolean showObjectivesAndCompetences = siadapProcess.getSiadap().getObjectivesAndCompetencesSealedDate() != null || siadapProcess.getSiadap().getEvaluator().getPerson().getUser().equals(user);
+boolean objectivesVisibileToEvaluated = siadapProcess.getSiadap().getObjectivesAndCompetencesSealedDate() != null;
 request.setAttribute("showObjectivesAndCompetences", showObjectivesAndCompetences);
+request.setAttribute("objectivesVisibleToEvaluated", objectivesVisibileToEvaluated);
 %>
 <logic:equal name="showObjectivesAndCompetences" value="true">
 <logic:equal name="process" property="siadap.evaluatedWithKnowledgeOfObjectives" value="false">
+	<logic:equal name="objectivesVisibleToEvaluated" value="true">
 	<div class="highlightBox mtop05 mbottom15">
 		<bean:message key="label.info.objectivesNotKownToEvaluated" bundle="SIADAP_RESOURCES"/>
 	</div>
+	</logic:equal>
 </logic:equal>
 
 <logic:equal name="process" property="siadap.autoEvaluationIntervalFinished" value="true">
