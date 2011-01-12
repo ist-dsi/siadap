@@ -11,12 +11,26 @@
 <bean:define id="objectiveOID" name="objectiveEvaluation" property="externalId" type="java.lang.String"/>
 
 <bean:define id="classToApply" value=""/>
+<bean:define id="applyXpto" value=""/>
 
 <logic:equal name="process" property="currentUserEvaluated" value="true">
 	<logic:notPresent name="objectiveEvaluation" property="acknowledgeDate"> 
 		<bean:define id="classToApply" value="highlightBox"/>
 	</logic:notPresent>
 </logic:equal>
+<logic:equal name="process" property="currentUserEvaluated" value="false">
+	<logic:equal name="objectiveEvaluation" property="valid" value="false">
+		<bean:define id="applyXpto" value="xpto"/>
+	</logic:equal>
+</logic:equal>
+
+<style>
+.xpto span {
+	background: #fdeaa5; 
+	padding: 1px 2px;
+}
+
+</style>
 
 <div class="<%= classToApply %>"/>
 	<logic:notPresent name="objectiveEvaluation" property="acknowledgeDate"> 
@@ -78,7 +92,7 @@
 			<td valign="middle">
 				<fr:view name="indicator" property="evaluation" type="module.siadap.domain.scoring.SiadapObjectivesEvaluation"/>
 			</td> 
-			<td valign="middle">
+			<td valign="middle" class="<%=applyXpto%>">
 			<fr:view name="indicator" type="module.siadap.domain.ObjectiveEvaluationIndicator" layout="values">
 					<fr:schema bundle="SIADAP_RESOURCES" type="module.siadap.domain.ObjectiveEvaluation">
 						<fr:slot name="ponderationFactor" layout="decimal-format">

@@ -330,4 +330,33 @@ public class Siadap extends Siadap_Base {
 	SiadapEvaluation evaluationData = getEvaluationData();
 	return evaluationData != null && !StringUtils.isEmpty(evaluationData.getNoEvaluationJustification());
     }
+
+    public boolean hasAllEvaluationItemsValid() {
+	for (ObjectiveEvaluation objectiveEvaluation : getObjectiveEvaluations()) {
+	    if (!objectiveEvaluation.isValid())
+		return false;
+
+	}
+	return true;
+    }
+
+    /**
+     * convenience method to allow this to be called by the JSPs
+     * 
+     * @return the same as {@link #hasAllEvaluationItemsValid()}
+     */
+    public boolean isAllEvaluationItemsValid() {
+	return hasAllEvaluationItemsValid();
+    }
+
+    /**
+     * 
+     * @return true if the evaluated person is evaluated only by competences and
+     *         has no objectives, false otherwise
+     */
+    public boolean isCoherentOnTypeOfEvaluation() {
+	if (getEvaluatedOnlyByCompetences() && getObjectiveEvaluations() != null)
+	    return false;
+	return true;
+    }
 }
