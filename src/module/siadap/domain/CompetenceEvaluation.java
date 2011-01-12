@@ -1,6 +1,5 @@
 package module.siadap.domain;
 
-import pt.ist.fenixWebFramework.services.Service;
 import module.siadap.domain.scoring.IScoring;
 
 public class CompetenceEvaluation extends CompetenceEvaluation_Base {
@@ -36,8 +35,8 @@ public class CompetenceEvaluation extends CompetenceEvaluation_Base {
 
 	@Override
 	public boolean isValid() {
-		// TODO Auto-generated method stub
-		return false;
+	// a competence is always valid by definition
+	return true;
 	}
 
 }

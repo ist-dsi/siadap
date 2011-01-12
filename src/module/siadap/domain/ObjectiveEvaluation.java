@@ -41,8 +41,8 @@ public class ObjectiveEvaluation extends ObjectiveEvaluation_Base {
 	    sum = sum.add(indicator.getPonderationFactor());
 	}
 	if (sum.add(ponderationFactor).compareTo(BigDecimal.ONE) > 0) {
-	    throw new DomainException("error.ponderation.cannot.be.over.100", DomainException
-		    .getResourceFor("resources/SiadapResources"));
+	    throw new DomainException("error.ponderation.cannot.be.over.100",
+		    DomainException.getResourceFor("resources/SiadapResources"));
 	}
 	new ObjectiveEvaluationIndicator(this, measurementIndicator, superationCriteria, ponderationFactor);
     }
@@ -77,9 +77,12 @@ public class ObjectiveEvaluation extends ObjectiveEvaluation_Base {
 	};
     }
 
-	@Override
-	public boolean isValid() {
-		// TODO Auto-generated method stub
-		return false;
+    @Override
+    public boolean isValid() {
+	BigDecimal sum = BigDecimal.ZERO;
+	for (ObjectiveEvaluationIndicator indicator : getIndicators()) {
+	    sum = sum.add(indicator.getPonderationFactor());
 	}
+	return sum.equals(BigDecimal.ONE);
+    }
 }
