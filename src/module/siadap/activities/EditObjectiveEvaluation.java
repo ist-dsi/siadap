@@ -2,7 +2,6 @@ package module.siadap.activities;
 
 import module.siadap.activities.CreateObjectiveEvaluationActivityInformation.ObjectiveIndicator;
 import module.siadap.domain.ObjectiveEvaluation;
-import module.siadap.domain.ObjectiveEvaluationIndicator;
 import module.siadap.domain.Siadap;
 import module.siadap.domain.SiadapProcess;
 import module.workflow.activities.ActivityInformation;
@@ -52,7 +51,10 @@ public class EditObjectiveEvaluation extends WorkflowActivity<SiadapProcess, Edi
 
     @Override
     protected String[] getArgumentsDescription(EditObjectiveEvaluationActivityInformation activityInformation) {
+	if (activityInformation.isEmployJustification()) {
 	return new String[] { activityInformation.getObjective(), activityInformation.getJustification() };
+	} else
+	    return new String[] { activityInformation.getObjective() };
     }
 
     @Override

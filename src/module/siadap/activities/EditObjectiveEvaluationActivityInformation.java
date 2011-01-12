@@ -20,7 +20,7 @@ public class EditObjectiveEvaluationActivityInformation extends
 			SiadapProcess process,
 			WorkflowActivity<? extends WorkflowProcess, ? extends ActivityInformation> activity) {
 		super(process, activity, false);
-		if (process.getSiadap().getObjectivesAndCompetencesSealedDate() != null) {
+	if (process.getSiadap().getRequestedAcknowledgeDate() != null) {
 			setEmployJustification(true);
 		} else {
 			setEmployJustification(false);

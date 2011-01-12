@@ -1,3 +1,4 @@
+<%@page import="module.siadap.activities.CreateObjectiveEvaluationActivityInformation"%>
 <%@page import="module.siadap.activities.EditObjectiveEvaluationActivityInformation"%>
 <%@page import="module.workflow.activities.ActivityInformation"%>
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
@@ -11,6 +12,11 @@
 <bean:define id="name" name="information" property="activityName" />
 
 <div class="dinline forminline">
+<% ActivityInformation ai = (ActivityInformation) request.getAttribute("information"); 
+		
+		boolean shouldTypeBeEditable = (ai instanceof EditObjectiveEvaluationActivityInformation) ? false : true;
+		request.setAttribute("shouldTypeBeEditable", shouldTypeBeEditable);
+%>
 
 <fr:form id="form" action='<%="/workflowProcessManagement.do?method=process&processId=" + processId + "&activity=" + name%>'>
 
@@ -25,8 +31,8 @@
 			<fr:property name="rows" value="3" />
 			<fr:property name="columns" value="50" />
 		</fr:slot>
-		<logic:present name="employJustification">
-			<logic:equal name="employJustification" value="true">
+		<logic:present name="information" property="employJustification" >
+			<logic:equal name="information" property="employJustification" value="true">
 				<fr:slot name="justification" layout="longText"
 				validator="pt.ist.fenixWebFramework.renderers.validators.RequiredValidator">
 					<fr:property name="rows" value="3" />
@@ -34,10 +40,7 @@
 				</fr:slot>
 			</logic:equal>
 		</logic:present>
-		<% ActivityInformation ai = (ActivityInformation) request.getAttribute("information"); 
-		boolean shouldTypeBeEditable = ai instanceof EditObjectiveEvaluationActivityInformation ? false : true;
-		request.setAttribute("shouldTypeBeEditable", shouldTypeBeEditable);
-		%>
+		
 		<logic:equal name="shouldTypeBeEditable" value="true">
 			<fr:slot name="type" validator="pt.ist.fenixWebFramework.renderers.validators.RequiredValidator"/>	
 		</logic:equal>
@@ -49,6 +52,15 @@
 		</fr:layout>
 		<fr:destination name="invalid" path='<%="/workflowProcessManagement.do?method=process&processId=" + processId + "&activity=" + name%>' />
 	</fr:edit>
+	
+	<logic:notEqual name="shouldTypeBeEditable" value="true">
+		<fr:view name="information">
+			<fr:schema type="module.siadap.activities.CreateObjectiveEvaluationActivityInformation" bundle="SIADAP_RESOURCES">
+				<fr:slot name="type"/>
+			</fr:schema>
+		</fr:view>
+	</logic:notEqual>
+	
 
 	 <logic:iterate id="indicator" name="information" property="indicators" indexId="counter">
 		<table>

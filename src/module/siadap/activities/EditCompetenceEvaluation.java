@@ -1,7 +1,7 @@
 package module.siadap.activities;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.ResourceBundle;
 
 import module.siadap.domain.Competence;
 import module.siadap.domain.CompetenceEvaluation;
@@ -10,7 +10,8 @@ import module.siadap.domain.SiadapProcess;
 import module.workflow.activities.ActivityInformation;
 import module.workflow.activities.WorkflowActivity;
 import myorg.domain.User;
-import myorg.util.BundleUtil;
+import myorg.domain.exceptions.DomainException;
+import pt.utl.ist.fenix.tools.util.i18n.Language;
 
 public class EditCompetenceEvaluation extends
 	WorkflowActivity<SiadapProcess, CreateOrEditCompetenceEvaluationActivityInformation> {
@@ -32,6 +33,22 @@ public class EditCompetenceEvaluation extends
 
     @Override
     protected void process(CreateOrEditCompetenceEvaluationActivityInformation activityInformation) {
+		int nrRequiredItems;
+		if (activityInformation.getEvaluatedOnlyByCompetences() != null) {
+			if (activityInformation.getEvaluatedOnlyByCompetences()
+					.booleanValue()) {
+				nrRequiredItems = Siadap.MINIMUM_COMPETENCES_WITHOUT_OBJ_EVAL_NUMBER;
+			} else
+				nrRequiredItems = Siadap.MINIMUM_COMPETENCES_WITH_OBJ_EVAL_NUMBER;
+		} else
+			nrRequiredItems = Integer.MAX_VALUE;
+		if (activityInformation.getCompetences().size() < nrRequiredItems) {
+			throw new DomainException(
+					"renderers.validator.invalid.nrCompetences",
+					ResourceBundle.getBundle("resources/SiadapResources",
+							Language.getLocale()),
+					Integer.toString(nrRequiredItems));
+		}
 	Siadap siadap = activityInformation.getSiadap();
 	// TODO ist154457 make this more efficient, for now, let's just remove
 	// and set them again
