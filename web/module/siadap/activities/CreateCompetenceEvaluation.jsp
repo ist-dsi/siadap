@@ -56,6 +56,7 @@
 	</fr:schema>
 	<fr:destination name="invalid" path='<%= "/workflowProcessManagement.do?method=activityDefaultPostback&processId=" + processId + "&activity=" + name%>'/>
 </fr:edit>
+
 	</logic:notEmpty>
 </logic:notEmpty>
 	<html:submit styleClass="inputbutton"><bean:message key="button.save" bundle="SIADAP_RESOURCES"/></html:submit>
@@ -64,6 +65,16 @@
 <html:submit styleClass="inputbutton"><bean:message key="renderers.form.cancel.name" bundle="SIADAP_RESOURCES"/></html:submit>
 </fr:form>
 </div>
+<%-- Resolving a bug on WebKit 
+<script>
+$('document').ready(function() {
+	$("td").css("background","yellow");
+});
+$("td").mouseenter(function() {
+	  $("td").css("background","blue");
+});
+</script>
+--%>
 <jsp:include page="/module/siadap/tracFeedBackSnip.jsp">	
    <jsp:param name="href" value="https://fenix-ashes.ist.utl.pt/trac/siadap/report/15" />	
 </jsp:include>
