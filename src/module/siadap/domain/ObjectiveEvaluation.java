@@ -83,6 +83,20 @@ public class ObjectiveEvaluation extends ObjectiveEvaluation_Base {
 	for (ObjectiveEvaluationIndicator indicator : getIndicators()) {
 	    sum = sum.add(indicator.getPonderationFactor());
 	}
-	return sum.equals(BigDecimal.ONE);
+	return sum.compareTo(BigDecimal.ONE) == 0;
+    }
+
+    /**
+     * Removes and deletes its indicators, disconnects itself from the world,
+     * and removes himself from the DB
+     */
+    public void delete() {
+	for (ObjectiveEvaluationIndicator indicator : getIndicators()) {
+	    removeIndicators(indicator);
+	    indicator.delete();
+	}
+	removeSiadap();
+	removeSiadapRootModule();
+	deleteDomainObject();
     }
 }

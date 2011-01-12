@@ -14,7 +14,8 @@ public class CreateObjectiveEvaluation extends WorkflowActivity<SiadapProcess, C
     public boolean isActive(SiadapProcess process, User user) {
 	Siadap siadap = process.getSiadap();
 	return !siadap.isObjectiveSpecificationIntervalFinished() && siadap.getEvaluator().getPerson().getUser() == user
-		&& siadap.getRequestedAcknowledgeDate() == null;
+		&& siadap.getRequestedAcknowledgeDate() == null
+		&& (siadap.getEvaluatedOnlyByCompetences() == null || !siadap.getEvaluatedOnlyByCompetences());
     }
 
     @Override

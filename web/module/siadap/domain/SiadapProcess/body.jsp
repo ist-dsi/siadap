@@ -72,6 +72,9 @@ request.setAttribute("objectivesVisibleToEvaluated", objectivesVisibileToEvaluat
 	</logic:notEmpty>
 	
 	
+	<logic:equal value="true" name="process" property="siadap.evaluatedOnlyByCompetences" >
+		<p><strong><bean:message bundle="SIADAP_RESOURCES" key="label.evaluatedOnlyByCompetences" /></p></strong>
+	</logic:equal>
 	<h4><bean:message key="label.competences"
 		bundle="SIADAP_RESOURCES" />:</h4>
 		<%-- link to allow to edit the competences--%>
@@ -82,7 +85,7 @@ request.setAttribute("objectivesVisibleToEvaluated", objectivesVisibileToEvaluat
 						</wf:activityLink>	
 						</span>
 					</wf:isActive>	
-	<p>
+					
 		<fr:view name="process" property="siadap.competenceEvaluations">
 			<fr:schema bundle="SIADAP_RESOURCES"
 				type="module.siadap.domain.CompetenceEvaluation">
@@ -96,7 +99,6 @@ request.setAttribute("objectivesVisibleToEvaluated", objectivesVisibileToEvaluat
 				<fr:property name="sortBy" value="competence.number"/>
 			</fr:layout>
 		</fr:view>
-	</p>
 	
 	<%--  The self evaluation with the justification for the competences --%>
 	<logic:notEmpty name="process" property="siadap.autoEvaluationData" >

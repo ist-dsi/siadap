@@ -66,6 +66,7 @@ public class CreateObjectiveEvaluationActivityInformation extends ActivityInform
 	public boolean isFilled() {
 	    return !StringUtils.isEmpty(measurementIndicator) && !StringUtils.isEmpty(superationCriteria);
 	}
+
     }
 
     public CreateObjectiveEvaluationActivityInformation(SiadapProcess process,

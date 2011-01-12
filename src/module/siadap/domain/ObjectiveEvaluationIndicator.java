@@ -26,6 +26,15 @@ public class ObjectiveEvaluationIndicator extends ObjectiveEvaluationIndicator_B
 	return getAutoEvaluation().getPoints().multiply(getPonderationFactor());
     }
 
+    /**
+     * Disconnects itself from the world, and removes itself from the DB
+     */
+    public void delete() {
+	removeObjectiveEvaluation();
+	removeSiadapRootModule();
+	deleteDomainObject();
+    }
+
     public BigDecimal getEvaluationPoints() {
 	return getEvaluation().getPoints().multiply(getPonderationFactor());
     }

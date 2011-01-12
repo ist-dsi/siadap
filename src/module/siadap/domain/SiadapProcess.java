@@ -17,6 +17,7 @@ import module.siadap.activities.GrantExcellencyAward;
 import module.siadap.activities.Homologate;
 import module.siadap.activities.NoEvaluation;
 import module.siadap.activities.NotValidateEvaluation;
+import module.siadap.activities.RemoveObjectiveEvaluation;
 import module.siadap.activities.RevertNoEvaluation;
 import module.siadap.activities.RevokeExcellencyAward;
 import module.siadap.activities.SealObjectivesAndCompetences;
@@ -40,6 +41,7 @@ public class SiadapProcess extends SiadapProcess_Base {
 
     static {
 	activities.add(new CreateObjectiveEvaluation());
+	activities.add(new RemoveObjectiveEvaluation());
 	activities.add(new CreateCompetenceEvaluation());
 	activities.add(new EditCompetenceEvaluation());
 	activities.add(new SealObjectivesAndCompetences());

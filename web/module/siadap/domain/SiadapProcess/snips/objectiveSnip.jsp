@@ -57,6 +57,13 @@
 					</wf:activityLink>	
 					</span>
 				</wf:isActive>			
+				<wf:isActive processName="process" activityName="RemoveObjectiveEvaluation" scope="request">		
+					| <span>
+					<wf:activityLink id="<%= "remove-" + objectiveOID %>" processName="process" activityName="RemoveObjectiveEvaluation" scope="request" paramName0="evaluation" paramValue0="<%= objectiveOID %>">
+							<bean:message key="link.remove" bundle="MYORG_RESOURCES"/>
+					</wf:activityLink>	
+					</span>
+				</wf:isActive>			
 		</td>
 	</tr>
 	

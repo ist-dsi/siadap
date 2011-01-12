@@ -5,7 +5,6 @@ import module.siadap.domain.SiadapProcess;
 import module.workflow.activities.ActivityInformation;
 import module.workflow.activities.WorkflowActivity;
 import myorg.domain.User;
-import myorg.domain.exceptions.DomainException;
 
 import org.joda.time.LocalDate;
 
@@ -20,9 +19,6 @@ public class SealObjectivesAndCompetences extends WorkflowActivity<SiadapProcess
 
     @Override
     protected void process(ActivityInformation<SiadapProcess> activityInformation) {
-	if (!activityInformation.getProcess().getSiadap().hasAllEvaluationItemsValid())
-	    throw new DomainException("activity.SealObjectivesAndCompetences.invalid.objectives",
-		    DomainException.getResourceFor("resouces/SiadapResources"));
 	activityInformation.getProcess().getSiadap().setObjectivesAndCompetencesSealedDate(new LocalDate());
     }
 
