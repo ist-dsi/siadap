@@ -244,9 +244,10 @@ public class Siadap extends Siadap_Base {
 		}
 	    }
 	}
-	return hasAllNeededCompetences() && efficiencyObjectives >= MINIMUM_EFICIENCY_OBJECTIVES_NUMBER
+	return hasAllNeededCompetences()
+		&& ((getEvaluatedOnlyByCompetences() == null || getEvaluatedOnlyByCompetences()) || (efficiencyObjectives >= MINIMUM_EFICIENCY_OBJECTIVES_NUMBER
 		&& performanceObjectives >= MINIMUM_PERFORMANCE_OBJECTIVES_NUMBER
-		&& qualityObjectives >= MINIMUM_QUALITY_OBJECTIVES_NUMBER;
+ && qualityObjectives >= MINIMUM_QUALITY_OBJECTIVES_NUMBER));
     }
 
     public boolean hasAllNeededCompetences() {
@@ -355,7 +356,8 @@ public class Siadap extends Siadap_Base {
      *         has no objectives, false otherwise
      */
     public boolean isCoherentOnTypeOfEvaluation() {
-	if (getEvaluatedOnlyByCompetences() && getObjectiveEvaluations() != null)
+	if ((getEvaluatedOnlyByCompetences() != null && getEvaluatedOnlyByCompetences()) && getObjectiveEvaluations() != null
+		&& getObjectiveEvaluations().size() != 0)
 	    return false;
 	return true;
     }
