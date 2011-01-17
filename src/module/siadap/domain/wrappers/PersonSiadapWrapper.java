@@ -19,7 +19,6 @@ import module.siadap.domain.Siadap;
 import module.siadap.domain.SiadapYearConfiguration;
 import myorg.applicationTier.Authenticate.UserView;
 import myorg.domain.exceptions.DomainException;
-import myorg.util.BundleUtil;
 
 import org.apache.commons.collections.Predicate;
 import org.joda.time.LocalDate;
@@ -56,38 +55,22 @@ public class PersonSiadapWrapper extends PartyWrapper implements Serializable {
 	return getConfiguration().getSiadapFor(getPerson(), getYear());
     }
 
-    public static final String NOT_CREATED = "siadap.state.not.created";
-    public static final String INCOMPLETE_OBJ_OR_COMP = "siadap.state.incomplete.objectives.or.competences";
-    public static final String NOT_SEALED = "siadap.state.not.sealed";
-    public static final String EVALUATION_NOT_GOING_TO_BE_DONE = "siadap.state.evaluation.not.going.to.be.done";
-    public static final String NOT_YET_SUBMITTED_FOR_ACK = "siadap.state.not.submitted.for.acknowledgement";
-    public static final String WAITING_EVAL_OBJ_ACK = "siadap.state.waiting.evaluation.objectives.acknowledgement";
-    public static final String WAITING_SELF_EVALUATION = "siadap.state.waiting.self.evaluation";
-    public static final String NOT_YET_EVALUATED = "siadap.state.not.evaluted.yet";
-    public static final String UNIMPLEMENTED_STATE = "siadap.state.unimplemented";
 
     /**
      * @return a localized String with the current state of the siadap process
      *         for this person
      */
     public String getCurrentProcessState() {
-	if (getSiadap() == null)
-	    return BundleUtil.getStringFromResourceBundle("resources/SiadapResources", NOT_CREATED);
-	else if (getSiadap().isWithSkippedEvaluation())
-	    return BundleUtil.getStringFromResourceBundle("resources/SiadapResources", EVALUATION_NOT_GOING_TO_BE_DONE);
-	else if (!getSiadap().isWithObjectivesFilled())
-	    return BundleUtil.getStringFromResourceBundle("resources/SiadapResources", INCOMPLETE_OBJ_OR_COMP);
-	else if (!getSiadap().hasSealedObjectivesAndCompetences())
-	    return BundleUtil.getStringFromResourceBundle("resources/SiadapResources", NOT_SEALED);
-	else if (getSiadap().getRequestedAcknowledgeDate() == null)
-	    return BundleUtil.getStringFromResourceBundle("resources/SiadapResources", NOT_YET_SUBMITTED_FOR_ACK);
-	else if (!getSiadap().isEvaluatedWithKnowledgeOfObjectives())
-	    return BundleUtil.getStringFromResourceBundle("resources/SiadapResources", WAITING_EVAL_OBJ_ACK);
-	else if (!getSiadap().isAutoEvaliationDone())
-	    return BundleUtil.getStringFromResourceBundle("resources/SiadapResources", WAITING_SELF_EVALUATION);
-	else if (!getSiadap().isEvaluationDone())
-	    return BundleUtil.getStringFromResourceBundle("resources/SiadapResources", NOT_YET_EVALUATED);
-	return BundleUtil.getStringFromResourceBundle("resources/SiadapResources", UNIMPLEMENTED_STATE);
+	return SiadapProcessStateEnum.getStateForListOfProcessesString(getSiadap());
+    }
+
+    /**
+     * @return a string with the explanation of what should be done next, based
+     *         on the user, if he is an evaluator or an evaluated
+     */
+    public String getNextStep() {
+	return SiadapProcessStateEnum.getNextStep(getSiadap(), UserView.getCurrentUser());
+
     }
 
     public PersonSiadapWrapper getEvaluator() {

@@ -10,6 +10,7 @@
 <%-- A simple definition to be able to use the process on the Java code --%>
 <bean:define id="processJava" name="process"/>
 <bean:define id="evaluatorPersonWrapper" name="process" property="siadap.evaluator"/>
+<bean:define id="evaluatedPersonWrapper" name="process" property="siadap.evaluatedWrapper"/>
 <bean:define id="user" name="USER_SESSION_ATTRIBUTE" property="user"/>
 <% SiadapProcess siadapProcess = (SiadapProcess) request.getAttribute("process");
 boolean showObjectivesAndCompetences = siadapProcess.getSiadap().getObjectivesAndCompetencesSealedDate() != null || siadapProcess.getSiadap().getEvaluator().getPerson().getUser().equals(user);
@@ -17,6 +18,8 @@ boolean objectivesVisibileToEvaluated = siadapProcess.getSiadap().getObjectivesA
 request.setAttribute("showObjectivesAndCompetences", showObjectivesAndCompetences);
 request.setAttribute("objectivesVisibleToEvaluated", objectivesVisibileToEvaluated);
 %>
+
+<p><strong><bean:write name="evaluatedPersonWrapper" property="nextStep"/></strong></p>
 
 <logic:equal name="showObjectivesAndCompetences" value="true">
 	<logic:equal name="process" property="siadap.evaluatedWithKnowledgeOfObjectives" value="false">

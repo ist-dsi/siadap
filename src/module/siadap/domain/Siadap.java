@@ -159,6 +159,9 @@ public class Siadap extends Siadap_Base {
 	}
     }
 
+    public PersonSiadapWrapper getEvaluatedWrapper() {
+	return new PersonSiadapWrapper(getEvaluated(), getYear());
+    }
     public PersonSiadapWrapper getEvaluator() {
 	return new PersonSiadapWrapper(getEvaluated(), getYear()).getEvaluator();
     }
