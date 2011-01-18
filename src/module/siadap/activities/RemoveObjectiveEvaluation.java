@@ -44,6 +44,11 @@ public class RemoveObjectiveEvaluation extends WorkflowActivity<SiadapProcess, R
     }
 
     @Override
+    public boolean isConfirmationNeeded(SiadapProcess process) {
+	return true;
+    }
+
+    @Override
     public String getUsedBundle() {
 	return "resources/SiadapResources";
     }
