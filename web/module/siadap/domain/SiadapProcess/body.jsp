@@ -56,6 +56,7 @@ request.setAttribute("objectivesVisibleToEvaluated", objectivesVisibileToEvaluat
 	<h3><bean:message key="label.results"
 		bundle="SIADAP_RESOURCES" />:</h3>
 	
+	<h4><bean:message key="label.objectives" bundle="SIADAP_RESOURCES" />:</h4>
 	
 		<logic:iterate id="objective" name="process"
 			property="siadap.objectiveEvaluations" indexId="i">
@@ -78,8 +79,7 @@ request.setAttribute("objectivesVisibleToEvaluated", objectivesVisibileToEvaluat
 	<logic:equal value="true" name="process" property="siadap.evaluatedOnlyByCompetences" >
 		<p><strong><bean:message bundle="SIADAP_RESOURCES" key="label.evaluatedOnlyByCompetences" /></p></strong>
 	</logic:equal>
-	<h4><bean:message key="label.competences"
-		bundle="SIADAP_RESOURCES" />:</h4>
+	<h4><bean:message key="label.competences" bundle="SIADAP_RESOURCES" />:</h4>
 		<%-- link to allow to edit the competences--%>
 		<wf:isActive processName="process" activityName="EditCompetenceEvaluation" scope="request">		
 						<span>
