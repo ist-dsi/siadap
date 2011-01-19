@@ -45,6 +45,11 @@ public class EditObjectiveEvaluation extends WorkflowActivity<SiadapProcess, Edi
     }
 
     @Override
+    public boolean isUserAwarenessNeeded(SiadapProcess process) {
+	return false;
+    }
+
+    @Override
     public String getUsedBundle() {
 	return "resources/SiadapResources";
     }

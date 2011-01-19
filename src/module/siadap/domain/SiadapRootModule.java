@@ -1,14 +1,14 @@
 package module.siadap.domain;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
 
+import module.organization.domain.Person;
 import module.organization.domain.Unit;
-import module.workflow.presentationTier.ProcessNodeSelectionMapper;
-import module.workflow.widgets.ProcessListWidget;
+import module.siadap.domain.wrappers.PersonSiadapWrapper;
 import myorg.domain.ModuleInitializer;
 import myorg.domain.MyOrg;
-import myorg.domain.contents.Node;
 import pt.ist.fenixWebFramework.services.Service;
 
 public class SiadapRootModule extends SiadapRootModule_Base implements ModuleInitializer {
@@ -37,6 +37,52 @@ public class SiadapRootModule extends SiadapRootModule_Base implements ModuleIni
 
     @Override
     public void init(MyOrg root) {
+    }
+
+    /**
+     * 
+     * @param forPerson
+     *            the person to whom we should be returning all of the
+     *            PersonSiadapWrapper instances related with him
+     * @param includeClosedYears
+     *            if true, it will return all of the years, even the closed ones
+     *            (where nothing should be able to be done for), false isn't
+     *            implemented yet, but should return only for the open years
+     *            TODO related with Issue #31
+     * @return a set of PersonSiadapWrapper with all of the PersonSiadapWrapper
+     *         instances associated with the given forPerson person and
+     *         including or not closed years TODO depending on the
+     *         includeClosedYears parameter. Or an empty list if none are
+     *         available
+     */
+    public ArrayList<PersonSiadapWrapper> getAssociatedSiadaps(Person forPerson, boolean includeClosedYears) {
+	ArrayList<PersonSiadapWrapper> personSiadapWrapperToReturn = new ArrayList<PersonSiadapWrapper>();
+	//get all of the years
+	//TODO implement the includeClosedYears functionality related with Issue #31
+	for (SiadapYearConfiguration yearConfiguration : getYearConfigurations()) {
+	    personSiadapWrapperToReturn.addAll(getAssociatedSiadaps(forPerson, yearConfiguration.getYear(), includeClosedYears));
+	}
+
+	return personSiadapWrapperToReturn;
+
+    }
+
+    public ArrayList<PersonSiadapWrapper> getAssociatedSiadaps(Person forPerson, int year, boolean includeClosedYears) {
+	SiadapYearConfiguration yearConfiguration = SiadapYearConfiguration.getSiadapYearConfiguration(year);
+	ArrayList<PersonSiadapWrapper> personSiadapWrapperToReturn = new ArrayList<PersonSiadapWrapper>();
+	//TODO Related with Issue #31 take the includeClosedYears into account
+	if (yearConfiguration == null) {
+	    return personSiadapWrapperToReturn;
+	}
+	PersonSiadapWrapper personSiadapWrapper = new PersonSiadapWrapper(forPerson, year);
+	// now let's add all of the evaluated persons to the list
+	Set<PersonSiadapWrapper> peopleToEvaluate = personSiadapWrapper.getPeopleToEvaluate();
+	if (peopleToEvaluate != null) {
+	    personSiadapWrapperToReturn.addAll(peopleToEvaluate);
+	}
+	personSiadapWrapperToReturn.add(personSiadapWrapper);
+	return personSiadapWrapperToReturn;
+
     }
 
     @Service

@@ -16,6 +16,8 @@ import module.organization.domain.Party;
 import module.organization.domain.Person;
 import module.organization.domain.Unit;
 import module.siadap.domain.Siadap;
+import module.siadap.domain.SiadapProcess;
+import module.siadap.domain.SiadapRootModule;
 import module.siadap.domain.SiadapYearConfiguration;
 import myorg.applicationTier.Authenticate.UserView;
 import myorg.domain.exceptions.DomainException;
@@ -97,6 +99,32 @@ public class PersonSiadapWrapper extends PartyWrapper implements Serializable {
 
     public Collection<UnitSiadapWrapper> getHarmozationUnits() {
 	return getHarmozationUnits(true);
+    }
+
+    public boolean hasPendingActions()
+    {
+	Siadap siadap = getSiadap();
+	if (siadap == null) {
+	    if (isCurrentUserAbleToCreateProcess()) {
+		return true;
+	    }
+	} else {
+	    SiadapProcess process = siadap.getProcess();
+	    if (process.isAccessibleToCurrentUser()) {
+		return siadap.getProcess().hasAnyAvailableActivitity();
+	    }
+	}
+	return false;
+    }
+
+    public int getNrPendingProcessActions() {
+	int counterPendingActions = 0;
+	ArrayList<PersonSiadapWrapper> personSiadapWrappers = SiadapRootModule.getInstance().getAssociatedSiadaps(getPerson(), getYear(), false);
+	for (PersonSiadapWrapper personSiadapWrapper : personSiadapWrappers) {
+	    if (personSiadapWrapper.hasPendingActions())
+		counterPendingActions++;
+	}
+	return counterPendingActions;
     }
 
     public Collection<UnitSiadapWrapper> getHarmozationUnits(boolean skipClosedAccountabilities) {

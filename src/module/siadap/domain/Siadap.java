@@ -10,7 +10,9 @@ import module.siadap.activities.AutoEvaluation;
 import module.siadap.activities.Evaluation;
 import module.siadap.domain.scoring.IScoring;
 import module.siadap.domain.scoring.SiadapGlobalEvaluation;
+import module.siadap.domain.util.SiadapPendingProcessesCounter;
 import module.siadap.domain.wrappers.PersonSiadapWrapper;
+import module.workflow.widgets.ProcessListWidget;
 import myorg.domain.exceptions.DomainException;
 
 import org.apache.commons.collections.Predicate;
@@ -21,6 +23,11 @@ import org.joda.time.LocalDate;
 import pt.ist.fenixWebFramework.services.Service;
 
 public class Siadap extends Siadap_Base {
+
+    //register itself in the pending processes widget:
+    static {
+	ProcessListWidget.register(new SiadapPendingProcessesCounter());
+    }
 
     private static final int PRECISION = 3;
     private static final int ROUND_MODE = BigDecimal.ROUND_HALF_EVEN;

@@ -21,6 +21,11 @@ public class RevertNoEvaluation extends WorkflowActivity<SiadapProcess, Activity
     }
 
     @Override
+    public boolean isUserAwarenessNeeded(SiadapProcess process) {
+	return false;
+    }
+
+    @Override
     public String getUsedBundle() {
 	return "resources/SiadapResources";
     }

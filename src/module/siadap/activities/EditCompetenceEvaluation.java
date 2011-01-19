@@ -80,6 +80,11 @@ public class EditCompetenceEvaluation extends
     }
 
     @Override
+    public boolean isUserAwarenessNeeded(SiadapProcess process) {
+	return false;
+    }
+
+    @Override
     public boolean isVisible() {
 	return false;
     };
