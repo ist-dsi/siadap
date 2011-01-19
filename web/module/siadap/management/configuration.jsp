@@ -22,9 +22,10 @@
 		<fr:destination name="postBack" path="/siadapManagement.do?method=showConfiguration"/>
 	</fr:edit>
 </fr:form>  
+<bean:define id="year" name="siadapYearWrapper" property="chosenYear"/>
 
 <logic:notPresent name="configuration"> 
-	<html:link page="/siadapManagement.do?method=createNewSiadapYearConfiguration">
+	<html:link page="/siadapManagement.do?method=createNewSiadapYearConfiguration" paramId="year" paramName="year">
 		<bean:message key="label.create.currentYearConfiguration" bundle="SIADAP_RESOURCES"/>
 	</html:link>
 </logic:notPresent>

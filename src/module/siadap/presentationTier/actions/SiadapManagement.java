@@ -155,7 +155,9 @@ public class SiadapManagement extends ContextBaseAction {
     public final ActionForward createNewSiadapYearConfiguration(final ActionMapping mapping, final ActionForm form,
 	    final HttpServletRequest request, final HttpServletResponse response) {
 
-	SiadapYearConfiguration.createNewSiadapYearConfiguration(new LocalDate().getYear());
+	Integer year = new Integer(request.getParameter("year"));
+
+	SiadapYearConfiguration.createNewSiadapYearConfiguration(year);
 	return manageSiadap(mapping, form, request, response);
     }
 
