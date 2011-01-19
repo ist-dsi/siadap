@@ -12,13 +12,27 @@
 <bean:define id="evaluatorPersonWrapper" name="process" property="siadap.evaluator"/>
 <bean:define id="evaluatedPersonWrapper" name="process" property="siadap.evaluatedWrapper"/>
 <bean:define id="user" name="USER_SESSION_ATTRIBUTE" property="user"/>
+<bean:define id="siadap" name="process" property="siadap"/>
 <% SiadapProcess siadapProcess = (SiadapProcess) request.getAttribute("process");
 boolean showObjectivesAndCompetences = siadapProcess.getSiadap().getObjectivesAndCompetencesSealedDate() != null || siadapProcess.getSiadap().getEvaluator().getPerson().getUser().equals(user);
 boolean objectivesVisibileToEvaluated = siadapProcess.getSiadap().getObjectivesAndCompetencesSealedDate() != null;
 request.setAttribute("showObjectivesAndCompetences", showObjectivesAndCompetences);
 request.setAttribute("objectivesVisibleToEvaluated", objectivesVisibileToEvaluated);
 %>
-
+<h3><bean:message bundle="SIADAP_RESOURCES" key="label.siadap.schedule" arg0="<%= ((SiadapProcess) processJava).getSiadap().getYear().toString()%>" />:</h3>
+<fr:view name="siadap" property="siadapYearConfiguration" >
+	<fr:schema bundle="SIADAP_RESOURCES" type="module.siadap.domain.SiadapYearConfiguration">
+		<fr:slot name="objectiveSpecificationBegin" key="label.config.objectiveSpecificationBegin" />
+		<fr:slot name="objectiveSpecificationEnd" key="label.config.objectiveSpecificationEnd" />
+		<fr:slot name="autoEvaluationBegin" key="label.autoEvaluationBegin" />
+		<fr:slot name="autoEvaluationEnd" key="label.autoEvaluationEnd" />
+		<fr:slot name="evaluationBegin" key="label.evaluationBegin" />
+		<fr:slot name="evaluationEnd" key="label.evaluationEnd" />
+	</fr:schema>
+	<fr:layout>
+		<fr:property name="classes" value="tstyle3 thleft mvert10px"/>
+	</fr:layout>
+</fr:view>
 <p><strong><bean:write name="evaluatedPersonWrapper" property="nextStep"/></strong></p>
 
 <logic:equal name="showObjectivesAndCompetences" value="true">

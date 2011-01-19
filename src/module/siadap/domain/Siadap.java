@@ -19,6 +19,8 @@ import org.apache.commons.collections.Predicate;
 import org.apache.commons.lang.StringUtils;
 import org.joda.time.Interval;
 import org.joda.time.LocalDate;
+import org.joda.time.ReadableDuration;
+import org.joda.time.ReadableInstant;
 
 import pt.ist.fenixWebFramework.services.Service;
 
@@ -287,6 +289,8 @@ public class Siadap extends Siadap_Base {
 	SiadapYearConfiguration configuration = getSiadapYearConfiguration();
 	LocalDate begin = configuration.getAutoEvaluationBegin();
 	LocalDate end = configuration.getAutoEvaluationEnd();
+	if (end == null || begin == null)
+	    return new Interval((ReadableDuration) null, (ReadableInstant) null);
 	return new Interval(begin.toDateMidnight(), end.toDateMidnight());
     }
 
@@ -294,6 +298,8 @@ public class Siadap extends Siadap_Base {
 	SiadapYearConfiguration configuration = getSiadapYearConfiguration();
 	LocalDate begin = configuration.getEvaluationBegin();
 	LocalDate end = configuration.getEvaluationEnd();
+	if (end == null || begin == null)
+	    return new Interval((ReadableDuration) null, (ReadableInstant) null);
 	return new Interval(begin.toDateMidnight(), end.toDateMidnight());
     }
 
@@ -301,6 +307,8 @@ public class Siadap extends Siadap_Base {
 	SiadapYearConfiguration configuration = getSiadapYearConfiguration();
 	LocalDate begin = configuration.getObjectiveSpecificationBegin();
 	LocalDate end = configuration.getObjectiveSpecificationEnd();
+	if (end == null || begin == null)
+	    return new Interval((ReadableDuration) null, (ReadableInstant) null);
 	return new Interval(begin.toDateMidnight(), end.toDateMidnight());
     }
 
