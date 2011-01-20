@@ -1,9 +1,6 @@
 package module.siadap.activities;
 
-import java.util.Locale;
 import java.util.ResourceBundle;
-
-import pt.utl.ist.fenix.tools.util.i18n.Language;
 
 import module.siadap.domain.Competence;
 import module.siadap.domain.CompetenceEvaluation;
@@ -13,6 +10,7 @@ import module.workflow.activities.ActivityInformation;
 import module.workflow.activities.WorkflowActivity;
 import myorg.domain.User;
 import myorg.domain.exceptions.DomainException;
+import pt.utl.ist.fenix.tools.util.i18n.Language;
 
 public class CreateCompetenceEvaluation
 		extends
@@ -29,7 +27,7 @@ public class CreateCompetenceEvaluation
 	@Override
 	public boolean isActive(SiadapProcess process, User user) {
 		Siadap siadap = process.getSiadap();
-		return !siadap.isObjectiveSpecificationIntervalFinished()
+	return siadap.getEvaluationInterval().containsNow()
 				&& siadap.getEvaluator().getPerson().getUser() == user
 				&& !siadap.hasAnyCompetencesSet()
 				&& !process.hasBeenExecuted(AutoEvaluation.class);

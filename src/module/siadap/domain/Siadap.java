@@ -312,15 +312,56 @@ public class Siadap extends Siadap_Base {
 	return new Interval(begin.toDateMidnight(), end.toDateMidnight());
     }
 
+    //TODO change this appropriately when Issue #31 is resolved
+    private boolean isAutoEvaluationScheduleDefined() {
+
+	SiadapYearConfiguration configuration = getSiadapYearConfiguration();
+	LocalDate begin = configuration.getAutoEvaluationBegin();
+	LocalDate end = configuration.getAutoEvaluationEnd();
+	if (end == null || begin == null)
+	    return false;
+	return true;
+    }
+
+    //TODO change this appropriately when Issue #31 is resolved
+    private boolean isEvaluationScheduleDefined() {
+
+	SiadapYearConfiguration configuration = getSiadapYearConfiguration();
+	LocalDate begin = configuration.getEvaluationBegin();
+	LocalDate end = configuration.getEvaluationEnd();
+	if (end == null || begin == null)
+	    return false;
+	return true;
+    }
+
+    //TODO change this appropriately when Issue #31 is resolved
+    private boolean isObjectiveSpecificationScheduleDefined() {
+	SiadapYearConfiguration configuration = getSiadapYearConfiguration();
+	LocalDate begin = configuration.getObjectiveSpecificationBegin();
+	LocalDate end = configuration.getObjectiveSpecificationEnd();
+	if (end == null || begin == null)
+	    return false;
+	return true;
+    }
+
     public boolean isAutoEvaluationIntervalFinished() {
+	//TODO change this appropriately when Issue #31 is resolved
+	if (!isAutoEvaluationScheduleDefined())
+	    return false;
 	return getAutoEvaluationInterval().isBeforeNow();
     }
 
     public boolean isEvaluationIntervalFinished() {
+	if (!isEvaluationScheduleDefined())
+	    return false;
+	//TODO change this appropriately when Issue #31 is resolved
 	return getEvaluationInterval().isBeforeNow();
     }
 
     public boolean isObjectiveSpecificationIntervalFinished() {
+	if (!isObjectiveSpecificationScheduleDefined())
+	    return false;
+	//TODO change this appropriately when Issue #31 is resolved
 	return getObjectiveSpecificationInterval().isBeforeNow();
     }
 

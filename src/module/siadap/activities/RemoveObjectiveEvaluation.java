@@ -11,8 +11,8 @@ public class RemoveObjectiveEvaluation extends WorkflowActivity<SiadapProcess, R
     @Override
     public boolean isActive(SiadapProcess process, User user) {
 	Siadap siadap = process.getSiadap();
-	return !siadap.isObjectiveSpecificationIntervalFinished() && siadap.getEvaluator().getPerson().getUser() == user
-		&& siadap.getRequestedAcknowledgeDate() == null;
+	return siadap.getObjectiveSpecificationInterval().containsNow() && siadap.getEvaluator().getPerson().getUser() == user
+		&& siadap.getRequestedAcknowledgeDate() == null && !process.hasBeenExecuted(SubmitForObjectivesAcknowledge.class);
     }
 
     @Override

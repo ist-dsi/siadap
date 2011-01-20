@@ -13,7 +13,7 @@ public class EditObjectiveEvaluation extends WorkflowActivity<SiadapProcess, Edi
     @Override
     public boolean isActive(SiadapProcess process, User user) {
 	Siadap siadap = process.getSiadap();
-	return !siadap.isObjectiveSpecificationIntervalFinished() && !process.hasBeenExecuted(AutoEvaluation.class)
+	return siadap.getObjectiveSpecificationInterval().containsNow() && !process.hasBeenExecuted(AutoEvaluation.class)
 		&& siadap.getEvaluator().getPerson().getUser() == user;
     }
 

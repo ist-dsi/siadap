@@ -27,7 +27,7 @@ public class EditCompetenceEvaluation extends
     @Override
     public boolean isActive(SiadapProcess process, User user) {
 	Siadap siadap = process.getSiadap();
-	return !siadap.isObjectiveSpecificationIntervalFinished() && siadap.getEvaluator().getPerson().getUser() == user
+	return siadap.getObjectiveSpecificationInterval().containsNow() && siadap.getEvaluator().getPerson().getUser() == user
 		&& siadap.hasAnyCompetencesSet() && !process.hasBeenExecuted(SubmitForObjectivesAcknowledge.class);
     }
 
