@@ -3,8 +3,9 @@ package module.siadap.domain.wrappers;
 import module.siadap.domain.Siadap;
 import myorg.domain.User;
 import myorg.util.BundleUtil;
+import pt.ist.fenixWebFramework.rendererExtensions.util.IPresentableEnum;
 
-public enum SiadapProcessStateEnum {
+public enum SiadapProcessStateEnum implements IPresentableEnum {
     NOT_CREATED,
 
     INCOMPLETE_OBJ_OR_COMP,
@@ -22,6 +23,10 @@ public enum SiadapProcessStateEnum {
     NOT_YET_EVALUATED,
 
     UNIMPLEMENTED_STATE;
+
+    private SiadapProcessStateEnum() {
+	// TODO Auto-generated constructor stub
+    }
 
     /**
      * 
@@ -92,6 +97,11 @@ public enum SiadapProcessStateEnum {
 	else if (siadap.getEvaluated().getUser().equals(currentUser))
 	    return BundleUtil.getStringFromResourceBundle("resources/SiadapResources", getLabelPrefix(siadap)
 		    + ".nextstep.evaluated");
+	return null;
+    }
+
+    @Override
+    public String getLocalizedName() {
 	return null;
     }
 

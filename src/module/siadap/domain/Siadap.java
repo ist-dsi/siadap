@@ -152,6 +152,8 @@ public class Siadap extends Siadap_Base {
     }
 
     public boolean isEvaluatedWithKnowledgeOfObjectives() {
+	if (getCurrentEvaluationItems() == null || getCurrentEvaluationItems().isEmpty())
+	    return false;
 	for (SiadapEvaluationItem item : getCurrentEvaluationItems()) {
 	    if (item.getAcknowledgeDate() == null) {
 		return false;
@@ -420,4 +422,5 @@ public class Siadap extends Siadap_Base {
 	    return false;
 	return true;
     }
+
 }

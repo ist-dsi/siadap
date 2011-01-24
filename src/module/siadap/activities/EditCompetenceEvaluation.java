@@ -33,16 +33,16 @@ public class EditCompetenceEvaluation extends
 
     @Override
     protected void process(CreateOrEditCompetenceEvaluationActivityInformation activityInformation) {
-		int nrRequiredItems;
+	int nrRequiredItems = 0;
 		if (activityInformation.getEvaluatedOnlyByCompetences() != null) {
 			if (activityInformation.getEvaluatedOnlyByCompetences()
 					.booleanValue()) {
 				nrRequiredItems = Siadap.MINIMUM_COMPETENCES_WITHOUT_OBJ_EVAL_NUMBER;
 			} else
 				nrRequiredItems = Siadap.MINIMUM_COMPETENCES_WITH_OBJ_EVAL_NUMBER;
-		} else
-			nrRequiredItems = Integer.MAX_VALUE;
-		if (activityInformation.getCompetences().size() < nrRequiredItems) {
+	}
+	if (activityInformation.getEvaluatedOnlyByCompetences() == null
+		|| activityInformation.getCompetences().size() < nrRequiredItems) {
 			throw new DomainException(
 					"renderers.validator.invalid.nrCompetences",
 					ResourceBundle.getBundle("resources/SiadapResources",

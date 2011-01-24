@@ -40,6 +40,7 @@ class Siadap {
 	Boolean validated;
 }
 
+
 class SiadapEvaluation {
 	String evaluationJustification;	
 	String noEvaluationJustification;
@@ -156,12 +157,11 @@ relation SiadapProcessSiadap {
 	SiadapProcess playsRole process;
 	Siadap playsRole siadap;
 }
-
-relation SiadapSiadapEvaluationItems {
-	Siadap playsRole siadap;
-	SiadapEvaluationItem playsRole siadapEvaluationItems {
-		multiplicity *;
-	}
+ relation SiadapSiadapEvaluationItems {
+ 	Siadap playsRole siadap;
+ 	SiadapEvaluationItem playsRole siadapEvaluationItems {
+  		multiplicity *;
+ 	}
 }
 
 

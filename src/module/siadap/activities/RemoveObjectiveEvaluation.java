@@ -17,12 +17,21 @@ public class RemoveObjectiveEvaluation extends WorkflowActivity<SiadapProcess, R
 
     @Override
     protected void process(RemoveObjectiveEvaluationActivityInformation activityInformation) {
-	activityInformation.getSiadap().removeSiadapEvaluationItems(activityInformation.getEvaluation());
+	Siadap siadap = activityInformation.getSiadap();
 	// TODO probably will have to alter this in the near future, related
 	// with Issue #2, most likely depending if it is sealed or not, and if
 	// it is we will want to add it to some object that will store the old
 	// objectives
-	activityInformation.getEvaluation().delete();
+	if (siadap.getObjectivesAndCompetencesSealedDate() == null) {
+	    siadap.removeSiadapEvaluationItems(activityInformation.getEvaluation());
+	    activityInformation.getEvaluation().delete();
+	} else {
+	    Integer currentObjectiveVersion = siadap.getCurrentObjectiveVersion();
+	    int newVersion = currentObjectiveVersion + 1;
+	    activityInformation.getEvaluation().setUntilVersion(currentObjectiveVersion);
+	    siadap.setCurrentObjectiveVersion(newVersion);
+
+	}
     }
 
     @Override
