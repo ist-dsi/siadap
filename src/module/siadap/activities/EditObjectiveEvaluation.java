@@ -7,6 +7,7 @@ import module.siadap.domain.SiadapProcess;
 import module.workflow.activities.ActivityInformation;
 import module.workflow.activities.WorkflowActivity;
 import myorg.domain.User;
+import myorg.util.BundleUtil;
 
 public class EditObjectiveEvaluation extends WorkflowActivity<SiadapProcess, EditObjectiveEvaluationActivityInformation> {
 
@@ -22,8 +23,8 @@ public class EditObjectiveEvaluation extends WorkflowActivity<SiadapProcess, Edi
 	ObjectiveEvaluation evaluation = activityInformation.getEvaluation().edit(activityInformation.getObjective(),
 		activityInformation.getJustification(), activityInformation.getType());
 	for (ObjectiveIndicator indicator : activityInformation.getIndicators()) {
-	    evaluation.addObjectiveIndicator(indicator.getMeasurementIndicator(), indicator.getSuperationCriteria(), indicator
-		    .getBigDecimalPonderationFactor());
+	    evaluation.addObjectiveIndicator(indicator.getMeasurementIndicator(), indicator.getSuperationCriteria(),
+		    indicator.getBigDecimalPonderationFactor());
 	}
     }
 
@@ -31,12 +32,13 @@ public class EditObjectiveEvaluation extends WorkflowActivity<SiadapProcess, Edi
     public ActivityInformation<SiadapProcess> getActivityInformation(SiadapProcess process) {
 	return new EditObjectiveEvaluationActivityInformation(process, this);
     }
-    
+
     @Override
     protected boolean shouldLogActivity(EditObjectiveEvaluationActivityInformation activityInformation) {
-    	if (activityInformation.getProcess().getSiadap().getObjectivesAndCompetencesSealedDate() != null)
-    		return true;
-    	else return false;
+	if (activityInformation.getProcess().getSiadap().getObjectivesAndCompetencesSealedDate() != null)
+	    return true;
+	else
+	    return false;
     }
 
     @Override
@@ -56,10 +58,16 @@ public class EditObjectiveEvaluation extends WorkflowActivity<SiadapProcess, Edi
 
     @Override
     protected String[] getArgumentsDescription(EditObjectiveEvaluationActivityInformation activityInformation) {
+	String labelBase = "label.description." + getClass().getName();
 	if (activityInformation.isEmployJustification()) {
-	return new String[] { activityInformation.getObjective(), activityInformation.getJustification() };
-	} else
-	    return new String[] { activityInformation.getObjective() };
+	    String[] getBaseArgument = new String[] { BundleUtil.getFormattedStringFromResourceBundle(getUsedBundle(), labelBase
+		    + ".withJustification", activityInformation.getObjective(), activityInformation.getJustification()) };
+	    return getBaseArgument;
+	} else {
+	    String[] getBaseArgument = new String[] { BundleUtil.getFormattedStringFromResourceBundle(getUsedBundle(), labelBase
+		    + ".withoutJustification", activityInformation.getObjective()) };
+	    return getBaseArgument;
+	}
     }
 
     @Override
