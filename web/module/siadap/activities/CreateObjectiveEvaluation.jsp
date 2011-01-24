@@ -88,7 +88,9 @@
 					validator="pt.ist.fenixWebFramework.renderers.validators.RequiredValidator" help="activity.CreateOrEditObjectiveEvaluation.ponderationFactor.help">
 					<fr:property name="maxLength" value="3"/>
 					<fr:property name="size" value="3"/>
-					<fr:validator name="pt.ist.fenixWebFramework.renderers.validators.NumberValidator"/>
+					<fr:validator name="pt.ist.fenixWebFramework.rendererExtensions.validators.NumberRangeValidator">
+						<fr:property name="lowerBound" value="1"/>
+					</fr:validator>
 				</fr:slot>
 			</fr:schema>
 	 	<fr:layout name="tabular">
