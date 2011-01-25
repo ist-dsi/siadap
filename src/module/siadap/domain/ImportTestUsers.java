@@ -23,6 +23,7 @@ public class ImportTestUsers extends WriteCustomTask {
 					//DEM Mecãnica: ??
 					"ist12889\n" + //Miguel Ayala Botto
 					// CIIST:
+					"ist23000\n" + //José Luis (por causa da ajuda)
 					"ist24698\n" + // Rita Wahl
 					"ist22619\n" + // Paula César
 					"ist12048\n" + // Fernando Mira da Silva
