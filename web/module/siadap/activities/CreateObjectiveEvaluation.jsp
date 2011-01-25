@@ -108,7 +108,7 @@
 	 <style>
 		div.tooltip div.tooltipText {
 		top: 20px;
-		left: -219;
+		left: -219px;
 		}
 	</style>
 	 <%--	hovering tooltip stuff:  --%>
