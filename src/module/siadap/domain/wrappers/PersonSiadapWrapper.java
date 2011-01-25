@@ -57,13 +57,12 @@ public class PersonSiadapWrapper extends PartyWrapper implements Serializable {
 	return getConfiguration().getSiadapFor(getPerson(), getYear());
     }
 
-
     /**
-     * @return a localized String with the current state of the siadap process
-     *         for this person
+     * @return a {@link SiadapProcessStateEnum} which represents the current
+     *         state of the SIADAP process
      */
-    public String getCurrentProcessState() {
-	return SiadapProcessStateEnum.getStateForListOfProcessesString(getSiadap());
+    public SiadapProcessStateEnum getCurrentProcessState() {
+	return SiadapProcessStateEnum.getState(getSiadap());
     }
 
     /**

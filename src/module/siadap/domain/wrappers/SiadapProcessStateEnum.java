@@ -34,11 +34,12 @@ public enum SiadapProcessStateEnum implements IPresentableEnum {
      *         persons, currently prepareCreateSiadap.jsp
      */
     public static String getStateForListOfProcessesString(Siadap siadap) {
-	return BundleUtil.getStringFromResourceBundle("resources/SiadapResources", getLabelPrefix(siadap));
+	return BundleUtil.getStringFromResourceBundle("resources/SiadapResources", getState(siadap).getLabelPrefix());
     }
 
-    private static String getLabelPrefix(Siadap siadap) {
-	switch (getState(siadap)) {
+
+    private String getLabelPrefix() {
+	switch (this) {
 	case NOT_CREATED:
 	    return "siadap.state.not.created";
 	case INCOMPLETE_OBJ_OR_COMP:
@@ -92,17 +93,18 @@ public enum SiadapProcessStateEnum implements IPresentableEnum {
      */
     public static String getNextStep(Siadap siadap, User currentUser) {
 	if (siadap.getEvaluator().getPerson().getUser().equals(currentUser))
-	    return BundleUtil.getStringFromResourceBundle("resources/SiadapResources", getLabelPrefix(siadap)
+	    return BundleUtil.getStringFromResourceBundle("resources/SiadapResources", getState(siadap).getLabelPrefix()
 		    + ".nextstep.evaluator");
 	else if (siadap.getEvaluated().getUser().equals(currentUser))
-	    return BundleUtil.getStringFromResourceBundle("resources/SiadapResources", getLabelPrefix(siadap)
+	    return BundleUtil.getStringFromResourceBundle("resources/SiadapResources", getState(siadap).getLabelPrefix()
 		    + ".nextstep.evaluated");
 	return null;
     }
 
     @Override
     public String getLocalizedName() {
-	return null;
+	return BundleUtil.getStringFromResourceBundle("resources/SiadapResources", getLabelPrefix());
+
     }
 
 }
