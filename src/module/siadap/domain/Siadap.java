@@ -3,6 +3,7 @@ package module.siadap.domain;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import module.organization.domain.Person;
@@ -59,22 +60,41 @@ public class Siadap extends Siadap_Base {
 		return objective.isValidForVersion(getCurrentObjectiveVersion());
 	    }
 
-	});
+	}, ObjectiveEvaluation.COMPARATOR_BY_OLDEST_DATE);
 
     }
 
     public List<CompetenceEvaluation> getCompetenceEvaluations() {
-	return getEvaluations(CompetenceEvaluation.class, null);
+	return getEvaluations(CompetenceEvaluation.class, null, null);
     }
 
-    private <T extends SiadapEvaluationItem> List<T> getEvaluations(Class<T> clazz, Predicate predicate) {
+    /**
+     * 
+     * @param <T>
+     * @param clazz
+     *            the class of the SiadapEvaluationItem that one is interested
+     *            in getting
+     * @param predicate
+     *            the predicate that is evaluated for each of the
+     *            SiadapEvaluationItem
+     * @param comparator
+     *            a comparator of {@link SiadapEvaluationItem} or null if we
+     *            want to use the default
+     *            {@link SiadapEvaluationItem#COMPARATOR_BY_DATE}
+     * @return a list of <T> elements
+     */
+    private <T extends SiadapEvaluationItem> List<T> getEvaluations(Class<T> clazz, Predicate predicate,
+ Comparator<T> comparator) {
 	List<T> evaluationItems = new ArrayList<T>();
 	for (SiadapEvaluationItem item : getSiadapEvaluationItems()) {
 	    if (clazz.isAssignableFrom(item.getClass()) && (predicate == null || predicate.evaluate(item))) {
 		evaluationItems.add((T) item);
 	    }
 	}
-	Collections.sort(evaluationItems, SiadapEvaluationItem.COMPARATOR_BY_DATE);
+	if (comparator == null) {
+	    Collections.sort(evaluationItems, SiadapEvaluationItem.COMPARATOR_BY_DATE);
+	} else
+	    Collections.sort(evaluationItems, comparator);
 	return evaluationItems;
     }
 
@@ -147,7 +167,7 @@ public class Siadap extends Siadap_Base {
 		return (arg0 instanceof ObjectiveEvaluation) ? ((ObjectiveEvaluation) arg0)
 			.isValidForVersion(getCurrentObjectiveVersion()) : true;
 	    }
-	});
+	}, null);
 
     }
 
@@ -173,6 +193,7 @@ public class Siadap extends Siadap_Base {
     public PersonSiadapWrapper getEvaluatedWrapper() {
 	return new PersonSiadapWrapper(getEvaluated(), getYear());
     }
+
     public PersonSiadapWrapper getEvaluator() {
 	return new PersonSiadapWrapper(getEvaluated(), getYear()).getEvaluator();
     }
@@ -260,8 +281,7 @@ public class Siadap extends Siadap_Base {
 	}
 	return hasAllNeededCompetences()
 		&& ((getEvaluatedOnlyByCompetences() == null || getEvaluatedOnlyByCompetences()) || (efficiencyObjectives >= MINIMUM_EFICIENCY_OBJECTIVES_NUMBER
-		&& performanceObjectives >= MINIMUM_PERFORMANCE_OBJECTIVES_NUMBER
- && qualityObjectives >= MINIMUM_QUALITY_OBJECTIVES_NUMBER));
+			&& performanceObjectives >= MINIMUM_PERFORMANCE_OBJECTIVES_NUMBER && qualityObjectives >= MINIMUM_QUALITY_OBJECTIVES_NUMBER));
     }
 
     public boolean hasAllNeededCompetences() {

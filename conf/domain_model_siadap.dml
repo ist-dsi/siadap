@@ -275,6 +275,15 @@ relation ObjectiveEvaluationObjectiveEvaluationIndicator {
 	}
 }
 
+/* Used to keep track of the old objects and for the moment only useful
+ * to list the objects in the same position. But it might be useful in the 
+ * future to have the relation between the several objects that until
+ * now wasn't being saved */
+relation ObjectiveEvaluationObjectiveEvaluation {
+	ObjectiveEvaluation playsRole oldObjectiveEvaluation;
+	ObjectiveEvaluation playsRole newObjectiveEvaluation;
+}
+
 relation ObjectiveEvaluationIndicatorSiadapRootModule {
 	SiadapRootModule playsRole siadapRootModule;
 	ObjectiveEvaluationIndicator playsRole indicators {

@@ -1,11 +1,34 @@
 package module.siadap.domain;
 
 import java.math.BigDecimal;
+import java.util.Comparator;
 
 import module.siadap.domain.scoring.IScoring;
 import myorg.domain.exceptions.DomainException;
 
 public class ObjectiveEvaluation extends ObjectiveEvaluation_Base {
+    
+    
+    public static Comparator<ObjectiveEvaluation> COMPARATOR_BY_OLDEST_DATE = new Comparator<ObjectiveEvaluation>() {
+
+	@Override
+	public int compare(ObjectiveEvaluation o1, ObjectiveEvaluation o2) {
+	    return getOldestObjective(o1).getWhenCreated().compareTo(getOldestObjective(o2).getWhenCreated());
+	}
+	
+	/**
+	 * Iterates through the related objectiveEvaluation objects on objectiveEvaluation and returns the oldest
+	 */
+	private ObjectiveEvaluation getOldestObjective(ObjectiveEvaluation objectiveEvaluation) {
+	    if (objectiveEvaluation.getOldObjectiveEvaluation() == null)
+		return objectiveEvaluation;
+	    else 
+	    {
+		return getOldestObjective(objectiveEvaluation.getOldObjectiveEvaluation());
+	    }
+	}
+
+    };
 
     public ObjectiveEvaluation(Siadap siadap, String objective, SiadapEvaluationObjectivesType type) {
 	super();
@@ -32,7 +55,11 @@ public class ObjectiveEvaluation extends ObjectiveEvaluation_Base {
 	int newVersion = currentObjectiveVersion + 1;
 	setUntilVersion(currentObjectiveVersion);
 	siadap.setCurrentObjectiveVersion(newVersion);
-	return new ObjectiveEvaluation(siadap, objective, editionJustification, type);
+	ObjectiveEvaluation newObjectiveEvaluation = new ObjectiveEvaluation(siadap, objective, editionJustification, type);
+	//set the oldest and newest references
+	newObjectiveEvaluation.setOldObjectiveEvaluation(this);
+	setNewObjectiveEvaluation(newObjectiveEvaluation);
+	return newObjectiveEvaluation;
     }
 
     public void addObjectiveIndicator(String measurementIndicator, String superationCriteria, BigDecimal ponderationFactor) {
@@ -95,6 +122,9 @@ public class ObjectiveEvaluation extends ObjectiveEvaluation_Base {
 	    removeIndicators(indicator);
 	    indicator.delete();
 	}
+	//unlink from the old only, if there is a newer, it should give an exception
+	getOldObjectiveEvaluation().removeNewObjectiveEvaluation();
+	removeOldObjectiveEvaluation();
 	removeSiadap();
 	removeSiadapRootModule();
 	deleteDomainObject();
