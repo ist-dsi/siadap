@@ -62,7 +62,7 @@
 	<html:submit styleClass="inputbutton"><bean:message key="button.save" bundle="SIADAP_RESOURCES"/></html:submit>
 </fr:form>
 <fr:form action='<%= "/workflowProcessManagement.do?method=viewProcess&processId=" + processId %>'>
-<html:submit styleClass="inputbutton"><bean:message key="renderers.form.cancel.name" bundle="SIADAP_RESOURCES"/></html:submit>
+<html:submit styleClass="inputbutton"><bean:message key="button.back" bundle="SIADAP_RESOURCES"/></html:submit>
 </fr:form>
 </div>
 <%-- Resolving a bug on WebKit 
