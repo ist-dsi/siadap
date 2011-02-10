@@ -12,7 +12,7 @@ import myorg.domain.scheduler.WriteCustomTask;
 
 public class ImportTestUsers extends WriteCustomTask {
 
-	private static final String groupName = new String(
+	public static final String groupName = new String(
 			"SIADAP Test user group 2010");
 
 	private static final String testUsersListString = new String(

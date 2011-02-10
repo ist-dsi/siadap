@@ -115,6 +115,16 @@ public class PersonSiadapWrapper extends PartyWrapper implements Serializable {
 	}
 	return false;
     }
+    
+    public int getNrPersonsWithUnreadComments() {
+	int counter = 0;
+	for (PersonSiadapWrapper personSiadapWrapper : getPeopleToEvaluate()) {
+	    if (personSiadapWrapper.getHasUnreadComments())
+		counter++;
+	}
+	return counter;
+
+    }
 
     public int getNrPendingProcessActions() {
 	int counterPendingActions = 0;
@@ -195,6 +205,15 @@ public class PersonSiadapWrapper extends PartyWrapper implements Serializable {
 	}
 	return people;
 
+    }
+
+    public boolean getHasUnreadComments() {
+	if (getSiadap() == null || getSiadap().getProcess() == null)
+	    return false;
+	if (getSiadap().getProcess().getUnreadCommentsForCurrentUser().isEmpty())
+	    return false;
+	else
+	    return true;
     }
 
     public Set<Siadap> getAllSiadaps() {
