@@ -16,6 +16,7 @@
 			<fr:slot name="workingUnit.unit.partyName" key="label.unit" bundle="ORGANIZATION_RESOURCES"/>
 			<fr:slot name="quotaAware" key="label.quotaAware"/>
 			<fr:slot name="currentProcessState" key="label.state" bundle="SIADAP_RESOURCES" />
+			<fr:slot name="hasUnreadComments" key="label.unreadComments" bundle="SIADAP_RESOURCES"/>
 		</fr:schema>
 		<fr:layout name="tabular-sortable">
 			<fr:property name="classes" value="tstyle2"/>
