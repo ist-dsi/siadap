@@ -1,10 +1,7 @@
 package module.siadap.domain;
 
 import java.io.BufferedReader;
-import java.io.DataInputStream;
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -26,6 +23,7 @@ import pt.ist.fenixWebFramework.services.ServicePredicate;
 import pt.utl.ist.fenix.tools.util.i18n.MultiLanguageString;
 
 public class ImportSiadapStructure extends ReadCustomTask {
+
 
     Map<Integer, List<Evaluator>> avaliators = new HashMap<Integer, List<Evaluator>>();
     List<Responsible> responsibles = new ArrayList<Responsible>();

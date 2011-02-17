@@ -13,7 +13,9 @@ import module.siadap.domain.scoring.IScoring;
 import module.siadap.domain.scoring.SiadapGlobalEvaluation;
 import module.siadap.domain.util.SiadapPendingProcessesCounter;
 import module.siadap.domain.wrappers.PersonSiadapWrapper;
+import module.workflow.domain.utils.WorkflowCommentCounter;
 import module.workflow.widgets.ProcessListWidget;
+import module.workflow.widgets.UnreadCommentsWidget;
 import myorg.domain.exceptions.DomainException;
 
 import org.apache.commons.collections.Predicate;
@@ -30,6 +32,7 @@ public class Siadap extends Siadap_Base {
     //register itself in the pending processes widget:
     static {
 	ProcessListWidget.register(new SiadapPendingProcessesCounter());
+	UnreadCommentsWidget.register(new WorkflowCommentCounter(SiadapProcess.class));
     }
 
     private static final int PRECISION = 3;
