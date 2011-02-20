@@ -8,6 +8,7 @@ import java.util.Collections;
 
 import module.siadap.domain.SiadapRootModule;
 import module.siadap.domain.SiadapYearConfiguration;
+import myorg.applicationTier.Authenticate.UserView;
 import pt.ist.fenixWebFramework.renderers.DataProvider;
 import pt.ist.fenixWebFramework.renderers.components.converters.Converter;
 
@@ -39,7 +40,13 @@ public class SiadapYearsFromExistingSiadapConfigurations implements DataProvider
     static public ArrayList<Integer> getYearsWithExistingConfigs() {
 	ArrayList<Integer> years = new ArrayList<Integer>();
 	for (SiadapYearConfiguration siadapYearConfiguration : SiadapRootModule.getInstance().getYearConfigurations()) {
-	    years.add(new Integer(siadapYearConfiguration.getYear()));
+	    //let's make the 2010 year disappear for all of the users which aren't on the test group
+	    if (siadapYearConfiguration.getYear() == 2010
+		    && !SiadapRootModule.getInstance().getSiadapTestUserGroup().hasUsers(UserView.getCurrentUser()))
+		continue;
+	    else {
+		years.add(new Integer(siadapYearConfiguration.getYear()));
+	    }
 	}
 	Collections.sort(years);
 	return years;

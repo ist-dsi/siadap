@@ -12,42 +12,41 @@ import myorg.domain.scheduler.WriteCustomTask;
 
 public class ImportTestUsers extends WriteCustomTask {
 
-	public static final String groupName = new String(
-			"SIADAP Test user group 2010");
+    public static final String groupName = "SIADAP Test user group 2010";
 
 	private static final String testUsersListString = new String(
 	// Managers:
-			"ist154457\n" + // João Antunes (eu)
+	    "ist154457\n" + // João Antunes (eu)
 					//DEC Civil: ??
-					"ist12603\n" + //Vitor Leitão
-					//DEM Mecãnica: ??
+		    "ist12603\n" + //Vitor Leitão
+		    //DEM Mecãnica: ??
 					"ist12889\n" + //Miguel Ayala Botto
 					// CIIST:
-					"ist23000\n" + //José Luis (por causa da ajuda)
+		    "ist23000\n" + //José Luis (por causa da ajuda)
 					"ist24698\n" + // Rita Wahl
-					"ist22619\n" + // Paula César
+		    "ist22619\n" + // Paula César
 					"ist12048\n" + // Fernando Mira da Silva
 					"ist24235\n" + //Nuno Pedroso
 					"ist138407\n" + // Fernando Oliveira
-					"ist24421\n" + // Miguel Cabeça
+		    "ist24421\n" + // Miguel Cabeça
 					"ist13499\n" + // Carlos Ribeiro
 					"ist22159\n" + //Carlos Manuel Martins
 					"ist21534\n" + //Victor Manuel Loucao Correia Coias
-					//Núcleo de arquivo ??
+		    //Núcleo de arquivo ??
 					"ist23555\n" + //Ana Cristina Fonseca da Silva Rigueiro
 					"ist23073\n" + //Aurora de Jesus Barbosa
 					// DRH
 					"ist24877\n" + // Nuno Cunha Rolo
 					"ist23932\n" + // Miguel Coimbra
-					"ist22752\n" + // Fátima Novais
+		    "ist22752\n" + // Fátima Novais
 					"ist24252\n" +// Dulce Cunha
 					//DT
-					"ist23470\n" +//José Manuel Riscado
-					"ist22757\n" + //Maria Salomé Louro
+		    "ist23470\n" + //José Manuel Riscado
+		    "ist22757\n" + //Maria Salomé Louro
 					"ist22234\n" + //Paula Sequeira
 					"ist24229\n" + //Ana Cristina Oliveira 
 					
-					"ist21901"); // Fátima Fernandes 
+		    "ist21901"); // Fátima Fernandes 
 
 	@Override
 	protected void doService() {

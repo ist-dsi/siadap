@@ -9,11 +9,15 @@ import module.organization.domain.Unit;
 import module.siadap.domain.wrappers.PersonSiadapWrapper;
 import myorg.domain.ModuleInitializer;
 import myorg.domain.MyOrg;
+import myorg.domain.groups.NamedGroup;
+import myorg.domain.groups.PersistentGroup;
 import pt.ist.fenixWebFramework.services.Service;
 
 public class SiadapRootModule extends SiadapRootModule_Base implements ModuleInitializer {
 
     private static boolean isInitialized = false;
+
+    private static NamedGroup siadapTestUserGroup;
 
     private static ThreadLocal<SiadapRootModule> init = null;
 
@@ -37,6 +41,9 @@ public class SiadapRootModule extends SiadapRootModule_Base implements ModuleIni
 
     @Override
     public void init(MyOrg root) {
+	if (getSiadapTestUserGroup() == null) {
+	    initializeSiadapTestGroup(root);
+	}
     }
 
     /**
@@ -102,6 +109,19 @@ public class SiadapRootModule extends SiadapRootModule_Base implements ModuleIni
 		init = null;
 	    }
 	}
+
+    }
+
+    private void initializeSiadapTestGroup(MyOrg root) {
+	SiadapRootModule.getInstance();
+	for (PersistentGroup group : root.getPersistentGroups()) {
+		if (group instanceof NamedGroup) {
+		    if (((NamedGroup) group).getGroupName().equals(ImportTestUsers.groupName)) {
+			setSiadapTestUserGroup((NamedGroup) group);
+		    }
+		}
+	    }
+
     }
 
     @Override
@@ -130,5 +150,13 @@ public class SiadapRootModule extends SiadapRootModule_Base implements ModuleIni
 	Set<Unit> units = new HashSet<Unit>();
 	addHarmonizationUnits(units, siadapYearConfiguration, topUnit);
 	return units;
+    }
+
+    private static void setSiadapTestUserGroup(NamedGroup siadapTestUserGroup) {
+	SiadapRootModule.siadapTestUserGroup = siadapTestUserGroup;
+    }
+
+    public NamedGroup getSiadapTestUserGroup() {
+	return siadapTestUserGroup;
     }
 }
