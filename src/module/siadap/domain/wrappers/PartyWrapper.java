@@ -18,7 +18,7 @@ import org.joda.time.LocalDate;
 public abstract class PartyWrapper implements Serializable {
 
     private int year;
-    private SiadapYearConfiguration configuration;
+    private final SiadapYearConfiguration configuration;
 
     public PartyWrapper(int year) {
 	this.year = year;
@@ -136,9 +136,9 @@ public abstract class PartyWrapper implements Serializable {
     }
 
     public static class FilterAccountabilities implements Predicate {
-	private LocalDate begin;
-	private LocalDate end;
-	private boolean skipClosedAccountabilities;
+	private final LocalDate begin;
+	private final LocalDate end;
+	private final boolean skipClosedAccountabilities;
 
 	public FilterAccountabilities(int year, boolean skipClosedAccountabilities) {
 	    this.begin = new LocalDate(year, Month.JANUARY, 1);
@@ -152,8 +152,12 @@ public abstract class PartyWrapper implements Serializable {
 	    LocalDate accountabilityStart = accountability.getBeginDate();
 	    LocalDate accountabilityEnd = accountability.getEndDate();
 
-	    return ((accountabilityEnd == null && accountabilityStart.isBefore(end)) || (!skipClosedAccountabilities && accountability
-		    .intersects(begin, end)));
+	    return accountability.isActive(end.minusDays(1));
+
+	    //	    return ((accountabilityEnd == null && accountabilityStart.isBefore(end)) || (!skipClosedAccountabilities && accountability
+	    //		    .intersects(begin, end)));
 	}
     }
+    
+
 }

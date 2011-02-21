@@ -5,15 +5,15 @@ import java.io.IOException;
 import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import module.organization.domain.Accountability;
 import module.organization.domain.AccountabilityType;
+import module.organization.domain.Party;
 import module.organization.domain.Person;
 import module.organization.domain.Unit;
+import module.organization.domain.predicates.PartyPredicate;
 import module.organizationIst.domain.listner.LoginListner;
 import module.siadap.domain.SiadapYearConfiguration;
 import myorg.domain.User;
@@ -23,6 +23,7 @@ import org.apache.commons.lang.StringUtils;
 import org.joda.time.LocalDate;
 
 import pt.ist.expenditureTrackingSystem.domain.organization.CostCenter;
+import pt.utl.ist.fenix.tools.util.i18n.MultiLanguageString;
 
 public class ImportSiadapStructure extends WriteCustomTask {
 
@@ -35,7 +36,7 @@ public class ImportSiadapStructure extends WriteCustomTask {
     /**
      * Contains all of the User objects that have been mapped by this script
      */
-    public static Set<User> mappedUsers = new HashSet<User>();
+    //    public static Set<User> mappedUsers = new HashSet<User>();
 
     /**
      * Assert if one should go over the Evaluation relations and end them if the
@@ -44,7 +45,8 @@ public class ImportSiadapStructure extends WriteCustomTask {
      * relation is exclusive to SIADAP under the penalty of messing up another
      * relation having an unwanted impact on other Workflows/applications
      */
-    public static final boolean removeEvaluationRelationsForUnmappedUsers = true;
+    public static final boolean removeEvaluationRelationsForUnmappedUsers = false;
+    private static boolean inDevelopmentSystem = false;
 
     static {
 	unknownUsersMap.put("ist25068", "Pedro Miguel Simões Coito");
@@ -286,6 +288,7 @@ public class ImportSiadapStructure extends WriteCustomTask {
 	} catch (IOException e) {// Catch exception if any
 	    out.println("Error: " + e.getMessage());
 	}
+	this.out = out;
 
 	out.println(avaliators.size());
 
@@ -306,7 +309,15 @@ public class ImportSiadapStructure extends WriteCustomTask {
 		    out.println("Created user: " + evaluator.istId);
 		}
 		if (user.getPerson() == null) {
-		    LoginListner.importUserInformation(evaluator.istId);
+		    if (inDevelopmentSystem) {
+
+			Person p = Person.create(MultiLanguageString.i18n().add("pt", "DUMMY USER").finish(),
+				Person.getPartyTypeInstance());
+			p.setUser(user);
+		    } else {
+			LoginListner.importUserInformation(evaluator.istId);
+
+		    }
 
 		}
 		if (evaluator.size() > max) {
@@ -321,15 +332,16 @@ public class ImportSiadapStructure extends WriteCustomTask {
 
     }
 
-    static protected void addMappedUserByUsername(String username) {
-
-	User user = User.findByUsername(username);
-
-	if (user == null)
-	    throw new Error("User not found");
-	else
-	    mappedUsers.add(user);
-    }
+    //    static protected void addMappedUserByUsername(String username) {
+    //
+    //	User user = User.findByUsername(username);
+    //
+    //	if (user == null) {
+    //		user = User.createNewUser(username);
+    //	    	out.println("Created user: " + username);
+    //	} else
+    //	    mappedUsers.add(user);
+    //    }
 
     private CostCenter validateCCenter(String centerString, CostCenter c) throws Error {
 	if (c == null) {
@@ -347,19 +359,40 @@ public class ImportSiadapStructure extends WriteCustomTask {
 	return c;
     }
 
+    static class AccTypeForGivenYearPredicate extends PartyPredicate {
+	AccountabilityType evaluationRelation;
+	LocalDate date;
+
+	public AccTypeForGivenYearPredicate(AccountabilityType evaluationRelation, LocalDate date) {
+	    this.evaluationRelation = evaluationRelation;
+	    this.date = date;
+	}
+
+	@Override
+	public boolean eval(Party party, Accountability accountability) {
+	    AccountabilityType accType = accountability.getAccountabilityType();
+	    return (accType == evaluationRelation && accountability.isActive(date));
+	}
+
+    }
+
     private void migrateStuff(Map<Integer, List<Evaluator>> avaliators2, List<Responsible> responsibles2) {
 	out.println("STarting");
-	LocalDate today = new LocalDate();
+	final LocalDate today = new LocalDate();
+	final LocalDate startOfTheYear = new LocalDate(today.getYear(), 1, 1);
+	final LocalDate endOfTheYear = new LocalDate(today.getYear(), 12, 31);
 	SiadapYearConfiguration configuration = SiadapYearConfiguration.getSiadapYearConfiguration(today.getYear());
-	AccountabilityType evaluationRelation = configuration.getEvaluationRelation();
+	final AccountabilityType evaluationRelation = configuration.getEvaluationRelation();
 	AccountabilityType workingRelation = configuration.getWorkingRelation();
 	AccountabilityType workingRelationWithNoQuota = configuration.getWorkingRelationWithNoQuota();
+
+	PartyPredicate evalForYearPredicate = new AccTypeForGivenYearPredicate(evaluationRelation, today);
 
 	for (Responsible responsible : responsibles) {
 	    Unit unit = responsible.getCenter().getUnit();
 	    Person person = responsible.getUser().getPerson();
-	    if (!unit.getChildPersons(evaluationRelation).contains(person)) {
-		person.addParent(unit, evaluationRelation, today, null);
+	    if (!unit.getChildren(evalForYearPredicate).contains(person)) {
+		person.addParent(unit, evaluationRelation, startOfTheYear, endOfTheYear);
 	    }
 	}
 
@@ -392,21 +425,33 @@ public class ImportSiadapStructure extends WriteCustomTask {
 		    Person evaluatedPerson = user.getPerson();
 		    if (evaluatedPerson == null) {
 			out.println(evaluated.istId + " NO PERSON");
-			LoginListner.importUserInformation(evaluator.istId);
+
+			if (inDevelopmentSystem) {
+
+			    Person p = Person.create(MultiLanguageString.i18n().add("pt", "DUMMY USER").finish(),
+				    Person.getPartyTypeInstance());
+			    p.setUser(user);
+			} else {
+
+			    LoginListner.importUserInformation(evaluated.istId);
+			}
 			evaluatedPerson = user.getPerson();
 			if (evaluatedPerson == null)
-			    throw new Error("Error, creation of person for user " + evaluator.istId + " didn't succeeded");
+			    throw new Error("Error, creation of person for user " + evaluated.istId + " didn't succeeded");
 		    }
 
-		    if (!adist && !unit.getChildPersons(workingRelation).contains(evaluatedPerson)) {
-			evaluatedPerson.addParent(unit, workingRelation, today, null);
+		    PartyPredicate workingPartyPredicate = new AccTypeForGivenYearPredicate(workingRelation, today);
+		    PartyPredicate workingNoQuotaPartyPredicate = new AccTypeForGivenYearPredicate(
+			    workingRelationWithNoQuota, today);
+		    if (!adist && !unit.getChildren(workingPartyPredicate).contains(evaluatedPerson)) {
+			evaluatedPerson.addParent(unit, workingRelation, startOfTheYear, endOfTheYear);
 		    }
-		    if (adist && !unit.getChildPersons(workingRelationWithNoQuota).contains(evaluatedPerson)) {
-			evaluatedPerson.addParent(unit, workingRelationWithNoQuota, today, null);
+		    if (adist && !unit.getChildren(workingNoQuotaPartyPredicate).contains(evaluatedPerson)) {
+			evaluatedPerson.addParent(unit, workingRelationWithNoQuota, startOfTheYear, endOfTheYear);
 		    }
 		    if (!isResponsible) {
-			if (!evaluatorPerson.getChildPersons(evaluationRelation).contains(evaluatedPerson)) {
-			    evaluatedPerson.addParent(evaluatorPerson, evaluationRelation, today, null);
+			if (!evaluatorPerson.getChildren(evalForYearPredicate).contains(evaluatedPerson)) {
+			    evaluatedPerson.addParent(evaluatorPerson, evaluationRelation, startOfTheYear, endOfTheYear);
 			}
 		    }
 		}
@@ -417,43 +462,10 @@ public class ImportSiadapStructure extends WriteCustomTask {
 	    out.println(string);
 	}
 
-	if (removeEvaluationRelationsForUnmappedUsers) {
-	    out.println("Starting to remove the unmapped users with the set evaluation relation");
-	    Set<Accountability> evaluationAccountabilitiesToEnd = new HashSet<Accountability>();
-	    int nrAccountabilitiesRemoved = 0;
-	    //get all of the accountabilities for the evaluation relations whose users aren't mapped here
-
-	    List<Accountability> evaluationAccountabilities = configuration.getEvaluationRelation().getAccountabilities();
-
-	    for (Accountability accountability : evaluationAccountabilities) {
-		//let's check if we should be removing this relation, which we should, if we have any of the Parties as a Person whose username isn't mapped here
-		Person evaluatedPerson = null;
-		Person evaluatorPerson = null;
-		if (accountability.getChild() instanceof Person)
-		    evaluatedPerson = (Person) accountability.getChild();
-		
-		if (accountability.getParent() instanceof Person)
-		    evaluatorPerson = (Person) accountability.getParent();
-		if (((evaluatorPerson != null && !mappedUsers.contains(evaluatorPerson.getUser())) || (evaluatedPerson != null && !mappedUsers
-			.contains(evaluatedPerson.getUser()))) && accountability.isActiveNow())
-		{
-		    //then indeed we should end this accountability
-		    accountability.setEndDate(today);
-		    debug("Ended eval relation were Parent was " + accountability.getParent().getPresentationName()
-			    + " and Child was " + accountability.getChild().getPresentationName());
-		    nrAccountabilitiesRemoved++;
-		}
-	    }
-
-	    //wrap up and end
-
-	    out.println("DONE removing the extra accountabilities. Removed " + nrAccountabilitiesRemoved + " accountabilities");
-
-	}
     }
 
     private void debug(String message) {
-	
+
 	if (debugModeOn)
 	    out.println("Debug: " + message);
 
@@ -503,13 +515,13 @@ public class ImportSiadapStructure extends WriteCustomTask {
 	List<Evaluated> evaluated;
 
 	public Evaluator(String istId) {
-	    addMappedUserByUsername(istId);
+	    //	    addMappedUserByUsername(istId);
 	    this.istId = istId.trim();
 	    evaluated = new ArrayList<Evaluated>();
 	}
 
 	public void addEvaluated(String istId, Boolean adist) {
-	    addMappedUserByUsername(istId);
+	    //	    addMappedUserByUsername(istId);
 	    evaluated.add(new Evaluated(istId, adist));
 	}
 
@@ -533,7 +545,7 @@ public class ImportSiadapStructure extends WriteCustomTask {
 	public Evaluated(String istId, Boolean adist) {
 	    this.istId = istId.trim();
 	    this.adist = adist;
-	    addMappedUserByUsername(this.istId);
+	    //	    addMappedUserByUsername(this.istId);
 	}
 
 	public boolean getAdist() {
@@ -550,7 +562,7 @@ public class ImportSiadapStructure extends WriteCustomTask {
 	CostCenter center;
 
 	public Responsible(User user, CostCenter center) {
-	    mappedUsers.add(user);
+	    //	    mappedUsers.add(user);
 	    this.user = user;
 	    this.center = center;
 	}

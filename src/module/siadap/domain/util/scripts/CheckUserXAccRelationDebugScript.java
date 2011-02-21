@@ -13,7 +13,7 @@ import module.siadap.domain.SiadapYearConfiguration;
 import module.siadap.domain.wrappers.PartyWrapper.FilterAccountabilities;
 import module.siadap.domain.wrappers.UnitSiadapWrapper;
 import myorg.domain.User;
-import myorg.domain.scheduler.WriteCustomTask;
+import myorg.domain.scheduler.ReadCustomTask;
 
 import org.apache.commons.collections.Predicate;
 
@@ -23,48 +23,8 @@ import org.apache.commons.collections.Predicate;
  * @author João Antunes (joao.antunes@tagus.ist.utl.pt)
  * 
  */
-public class CheckUserXWorkingRelationDebugScript extends WriteCustomTask {
+public class CheckUserXAccRelationDebugScript extends ReadCustomTask {
     User user;
-
-    @Override
-    protected void doService() {
-	//get the user to check
-	user = User.findByUsername("ist21526");
-
-	//this is the code that i want to debug 
-	Person evaluator = null;
-
-	Collection<Person> possibleCustomEvaluator = getParentPersons(getConfiguration().getEvaluationRelation());
-
-	if (!possibleCustomEvaluator.isEmpty()) {
-	    out.println("possibleCustomEvaluator relation is not null! * WARNING * it should be");
-	    evaluator = possibleCustomEvaluator.iterator().next();
-	    Collection<Accountability> accountabilities = user.getPerson().getParentAccountabilities(
-		    getConfiguration().getEvaluationRelation());
-	    out.println("Displaying all of the SIADAP accountabilities found");
-	    for (Accountability accountability : accountabilities) {
-		out.println("acc details: " + accountability.getDetailsString());
-	    }
-
-	} else {
-	    out.println("possibleCustomEvaluator relation is null as expected");
-	    if (getWorkingUnit() != null) {
-		Collection<Unit> workingPlaces = getParentUnits(getConfiguration().getWorkingRelation(), getConfiguration()
-			.getWorkingRelationWithNoQuota());
-		Unit workingUnit = workingPlaces.iterator().next();
-		Collection<Person> childPersons = workingUnit.getChildPersons(getConfiguration().getEvaluationRelation());
-		if (!childPersons.isEmpty()) {
-		    evaluator = childPersons.iterator().next();
-		}
-	    }
-	}
-
-	if (evaluator != null)
-	    out.println("Final evaluator name is: " + evaluator.getName());
-	else
-	    out.println("final evaluator is null!");
-
-    }
 
     private SiadapYearConfiguration getConfiguration() {
 	return SiadapYearConfiguration.getSiadapYearConfiguration(new Integer(2011));
@@ -108,6 +68,42 @@ public class CheckUserXWorkingRelationDebugScript extends WriteCustomTask {
 	    }
 	}
 	return units;
+    }
+
+    private void printAllAcc(User user) {
+	out.println("Username: " + user.getUsername());
+	out.println("Parent:");
+
+	for (Accountability acc : user.getPerson().getParentAccountabilities()) {
+	    out.println("\t" + acc.getDetailsString() + " Parent:" + acc.getParent().getPartyName());
+	    
+	}
+	out.println("Child:");
+	for (Accountability acc : user.getPerson().getChildAccountabilities()) {
+	    out.println("\t" + acc.getDetailsString() + " Parent:" + acc.getChild().getPartyName());
+	}
+
+    }
+
+    @Override
+    public void doIt() {
+	//get the user to check
+	User userA = User.findByUsername("ist12048");
+	User userB = User.findByUsername("ist21846");
+
+	User userC = User.findByUsername("ist24439");
+	User userD = User.findByUsername("ist24616");
+
+	User userE = User.findByUsername("ist149676");
+	User userF = User.findByUsername("ist151339");
+
+	printAllAcc(userA);
+	printAllAcc(userB);
+	printAllAcc(userC);
+	printAllAcc(userD);
+	printAllAcc(userE);
+	printAllAcc(userF);
+
     }
 
 }
