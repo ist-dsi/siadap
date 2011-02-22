@@ -42,15 +42,15 @@
 </fr:view>
 <h3><bean:message bundle="SIADAP_RESOURCES" key="label.state.legend" /></h3>
 <ul>
-  <li><bean:message bundle="SIADAP_RESOURCES" key="siadap.state.evaluation.not.going.to.be.done.explanation"/>;</li>
-  <li><bean:message bundle="SIADAP_RESOURCES" key="siadap.state.incomplete.objectives.or.competences.explanation"/>;</li>
-  <li><bean:message bundle="SIADAP_RESOURCES" key="siadap.state.not.created.explanation"/>;</li>
-  <li><bean:message bundle="SIADAP_RESOURCES" key="siadap.state.not.evaluted.yet.explanation"/>;</li>
-  <li><bean:message bundle="SIADAP_RESOURCES" key="siadap.state.not.sealed.explanation"/>;</li>
-  <li><bean:message bundle="SIADAP_RESOURCES" key="siadap.state.not.submitted.for.acknowledgement.explanation"/>;</li>
-  <li><bean:message bundle="SIADAP_RESOURCES" key="siadap.state.unimplemented.explanation"/>;</li> 
-  <li><bean:message bundle="SIADAP_RESOURCES" key="siadap.state.waiting.evaluation.objectives.acknowledgement.explanation"/>;</li>
-  <li><bean:message bundle="SIADAP_RESOURCES" key="siadap.state.waiting.self.evaluation.explanation"/>;</li>
+  <li><bean:message bundle="SIADAP_RESOURCES" key="siadap.state.evaluation.not.going.to.be.done"/> - <bean:message bundle="SIADAP_RESOURCES" key="siadap.state.evaluation.not.going.to.be.done.explanation"/>;</li>
+  <li><bean:message bundle="SIADAP_RESOURCES" key="siadap.state.incomplete.objectives.or.competences"/> - <bean:message bundle="SIADAP_RESOURCES" key="siadap.state.incomplete.objectives.or.competences.explanation"/>;</li>
+  <li><bean:message bundle="SIADAP_RESOURCES" key="siadap.state.not.created"/> - <bean:message bundle="SIADAP_RESOURCES" key="siadap.state.not.created.explanation"/>;</li>
+  <li><bean:message bundle="SIADAP_RESOURCES" key="siadap.state.not.evaluted.yet"/> - <bean:message bundle="SIADAP_RESOURCES" key="siadap.state.not.evaluted.yet.explanation"/>;</li>
+  <li><bean:message bundle="SIADAP_RESOURCES" key="siadap.state.not.sealed"/> - <bean:message bundle="SIADAP_RESOURCES" key="siadap.state.not.sealed.explanation"/>;</li>
+  <li><bean:message bundle="SIADAP_RESOURCES" key="siadap.state.not.submitted.for.acknowledgement"/> - <bean:message bundle="SIADAP_RESOURCES" key="siadap.state.not.submitted.for.acknowledgement.explanation"/>;</li>
+  <li><bean:message bundle="SIADAP_RESOURCES" key="siadap.state.unimplemented"/> - <bean:message bundle="SIADAP_RESOURCES" key="siadap.state.unimplemented.explanation"/>;</li> 
+  <li><bean:message bundle="SIADAP_RESOURCES" key="siadap.state.waiting.evaluation.objectives.acknowledgement"/> - <bean:message bundle="SIADAP_RESOURCES" key="siadap.state.waiting.evaluation.objectives.acknowledgement.explanation"/>;</li>
+  <li><bean:message bundle="SIADAP_RESOURCES" key="siadap.state.waiting.self.evaluation"/> - <bean:message bundle="SIADAP_RESOURCES" key="siadap.state.waiting.self.evaluation.explanation"/>;</li>
 </ul>
 
 <jsp:include page="/module/siadap/tracFeedBackSnip.jsp">	
