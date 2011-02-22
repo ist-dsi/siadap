@@ -266,8 +266,8 @@ public class PersonSiadapWrapper extends PartyWrapper implements Serializable {
     public void changeWorkingUnitTo(Unit unit, Boolean withQuotas, LocalDate dateOfChange) {
 	verifyDate(dateOfChange);
 	LocalDate now = new LocalDate();
-	LocalDate startOfYear = new LocalDate(1, 1, now.getYear());
-	LocalDate endOfYear = new LocalDate(31, 12, now.getYear());
+	LocalDate startOfYear = new LocalDate(now.getYear(), 1, 1);
+	LocalDate endOfYear = new LocalDate(now.getYear(), 12, 31);
 	SiadapYearConfiguration configuration = getConfiguration();
 	for (Accountability accountability : getParentAccountabilityTypes(configuration.getWorkingRelation(), configuration
 		.getWorkingRelationWithNoQuota())) {
@@ -297,8 +297,8 @@ public class PersonSiadapWrapper extends PartyWrapper implements Serializable {
     public void changeEvaluatorTo(Person newEvaluator, LocalDate dateOfChange) {
 	verifyDate(dateOfChange);
 	LocalDate now = new LocalDate();
-	LocalDate startOfYear = new LocalDate(1, 1, now.getYear());
-	LocalDate endOfYear = new LocalDate(31, 12, now.getYear());
+	LocalDate startOfYear = new LocalDate(now.getYear(), 1, 1);
+	LocalDate endOfYear = new LocalDate(now.getYear(), 12, 31);
 	SiadapYearConfiguration configuration = getConfiguration();
 	AccountabilityType evaluationRelation = configuration.getEvaluationRelation();
 	for (Accountability accountability : getParentAccountabilityTypes(evaluationRelation)) {
