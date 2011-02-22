@@ -27,7 +27,7 @@ public class CreateCompetenceEvaluation
 	@Override
 	public boolean isActive(SiadapProcess process, User user) {
 		Siadap siadap = process.getSiadap();
-	return siadap.getEvaluationInterval().containsNow()
+	return siadap.getObjectiveSpecificationInterval().containsNow()
 				&& siadap.getEvaluator().getPerson().getUser() == user
 				&& !siadap.hasAnyCompetencesSet()
 				&& !process.hasBeenExecuted(AutoEvaluation.class);
