@@ -71,7 +71,7 @@ public class CheckUserXAccRelationDebugScript extends ReadCustomTask {
     }
 
     private void printAllAcc(User user) {
-	out.println("Username: " + user.getUsername());
+	out.println("Username: " + user.getUsername() + " Name: " + user.getPerson().getName());
 	out.println("Parent:");
 
 	for (Accountability acc : user.getPerson().getParentAccountabilities()) {
@@ -97,12 +97,24 @@ public class CheckUserXAccRelationDebugScript extends ReadCustomTask {
 	User userE = User.findByUsername("ist149676");
 	User userF = User.findByUsername("ist151339");
 
+	User userG = User.findByUsername("ist12889");
+	User userH = User.findByUsername("ist22353");
+
+	//	User userI = User.findByUsername("ist12470");
+	//	User userJ = User.findByUsername("ist23053");
+	//	User userK = User.findByUsername("ist22237");
+
 	printAllAcc(userA);
 	printAllAcc(userB);
 	printAllAcc(userC);
 	printAllAcc(userD);
 	printAllAcc(userE);
 	printAllAcc(userF);
+	printAllAcc(userG);
+	printAllAcc(userH);
+	//	printAllAcc(userI);
+	//	printAllAcc(userJ);
+	//	printAllAcc(userK);
 
     }
 
