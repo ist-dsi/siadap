@@ -265,16 +265,19 @@ public class PersonSiadapWrapper extends PartyWrapper implements Serializable {
 
     public void changeWorkingUnitTo(Unit unit, Boolean withQuotas, LocalDate dateOfChange) {
 	verifyDate(dateOfChange);
+	LocalDate now = new LocalDate();
+	LocalDate startOfYear = new LocalDate(1, 1, now.getYear());
+	LocalDate endOfYear = new LocalDate(31, 12, now.getYear());
 	SiadapYearConfiguration configuration = getConfiguration();
 	for (Accountability accountability : getParentAccountabilityTypes(configuration.getWorkingRelation(), configuration
 		.getWorkingRelationWithNoQuota())) {
-	    if (accountability.getEndDate() == null) {
-		accountability.editDates(accountability.getBeginDate(), dateOfChange);
+	    if (accountability.isActiveNow()) {
+		accountability.setEndDate(now.minusDays(1));
 	    }
 	}
 	unit.addChild(getPerson(), withQuotas ? configuration.getWorkingRelation() : configuration
-.getWorkingRelationWithNoQuota(), dateOfChange,
-		null);
+.getWorkingRelationWithNoQuota(), startOfYear,
+		endOfYear);
     }
 
     // use the version that allows a date instead (may not apply to all of the
@@ -293,14 +296,19 @@ public class PersonSiadapWrapper extends PartyWrapper implements Serializable {
 
     public void changeEvaluatorTo(Person newEvaluator, LocalDate dateOfChange) {
 	verifyDate(dateOfChange);
+	LocalDate now = new LocalDate();
+	LocalDate startOfYear = new LocalDate(1, 1, now.getYear());
+	LocalDate endOfYear = new LocalDate(31, 12, now.getYear());
 	SiadapYearConfiguration configuration = getConfiguration();
 	AccountabilityType evaluationRelation = configuration.getEvaluationRelation();
 	for (Accountability accountability : getParentAccountabilityTypes(evaluationRelation)) {
-	    if (accountability.getParent() instanceof Person && accountability.getEndDate() == null) {
-		accountability.editDates(accountability.getBeginDate(), dateOfChange);
+	    if (accountability.isActiveNow() && accountability.getParent() instanceof Person
+		    && accountability.getChild() instanceof Person) {
+		accountability.editDates(accountability.getBeginDate(), now.minusDays(1));
 	    }
 	}
-	newEvaluator.addChild(getPerson(), evaluationRelation, dateOfChange, null);
+	//let's
+	newEvaluator.addChild(getPerson(), evaluationRelation, startOfYear, endOfYear);
 
     }
 
@@ -312,8 +320,9 @@ public class PersonSiadapWrapper extends PartyWrapper implements Serializable {
 	LocalDate now = new LocalDate();
 	AccountabilityType evaluationRelation = getConfiguration().getEvaluationRelation();
 	for (Accountability accountability : getParentAccountabilityTypes(evaluationRelation)) {
-	    if (accountability.getParent() instanceof Person && accountability.getEndDate() == null) {
-		accountability.editDates(accountability.getBeginDate(), now);
+	    if (accountability.isActiveNow() && accountability.getChild() instanceof Person
+		    && accountability.getParent() instanceof Person) {
+		accountability.setEndDate(now.minusDays(1));
 	    }
 	}
     }
