@@ -1,7 +1,5 @@
 package module.siadap.domain.util.scripts;
 
-import java.util.List;
-
 import module.organization.domain.Accountability;
 import module.organization.domain.AccountabilityType;
 import module.siadap.domain.SiadapYearConfiguration;
@@ -26,10 +24,9 @@ public class MakeXRelationsEndAtEndYear extends WriteCustomTask {
 
 	//let's get all of the evaluation relations already set
 
-	List<Accountability> evaluationAccountabilities = configuration.getEvaluationRelation().getAccountabilities();
-
 	endUnfinishedAcc(workingRelationWithNoQuota);
 	endUnfinishedAcc(workingRelation);
+	endUnfinishedAcc(evaluationRelation);
 
 
 
@@ -39,12 +36,14 @@ public class MakeXRelationsEndAtEndYear extends WriteCustomTask {
 
     private void endUnfinishedAcc(AccountabilityType accType) {
 	for (Accountability accountability : accType.getAccountabilities()) {
-	    LocalDate beginDate = accountability.getBeginDate();
 	    LocalDate endDate = accountability.getEndDate();
 	    if (endDate == null) {
-		endDate = new LocalDate(beginDate.getYear(), 12, 31);
+		endDate = new LocalDate((new LocalDate()).getYear(), 12, 31);
 		accountability.setEndDate(endDate);
 		nrOfEvalAccEnded++;
+		out.println("Ended an accountability where parent is " + accountability.getParent().getPartyName()
+			+ " and child is " + accountability.getChild().getPartyName() + " now the accountability is: "
+			+ accountability.getDetailsString());
 	    }
 	}
     }

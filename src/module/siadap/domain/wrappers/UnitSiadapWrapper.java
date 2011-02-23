@@ -8,8 +8,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Set;
-import java.util.TreeSet;
 
 import module.organization.domain.Accountability;
 import module.organization.domain.AccountabilityType;
@@ -34,6 +32,9 @@ public class UnitSiadapWrapper extends PartyWrapper implements Serializable {
     private static final int SCALE = 4;
 
     private Unit unit;
+
+    private UnitSiadapWrapper() {
+    };
 
     public UnitSiadapWrapper(Unit unit, Integer year) {
 	super(year);
@@ -534,5 +535,22 @@ public class UnitSiadapWrapper extends PartyWrapper implements Serializable {
 
 	});
 	return list;
+    }
+
+    public static class NullUnitSiadapWrapper extends UnitSiadapWrapper {
+
+	public NullUnitSiadapWrapper() {
+	    this(null, null);
+
+	}
+
+	private NullUnitSiadapWrapper(Unit unit, Integer year) {
+	}
+
+	@Override
+	public MultiLanguageString getName() {
+	    return new MultiLanguageString("-");
+	}
+
     }
 }
