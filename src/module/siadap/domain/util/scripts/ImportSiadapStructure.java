@@ -2,6 +2,7 @@ package module.siadap.domain.util.scripts;
 
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -17,19 +18,21 @@ import module.organization.domain.predicates.PartyPredicate;
 import module.organizationIst.domain.listner.LoginListner;
 import module.siadap.domain.SiadapYearConfiguration;
 import myorg.domain.User;
-import myorg.domain.scheduler.WriteCustomTask;
+import myorg.domain.scheduler.ReadCustomTask;
+import myorg.domain.scheduler.TransactionalThread;
 
 import org.apache.commons.lang.StringUtils;
 import org.joda.time.LocalDate;
 
 import pt.ist.expenditureTrackingSystem.domain.organization.CostCenter;
+import pt.ist.fenixframework.pstm.AbstractDomainObject;
 import pt.utl.ist.fenix.tools.util.i18n.MultiLanguageString;
 
-public class ImportSiadapStructure extends WriteCustomTask {
+public class ImportSiadapStructure extends ReadCustomTask {
 
     Map<Integer, List<Evaluator>> avaliators = new HashMap<Integer, List<Evaluator>>();
     List<Responsible> responsibles = new ArrayList<Responsible>();
-    public static Map<String, String> unknownUsersMap = new HashMap<String, String>();
+    //    public static Map<String, String> unknownUsersMap = new HashMap<String, String>();
 
     public static final boolean debugModeOn = true;
 
@@ -48,23 +51,23 @@ public class ImportSiadapStructure extends WriteCustomTask {
     public static final boolean removeEvaluationRelationsForUnmappedUsers = false;
     private static boolean inDevelopmentSystem = false;
 
-    static {
-	unknownUsersMap.put("ist25068", "Pedro Miguel Simões Coito");
-	unknownUsersMap.put("ist25072", "Alvarinho Carvalho do Espirito Santo");
-	unknownUsersMap.put("ist25079", "Adolfo Pereira Moura");
-	unknownUsersMap.put("ist25095", "Marcelo Gurgel Figueiredo Moleiro");
-	unknownUsersMap.put("ist25096", "Rute Catarina Panaças Guerreiro");
-	unknownUsersMap.put("ist25104", "Teresa Jacinto de Oliveira Marques");
-	unknownUsersMap.put("ist25106", "Miriam Mano Ferreira");
-	unknownUsersMap.put("ist25109", "Elisabete Moreira de Oliveira Pino");
-	unknownUsersMap.put("ist25110", "Dino Rodrigues Pereira das Neves");
-	unknownUsersMap.put("ist25111", "Fábio André Duarte Morgado");
-	unknownUsersMap.put("ist25112", "Hugo Alexandre Gonçalves Furtado");
-	unknownUsersMap.put("ist25115", "Sandra Nazaré Gomes da Fonseca");
-	unknownUsersMap.put("ist25118", "Joana Alves Lindinho Nunes de Castro");
-	unknownUsersMap.put("ist25121", "Aurora Bonfim de Carvalho Oliveira");
-	unknownUsersMap.put("ist25125", "Tiago Luís Ramos Silva Machado");
-    }
+    //    static {
+    //	unknownUsersMap.put("ist25068", "Pedro Miguel Simões Coito");
+    //	unknownUsersMap.put("ist25072", "Alvarinho Carvalho do Espirito Santo");
+    //	unknownUsersMap.put("ist25079", "Adolfo Pereira Moura");
+    //	unknownUsersMap.put("ist25095", "Marcelo Gurgel Figueiredo Moleiro");
+    //	unknownUsersMap.put("ist25096", "Rute Catarina Panaças Guerreiro");
+    //	unknownUsersMap.put("ist25104", "Teresa Jacinto de Oliveira Marques");
+    //	unknownUsersMap.put("ist25106", "Miriam Mano Ferreira");
+    //	unknownUsersMap.put("ist25109", "Elisabete Moreira de Oliveira Pino");
+    //	unknownUsersMap.put("ist25110", "Dino Rodrigues Pereira das Neves");
+    //	unknownUsersMap.put("ist25111", "Fábio André Duarte Morgado");
+    //	unknownUsersMap.put("ist25112", "Hugo Alexandre Gonçalves Furtado");
+    //	unknownUsersMap.put("ist25115", "Sandra Nazaré Gomes da Fonseca");
+    //	unknownUsersMap.put("ist25118", "Joana Alves Lindinho Nunes de Castro");
+    //	unknownUsersMap.put("ist25121", "Aurora Bonfim de Carvalho Oliveira");
+    //	unknownUsersMap.put("ist25125", "Tiago Luís Ramos Silva Machado");
+    //    }
 
     ArrayList<String> costCentersMartelados = new ArrayList<String>();
 
@@ -218,15 +221,15 @@ public class ImportSiadapStructure extends WriteCustomTask {
 	    + "2501,ist21530,ist12530,\n" + "2501,ist23046,ist12530,\n" + "2501,ist23625,ist12530,\n"
 	    + "2501,ist24644,ist12530,\n" + "2501,ist22474,ist12530,\n" + "2501,ist21510,ist12530,\n"
 	    + "2501,ist22689,ist12530,\n" + "2501,ist24898,ist12530,\n" + "2501,ist24271,ist12530,\n"
-	    + "2501,ist24793,ist12530,\n" + "2501,ist23007,ist11063,\n" + "2501,ist23043,ist11063,\n"
-	    + "2501,ist23067,ist11063,\n" + "2501,ist23070,ist11063,\n" + "2501,ist23380,ist11063,\n"
-	    + "2501,ist23480,ist11063,\n" + "2501,ist23823,ist11063,\n" + "2501,ist23838,ist11063,\n"
-	    + "2501,ist23885,ist11063,\n" + "2501,ist24637,ist11063,\n" + "2501,ist25005,ist11063,\n"
-	    + "2501,ist23482,ist12916,\n" + "2501,ist148177,ist12916,\n" + "2501,ist23563,ist13387,\n"
-	    + "2501,ist23691,ist13387,\n" + "2501,ist24918,ist13387,\n" + "2501,ist45840,ist13387,\n"
-	    + "2501,ist23842,ist11011,\n" + "2501,ist23853,ist11011,\n" + "2501,ist23899,ist11011,\n"
-	    + "2501,ist23817,ist23844,\n" + "2501,ist23871,ist23844,\n" + "2501,ist23295,ist11579,\n"
-	    + "2501,ist23562,ist10845,\n" + "2501,ist130867,ist24515,\n" + "1111,ist23600,ist23594,\n"
+	    + "2501,ist24793,ist12530,\n" + "1145,ist23007,ist11063,\n" + "1145,ist23043,ist11063,\n"
+	    + "1145,ist23067,ist11063,\n" + "1145,ist23070,ist11063,\n" + "1145,ist23380,ist11063,\n"
+	    + "1145,ist23480,ist11063,\n" + "1145,ist23823,ist11063,\n" + "1145,ist23838,ist11063,\n"
+	    + "1145,ist23885,ist11063,\n" + "1145,ist24637,ist11063,\n" + "1145,ist25005,ist11063,\n"
+	    + "1145,ist23482,ist12916,\n" + "1145,ist148177,ist12916,\n" + "1145,ist23563,ist13387,\n"
+	    + "1145,ist23691,ist13387,\n" + "1145,ist24918,ist13387,\n" + "1145,ist45840,ist13387,\n"
+	    + "1145,ist23842,ist11011,\n" + "1145,ist23853,ist11011,\n" + "1145,ist23899,ist11011,\n"
+	    + "1145,ist23817,ist23844,\n" + "1145,ist23871,ist23844,\n" + "1145,ist23295,ist11579,\n"
+	    + "1145,ist23562,ist10845,\n" + "1145,ist130867,ist24515,\n" + "1111,ist23600,ist23594,\n"
 	    + "1111,ist23617,ist23594,\n" + "1111,ist23594,ist10984,\n" + "1111,ist90358,ist12919,\n"
 	    + "1113,ist24268,ist11938,\n" + "1115,ist23566,ist11165,\n" + "1115,ist23743,ist11165,\n"
 	    + "1116,ist23576,ist10800,\n" + "8050,ist24147,ist11648,\n" + "8050,ist24444,ist11648,\n"
@@ -281,8 +284,8 @@ public class ImportSiadapStructure extends WriteCustomTask {
 	    + "2040,ist24278,ist24757,1\n" + "2110,ist24273,ist11453,1\n" + "1601,ist24626,ist12760,1\n"
 	    + "2115,ist136657,ist12403,1\n" + "1134,ist25104,ist11029,1\n" + "2801,ist24537,ist13085,1\n"
 	    + "2801,ist24322,ist13085,1\n" + "2801,ist141687,ist13085,1\n" + "2801,ist24330,ist13085,1\n"
-	    + "1137,ist24206,ist11063,1\n" + "1137,ist149536,ist11063,1\n" + "1137,ist25182,ist11063,1\n"
-	    + "1137,ist24658,ist23844,1\n" + "1137,ist24668,ist23844,1\n" + "1137,ist25132,ist23913,1\n"
+	    + "1145,ist24206,ist11063,1\n" + "1145,ist149536,ist11063,1\n" + "1145,ist25182,ist11063,1\n"
+	    + "1145,ist24658,ist23844,1\n" + "1145,ist24668,ist23844,1\n" + "1145,ist25132,ist23913,1\n"
 	    + "8050,ist24507,ist11648,1\n" + "8050,ist25025,ist11648,1\n" + "8050,ist25111,ist11648,1\n"
 	    + "8051,ist24435,ist23868,1\n" + "8052,ist24426,ist22778,1\n" + "8052,ist24430,ist22778,1\n"
 	    + "8052,ist24438,ist22778,1\n" + "8052,ist24533,ist22778,1\n" + "8052,ist24733,ist22778,1\n"
@@ -294,7 +297,7 @@ public class ImportSiadapStructure extends WriteCustomTask {
 	    + "8055,ist24848,ist11648,1\n" + "8055,ist24881,ist11648,1\n");
 
     @Override
-    protected void doService() {
+    public void doIt() {
 	try {
 	    //	    FileInputStream fstream = new FileInputStream("/home/joantune/CIIST-Wspace/siadap-import-with-adist.csv");
 	    StringReader csvContentReader = new StringReader(csvContent);
@@ -315,13 +318,192 @@ public class ImportSiadapStructure extends WriteCustomTask {
 	out.println(avaliators.size());
 
 	for (Integer costCenter : avaliators.keySet()) {
+	    ProcessCostCenter proccessCostCenter = new ProcessCostCenter(costCenter, avaliators.get(costCenter), responsibles,
+		    out, costCentersMartelados);
+	    proccessCostCenter.start();
+	    try {
+		proccessCostCenter.join();
+	    } catch (InterruptedException e) {
+		throw new Error(e);
+	    }
+
+	}
+
+	migrateStuff(avaliators, responsibles);
+
+    }
+
+    public static class ProcessWorkers extends TransactionalThread {
+	Map<Integer, List<Evaluator>> avaliators;
+	Integer costCenter;
+	ArrayList<String> costCentersMartelados;
+	PrintWriter out;
+
+	public ProcessWorkers(Integer costCenter, Map<Integer, List<Evaluator>> avaliators,
+		ArrayList<String> costCentersMartelados, PrintWriter out) {
+	    this.costCenter = costCenter;
+	    this.avaliators = avaliators;
+	    this.costCentersMartelados = costCentersMartelados;
+	    this.out = out;
+	}
+	@Override
+	public void transactionalRun() {
+	    final LocalDate today = new LocalDate();
+	    final LocalDate startOfTheYear = new LocalDate(today.getYear(), 1, 1);
+	    final LocalDate endOfTheYear = new LocalDate(today.getYear(), 12, 31);
+	    SiadapYearConfiguration configuration = SiadapYearConfiguration.getSiadapYearConfiguration(today.getYear());
+	    final AccountabilityType evaluationRelation = configuration.getEvaluationRelation();
+	    AccountabilityType workingRelation = configuration.getWorkingRelation();
+	    AccountabilityType workingRelationWithNoQuota = configuration.getWorkingRelationWithNoQuota();
+	    PartyPredicate evalForYearPredicate = new AccTypeForGivenYearClassPredicate(evaluationRelation, today, null);
 	    List<Evaluator> evaluators = avaliators.get(costCenter);
 	    String centerString = costCenter.toString();
+	    if (evaluationRelation == null)
+		throw new Error("Holy crap!");
 	    if (centerString.length() == 1) {
 		centerString = "000" + centerString;
 	    }
 	    CostCenter c = (CostCenter) CostCenter.findUnitByCostCenter(centerString);
-	    c = validateCCenter(centerString, c);
+	    c = validateCCenter(centerString, c, costCentersMartelados);
+	    Unit unit = c.getUnit();
+
+	    for (Evaluator evaluator : evaluators) {
+		Person evaluatorPerson = evaluator.getUser().getPerson();
+		if (evaluatorPerson == null) {
+		    out.println("WTF: " + evaluator.getUser().getUsername());
+		}
+		if (evaluatorPerson.getParentUnits(evaluationRelation) == null) {
+		    out.println("WTF-relation for: " + evaluator.getUser().getUsername());
+		}
+
+		PartyPredicate parentEvalUnitsCurrentDate = new AccTypeForGivenYearClassPredicate(evaluationRelation, today,
+			Unit.class);
+
+		boolean isResponsible = evaluatorPerson.getParents(parentEvalUnitsCurrentDate).contains(unit);
+		for (Evaluated evaluated : evaluator.evaluated) {
+		    User user = evaluated.getUser();
+		    boolean adist = evaluated.getAdist();
+		    if (user == null) {
+			out.println(evaluated.istId + " NO USER");
+			user = new User(evaluated.istId);
+		    }
+		    Person evaluatedPerson = user.getPerson();
+		    if (evaluatedPerson == null) {
+			out.println(evaluated.istId + " NO PERSON");
+
+			if (inDevelopmentSystem) {
+
+			    Person p = Person.create(MultiLanguageString.i18n().add("pt", "DUMMY USER").finish(),
+				    Person.getPartyTypeInstance());
+			    p.setUser(user);
+			} else {
+
+			    LoginListner.importUserInformation(evaluated.istId);
+			}
+			evaluatedPerson = user.getPerson();
+			if (evaluatedPerson == null)
+			    throw new Error("Error, creation of person for user " + evaluated.istId + " didn't succeeded");
+		    }
+
+		    PartyPredicate workingPartyPredicate = new AccTypeForGivenYearClassPredicate(workingRelation, today, null);
+		    PartyPredicate workingNoQuotaPartyPredicate = new AccTypeForGivenYearClassPredicate(
+			    workingRelationWithNoQuota, today, null);
+
+		    for (Accountability acc : evaluatedPerson.getParentAccountabilities()) {
+			if (acc.getParent() != unit
+				&& (workingPartyPredicate.eval(null, acc) || workingNoQuotaPartyPredicate.eval(null, acc))) {
+			    //remove
+			    //			    evaluatedPerson.removeParent(acc);
+			}
+		    }
+
+		    if (!adist && !unit.getChildren(workingPartyPredicate).contains(evaluatedPerson)) {
+			evaluatedPerson.addParent(unit, workingRelation, startOfTheYear, endOfTheYear);
+		    }
+		    if (adist && !unit.getChildren(workingNoQuotaPartyPredicate).contains(evaluatedPerson)) {
+			evaluatedPerson.addParent(unit, workingRelationWithNoQuota, startOfTheYear, endOfTheYear);
+		    }
+		    if (!isResponsible) {
+			for (Accountability acc : evaluatedPerson.getParentAccountabilities())
+			{
+			    if (acc.getParent() != evaluatorPerson && evalForYearPredicate.eval(evaluatedPerson, acc)) {
+				//remove
+				//				evaluatedPerson.removeParent(acc);
+			    }
+			}
+			if (!evaluatorPerson.getChildren(evalForYearPredicate).contains(evaluatedPerson)) {
+			    evaluatedPerson.addParent(evaluatorPerson, evaluationRelation, startOfTheYear, endOfTheYear);
+			}
+		    }
+		}
+	    }
+	 
+
+	}
+
+    }
+
+    public static class ProcessResponsibles extends TransactionalThread {
+
+	List<Responsible> responsibles;
+
+	public ProcessResponsibles(List<Responsible> responsibles) {
+	    this.responsibles = responsibles;
+	}
+
+	@Override
+	public void transactionalRun() {
+	    final LocalDate today = new LocalDate();
+	    final LocalDate startOfTheYear = new LocalDate(today.getYear(), 1, 1);
+	    final LocalDate endOfTheYear = new LocalDate(today.getYear(), 12, 31);
+	    SiadapYearConfiguration configuration = SiadapYearConfiguration.getSiadapYearConfiguration(today.getYear());
+	    final AccountabilityType evaluationRelation = configuration.getEvaluationRelation();
+
+	    PartyPredicate evalForYearPredicate = new AccTypeForGivenYearClassPredicate(evaluationRelation, today, null);
+	    // TODO Auto-generated method stub
+	    for (Responsible responsible : responsibles) {
+		Unit unit = responsible.getCenter().getUnit();
+		Person person = responsible.getUser().getPerson();
+		//let's remove the previous responsibles
+		for (Accountability acc : unit.getChildAccountabilities()) {
+		    if (acc.getChild() != person && evalForYearPredicate.eval(acc.getChild(), acc)) {
+			//			unit.removeChildAccountabilities(acc);
+		    }
+		}
+		if (!unit.getChildren(evalForYearPredicate).contains(person)) {
+		    person.addParent(unit, evaluationRelation, startOfTheYear, endOfTheYear);
+		}
+	    }
+
+	}
+
+    }
+
+    public static class ProcessCostCenter extends TransactionalThread {
+	Integer costCenterBeingProcessed;
+	List<Evaluator> listEvaluators;
+	List<Responsible> responsibles;
+	PrintWriter out;
+	ArrayList<String> costCentersMartelados;
+
+	public ProcessCostCenter(Integer processCostCenter, List<Evaluator> listEvaluators, List<Responsible> responsibles,
+		PrintWriter out, ArrayList<String> costCentersMartelados) {
+	    this.costCenterBeingProcessed = processCostCenter;
+	    this.listEvaluators = listEvaluators;
+	    this.responsibles = responsibles;
+	    this.out = out;
+	    this.costCentersMartelados = costCentersMartelados;
+	}
+
+	@Override
+	public void transactionalRun() {
+	    List<Evaluator> evaluators = listEvaluators;
+	    String centerString = costCenterBeingProcessed.toString();
+	    if (centerString.length() == 1) {
+		centerString = "000" + centerString;
+	    }
+	    CostCenter c = (CostCenter) CostCenter.findUnitByCostCenter(centerString);
+	    c = validateCCenter(centerString, c, costCentersMartelados);
 	    Person responsible = null;
 	    int max = 0;
 	    for (Evaluator evaluator : evaluators) {
@@ -350,8 +532,6 @@ public class ImportSiadapStructure extends WriteCustomTask {
 	    responsibles.add(new Responsible(responsible.getUser(), c));
 	}
 
-	migrateStuff(avaliators, responsibles);
-
     }
 
     //    static protected void addMappedUserByUsername(String username) {
@@ -365,7 +545,8 @@ public class ImportSiadapStructure extends WriteCustomTask {
     //	    mappedUsers.add(user);
     //    }
 
-    private CostCenter validateCCenter(String centerString, CostCenter c) throws Error {
+    static protected CostCenter validateCCenter(String centerString, CostCenter c, ArrayList<String> costCentersMartelados)
+	    throws Error {
 	if (c == null) {
 	    Integer cc = Integer.valueOf(centerString);
 	    String newCenterString = String.valueOf(cc.intValue() + 1);
@@ -407,90 +588,25 @@ public class ImportSiadapStructure extends WriteCustomTask {
     }
 
     private void migrateStuff(Map<Integer, List<Evaluator>> avaliators2, List<Responsible> responsibles2) {
-	out.println("STarting");
-	final LocalDate today = new LocalDate();
-	final LocalDate startOfTheYear = new LocalDate(today.getYear(), 1, 1);
-	final LocalDate endOfTheYear = new LocalDate(today.getYear(), 12, 31);
-	SiadapYearConfiguration configuration = SiadapYearConfiguration.getSiadapYearConfiguration(today.getYear());
-	final AccountabilityType evaluationRelation = configuration.getEvaluationRelation();
-	AccountabilityType workingRelation = configuration.getWorkingRelation();
-	AccountabilityType workingRelationWithNoQuota = configuration.getWorkingRelationWithNoQuota();
+	ProcessResponsibles processResponsibles = new ProcessResponsibles(responsibles);
 
-	PartyPredicate evalForYearPredicate = new AccTypeForGivenYearClassPredicate(evaluationRelation, today, null);
-
-	for (Responsible responsible : responsibles) {
-	    Unit unit = responsible.getCenter().getUnit();
-	    Person person = responsible.getUser().getPerson();
-	    if (!unit.getChildren(evalForYearPredicate).contains(person)) {
-		person.addParent(unit, evaluationRelation, startOfTheYear, endOfTheYear);
-	    }
+	processResponsibles.start();
+	try {
+	    processResponsibles.join();
+	} catch (InterruptedException e) {
+	    throw new Error(e);
 	}
 
-	for (Integer costCenter : avaliators.keySet()) {
-	    List<Evaluator> evaluators = avaliators.get(costCenter);
-	    String centerString = costCenter.toString();
-	    if (centerString.length() == 1) {
-		centerString = "000" + centerString;
+	for (Integer costCenter : avaliators.keySet()) 
+	{
+	    ProcessWorkers processWorkers = new ProcessWorkers(costCenter, avaliators, costCentersMartelados, out);
+	    processWorkers.start();
+	    try {
+		processWorkers.join();
+	    } catch (InterruptedException e) {
+		throw new Error(e);
 	    }
-	    CostCenter c = (CostCenter) CostCenter.findUnitByCostCenter(centerString);
-	    c = validateCCenter(centerString, c);
-	    Unit unit = c.getUnit();
-
-	    for (Evaluator evaluator : evaluators) {
-		Person evaluatorPerson = evaluator.getUser().getPerson();
-		if (evaluatorPerson == null) {
-		    out.println("WTF: " + evaluator.getUser().getUsername());
-		}
-		if (evaluatorPerson.getParentUnits(evaluationRelation) == null) {
-		    out.println("WTF-relation for: " + evaluator.getUser().getUsername());
-		}
-		
-		PartyPredicate parentEvalUnitsCurrentDate = new AccTypeForGivenYearClassPredicate(evaluationRelation, today,
-			Unit.class);
-
-		boolean isResponsible = evaluatorPerson.getParents(parentEvalUnitsCurrentDate).contains(unit);
-		for (Evaluated evaluated : evaluator.evaluated) {
-		    User user = evaluated.getUser();
-		    boolean adist = evaluated.getAdist();
-		    if (user == null) {
-			out.println(evaluated.istId + " NO USER");
-			user = new User(evaluated.istId);
-		    }
-		    Person evaluatedPerson = user.getPerson();
-		    if (evaluatedPerson == null) {
-			out.println(evaluated.istId + " NO PERSON");
-
-			if (inDevelopmentSystem) {
-
-			    Person p = Person.create(MultiLanguageString.i18n().add("pt", "DUMMY USER").finish(),
-				    Person.getPartyTypeInstance());
-			    p.setUser(user);
-			} else {
-
-			    LoginListner.importUserInformation(evaluated.istId);
-			}
-			evaluatedPerson = user.getPerson();
-			if (evaluatedPerson == null)
-			    throw new Error("Error, creation of person for user " + evaluated.istId + " didn't succeeded");
-		    }
-
-		    PartyPredicate workingPartyPredicate = new AccTypeForGivenYearClassPredicate(workingRelation, today, null);
-		    PartyPredicate workingNoQuotaPartyPredicate = new AccTypeForGivenYearClassPredicate(
-workingRelationWithNoQuota,
-			    today, null);
-		    if (!adist && !unit.getChildren(workingPartyPredicate).contains(evaluatedPerson)) {
-			evaluatedPerson.addParent(unit, workingRelation, startOfTheYear, endOfTheYear);
-		    }
-		    if (adist && !unit.getChildren(workingNoQuotaPartyPredicate).contains(evaluatedPerson)) {
-			evaluatedPerson.addParent(unit, workingRelationWithNoQuota, startOfTheYear, endOfTheYear);
-		    }
-		    if (!isResponsible) {
-			if (!evaluatorPerson.getChildren(evalForYearPredicate).contains(evaluatedPerson)) {
-			    evaluatedPerson.addParent(evaluatorPerson, evaluationRelation, startOfTheYear, endOfTheYear);
-			}
-		    }
-		}
-	    }
+	    
 	}
 	out.println("DONE importing the list!");
 	for (String string : costCentersMartelados) {
@@ -593,23 +709,24 @@ workingRelationWithNoQuota,
     }
 
     public static class Responsible {
-	User user;
-	CostCenter center;
+	String userOId;
+	String costCenterOId;
 
 	public Responsible(User user, CostCenter center) {
 	    //	    mappedUsers.add(user);
-	    this.user = user;
-	    this.center = center;
+	    this.userOId = user.getExternalId();
+	    this.costCenterOId = center.getExternalId();
 	}
 
 	public User getUser() {
-	    return user;
+	    return AbstractDomainObject.fromExternalId(userOId);
 	}
 
 	public CostCenter getCenter() {
-	    return center;
+	    return AbstractDomainObject.fromExternalId(costCenterOId);
 	}
 
     }
+
 
 }
