@@ -418,10 +418,10 @@ public class ImportSiadapStructure extends ReadCustomTask {
 		    }
 
 		    if (!adist && !unit.getChildren(workingPartyPredicate).contains(evaluatedPerson)) {
-			evaluatedPerson.addParent(unit, workingRelation, startOfTheYear, endOfTheYear);
+			evaluatedPerson.addParent(unit, workingRelation, minParentExistence(unit, startOfTheYear), endOfTheYear);
 		    }
 		    if (adist && !unit.getChildren(workingNoQuotaPartyPredicate).contains(evaluatedPerson)) {
-			evaluatedPerson.addParent(unit, workingRelationWithNoQuota, startOfTheYear, endOfTheYear);
+			evaluatedPerson.addParent(unit, workingRelationWithNoQuota, minParentExistence(unit, startOfTheYear), endOfTheYear);
 		    }
 		    if (!isResponsible) {
 			for (Accountability acc : evaluatedPerson.getParentAccountabilities())
@@ -432,7 +432,7 @@ public class ImportSiadapStructure extends ReadCustomTask {
 			    }
 			}
 			if (!evaluatorPerson.getChildren(evalForYearPredicate).contains(evaluatedPerson)) {
-			    evaluatedPerson.addParent(evaluatorPerson, evaluationRelation, startOfTheYear, endOfTheYear);
+			    evaluatedPerson.addParent(evaluatorPerson, evaluationRelation, minParentExistence(evaluatorPerson, startOfTheYear), endOfTheYear);
 			}
 		    }
 		}
@@ -441,6 +441,20 @@ public class ImportSiadapStructure extends ReadCustomTask {
 
 	}
 
+    }
+
+    public static LocalDate minParentExistence(final Party party, final LocalDate localDate) {
+	LocalDate min = null;
+	for (final Accountability accountability : party.getParentAccountabilitiesSet()) {
+	    final LocalDate beginDate = accountability.getBeginDate();
+	    if (min == null || min.isAfter(beginDate)) {
+		min = beginDate;
+	    }
+	}
+	if (min == null) {
+	    throw new Error("????");
+	}
+	return min.isBefore(localDate) ? localDate : min;
     }
 
     public static class ProcessResponsibles extends TransactionalThread {
@@ -471,7 +485,7 @@ public class ImportSiadapStructure extends ReadCustomTask {
 		    }
 		}
 		if (!unit.getChildren(evalForYearPredicate).contains(person)) {
-		    person.addParent(unit, evaluationRelation, startOfTheYear, endOfTheYear);
+		    person.addParent(unit, evaluationRelation, minParentExistence(unit, startOfTheYear), endOfTheYear);
 		}
 	    }
 
