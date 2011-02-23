@@ -413,7 +413,7 @@ public class ImportSiadapStructure extends ReadCustomTask {
 			if (acc.getParent() != unit
 				&& (workingPartyPredicate.eval(null, acc) || workingNoQuotaPartyPredicate.eval(null, acc))) {
 			    //remove
-			    //			    evaluatedPerson.removeParent(acc);
+			    evaluatedPerson.removeParent(acc);
 			}
 		    }
 
@@ -428,7 +428,7 @@ public class ImportSiadapStructure extends ReadCustomTask {
 			{
 			    if (acc.getParent() != evaluatorPerson && evalForYearPredicate.eval(evaluatedPerson, acc)) {
 				//remove
-				//				evaluatedPerson.removeParent(acc);
+				evaluatedPerson.removeParent(acc);
 			    }
 			}
 			if (!evaluatorPerson.getChildren(evalForYearPredicate).contains(evaluatedPerson)) {
@@ -467,7 +467,7 @@ public class ImportSiadapStructure extends ReadCustomTask {
 		//let's remove the previous responsibles
 		for (Accountability acc : unit.getChildAccountabilities()) {
 		    if (acc.getChild() != person && evalForYearPredicate.eval(acc.getChild(), acc)) {
-			//			unit.removeChildAccountabilities(acc);
+			acc.getChild().removeParent(acc);
 		    }
 		}
 		if (!unit.getChildren(evalForYearPredicate).contains(person)) {
