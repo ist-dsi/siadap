@@ -169,7 +169,7 @@ public class PersonSiadapWrapper extends PartyWrapper implements Serializable {
     public UnitSiadapWrapper getWorkingUnit() {
 	Collection<Unit> parentUnits = getParentUnits(getConfiguration().getWorkingRelation(), getConfiguration()
 		.getWorkingRelationWithNoQuota());
-	return parentUnits.isEmpty() ? new UnitSiadapWrapper.NullUnitSiadapWrapper() : new UnitSiadapWrapper(parentUnits
+	return parentUnits.isEmpty() ? null : new UnitSiadapWrapper(parentUnits
 		.iterator().next(), getConfiguration().getYear());
     }
 

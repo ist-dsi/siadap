@@ -20,11 +20,6 @@ public abstract class PartyWrapper implements Serializable {
     private int year;
     private final SiadapYearConfiguration configuration;
 
-    protected PartyWrapper() {
-	configuration = null;
-
-    }
-
     public PartyWrapper(int year) {
 	this.year = year;
 	this.configuration = SiadapYearConfiguration.getSiadapYearConfiguration(year);

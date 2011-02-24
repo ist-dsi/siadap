@@ -33,9 +33,6 @@ public class UnitSiadapWrapper extends PartyWrapper implements Serializable {
 
     private Unit unit;
 
-    private UnitSiadapWrapper() {
-    };
-
     public UnitSiadapWrapper(Unit unit, Integer year) {
 	super(year);
 	this.unit = unit;
@@ -537,20 +534,4 @@ public class UnitSiadapWrapper extends PartyWrapper implements Serializable {
 	return list;
     }
 
-    public static class NullUnitSiadapWrapper extends UnitSiadapWrapper {
-
-	public NullUnitSiadapWrapper() {
-	    this(null, null);
-
-	}
-
-	private NullUnitSiadapWrapper(Unit unit, Integer year) {
-	}
-
-	@Override
-	public MultiLanguageString getName() {
-	    return new MultiLanguageString("-");
-	}
-
-    }
 }

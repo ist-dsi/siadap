@@ -95,7 +95,12 @@
 				<logic:lessThan name="index" value="5">
 					<tr>
 						<td><fr:view name="evaluated" property="name"/></td>
-						<td><fr:view name="evaluated" property="workingUnit.name"/></td>
+						<logic:notPresent name="evaluated" property="workingUnit">
+							<td>-</td>
+						</logic:notPresent>
+						<logic:present name="evaluated" property="workingUnit">
+							<td><fr:view name="evaluated" property="workingUnit.name"/></td>
+						</logic:present>
 					</tr>
 				</logic:lessThan>
 			</logic:iterate>
