@@ -445,7 +445,9 @@ public class ImportSiadapStructure extends ReadCustomTask {
 		    }
 		    if (!isResponsible) {
 			for (Accountability acc : evaluatedPerson.getParentAccountabilities()) {
-			    if (acc.getParent() != evaluatorPerson && evalForYearPredicate.eval(evaluatedPerson, acc)) {
+			    if (acc.getParent() != evaluatorPerson
+				    && evalForYearPredicate.eval(evaluatedPerson, acc)
+				    && acc.getParent().isPerson()) {
 				//remove
 				evaluatedPerson.removeParent(acc);
 			    }
