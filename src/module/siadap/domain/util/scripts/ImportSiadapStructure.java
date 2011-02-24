@@ -347,7 +347,7 @@ public class ImportSiadapStructure extends ReadCustomTask {
 
 	}
 
-	migrateStuff(avaliators, responsibles);
+	migrateStuff();
 
     }
 
@@ -364,6 +364,7 @@ public class ImportSiadapStructure extends ReadCustomTask {
 	    this.costCentersMartelados = costCentersMartelados;
 	    this.out = out;
 	}
+
 	@Override
 	public void transactionalRun() {
 	    final LocalDate today = new LocalDate();
@@ -439,23 +440,23 @@ public class ImportSiadapStructure extends ReadCustomTask {
 			evaluatedPerson.addParent(unit, workingRelation, minParentExistence(unit, startOfTheYear), endOfTheYear);
 		    }
 		    if (adist && !unit.getChildren(workingNoQuotaPartyPredicate).contains(evaluatedPerson)) {
-			evaluatedPerson.addParent(unit, workingRelationWithNoQuota, minParentExistence(unit, startOfTheYear), endOfTheYear);
+			evaluatedPerson.addParent(unit, workingRelationWithNoQuota, minParentExistence(unit, startOfTheYear),
+				endOfTheYear);
 		    }
 		    if (!isResponsible) {
-			for (Accountability acc : evaluatedPerson.getParentAccountabilities())
-			{
+			for (Accountability acc : evaluatedPerson.getParentAccountabilities()) {
 			    if (acc.getParent() != evaluatorPerson && evalForYearPredicate.eval(evaluatedPerson, acc)) {
 				//remove
 				evaluatedPerson.removeParent(acc);
 			    }
 			}
 			if (!evaluatorPerson.getChildren(evalForYearPredicate).contains(evaluatedPerson)) {
-			    evaluatedPerson.addParent(evaluatorPerson, evaluationRelation, minParentExistence(evaluatorPerson, startOfTheYear), endOfTheYear);
+			    evaluatedPerson.addParent(evaluatorPerson, evaluationRelation,
+				    minParentExistence(evaluatorPerson, startOfTheYear), endOfTheYear);
 			}
 		    }
 		}
 	    }
-	 
 
 	}
 
@@ -478,9 +479,11 @@ public class ImportSiadapStructure extends ReadCustomTask {
     public static class ProcessResponsibles extends TransactionalThread {
 
 	List<Responsible> responsibles;
+	PrintWriter out;
 
-	public ProcessResponsibles(List<Responsible> responsibles) {
+	public ProcessResponsibles(List<Responsible> responsibles, PrintWriter out) {
 	    this.responsibles = responsibles;
+	    this.out = out;
 	}
 
 	@Override
@@ -499,16 +502,21 @@ public class ImportSiadapStructure extends ReadCustomTask {
 		//let's remove the previous responsibles
 		for (Accountability acc : unit.getChildAccountabilities()) {
 		    if (acc.getChild() != person && evalForYearPredicate.eval(acc.getChild(), acc)) {
+			debug("Going to remove previous responsible " + acc.getChild().getPartyName() + " "
+				+ acc.getDetailsString() + " from unit " + unit.getPresentationName(), out);
 			acc.getChild().removeParent(acc);
 		    }
 		}
 		if (!unit.getChildren(evalForYearPredicate).contains(person)) {
-		    person.addParent(unit, evaluationRelation, minParentExistence(unit, startOfTheYear), endOfTheYear);
+		    LocalDate startDate = minParentExistence(unit, startOfTheYear);
+		    person.addParent(unit, evaluationRelation, startDate, endOfTheYear);
+		    debug("Really added the responsible " + responsible.getUser().getUsername() + " to cc "
+			    + responsible.getCenter().getCostCenter() + " starting at " + startDate + " ending at "
+			    + endOfTheYear, out);
 		}
 	    }
 
 	}
-
     }
 
     public static class ProcessCostCenter extends TransactionalThread {
@@ -561,6 +569,7 @@ public class ImportSiadapStructure extends ReadCustomTask {
 		    max = evaluator.size();
 		}
 	    }
+	    debug("Added responsible for cc " + c.getCostCenter() + " the " + responsible.getUser().getUsername(), out);
 	    responsibles.add(new Responsible(responsible.getUser(), c));
 	}
 
@@ -619,8 +628,8 @@ public class ImportSiadapStructure extends ReadCustomTask {
 
     }
 
-    private void migrateStuff(Map<Integer, List<Evaluator>> avaliators2, List<Responsible> responsibles2) {
-	ProcessResponsibles processResponsibles = new ProcessResponsibles(responsibles);
+    private void migrateStuff() {
+	ProcessResponsibles processResponsibles = new ProcessResponsibles(responsibles, out);
 
 	processResponsibles.start();
 	try {
@@ -629,8 +638,7 @@ public class ImportSiadapStructure extends ReadCustomTask {
 	    throw new Error(e);
 	}
 
-	for (Integer costCenter : avaliators.keySet()) 
-	{
+	for (Integer costCenter : avaliators.keySet()) {
 	    ProcessWorkers processWorkers = new ProcessWorkers(costCenter, avaliators, costCentersMartelados, out);
 	    processWorkers.start();
 	    try {
@@ -638,12 +646,19 @@ public class ImportSiadapStructure extends ReadCustomTask {
 	    } catch (InterruptedException e) {
 		throw new Error(e);
 	    }
-	    
+
 	}
 	out.println("DONE importing the list!");
 	for (String string : costCentersMartelados) {
 	    out.println(string);
 	}
+
+    }
+
+    private static void debug(String message, PrintWriter out) {
+
+	if (debugModeOn)
+	    out.println("Debug: " + message);
 
     }
 
@@ -673,7 +688,7 @@ public class ImportSiadapStructure extends ReadCustomTask {
 
 	List<Evaluator> evaluators = avaliators.get(ccNumber);
 	if (evaluators == null) {
-	    out.println("Starting evalutors for " + cc);
+	    debug("Starting evalutors for " + cc);
 	    evaluators = new ArrayList<Evaluator>();
 	    avaliators.put(ccNumber, evaluators);
 	}
@@ -681,12 +696,12 @@ public class ImportSiadapStructure extends ReadCustomTask {
 	for (Evaluator evaluator : evaluators) {
 	    if (evaluator.match(evaluatorId)) {
 		added = true;
-		out.println("Adding existing evaluator " + evaluatorId + " for " + cc + "adist: " + adist);
+		debug("Adding existing evaluator " + evaluatorId + " for " + cc + "adist: " + adist);
 		evaluator.addEvaluated(evaluatedId, adist);
 	    }
 	}
 	if (!added) {
-	    out.println("New evaluator " + evaluatorId + " for " + cc + " adist: " + adist);
+	    debug("New evaluator " + evaluatorId + " for " + cc + " adist: " + adist);
 	    Evaluator evaluator = new Evaluator(evaluatorId);
 	    evaluator.addEvaluated(evaluatedId, adist);
 	    evaluators.add(evaluator);
@@ -759,6 +774,5 @@ public class ImportSiadapStructure extends ReadCustomTask {
 	}
 
     }
-
 
 }
