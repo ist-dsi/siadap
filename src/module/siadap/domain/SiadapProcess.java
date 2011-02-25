@@ -1,9 +1,11 @@
 package module.siadap.domain;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import module.organization.domain.Person;
+import module.organizationIst.domain.listner.LoginListner;
 import module.siadap.activities.AcknowledgeEvaluationObjectives;
 import module.siadap.activities.AcknowledgeEvaluationValidation;
 import module.siadap.activities.AcknowledgeHomologation;
@@ -32,6 +34,7 @@ import myorg.applicationTier.Authenticate.UserView;
 import myorg.domain.User;
 import myorg.domain.exceptions.DomainException;
 import myorg.util.ClassNameBundle;
+import pt.ist.emailNotifier.domain.Email;
 import pt.ist.fenixWebFramework.services.Service;
 
 @ClassNameBundle(bundle = "resources/SiadapResources", key = "label.process.siadap")
@@ -132,6 +135,32 @@ public class SiadapProcess extends SiadapProcess_Base {
 
     public boolean isCurrentUserEvaluated() {
 	return isUserEvaluated(UserView.getCurrentUser());
+    }
+
+    public void checkEmailExistenceImportAndWarnOnError(Person person) {
+	//if we have no info about the person, let's import it
+	if (person.getRemotePerson() == null || person.getRemotePerson().getEmailForSendingEmails() == null) {
+	    LoginListner.importUserInformation(person.getUser().getUsername());
+	}
+	//if that didn't solved it, let's warn the admin by e-mail
+	if (person.getRemotePerson() == null || person.getRemotePerson().getEmailForSendingEmails() == null) {
+	    StringBuilder message = new StringBuilder("Error, could not import e-mail/info for person " + person.getName() + "\n");
+	    if (person.getUser() != null && person.getUser().getUsername() != null) {
+		message.append("the username is: " + person.getUser().getUsername() + "\n");
+
+	    }
+	    message.append("Please take appropriate actions\n");
+	    notifyAdmin("[Bennu/Myorg] - Error retrieving remote information from fenix for a user", message.toString());
+
+	}
+    }
+
+    //TODO change this so that the e-mail isn't hardcoded and there is a batch sent not for each error an e-mail
+    private void notifyAdmin(String subject, String message) {
+	ArrayList<String> toAddress = new ArrayList<String>();
+	toAddress.add("joao.antunes@tagus.ist.utl.pt");
+	new Email("Aplicação SIADAP", "noreply@ist.utl.pt", new String[] {}, toAddress, Collections.EMPTY_LIST,
+		Collections.EMPTY_LIST, subject, message);
     }
 
     @Override
