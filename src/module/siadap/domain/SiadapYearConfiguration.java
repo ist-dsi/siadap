@@ -1,6 +1,5 @@
 package module.siadap.domain;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import module.organization.domain.Person;
@@ -70,6 +69,7 @@ public class SiadapYearConfiguration extends SiadapYearConfiguration_Base {
     		createHomologationMembersGroup();
     }
     
+
     @Service
     private static void createHomologationMembersGroup() {
     	homologationMembersGroup = new NamedGroup(HOMOLOGATION_MEMBERS_GROUPNAME);

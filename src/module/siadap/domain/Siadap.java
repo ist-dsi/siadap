@@ -20,9 +20,9 @@ import myorg.domain.exceptions.DomainException;
 
 import org.apache.commons.collections.Predicate;
 import org.apache.commons.lang.StringUtils;
+import org.joda.time.DateTime;
 import org.joda.time.Interval;
 import org.joda.time.LocalDate;
-import org.joda.time.ReadableDuration;
 import org.joda.time.ReadableInstant;
 
 import pt.ist.fenixWebFramework.services.Service;
@@ -86,8 +86,7 @@ public class Siadap extends Siadap_Base {
      *            {@link SiadapEvaluationItem#COMPARATOR_BY_DATE}
      * @return a list of <T> elements
      */
-    private <T extends SiadapEvaluationItem> List<T> getEvaluations(Class<T> clazz, Predicate predicate,
- Comparator<T> comparator) {
+    private <T extends SiadapEvaluationItem> List<T> getEvaluations(Class<T> clazz, Predicate predicate, Comparator<T> comparator) {
 	List<T> evaluationItems = new ArrayList<T>();
 	for (SiadapEvaluationItem item : getSiadapEvaluationItems()) {
 	    if (clazz.isAssignableFrom(item.getClass()) && (predicate == null || predicate.evaluate(item))) {
@@ -314,27 +313,59 @@ public class Siadap extends Siadap_Base {
 	SiadapYearConfiguration configuration = getSiadapYearConfiguration();
 	LocalDate begin = configuration.getAutoEvaluationBegin();
 	LocalDate end = configuration.getAutoEvaluationEnd();
-	if (end == null || begin == null)
-	    return new Interval((ReadableDuration) null, (ReadableInstant) null);
-	return new Interval(begin.toDateMidnight(), end.toDateMidnight());
+	return new Interval(convertDateToBeginOfDay(begin), convertDateToEndOfDay(end));
     }
 
     public Interval getEvaluationInterval() {
 	SiadapYearConfiguration configuration = getSiadapYearConfiguration();
 	LocalDate begin = configuration.getEvaluationBegin();
 	LocalDate end = configuration.getEvaluationEnd();
-	if (end == null || begin == null)
-	    return new Interval((ReadableDuration) null, (ReadableInstant) null);
-	return new Interval(begin.toDateMidnight(), end.toDateMidnight());
+	return new Interval(convertDateToBeginOfDay(begin), convertDateToEndOfDay(end));
     }
 
     public Interval getObjectiveSpecificationInterval() {
 	SiadapYearConfiguration configuration = getSiadapYearConfiguration();
 	LocalDate begin = configuration.getObjectiveSpecificationBegin();
 	LocalDate end = configuration.getObjectiveSpecificationEnd();
-	if (end == null || begin == null)
-	    return new Interval((ReadableDuration) null, (ReadableInstant) null);
-	return new Interval(begin.toDateMidnight(), end.toDateMidnight());
+	return new Interval(convertDateToBeginOfDay(begin), convertDateToEndOfDay(end));
+    }
+
+    /**
+     * 
+     * @param date
+     *            the {@link LocalDate} that will be converted to represent the
+     *            date at the beginning of the day
+     * @return an {@link ReadableInstant} with the same day/month/year but the
+     *         first instant of it, that is the first hour, first minute, first
+     *         second etc...
+     */
+    private ReadableInstant convertDateToBeginOfDay(LocalDate date) {
+	ReadableInstant newLocalDate = null;
+	if (date != null)
+	{
+	    return date.toDateTimeAtStartOfDay();
+	}
+	return newLocalDate;
+
+    }
+
+    /**
+     * 
+     * @param date
+     *            the {@link LocalDate} that will be converted to represent the
+     *            date at the beginning of the day
+     * @return an {@link ReadableInstant} with the same day/month/year but the
+     *         last instant of it, that is the last hour, last minute, last
+     *         second etc...
+     */
+    private ReadableInstant convertDateToEndOfDay(LocalDate date) {
+	ReadableInstant newLocalDate = null;
+	if (date != null) {
+	    return new DateTime(date.getYear(), date.getMonthOfYear(), date.getDayOfMonth(), 23, 59, 59, 59);
+
+	}
+	return newLocalDate;
+
     }
 
     //TODO change this appropriately when Issue #31 is resolved
