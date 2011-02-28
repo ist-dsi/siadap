@@ -28,9 +28,10 @@
 <div class="infobox">
 	<bean:message key="siadap.more.info" bundle="SIADAP_RESOURCES"/> <html:link target="_blank"  href="http://drh.ist.utl.pt/html/avaliacao/naodocente/"> <bean:message key="siadap.more.info.link" bundle="SIADAP_RESOURCES"/></html:link>
 </div>
+
 <logic:present name="person">
 <p>
-<strong> <bean:message key="label.myData" bundle="SIADAP_RESOURCES"/> </strong>
+<h3> <bean:message key="label.myData" bundle="SIADAP_RESOURCES"/> </h3>
 </p>
 <fr:view name="person">
 	<fr:schema type="module.siadap.domain.wrappers.PersonSiadapWrapper" bundle="SIADAP_RESOURCES">
@@ -56,7 +57,7 @@
 
  <logic:notEmpty name="person" property="allSiadaps">
  <p>
- 	<strong> <bean:message key="label.myEvaluations" bundle="SIADAP_RESOURCES"/> </strong>
+ 	<h3> <bean:message key="label.myEvaluations" bundle="SIADAP_RESOURCES"/> </h3>
  	
  	<fr:view name="person" property="allSiadaps">
  		<fr:schema type="module.siadap.domain.Siadap" bundle="SIADAP_RESOURCES">
@@ -76,11 +77,13 @@
  </p>
  </logic:notEmpty>
  
- <bean:define id="personJava" name="person"/>
- 
-<logic:notEmpty name="person" property="peopleToEvaluate"> 
+<bean:define id="personJava" name="person"/>
+
+<logic:notEmpty name="person" property="peopleToEvaluate">
+	<br/>
+	<h3> <bean:message key="label.responsibleForEvaluationOf" bundle="SIADAP_RESOURCES"/>: </h3>
+<!-- 
 	<p>
-		<strong> <bean:message key="label.responsibleForEvaluationOf" bundle="SIADAP_RESOURCES"/>: </strong>
 	</p>
 		<table class="tstyle2">
 			<tr>
@@ -105,23 +108,29 @@
 				</logic:lessThan>
 			</logic:iterate>
 		</table>
-		<bean:size id="nrOfPersonsToEvaluate" name="person" property="peopleToEvaluate"/>
+		
 		<logic:greaterThan name="nrOfPersonsToEvaluate" value="5">
 				<i><bean:message bundle="SIADAP_RESOURCES" key="label.shown5ofX" arg0="<%=String.valueOf(((PersonSiadapWrapper) personJava).getPeopleToEvaluate().size())%>" /></i>
 				<br/><br/>
 		</logic:greaterThan>
+
+		<html:link page="/siadapManagement.do?method=prepareToCreateNewSiadapProcess" paramId="year" paramName="person" paramProperty="year"> <bean:message key="label.viewAllEvaluated" bundle="SIADAP_RESOURCES"/> </html:link>
+ -->
+		<bean:size id="nrOfPersonsToEvaluate" name="person" property="peopleToEvaluate"/>
 		<bean:message bundle="SIADAP_RESOURCES" key="siadap.nr.processes.with.pending.actions.label"/>: <bean:write name="person" property="nrPendingProcessActions"/>
 		<br/>
 		<bean:message bundle="SIADAP_RESOURCES" key="siadap.nr.processes.with.unread.comments.label"/>: <bean:write name="person" property="nrPersonsWithUnreadComments"/>
 		<br/>
-		
-		<html:link page="/siadapManagement.do?method=prepareToCreateNewSiadapProcess" paramId="year" paramName="person" paramProperty="year"> <bean:message key="label.viewAllEvaluated" bundle="SIADAP_RESOURCES"/> </html:link>
+
+	<bean:define id="peopleToEvaluate" name="person" property="peopleToEvaluate" toScope="request"/>
+	<jsp:include page="prepareCreateSiadap.jsp"/>
 </logic:notEmpty>
+
 <logic:notEmpty name="person" property="harmozationUnits">
 <%-- Defining the year here so that it can be more easily passed on the links below that use it --%>
 <bean:define id="year" name="siadapYearWrapper" property="chosenYear"/>
+		<h3> <bean:message key="label.responsifleForHarmonizationOf" bundle="SIADAP_RESOURCES"/>: </h3>
 	<p>
-		<strong> <bean:message key="label.responsifleForHarmonizationOf" bundle="SIADAP_RESOURCES"/>: </strong>
 		<fr:view name="person" property="harmozationUnits">
 			<fr:schema type="module.siadap.domain.wrappers.UnitSiadapWrapper" bundle="SIADAP_RESOURCES">
 				<fr:slot name="unit.partyName"  key="label.unit" bundle="ORGANIZATION_RESOURCES" />
@@ -146,6 +155,8 @@
 <logic:notPresent name="person">
 <strong><bean:message bundle="SIADAP_RESOURCES" key="label.noconfiguration"/> <a href="mailto:suporte@ist.utl.pt" ><bean:message bundle="SIADAP_RESOURCES" key="label.here" /></a></strong>
 </logic:notPresent>
+<!-- 
 <jsp:include page="/module/siadap/tracFeedBackSnip.jsp">	
    <jsp:param name="href" value="https://fenix-ashes.ist.utl.pt/trac/siadap/report/13" />	
 </jsp:include>
+ -->

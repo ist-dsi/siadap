@@ -5,10 +5,12 @@
 <%@ taglib uri="/WEB-INF/struts-logic.tld" prefix="logic"%>
 <%@ taglib uri="/WEB-INF/fenix-renderers.tld" prefix="fr"%>
 
-<h2>
+<!-- 
+<h3>
 	<bean:message key="title.createSiadap" arg0="<%=String.valueOf(request.getAttribute("year"))%>" bundle="SIADAP_RESOURCES"/>
-</h2>
-
+</h3>
+ -->
+ 
 <fr:view name="peopleToEvaluate">
 		<fr:schema type="module.siadap.domain.wrappers.PersonSiadapWrapper" bundle="SIADAP_RESOURCES">
 			<fr:slot name="person.partyName" key="label.evaluated"/>
