@@ -5,69 +5,19 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringReader;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.HashSet;
+import java.util.Set;
 
-import module.organization.domain.Accountability;
-import module.organization.domain.AccountabilityType;
-import module.organization.domain.Party;
-import module.organization.domain.Person;
-import module.organization.domain.Unit;
-import module.organization.domain.predicates.PartyPredicate;
 import module.organizationIst.domain.listner.LoginListner;
-import module.siadap.domain.SiadapYearConfiguration;
 import myorg.domain.User;
 import myorg.domain.scheduler.ReadCustomTask;
 import myorg.domain.scheduler.TransactionalThread;
 
-import org.apache.commons.lang.StringUtils;
-import org.joda.time.LocalDate;
-
-import pt.ist.expenditureTrackingSystem.domain.organization.CostCenter;
-import pt.ist.fenixframework.pstm.AbstractDomainObject;
-import pt.utl.ist.fenix.tools.util.i18n.MultiLanguageString;
-
-public class ImportSiadapStructure extends ReadCustomTask {
-
-    Map<Integer, List<Evaluator>> avaliators = new HashMap<Integer, List<Evaluator>>();
-    List<Responsible> responsibles = new ArrayList<Responsible>();
-    //    public static Map<String, String> unknownUsersMap = new HashMap<String, String>();
+public class ImportGivenUsersFromFenix extends ReadCustomTask {
 
     public static final boolean debugModeOn = true;
 
-    /**
-     * Contains all of the User objects that have been mapped by this script
-     */
-    //    public static Set<User> mappedUsers = new HashSet<User>();
-
-    /**
-     * Assert if one should go over the Evaluation relations and end them if the
-     * users aren't on this script. NOTE: Basicly this removes the previous
-     * users that weren't on the list and should only be done if the evaluation
-     * relation is exclusive to SIADAP under the penalty of messing up another
-     * relation having an unwanted impact on other Workflows/applications
-     */
-    public static final boolean removeEvaluationRelationsForUnmappedUsers = false;
-    private static boolean inDevelopmentSystem = false;
-
-    //    static {
-    //	unknownUsersMap.put("ist25068", "Pedro Miguel Simões Coito");
-    //	unknownUsersMap.put("ist25072", "Alvarinho Carvalho do Espirito Santo");
-    //	unknownUsersMap.put("ist25079", "Adolfo Pereira Moura");
-    //	unknownUsersMap.put("ist25095", "Marcelo Gurgel Figueiredo Moleiro");
-    //	unknownUsersMap.put("ist25096", "Rute Catarina Panaças Guerreiro");
-    //	unknownUsersMap.put("ist25104", "Teresa Jacinto de Oliveira Marques");
-    //	unknownUsersMap.put("ist25106", "Miriam Mano Ferreira");
-    //	unknownUsersMap.put("ist25109", "Elisabete Moreira de Oliveira Pino");
-    //	unknownUsersMap.put("ist25110", "Dino Rodrigues Pereira das Neves");
-    //	unknownUsersMap.put("ist25111", "Fábio André Duarte Morgado");
-    //	unknownUsersMap.put("ist25112", "Hugo Alexandre Gonçalves Furtado");
-    //	unknownUsersMap.put("ist25115", "Sandra Nazaré Gomes da Fonseca");
-    //	unknownUsersMap.put("ist25118", "Joana Alves Lindinho Nunes de Castro");
-    //	unknownUsersMap.put("ist25121", "Aurora Bonfim de Carvalho Oliveira");
-    //	unknownUsersMap.put("ist25125", "Tiago Luís Ramos Silva Machado");
-    //    }
+    Set<User> existingUsers = new HashSet<User>();
 
     ArrayList<String> costCentersMartelados = new ArrayList<String>();
 
@@ -318,10 +268,8 @@ public class ImportSiadapStructure extends ReadCustomTask {
     @Override
     public void doIt() {
 	try {
-	    //	    FileInputStream fstream = new FileInputStream("/home/joantune/CIIST-Wspace/siadap-import-with-adist.csv");
 	    StringReader csvContentReader = new StringReader(csvContent);
-	    // Get the object of DataInputStream
-	    //	    DataInputStream in = new DataInputStream(fstream);
+
 	    BufferedReader br = new BufferedReader(csvContentReader);
 	    String strLine;
 	    // Read File Line By Line
@@ -334,251 +282,48 @@ public class ImportSiadapStructure extends ReadCustomTask {
 	    out.println("Error: " + e.getMessage());
 	}
 
-	out.println(avaliators.size());
+	out.println("Found " + existingUsers.size() + " users");
 
-	for (Integer costCenter : avaliators.keySet()) {
-	    ProcessCostCenter proccessCostCenter = new ProcessCostCenter(costCenter, avaliators.get(costCenter), responsibles,
-		    out, costCentersMartelados);
-	    proccessCostCenter.start();
-	    try {
-		proccessCostCenter.join();
-	    } catch (InterruptedException e) {
-		throw new Error(e);
-	    }
+	ProcessUsersImport processUsersImport = new ProcessUsersImport(existingUsers, out);
 
+	processUsersImport.start();
+	try {
+	    processUsersImport.join();
+	} catch (InterruptedException e) {
+	    throw new Error(e);
 	}
-
-	migrateStuff();
 
     }
 
-    public static class ProcessWorkers extends TransactionalThread {
-	Map<Integer, List<Evaluator>> avaliators;
-	Integer costCenter;
-	ArrayList<String> costCentersMartelados;
+    public static class ProcessUsersImport extends TransactionalThread {
+	Set<User> existingUsers;
 	PrintWriter out;
 
-	public ProcessWorkers(Integer costCenter, Map<Integer, List<Evaluator>> avaliators,
-		ArrayList<String> costCentersMartelados, PrintWriter out) {
-	    this.costCenter = costCenter;
-	    this.avaliators = avaliators;
-	    this.costCentersMartelados = costCentersMartelados;
+	public ProcessUsersImport(Set<User> existingUsers, PrintWriter out) {
+	    this.existingUsers = existingUsers;
 	    this.out = out;
 	}
 
 	@Override
 	public void transactionalRun() {
-	    final LocalDate today = new LocalDate();
-	    final LocalDate startOfTheYear = new LocalDate(today.getYear(), 1, 1);
-	    final LocalDate endOfTheYear = new LocalDate(today.getYear(), 12, 31);
-	    SiadapYearConfiguration configuration = SiadapYearConfiguration.getSiadapYearConfiguration(today.getYear());
-	    final AccountabilityType evaluationRelation = configuration.getEvaluationRelation();
-	    AccountabilityType workingRelation = configuration.getWorkingRelation();
-	    AccountabilityType workingRelationWithNoQuota = configuration.getWorkingRelationWithNoQuota();
-	    PartyPredicate evalForYearPredicate = new AccTypeForGivenYearClassPredicate(evaluationRelation, today, null);
-	    List<Evaluator> evaluators = avaliators.get(costCenter);
-	    String centerString = costCenter.toString();
-	    if (evaluationRelation == null)
-		throw new Error("Holy crap!");
-	    if (centerString.length() == 1) {
-		centerString = "000" + centerString;
-	    }
-	    CostCenter c = (CostCenter) CostCenter.findUnitByCostCenter(centerString);
-	    c = validateCCenter(centerString, c, costCentersMartelados);
-	    Unit unit = c.getUnit();
 
-	    for (Evaluator evaluator : evaluators) {
-		Person evaluatorPerson = evaluator.getUser().getPerson();
-		if (evaluatorPerson == null) {
-		    out.println("WTF: " + evaluator.getUser().getUsername());
-		}
-		if (evaluatorPerson.getParentUnits(evaluationRelation) == null) {
-		    out.println("WTF-relation for: " + evaluator.getUser().getUsername());
-		}
+	    debug("Starting thread", out);
 
-		PartyPredicate parentEvalUnitsCurrentDate = new AccTypeForGivenYearClassPredicate(evaluationRelation, today,
-			Unit.class);
+	    int nrOfUsersImported = 0;
 
-		boolean isResponsible = evaluatorPerson.getParents(parentEvalUnitsCurrentDate).contains(unit);
-		for (Evaluated evaluated : evaluator.evaluated) {
-		    User user = evaluated.getUser();
-		    boolean adist = evaluated.getAdist();
-		    if (user == null) {
-			out.println(evaluated.istId + " NO USER");
-			user = new User(evaluated.istId);
-		    }
-		    Person evaluatedPerson = user.getPerson();
-		    if (evaluatedPerson == null) {
-			out.println(evaluated.istId + " NO PERSON");
-
-			if (inDevelopmentSystem) {
-
-			    Person p = Person.create(MultiLanguageString.i18n().add("pt", "DUMMY USER").finish(),
-				    Person.getPartyTypeInstance());
-			    p.setUser(user);
-			} else {
-
-			    LoginListner.importUserInformation(evaluated.istId);
-			}
-			evaluatedPerson = user.getPerson();
-			if (evaluatedPerson == null)
-			    throw new Error("Error, creation of person for user " + evaluated.istId + " didn't succeeded");
-		    }
-
-		    PartyPredicate workingPartyPredicate = new AccTypeForGivenYearClassPredicate(workingRelation, today, null);
-		    PartyPredicate workingNoQuotaPartyPredicate = new AccTypeForGivenYearClassPredicate(
-			    workingRelationWithNoQuota, today, null);
-
-		    for (Accountability acc : evaluatedPerson.getParentAccountabilities()) {
-			if (acc.getParent() != unit
-				&& (workingPartyPredicate.eval(null, acc) || workingNoQuotaPartyPredicate.eval(null, acc))
-				&& acc.getParent() instanceof Unit) {
-			    //remove
-			    debug("Going to remove previous working relation for " + acc.getChild().getPartyName() + " "
-				    + acc.getDetailsString() + " from unit " + acc.getParent().getPresentationName(), out);
-			    evaluatedPerson.removeParent(acc);
-			}
-		    }
-
-		    if (!adist && !unit.getChildren(workingPartyPredicate).contains(evaluatedPerson)) {
-			evaluatedPerson.addParent(unit, workingRelation, minParentExistence(unit, startOfTheYear), endOfTheYear);
-		    }
-		    if (adist && !unit.getChildren(workingNoQuotaPartyPredicate).contains(evaluatedPerson)) {
-			evaluatedPerson.addParent(unit, workingRelationWithNoQuota, minParentExistence(unit, startOfTheYear),
-				endOfTheYear);
-		    }
-		    if (!isResponsible) {
-			for (Accountability acc : evaluatedPerson.getParentAccountabilities()) {
-			    if (acc.getParent() != evaluatorPerson && evalForYearPredicate.eval(evaluatedPerson, acc)
-				    && acc.getChild() instanceof Person && acc.getParent() instanceof Person) {
-				//remove
-				debug("Going to remove previous personal eval rel for " + acc.getChild().getPartyName() + " "
-					+ acc.getDetailsString() + " with unit " + acc.getParent().getPresentationName(), out);
-				evaluatedPerson.removeParent(acc);
-			    }
-			}
-			if (!evaluatorPerson.getChildren(evalForYearPredicate).contains(evaluatedPerson)) {
-			    evaluatedPerson.addParent(evaluatorPerson, evaluationRelation,
-				    minParentExistence(evaluatorPerson, startOfTheYear), endOfTheYear);
-			}
-		    }
+	    //for each user let's get the remote person
+	    for (User user : existingUsers) {
+		if (user.getPerson() == null || user.getPerson().getRemotePerson() == null
+			|| user.getPerson().getRemotePerson().getEmailForSendingEmails() == null) {
+		    LoginListner.importUserInformation(user.getUsername());
+		    debug("Imported info for user " + user.getUsername() + " remote object is null? : "
+			    + (user.getPerson().getRemotePerson() == null), out);
 		}
 	    }
 
-	}
-
-    }
-
-    public static LocalDate minParentExistence(final Party party, final LocalDate localDate) {
-	LocalDate min = null;
-	for (final Accountability accountability : party.getParentAccountabilitiesSet()) {
-	    final LocalDate beginDate = accountability.getBeginDate();
-	    if (min == null || min.isAfter(beginDate)) {
-		min = beginDate;
-	    }
-	}
-	if (min == null) {
-	    throw new Error("????");
-	}
-	return min.isBefore(localDate) ? localDate : min;
-    }
-
-    public static class ProcessResponsibles extends TransactionalThread {
-
-	List<Responsible> responsibles;
-	PrintWriter out;
-
-	public ProcessResponsibles(List<Responsible> responsibles, PrintWriter out) {
-	    this.responsibles = responsibles;
-	    this.out = out;
-	}
-
-	@Override
-	public void transactionalRun() {
-	    final LocalDate today = new LocalDate();
-	    final LocalDate startOfTheYear = new LocalDate(today.getYear(), 1, 1);
-	    final LocalDate endOfTheYear = new LocalDate(today.getYear(), 12, 31);
-	    SiadapYearConfiguration configuration = SiadapYearConfiguration.getSiadapYearConfiguration(today.getYear());
-	    final AccountabilityType evaluationRelation = configuration.getEvaluationRelation();
-
-	    PartyPredicate evalForYearPredicate = new AccTypeForGivenYearClassPredicate(evaluationRelation, today, null);
-	    // TODO Auto-generated method stub
-	    for (Responsible responsible : responsibles) {
-		Unit unit = responsible.getCenter().getUnit();
-		Person person = responsible.getUser().getPerson();
-		//let's remove the previous responsibles
-		for (Accountability acc : unit.getChildAccountabilities()) {
-		    if (acc.getChild() != person && evalForYearPredicate.eval(acc.getChild(), acc)) {
-			debug("Going to remove previous responsible " + acc.getChild().getPartyName() + " "
-				+ acc.getDetailsString() + " from unit " + unit.getPresentationName(), out);
-			acc.getChild().removeParent(acc);
-		    }
-		}
-		if (!unit.getChildren(evalForYearPredicate).contains(person)) {
-		    LocalDate startDate = minParentExistence(unit, startOfTheYear);
-		    person.addParent(unit, evaluationRelation, startDate, endOfTheYear);
-		    debug("Really added the responsible " + responsible.getUser().getUsername() + " to cc "
-			    + responsible.getCenter().getCostCenter() + " starting at " + startDate + " ending at "
-			    + endOfTheYear, out);
-		}
-	    }
 
 	}
-    }
-
-    public static class ProcessCostCenter extends TransactionalThread {
-	Integer costCenterBeingProcessed;
-	List<Evaluator> listEvaluators;
-	List<Responsible> responsibles;
-	PrintWriter out;
-	ArrayList<String> costCentersMartelados;
-
-	public ProcessCostCenter(Integer processCostCenter, List<Evaluator> listEvaluators, List<Responsible> responsibles,
-		PrintWriter out, ArrayList<String> costCentersMartelados) {
-	    this.costCenterBeingProcessed = processCostCenter;
-	    this.listEvaluators = listEvaluators;
-	    this.responsibles = responsibles;
-	    this.out = out;
-	    this.costCentersMartelados = costCentersMartelados;
-	}
-
-	@Override
-	public void transactionalRun() {
-	    List<Evaluator> evaluators = listEvaluators;
-	    String centerString = costCenterBeingProcessed.toString();
-	    if (centerString.length() == 1) {
-		centerString = "000" + centerString;
-	    }
-	    CostCenter c = (CostCenter) CostCenter.findUnitByCostCenter(centerString);
-	    c = validateCCenter(centerString, c, costCentersMartelados);
-	    Person responsible = null;
-	    int max = 0;
-	    for (Evaluator evaluator : evaluators) {
-		User user = User.findByUsername(evaluator.istId);
-		if (user == null) {
-		    user = User.createNewUser(evaluator.istId);
-		    out.println("Created user: " + evaluator.istId);
-		}
-		if (user.getPerson() == null) {
-		    if (inDevelopmentSystem) {
-
-			Person p = Person.create(MultiLanguageString.i18n().add("pt", "DUMMY USER").finish(),
-				Person.getPartyTypeInstance());
-			p.setUser(user);
-		    } else {
-			LoginListner.importUserInformation(evaluator.istId);
-
-		    }
-
-		}
-		if (evaluator.size() > max) {
-		    responsible = user.getPerson();
-		    max = evaluator.size();
-		}
-	    }
-	    debug("Added responsible for cc " + c.getCostCenter() + " the " + responsible.getUser().getUsername(), out);
-	    responsibles.add(new Responsible(responsible.getUser(), c));
-	}
+	   
 
     }
 
@@ -593,74 +338,7 @@ public class ImportSiadapStructure extends ReadCustomTask {
     //	    mappedUsers.add(user);
     //    }
 
-    static protected CostCenter validateCCenter(String centerString, CostCenter c, ArrayList<String> costCentersMartelados)
-	    throws Error {
-	if (c == null) {
-	    Integer cc = Integer.valueOf(centerString);
-	    String newCenterString = String.valueOf(cc.intValue() + 1);
-	    c = (CostCenter) CostCenter.findUnitByCostCenter(newCenterString);
-	    if (c == null)
-		throw new Error("Cost center " + centerString + " wasn't found");
-	    else {
-
-		costCentersMartelados.add("Cost center " + centerString + " wasn't found but " + newCenterString + " was");
-
-	    }
-	}
-	return c;
-    }
-
-    static class AccTypeForGivenYearClassPredicate extends PartyPredicate {
-	AccountabilityType evaluationRelation;
-	LocalDate date;
-	Class<? extends Party> typeToUse;
-
-	public AccTypeForGivenYearClassPredicate(AccountabilityType evaluationRelation, LocalDate date,
-		Class<? extends Party> typeToUse) {
-	    this.evaluationRelation = evaluationRelation;
-	    this.date = date;
-	    this.typeToUse = typeToUse;
-	}
-
-	@Override
-	public boolean eval(Party party, Accountability accountability) {
-	    AccountabilityType accType = accountability.getAccountabilityType();
-	    return (hasClass(typeToUse, party) && accType == evaluationRelation && accountability.isActive(date));
-	}
-
-	@Override
-	protected boolean hasClass(final Class<? extends Party> clazz, final Party party) {
-	    return clazz == null || clazz.isAssignableFrom(party.getClass());
-	}
-
-    }
-
-    private void migrateStuff() {
-	ProcessResponsibles processResponsibles = new ProcessResponsibles(responsibles, out);
-
-	processResponsibles.start();
-	try {
-	    processResponsibles.join();
-	} catch (InterruptedException e) {
-	    throw new Error(e);
-	}
-
-	for (Integer costCenter : avaliators.keySet()) {
-	    ProcessWorkers processWorkers = new ProcessWorkers(costCenter, avaliators, costCentersMartelados, out);
-	    processWorkers.start();
-	    try {
-		processWorkers.join();
-	    } catch (InterruptedException e) {
-		throw new Error(e);
-	    }
-
-	}
-	out.println("DONE importing the list!");
-	for (String string : costCentersMartelados) {
-	    out.println(string);
-	}
-
-    }
+  
 
     private static void debug(String message, PrintWriter out) {
 
@@ -687,98 +365,11 @@ public class ImportSiadapStructure extends ReadCustomTask {
 	Integer ccNumber = Integer.valueOf(cc);
 	String evaluatedId = values[1].trim();
 	String evaluatorId = values[2].trim();
-	Boolean adist = values.length == 4 ? values[3].trim().equals("1") : false;
 
-	if (StringUtils.isEmpty(evaluatorId)) {
-	    return;
-	}
+	//let's add each of the users to the map
 
-	List<Evaluator> evaluators = avaliators.get(ccNumber);
-	if (evaluators == null) {
-	    debug("Starting evalutors for " + cc);
-	    evaluators = new ArrayList<Evaluator>();
-	    avaliators.put(ccNumber, evaluators);
-	}
-	boolean added = false;
-	for (Evaluator evaluator : evaluators) {
-	    if (evaluator.match(evaluatorId)) {
-		added = true;
-		debug("Adding existing evaluator " + evaluatorId + " for " + cc + "adist: " + adist);
-		evaluator.addEvaluated(evaluatedId, adist);
-	    }
-	}
-	if (!added) {
-	    debug("New evaluator " + evaluatorId + " for " + cc + " adist: " + adist);
-	    Evaluator evaluator = new Evaluator(evaluatorId);
-	    evaluator.addEvaluated(evaluatedId, adist);
-	    evaluators.add(evaluator);
-	}
-    }
-
-    public static class Evaluator {
-	String istId;
-	List<Evaluated> evaluated;
-
-	public Evaluator(String istId) {
-	    //	    addMappedUserByUsername(istId);
-	    this.istId = istId.trim();
-	    evaluated = new ArrayList<Evaluated>();
-	}
-
-	public void addEvaluated(String istId, Boolean adist) {
-	    //	    addMappedUserByUsername(istId);
-	    evaluated.add(new Evaluated(istId, adist));
-	}
-
-	public boolean match(String istId) {
-	    return this.istId.equals(istId);
-	}
-
-	public int size() {
-	    return evaluated.size();
-	}
-
-	public User getUser() {
-	    return User.findByUsername(istId);
-	}
-    }
-
-    public static class Evaluated {
-	String istId;
-	Boolean adist;
-
-	public Evaluated(String istId, Boolean adist) {
-	    this.istId = istId.trim();
-	    this.adist = adist;
-	    //	    addMappedUserByUsername(this.istId);
-	}
-
-	public boolean getAdist() {
-	    return adist;
-	}
-
-	public User getUser() {
-	    return User.findByUsername(istId);
-	}
-    }
-
-    public static class Responsible {
-	String userOId;
-	String costCenterOId;
-
-	public Responsible(User user, CostCenter center) {
-	    //	    mappedUsers.add(user);
-	    this.userOId = user.getExternalId();
-	    this.costCenterOId = center.getExternalId();
-	}
-
-	public User getUser() {
-	    return AbstractDomainObject.fromExternalId(userOId);
-	}
-
-	public CostCenter getCenter() {
-	    return AbstractDomainObject.fromExternalId(costCenterOId);
-	}
+	existingUsers.add(User.findByUsername(evaluatorId));
+	existingUsers.add(User.findByUsername(evaluatedId));
 
     }
 
