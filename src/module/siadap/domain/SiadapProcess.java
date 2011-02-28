@@ -26,6 +26,7 @@ import module.siadap.activities.SealObjectivesAndCompetences;
 import module.siadap.activities.SubmitForObjectivesAcknowledge;
 import module.siadap.activities.ValidateEvaluation;
 import module.siadap.domain.wrappers.PersonSiadapWrapper;
+import module.siadap.domain.wrappers.SiadapProcessStateEnum;
 import module.workflow.activities.ActivityInformation;
 import module.workflow.activities.WorkflowActivity;
 import module.workflow.domain.LabelLog;
@@ -167,4 +168,9 @@ public class SiadapProcess extends SiadapProcess_Base {
     public boolean isTicketSupportAvailable() {
 	return false;
     }
+
+    public boolean isNotSubmittedForConfirmation() {
+	return SiadapProcessStateEnum.isNotSubmittedForConfirmation(getSiadap());
+    }
+
 }

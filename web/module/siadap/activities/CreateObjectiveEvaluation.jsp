@@ -1,3 +1,4 @@
+<%@page import="module.siadap.domain.SiadapProcess"%>
 <%@page import="module.siadap.activities.CreateObjectiveEvaluationActivityInformation"%>
 <%@page import="module.siadap.activities.EditObjectiveEvaluationActivityInformation"%>
 <%@page import="module.workflow.activities.ActivityInformation"%>
@@ -13,8 +14,8 @@
 
 <div class="dinline forminline">
 <% ActivityInformation ai = (ActivityInformation) request.getAttribute("information"); 
-		
-		boolean shouldTypeBeEditable = (ai instanceof EditObjectiveEvaluationActivityInformation) ? false : true;
+		SiadapProcess siadapProcess = (SiadapProcess) request.getAttribute("process");
+		boolean shouldTypeBeEditable =  siadapProcess.isNotSubmittedForConfirmation() ; //(ai instanceof EditObjectiveEvaluationActivityInformation) ? false : true;
 		request.setAttribute("shouldTypeBeEditable", shouldTypeBeEditable);
 %>
 

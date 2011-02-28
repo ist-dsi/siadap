@@ -107,4 +107,9 @@ public enum SiadapProcessStateEnum implements IPresentableEnum {
 
     }
 
+    public static boolean isNotSubmittedForConfirmation(final Siadap siadap) {
+	final SiadapProcessStateEnum state = getState(siadap);
+	return state.ordinal() <= NOT_YET_SUBMITTED_FOR_ACK.ordinal();
+    }
+
 }

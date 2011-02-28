@@ -66,4 +66,5 @@ public class EditObjectiveEvaluationActivityInformation extends
 	public boolean isEmployJustification() {
 		return employJustification;
 	}
+
 }
