@@ -28,6 +28,7 @@
 			<fr:property name="subLayout" value="values"/>
 			<fr:property name="subSchema" value="view.PersonSiadapWrapper.name"/>
 		</fr:slot>
+		<fr:slot name="person.user.username" key="label.username" />
 	</fr:schema>
 	<fr:layout name="tabular">
 		<fr:property name="classes" value="tstyle2"/>

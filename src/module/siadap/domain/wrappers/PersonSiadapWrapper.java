@@ -25,6 +25,7 @@ import myorg.domain.exceptions.DomainException;
 import org.apache.commons.collections.Predicate;
 import org.joda.time.LocalDate;
 
+import pt.ist.fenixWebFramework.services.Service;
 import pt.utl.ist.fenix.tools.util.i18n.MultiLanguageString;
 
 public class PersonSiadapWrapper extends PartyWrapper implements Serializable {
@@ -264,6 +265,7 @@ public class PersonSiadapWrapper extends PartyWrapper implements Serializable {
 	}
     }
 
+    @Service
     public void changeWorkingUnitTo(Unit unit, Boolean withQuotas, LocalDate dateOfChange) {
 	verifyDate(dateOfChange);
 	LocalDate now = new LocalDate();

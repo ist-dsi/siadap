@@ -29,10 +29,10 @@
 <fr:edit id="searchPerson" name="bean" action="<%="/siadapPersonnelManagement.do?method=viewPerson&year=" + year.toString()%>" >
 <fr:schema type="myorg.util.VariantBean" bundle="SIADAP_RESOURCES">
 		<fr:slot name="domainObject" layout="autoComplete" key="label.person" bundle="ORGANIZATION_RESOURCES">
-        <fr:property name="labelField" value="partyName.content"/>
-		<fr:property name="format" value="${presentationName}"/>
+        <fr:property name="labelField" value="name"/>
+		<fr:property name="format" value="${name} (${user.username})"/>
 		<fr:property name="minChars" value="3"/>		
-		<fr:property name="args" value="provider=module.organization.presentationTier.renderers.providers.PersonAutoCompleteProvider"/>
+		<fr:property name="args" value="provider=pt.ist.expenditureTrackingSystem.presentationTier.renderers.autoCompleteProvider.PersonAutoComplete"/>
 		<fr:property name="size" value="60"/>
 		<fr:validator name="pt.ist.fenixWebFramework.rendererExtensions.validators.RequiredAutoCompleteSelectionValidator">
 			<fr:property name="message" value="label.pleaseSelectOne.person"/>
