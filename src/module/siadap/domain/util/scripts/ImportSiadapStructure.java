@@ -269,9 +269,10 @@ public class ImportSiadapStructure extends ReadCustomTask {
 	    + "6215,ist24988,ist24661,1\n" + "6215,ist24989,ist24661,1\n" + "6215,ist90394,ist24661,1\n"
 	    + "6215,ist24075,ist24661,1\n" + "6215,ist25164,ist24661,1\n" + "6223,ist90111,ist23570,1\n"
 	    + "6224,ist24120,ist21903,1\n" + "6224,ist24964,ist21903,1\n" + "6224,ist24966,ist21903,1\n"
-	    + "6224,ist24450,ist21903,1\n" + "6241,ist24960,ist24588,1\n" + "6242,ist25130,ist25185,1\n"
-	    + "6242,ist24645,ist25185,1\n" + "6242,ist25145,ist25185,1\n" + "6243,ist24389,ist24588,1\n"
-	    + "6243,ist24980,ist24588,1\n" + "6243,ist24062,ist24588,1\n" + "6400,ist24875,ist21846,1\n"
+	    + "6224,ist24450,ist21903,1\n" + "6241,ist25187,ist24588,1\n" + "6241,ist24724,ist24588,1\n"
+	    + "6242,ist24960,ist25185,1\n" + "6242,ist24645,ist25185,1\n" + "6242,ist25130,ist25185,1\n"
+	    + "6242,ist25145,ist25185,1\n" + "6243,ist24062,ist24588,1\n" + "6243,ist24389,ist24588,1\n"
+	    + "6243,ist141687,ist13085,1\n" + "6243,ist24980,ist24588,1\n" + "6400,ist24875,ist21846,1\n"
 	    + "6400,ist25096,ist24877,1\n" + "6401,ist25136,ist24877,1\n" + "6410,ist90385,ist23932,1\n"
 	    + "6412,ist24064,ist22752,1\n" + "6413,ist24688,ist22751,1\n" + "6413,ist24726,ist22751,1\n"
 	    + "6420,ist32949,ist23932,1\n" + "6300,ist24979,ist23470,1\n" + "6300,ist24981,ist23470,1\n"
@@ -301,19 +302,19 @@ public class ImportSiadapStructure extends ReadCustomTask {
 	    + "2040,ist24844,ist24757,1\n" + "2040,ist25166,ist24757,1\n" + "2040,ist24278,ist24757,1\n"
 	    + "2110,ist24273,ist11453,1\n" + "1601,ist24626,ist12760,1\n" + "2115,ist136657,ist12403,1\n"
 	    + "1134,ist25104,ist11029,1\n" + "2801,ist24537,ist13085,1\n" + "2801,ist24322,ist13085,1\n"
-	    + "2801,ist141687,ist13085,1\n" + "2801,ist24330,ist13085,1\n" + "2201,ist24260,ist12272,1\n"
-	    + "1137,ist145517,ist12361,1\n" + "1137,ist32386,ist12361,1\n" + "1137,ist25184,ist12361,1\n"
-	    + "1145,ist24206,ist11063,1\n" + "1145,ist149536,ist11063,1\n" + "1145,ist25182,ist11063,1\n"
-	    + "1145,ist24658,ist23844,1\n" + "1145,ist24668,ist23844,1\n" + "1145,ist25132,ist23913,1\n"
-	    + "8050,ist24507,ist11648,1\n" + "8050,ist25025,ist11648,1\n" + "8050,ist25111,ist11648,1\n"
-	    + "8051,ist24435,ist23868,1\n" + "8052,ist24426,ist22778,1\n" + "8052,ist24430,ist22778,1\n"
-	    + "8052,ist24438,ist22778,1\n" + "8052,ist24533,ist22778,1\n" + "8052,ist24733,ist22778,1\n"
-	    + "8052,ist24734,ist22778,1\n" + "8052,ist24743,ist22778,1\n" + "8052,ist24784,ist22778,1\n"
-	    + "8052,ist24787,ist22778,1\n" + "8052,ist25118,ist22778,1\n" + "8053,ist163826,ist23835,1\n"
-	    + "8053,ist24428,ist23835,1\n" + "8054,ist24785,ist23872,1\n" + "8054,ist25026,ist23872,1\n"
-	    + "8054,ist24427,ist23872,1\n" + "8054,ist24429,ist23872,1\n" + "8055,ist24432,ist11648,1\n"
-	    + "8055,ist24433,ist11648,1\n" + "8055,ist24732,ist11648,1\n" + "8055,ist151317,ist11648,1\n"
-	    + "8055,ist24848,ist11648,1\n" + "8055,ist24881,ist11648,1\n");
+	    + "2801,ist24330,ist13085,1\n" + "2201,ist24260,ist12272,1\n" + "1137,ist145517,ist12361,1\n"
+	    + "1137,ist32386,ist12361,1\n" + "1137,ist25184,ist12361,1\n" + "1145,ist24206,ist11063,1\n"
+	    + "1145,ist149536,ist11063,1\n" + "1145,ist25182,ist11063,1\n" + "1145,ist24658,ist23844,1\n"
+	    + "1145,ist24668,ist23844,1\n" + "1145,ist25132,ist23913,1\n" + "8050,ist24507,ist11648,1\n"
+	    + "8050,ist25025,ist11648,1\n" + "8050,ist25111,ist11648,1\n" + "8051,ist24435,ist23868,1\n"
+	    + "8052,ist24426,ist22778,1\n" + "8052,ist24430,ist22778,1\n" + "8052,ist24438,ist22778,1\n"
+	    + "8052,ist24553,ist22778,1\n" + "8052,ist24733,ist22778,1\n" + "8052,ist24734,ist22778,1\n"
+	    + "8052,ist24743,ist22778,1\n" + "8052,ist24784,ist22778,1\n" + "8052,ist24787,ist22778,1\n"
+	    + "8052,ist25118,ist22778,1\n" + "8053,ist163826,ist23835,1\n" + "8053,ist24428,ist23835,1\n"
+	    + "8054,ist24785,ist23872,1\n" + "8054,ist25026,ist23872,1\n" + "8054,ist24427,ist23872,1\n"
+	    + "8054,ist24429,ist23872,1\n" + "8055,ist24432,ist11648,1\n" + "8055,ist24433,ist11648,1\n"
+	    + "8055,ist24732,ist11648,1\n" + "8055,ist151317,ist11648,1\n" + "8055,ist24848,ist11648,1\n"
+	    + "8055,ist24881,ist11648,1\n");
 
     @Override
     public void doIt() {
@@ -447,9 +448,9 @@ public class ImportSiadapStructure extends ReadCustomTask {
 			evaluatedPerson.addParent(unit, workingRelationWithNoQuota, minParentExistence(unit, startOfTheYear),
 				endOfTheYear);
 		    }
-		    if (!isResponsible) {
-			for (Accountability acc : evaluatedPerson.getParentAccountabilities()) {
-			    if (acc.getParent() != evaluatorPerson && evalForYearPredicate.eval(evaluatedPerson, acc)
+		    //let's remove any custom eval relations that might be present for this evaluatedPerson
+		    for (Accountability acc : evaluatedPerson.getParentAccountabilities()) {
+			    if (!acc.getParent().equals(evaluatorPerson) && evalForYearPredicate.eval(evaluatedPerson, acc)
 				    && acc.getChild() instanceof Person && acc.getParent() instanceof Person) {
 				//remove
 				debug("Going to remove previous personal eval rel for " + acc.getChild().getPartyName() + " "
@@ -457,6 +458,8 @@ public class ImportSiadapStructure extends ReadCustomTask {
 				evaluatedPerson.removeParent(acc);
 			    }
 			}
+		    if (!isResponsible) {
+
 			if (!evaluatorPerson.getChildren(evalForYearPredicate).contains(evaluatedPerson)) {
 			    evaluatedPerson.addParent(evaluatorPerson, evaluationRelation,
 				    minParentExistence(evaluatorPerson, startOfTheYear), endOfTheYear);
