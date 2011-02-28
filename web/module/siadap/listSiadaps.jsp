@@ -1,3 +1,4 @@
+<%@page import="module.siadap.domain.wrappers.SiadapYearWrapper"%>
 <%@page import="module.siadap.domain.wrappers.PersonSiadapWrapper"%>
 <%@page import="module.organization.domain.Person"%>
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
@@ -122,8 +123,12 @@
 		<bean:message bundle="SIADAP_RESOURCES" key="siadap.nr.processes.with.unread.comments.label"/>: <bean:write name="person" property="nrPersonsWithUnreadComments"/>
 		<br/>
 
+<%
+SiadapYearWrapper siadapYearWrapper = (SiadapYearWrapper) request.getAttribute("siadapYearWrapper");%>
 	<bean:define id="peopleToEvaluate" name="person" property="peopleToEvaluate" toScope="request"/>
-	<jsp:include page="prepareCreateSiadap.jsp"/>
+	<jsp:include page="prepareCreateSiadap.jsp">
+		<jsp:param value="<%=siadapYearWrapper.getChosenYear()%>" name="year"/>
+	</jsp:include>
 </logic:notEmpty>
 
 <logic:notEmpty name="person" property="harmozationUnits">
