@@ -63,4 +63,13 @@ public class SiadapProcessCounter implements Serializable {
         return counts;
     }
 
+    public boolean hasAnyPendingProcesses() {
+	for (int i = 0; i < counts.length; i++) {
+	    if (i != 6 && counts[i] > 0) {
+		return true;
+	    }
+	}
+	return false;
+    }
+
 }
