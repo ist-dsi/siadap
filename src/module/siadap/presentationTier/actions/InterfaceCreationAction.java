@@ -62,4 +62,17 @@ public class InterfaceCreationAction extends BaseAction {
 
     }
 
+    @CreateNodeAction(bundle = "SIADAP_RESOURCES", key = "add.node.siadap.siadapProcessCountInterface", groupKey = "label.module.siadap")
+    public final ActionForward createSiadapProcessCountInterfaceNode(final ActionMapping mapping, final ActionForm form,
+	    final HttpServletRequest request, final HttpServletResponse response) throws Exception {
+	final VirtualHost virtualHost = getDomainObject(request, "virtualHostToManageId");
+	final Node node = getDomainObject(request, "parentOfNodesToManageId");
+
+	ActionNode.createActionNode(virtualHost, node, "/siadapProcessCount", "showUnit",
+		"resources.SiadapResources", "link.siadapProcessCount", Role.getRole(RoleType.MANAGER));
+
+	return forwardToMuneConfiguration(request, virtualHost, node);
+
+    }
+
 }

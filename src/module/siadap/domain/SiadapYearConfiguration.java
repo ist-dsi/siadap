@@ -143,6 +143,16 @@ public class SiadapYearConfiguration extends SiadapYearConfiguration_Base {
 	return null;
     }
 
+    public Siadap getSiadapFor(final Person person) {
+	final int year = getYear();
+	for (final Siadap siadap : person.getSiadapsAsEvaluated()) {
+	    if (siadap.getYear().intValue() == year) {
+		return siadap;
+	    }
+	}
+	return null;
+    }
+
     public static List<UnitSiadapWrapper> getAllHarmonizationUnitsFor(Integer year) {
 	SiadapYearConfiguration configuration = getSiadapYearConfiguration(year);
 	UnitSiadapWrapper unitSiadapWrapper = new UnitSiadapWrapper(configuration.getSiadapStructureTopUnit(), year);
