@@ -101,6 +101,7 @@ public class SiadapManagement extends ContextBaseAction {
 	request.setAttribute("configuration", siadapYearConfiguration);
 	request.setAttribute("addCCAMember", new VariantBean());
 	request.setAttribute("addHomologationMember", new VariantBean());
+	request.setAttribute("addScheduleExtenderMember", new VariantBean());
 	return forward(request, "/module/siadap/management/configuration.jsp");
     }
 
@@ -114,6 +115,17 @@ public class SiadapManagement extends ContextBaseAction {
 	SiadapYearConfiguration.addCCAMember(((Person) bean.getDomainObject()).getUser());
 	// TODO make the nodes access list to be updated
 	RenderUtils.invalidateViewState("ccaMember");
+	return showConfiguration(mapping, form, request, response);
+    }
+
+    public final ActionForward addScheduleExtenderMember(final ActionMapping mapping, final ActionForm form, final HttpServletRequest request,
+	    final HttpServletResponse response) {
+
+	SiadapYearConfiguration configuration = getDomainObject(request, "configurationId");
+	VariantBean bean = getRenderedObject("scheduleExtenderMember");
+	configuration.addScheduleExtenders(((Person) bean.getDomainObject()));
+	// TODO make the nodes access list to be updated
+	RenderUtils.invalidateViewState("scheduleExtenderMember");
 	return showConfiguration(mapping, form, request, response);
     }
 
@@ -138,6 +150,15 @@ public class SiadapManagement extends ContextBaseAction {
 	configuration.removeCcaMembers(person);
 	// remove them from the persistent group as well
 	SiadapYearConfiguration.removeCCAMember(person.getUser());
+	return showConfiguration(mapping, form, request, response);
+    }
+
+    public final ActionForward removeSchedulerExtenderMember(final ActionMapping mapping, final ActionForm form,
+	    final HttpServletRequest request, final HttpServletResponse response) {
+
+	SiadapYearConfiguration configuration = getDomainObject(request, "configurationId");
+	Person person = getDomainObject(request, "personId");
+	configuration.removeScheduleExtenders(person);
 	return showConfiguration(mapping, form, request, response);
     }
 

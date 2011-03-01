@@ -60,8 +60,16 @@ public class GetSiadapStatisticTotalCounts extends ReadCustomTask {
 	int nrOfSubmittedForAcknowledgement = 0;
 	int nrOfAcknowledged = 0;
 
+	boolean printedInexistantProcessUser = false;
+	boolean printedUnsealedProcessUser = false;
+	boolean printedUnsubmittedProcessUser = false;
+	boolean printedUnacknowledgedProcessUser = false;
+
+	boolean printOneOfEach = true;
+
 	for (User user : mappedUsers) {
 	    Siadap siadap = configuration.getSiadapFor(user.getPerson(), today.getYear());
+
 	    if (siadap != null) {
 		nrOfCreatedSiadapProcesses++;
 		if (siadap.getObjectivesAndCompetencesSealedDate() != null) {
@@ -72,15 +80,35 @@ public class GetSiadapStatisticTotalCounts extends ReadCustomTask {
 			if (evaluationItems != null && evaluationItems.size() >= 1
 				&& evaluationItems.get(0).getAcknowledgeDate() != null) {
 			    nrOfAcknowledged++;
+			    if (nrOfAcknowledged == 1 && printOneOfEach) {
+
+				out.println("User with an acknowledged process: " + user.getUsername());
+			    }
+			} //siadap process hasn't been acknowledged
+			else if (!printedUnacknowledgedProcessUser && printOneOfEach) {
+			    printedUnacknowledgedProcessUser = true;
+			    out.println("User with unacknowledged process: " + user.getUsername());
 			}
+		    } //siadap process hasn't been submited for acknowledgement
+		    else if (!printedUnsubmittedProcessUser && printOneOfEach) {
+			printedUnsubmittedProcessUser = true;
+			out.println("User with unsubmitted for ack process: " + user.getUsername());
+
 		    }
 
+		} //siadap processe hasn't been sealed
+		else if (!printedUnsealedProcessUser && printOneOfEach) {
+		    printedUnsealedProcessUser = true;
+		    out.println("User with unsealed process: " + user.getUsername());
 		}
 
+	    } //siadap process is null
+	    else if (!printedInexistantProcessUser && printOneOfEach) {
+		printedInexistantProcessUser = true;
+		out.println("User with no SIADAP process: " + user.getUsername());
 	    }
 	}
 
-	
 	out.println("Nr of SIADAP processes created: " + nrOfCreatedSiadapProcesses);
 	out.println("Nr of SIADAP processes sealed: " + nrOfSealedSiadapProcesses);
 	out.println("Nr of SIADAP processes submitted for acknowledgement: " + nrOfSubmittedForAcknowledgement);

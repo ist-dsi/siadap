@@ -17,6 +17,7 @@ import module.organization.domain.Person;
 import module.organization.domain.Unit;
 import module.siadap.domain.Siadap;
 import module.siadap.domain.SiadapProcess;
+import module.siadap.domain.SiadapProcessStateEnum;
 import module.siadap.domain.SiadapRootModule;
 import module.siadap.domain.SiadapYearConfiguration;
 import myorg.applicationTier.Authenticate.UserView;
@@ -319,6 +320,7 @@ public class PersonSiadapWrapper extends PartyWrapper implements Serializable {
 	return !getParentPersons(getConfiguration().getEvaluationRelation()).isEmpty();
     }
 
+    @Service
     public void removeCustomEvaluator() {
 	LocalDate now = new LocalDate();
 	AccountabilityType evaluationRelation = getConfiguration().getEvaluationRelation();

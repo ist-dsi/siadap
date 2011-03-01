@@ -10,6 +10,7 @@ import module.siadap.activities.AcknowledgeEvaluationObjectives;
 import module.siadap.activities.AcknowledgeEvaluationValidation;
 import module.siadap.activities.AcknowledgeHomologation;
 import module.siadap.activities.AutoEvaluation;
+import module.siadap.activities.ChangeCustomSchedule;
 import module.siadap.activities.CreateCompetenceEvaluation;
 import module.siadap.activities.CreateObjectiveEvaluation;
 import module.siadap.activities.EditCompetenceEvaluation;
@@ -26,7 +27,6 @@ import module.siadap.activities.SealObjectivesAndCompetences;
 import module.siadap.activities.SubmitForObjectivesAcknowledge;
 import module.siadap.activities.ValidateEvaluation;
 import module.siadap.domain.wrappers.PersonSiadapWrapper;
-import module.siadap.domain.wrappers.SiadapProcessStateEnum;
 import module.workflow.activities.ActivityInformation;
 import module.workflow.activities.WorkflowActivity;
 import module.workflow.domain.LabelLog;
@@ -44,6 +44,7 @@ public class SiadapProcess extends SiadapProcess_Base {
     private static List<WorkflowActivity<SiadapProcess, ? extends ActivityInformation<SiadapProcess>>> activities = new ArrayList<WorkflowActivity<SiadapProcess, ? extends ActivityInformation<SiadapProcess>>>();
 
     static {
+	activities.add(new ChangeCustomSchedule());
 	activities.add(new CreateObjectiveEvaluation());
 	activities.add(new RemoveObjectiveEvaluation());
 	activities.add(new CreateCompetenceEvaluation());
@@ -114,7 +115,8 @@ public class SiadapProcess extends SiadapProcess_Base {
 	SiadapYearConfiguration configuration = getSiadap().getSiadapYearConfiguration();
 	return person == getSiadap().getEvaluated() || person == getSiadap().getEvaluator().getPerson()
 		|| isResponsibleForHarmonization(person, getSiadap().getEvaluated()) || configuration.isPersonMemberOfCCA(person)
-		|| configuration.isPersonResponsibleForHomologation(person);
+		|| configuration.isPersonResponsibleForHomologation(person)
+		|| configuration.isPersonMemberOfScheduleExtenders(person);
     }
 
     private boolean isResponsibleForHarmonization(Person accessor, Person evaluated) {

@@ -7,8 +7,8 @@ import module.organization.domain.AccountabilityType;
 import module.organization.domain.Person;
 import module.organization.domain.Unit;
 import module.siadap.domain.Siadap;
+import module.siadap.domain.SiadapProcessStateEnum;
 import module.siadap.domain.SiadapYearConfiguration;
-import module.siadap.domain.wrappers.SiadapProcessStateEnum;
 
 import org.joda.time.LocalDate;
 

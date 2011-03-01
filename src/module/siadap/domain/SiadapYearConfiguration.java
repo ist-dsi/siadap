@@ -187,6 +187,15 @@ public class SiadapYearConfiguration extends SiadapYearConfiguration_Base {
 	super.removeHomologationMembers(homologationMembers);
     }
 
+    public boolean isCurrentUserMemberOfScheduleExtenders() {
+	return isPersonMemberOfScheduleExtenders(UserView.getCurrentUser().getPerson());
+
+    }
+
+    public boolean isPersonMemberOfScheduleExtenders(Person person) {
+	return getScheduleExtenders().contains(person);
+    }
+
     public boolean isPersonMemberOfCCA(Person person) {
 	return getCcaMembers().contains(person);
     }

@@ -173,6 +173,38 @@ public class Siadap extends Siadap_Base {
 
     }
 
+    /**
+     * @param processSchedulesEnum
+     *            the {@link SiadapProcessSchedulesEnum} which represents the
+     *            type of customschedule to change
+     * @param newDate
+     *            the new {@link LocalDate} which should be defined for the
+     *            given processSchedulesEnum
+     */
+    public void setCustomSchedule(SiadapProcessSchedulesEnum processSchedulesEnum, LocalDate newDate) {
+	switch (processSchedulesEnum) {
+	case OBJECTIVES_SPECIFICATION_BEGIN_DATE:
+	    setCustomObjectiveSpecificationBegin(newDate);
+	    break;
+	case OBJECTIVES_SPECIFICATION_END_DATE:
+	    setCustomObjectiveSpecificationEnd(newDate);
+	    break;
+	case AUTOEVALUATION_BEGIN_DATE:
+	    setCustomAutoEvaluationBegin(newDate);
+	    break;
+	case AUTOEVALUATION_END_DATE:
+	    setCustomAutoEvaluationEnd(newDate);
+	    break;
+	case EVALUATION_BEGIN_DATE:
+	    setCustomEvaluationBegin(newDate);
+	    break;
+	case EVALUATION_END_DATE:
+	    setCustomEvaluationEnd(newDate);
+	    break;
+	}
+
+    }
+
     public boolean isEvaluatedWithKnowledgeOfObjectives() {
 	if (getCurrentEvaluationItems() == null || getCurrentEvaluationItems().isEmpty())
 	    return false;
@@ -305,6 +337,7 @@ public class Siadap extends Siadap_Base {
 	return isEvaluationDone() && SiadapGlobalEvaluation.LOW.accepts(getTotalEvaluationScoring());
     }
 
+    @Override
     public SiadapYearConfiguration getSiadapYearConfiguration() {
 	return SiadapYearConfiguration.getSiadapYearConfiguration(getYear());
     }
