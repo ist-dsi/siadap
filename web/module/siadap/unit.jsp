@@ -1,3 +1,4 @@
+<%@page import="module.organization.domain.Unit"%>
 <%@page import="module.siadap.domain.Siadap"%>
 <%@page import="module.organization.domain.Person"%>
 <%@page import="module.siadap.domain.SiadapYearConfiguration"%>
@@ -35,7 +36,7 @@
 						%>
 
 								<%
-									final SiadapProcessCounter counter = new SiadapProcessCounter(unit);
+									final SiadapProcessCounter counter = new SiadapProcessCounter((Unit) party);
 									final StringBuilder builder = new StringBuilder();
 									for (int i = 0 ; i < counter.getCounts().length; i++) {
 										final int count = counter.getCounts()[i];
