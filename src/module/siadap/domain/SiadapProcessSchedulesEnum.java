@@ -1,6 +1,5 @@
 package module.siadap.domain;
 
-import module.contacts.domain.PartyContactType;
 import myorg.util.BundleUtil;
 import pt.ist.fenixWebFramework.rendererExtensions.util.IPresentableEnum;
 
@@ -18,7 +17,7 @@ public enum SiadapProcessSchedulesEnum implements IPresentableEnum {
 
     @Override
     public String getLocalizedName() {
-	return BundleUtil.getStringFromResourceBundle("resources/SiadapResources", PartyContactType.class.getSimpleName() + "."
+	return BundleUtil.getStringFromResourceBundle("resources/SiadapResources", SiadapProcessSchedulesEnum.class.getSimpleName() + "."
 		+ name());
 
     }
