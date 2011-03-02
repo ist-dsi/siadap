@@ -59,9 +59,8 @@ public class SiadapPersonnelManagement extends ContextBaseAction {
 	    final HttpServletResponse response) throws Exception {
 
 	VariantBean bean = getRenderedObject("searchPerson");
-	pt.ist.expenditureTrackingSystem.domain.organization.Person expPerson = (pt.ist.expenditureTrackingSystem.domain.organization.Person) ((bean != null) ? bean
+	Person person = (Person) ((bean != null) ? bean
 		.getDomainObject() : getDomainObject(request, "personId"));
-	Person person = expPerson.getUser().getPerson();
 
 	int year = Integer.parseInt(request.getParameter("year"));
 	PersonSiadapWrapper personSiadapWrapper = new PersonSiadapWrapper(person, year);

@@ -32,11 +32,11 @@
         <fr:property name="labelField" value="name"/>
 		<fr:property name="format" value="${name} (${user.username})"/>
 		<fr:property name="minChars" value="3"/>		
-		<fr:property name="args" value="provider=pt.ist.expenditureTrackingSystem.presentationTier.renderers.autoCompleteProvider.PersonAutoComplete"/>
+		<fr:property name="args" value="provider=module.organization.presentationTier.renderers.providers.PersonAutoCompleteProvider"/>
 		<fr:property name="size" value="60"/>
 		<fr:validator name="pt.ist.fenixWebFramework.rendererExtensions.validators.RequiredAutoCompleteSelectionValidator">
 			<fr:property name="message" value="label.pleaseSelectOne.person"/>
-			<fr:property name="bundle" value="EXPENDITURE_RESOURCES"/>
+			<fr:property name="bundle" value="ORGANIZATION_RESOURCES"/>
 			<fr:property name="key" value="true"/>
 		</fr:validator>
 	</fr:slot>
