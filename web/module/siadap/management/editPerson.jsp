@@ -1,9 +1,17 @@
+<%@page import="module.siadap.domain.wrappers.PersonSiadapWrapper"%>
+<%@page import="module.organization.domain.Person"%>
+<%@page import="myorg.domain.RoleType"%>
+<%@page import="myorg.domain.groups.Role"%>
+<%@page import="myorg.domain.groups.PersistentGroup"%>
+<%@page import="module.siadap.domain.SiadapYearConfiguration"%>
+<%@page import="myorg.domain.User"%>
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html"%>
 <%@ taglib uri="/WEB-INF/struts-bean.tld" prefix="bean"%>
 <%@ taglib uri="/WEB-INF/struts-logic.tld" prefix="logic"%>
 <%@ taglib uri="/WEB-INF/fenix-renderers.tld" prefix="fr"%>
 
+<bean:define id="user" name="USER_SESSION_ATTRIBUTE" property="user"/>
 <bean:define id="year" name="person" property="year"/>
 
 <h2><bean:message key="link.siadap.structureManagement.forAGivenYear" arg0="<%=year.toString()%>" bundle="SIADAP_RESOURCES"/></h2>
@@ -38,82 +46,99 @@
 </fr:view>
 </p>
 
-<a href="#" id="changeUnit"> <bean:message key="label.changeWorkingUnit" bundle="SIADAP_RESOURCES"/> </a> | <a href="#" id="changeEvaluator"> <bean:message key="label.changeEvaluator" bundle="SIADAP_RESOURCES"/> </a>
+<%-- ACL for the ability to change anything --%>
+<%
+User currentUser = (User)user;
+Person person = currentUser.getPerson();
+SiadapYearConfiguration configuration = SiadapYearConfiguration.getSiadapYearConfiguration((Integer)year);
 
-<logic:equal name="person" property="customEvaluatorDefined" value="true">
-	| <html:link page="<%="/siadapPersonnelManagement.do?method=removeCustomEvaluator&year=" + year.toString()%>" paramId="personId"  paramName="person"  paramProperty="person.externalId"><bean:message key="label.removeCustomEvaluator" bundle="SIADAP_RESOURCES"/> </html:link>
-</logic:equal>
+boolean isAbleToChangeAnything = false;
+//if (configuration.getCcaMembers().contains(person) || Role.getRole(RoleType.MANAGER).isMember(currentUser) )
+if (Role.getRole(RoleType.MANAGER).isMember(currentUser) )
+{
+    isAbleToChangeAnything = true;
+}
+
+request.setAttribute("isAbleToChangeAnything", isAbleToChangeAnything);
+%>
 
 
-<div id="changeUnitDiv" style="display: none;">
-	<div class="highlightBox">
-	<fr:form action="<%= "/siadapPersonnelManagement.do?method=changeWorkingUnit&personId=" + personId + "&year=" + year.toString() %>">
-	<fr:edit id="changeWorkingUnit" name="changeWorkingUnit" visible="false"/>
-
-	<fr:edit id="changeWorkingUnit1" name="changeWorkingUnit" slot="unit" >
+<logic:equal name="isAbleToChangeAnything" value="true">
+	<a href="#" id="changeUnit"> <bean:message key="label.changeWorkingUnit" bundle="SIADAP_RESOURCES"/> </a> | <a href="#" id="changeEvaluator"> <bean:message key="label.changeEvaluator" bundle="SIADAP_RESOURCES"/> </a>
+	<logic:equal name="person" property="customEvaluatorDefined" value="true">
+		| <html:link page="<%="/siadapPersonnelManagement.do?method=removeCustomEvaluator&year=" + year.toString()%>" paramId="personId"  paramName="person"  paramProperty="person.externalId"><bean:message key="label.removeCustomEvaluator" bundle="SIADAP_RESOURCES"/> </html:link>
+	</logic:equal>
 	
-	<fr:layout name="autoComplete">
-		<fr:property name="classes" value="tstyle2"/>
-		<fr:property name="labelField" value="partyName.content"/>
-		<fr:property name="format" value="${presentationName}"/>
-		<fr:property name="minChars" value="3"/>		
-		<fr:property name="args" value="provider=module.organization.presentationTier.renderers.providers.UnitAutoCompleteProvider"/>
-		<fr:property name="size" value="60"/>
-		<fr:validator name="pt.ist.fenixWebFramework.rendererExtensions.validators.RequiredAutoCompleteSelectionValidator">
-			<fr:property name="message" value="label.pleaseSelectOne.unit"/>
-			<fr:property name="bundle" value="EXPENDITURE_RESOURCES"/>
-			<fr:property name="key" value="true"/>
-		</fr:validator>
-	</fr:layout>
-</fr:edit>
-
-	Contabiliza para as quotas: <fr:edit id="changeWorkingUnit2" name="changeWorkingUnit" slot="withQuotas" >
-	<fr:layout name="autoComplete">
-		<fr:property name="classes" value="tstyle2"/>
-	</fr:layout>
-	</fr:edit>
 	
-	Data da alteração: <fr:edit id="changeWorkingUnit3" name="changeWorkingUnit" slot="dateOfChange" >
-	<fr:layout name="picker"/>
-	</fr:edit>
+	<div id="changeUnitDiv" style="display: none;">
+		<div class="highlightBox">
+		<fr:form action="<%= "/siadapPersonnelManagement.do?method=changeWorkingUnit&personId=" + personId + "&year=" + year.toString() %>">
+		<fr:edit id="changeWorkingUnit" name="changeWorkingUnit" visible="false"/>
 	
-	<html:submit styleClass="inputbutton"><bean:message key="renderers.form.submit.name" bundle="RENDERER_RESOURCES"/></html:submit>
-</fr:form>
-	</div>
-</div>
-
-<div id="changeEvaluatorDiv" style="display: none;" >
-	<div class="highlightBox">
-	
-	<fr:form action="<%= "/siadapPersonnelManagement.do?method=changeEvaluator&personId=" + personId + "&year=" + year.toString() %>">
-	
-	<fr:edit id="changeEvaluator" name="changeEvaluator" visible="false"/>
-	
-	<fr:edit id="changeEvaluator1" name="changeEvaluator" slot="evaluator">
-	<fr:layout name="autoComplete">
-		<fr:property name="labelField" value="partyName.content"/>
-		<fr:property name="format" value="${presentationName}"/>
-		<fr:property name="minChars" value="3"/>		
-		<fr:property name="args" value="provider=module.organization.presentationTier.renderers.providers.PersonAutoCompleteProvider"/>
-		<fr:property name="size" value="60"/>
-		<fr:validator name="pt.ist.fenixWebFramework.rendererExtensions.validators.RequiredAutoCompleteSelectionValidator">
-			<fr:property name="message" value="label.pleaseSelectOne.unit"/>
-			<fr:property name="bundle" value="EXPENDITURE_RESOURCES"/>
-			<fr:property name="key" value="true"/>
-		</fr:validator>
+		<fr:edit id="changeWorkingUnit1" name="changeWorkingUnit" slot="unit" >
+		
+		<fr:layout name="autoComplete">
+			<fr:property name="classes" value="tstyle2"/>
+			<fr:property name="labelField" value="partyName.content"/>
+			<fr:property name="format" value="${presentationName}"/>
+			<fr:property name="minChars" value="3"/>		
+			<fr:property name="args" value="provider=module.organization.presentationTier.renderers.providers.UnitAutoCompleteProvider"/>
+			<fr:property name="size" value="60"/>
+			<fr:validator name="pt.ist.fenixWebFramework.rendererExtensions.validators.RequiredAutoCompleteSelectionValidator">
+				<fr:property name="message" value="label.pleaseSelectOne.unit"/>
+				<fr:property name="bundle" value="EXPENDITURE_RESOURCES"/>
+				<fr:property name="key" value="true"/>
+			</fr:validator>
 		</fr:layout>
 	</fr:edit>
 	
-	Data da alteração: <fr:edit id="changeEvaluator1" name="changeEvaluator" slot="dateOfChange" >
-	<fr:layout name="picker"/>
-	</fr:edit>
-	
-	<html:submit styleClass="inputbutton"><bean:message key="renderers.form.submit.name" bundle="RENDERER_RESOURCES"/></html:submit>
-</fr:form>
+		Contabiliza para as quotas: <fr:edit id="changeWorkingUnit2" name="changeWorkingUnit" slot="withQuotas" >
+		<fr:layout name="autoComplete">
+			<fr:property name="classes" value="tstyle2"/>
+		</fr:layout>
+		</fr:edit>
 		
+		Data da alteração: <fr:edit id="changeWorkingUnit3" name="changeWorkingUnit" slot="dateOfChange" >
+		<fr:layout name="picker"/>
+		</fr:edit>
+		
+		<html:submit styleClass="inputbutton"><bean:message key="renderers.form.submit.name" bundle="RENDERER_RESOURCES"/></html:submit>
+	</fr:form>
+		</div>
 	</div>
-</div>
-
+	
+	<div id="changeEvaluatorDiv" style="display: none;" >
+		<div class="highlightBox">
+		
+		<fr:form action="<%= "/siadapPersonnelManagement.do?method=changeEvaluator&personId=" + personId + "&year=" + year.toString() %>">
+		
+		<fr:edit id="changeEvaluator" name="changeEvaluator" visible="false"/>
+		
+		<fr:edit id="changeEvaluator1" name="changeEvaluator" slot="evaluator">
+		<fr:layout name="autoComplete">
+			<fr:property name="labelField" value="partyName.content"/>
+			<fr:property name="format" value="${presentationName}"/>
+			<fr:property name="minChars" value="3"/>		
+			<fr:property name="args" value="provider=module.organization.presentationTier.renderers.providers.PersonAutoCompleteProvider"/>
+			<fr:property name="size" value="60"/>
+			<fr:validator name="pt.ist.fenixWebFramework.rendererExtensions.validators.RequiredAutoCompleteSelectionValidator">
+				<fr:property name="message" value="label.pleaseSelectOne.unit"/>
+				<fr:property name="bundle" value="EXPENDITURE_RESOURCES"/>
+				<fr:property name="key" value="true"/>
+			</fr:validator>
+			</fr:layout>
+		</fr:edit>
+		
+		Data da alteração: <fr:edit id="changeEvaluator1" name="changeEvaluator" slot="dateOfChange" >
+		<fr:layout name="picker"/>
+		</fr:edit>
+		
+		<html:submit styleClass="inputbutton"><bean:message key="renderers.form.submit.name" bundle="RENDERER_RESOURCES"/></html:submit>
+	</fr:form>
+			
+		</div>
+	</div>
+</logic:equal>
 <script type="text/javascript">
 	$("#changeUnit").click(function() {
 		$("#changeEvaluatorDiv").hide();
@@ -146,6 +171,25 @@
 						<td><fr:view name="evaluated" property="name"/>
 						<td><fr:view name="evaluated" property="workingUnit.name"/>
 						<td><html:link page="<%= "/siadapPersonnelManagement.do?method=viewPerson&personId=" + evalutedId + "&year=" + year.toString()%>"> Ver avaliado </html:link></td>
+						<td>
+						<logic:present name="evaluated" property="siadap">
+							<html:link page="<%= "/workflowProcessManagement.do?method=viewProcess&year="
+							+ configuration.getYear()
+							+ "&processId="
+							+ ((module.siadap.domain.wrappers.PersonSiadapWrapper)evaluated).getSiadap().getProcess().getExternalId() %>">
+							<bean:message key="link.view" bundle="MYORG_RESOURCES"/>
+						</html:link>
+						</logic:present>
+						<logic:notPresent name="evaluated" property="siadap">
+							<html:link page="<%= "/siadapManagement.do?method=createNewSiadapProcess&year="
+								+ configuration.getYear()
+								+ "&personId="
+								+ ((module.siadap.domain.wrappers.PersonSiadapWrapper)evaluated).getPerson().getExternalId() %>">
+								<bean:message key="link.create" bundle="MYORG_RESOURCES"/>
+							</html:link>
+						
+						</logic:notPresent>
+						</td>
 					</tr>
 			</logic:iterate>
 		</table>		
@@ -166,41 +210,44 @@
 			</fr:schema>
 			<fr:layout name="tabular">
 				<fr:property name="classes" value="tstyle2"/>
-				<fr:property name="link(terminate)" value="<%=  "/siadapPersonnelManagement.do?method=terminateUnitHarmonization&personId=" + personId + "&year=" + year.toString()%>"/>
-				<fr:property name="bundle(terminate)" value="MYORG_RESOURCES"/>
-				<fr:property name="key(terminate)" value="link.remove"/>
-				<fr:property name="param(terminate)" value="unit.externalId/unitId"/>
-				<fr:property name="order(terminate)" value="1"/>
+				<logic:equal name="isAbleToChangeAnything" value="true">
+					<fr:property name="link(terminate)" value="<%=  "/siadapPersonnelManagement.do?method=terminateUnitHarmonization&personId=" + personId + "&year=" + year.toString()%>"/>
+					<fr:property name="bundle(terminate)" value="MYORG_RESOURCES"/>
+					<fr:property name="key(terminate)" value="link.remove"/>
+					<fr:property name="param(terminate)" value="unit.externalId/unitId"/>
+					<fr:property name="order(terminate)" value="1"/>
+				</logic:equal>
 			</fr:layout>	
 		</fr:view>
 	</p>
 </logic:notEmpty>
 
 
-<p>
-<strong><bean:message key="label.addHarmonizationResponsability" bundle="SIADAP_RESOURCES"/></strong>
-<fr:edit id="addHarmonizationUnit" name="bean" action="<%= "/siadapPersonnelManagement.do?method=addHarmonizationUnit&personId=" + personId + "&year=" + year.toString() %>">
-	<fr:schema type="myorg.util.VariantBean" bundle="SIADAP_RESOURCES">
-		<fr:slot name="domainObject" layout="autoComplete" key="label.unit" bundle="ORGANIZATION_RESOURCES">
-        <fr:property name="labelField" value="partyName.content"/>
-		<fr:property name="format" value="${presentationName}"/>
-		<fr:property name="minChars" value="3"/>		
-		<fr:property name="args" value="provider=module.organization.presentationTier.renderers.providers.UnitAutoCompleteProvider"/>
-		<fr:property name="size" value="60"/>
-		<fr:validator name="pt.ist.fenixWebFramework.rendererExtensions.validators.RequiredAutoCompleteSelectionValidator">
-			<fr:property name="message" value="label.pleaseSelectOne.unit"/>
-			<fr:property name="bundle" value="EXPENDITURE_RESOURCES"/>
-			<fr:property name="key" value="true"/>
-		</fr:validator>
-	</fr:slot>
-	</fr:schema>	
-	<fr:layout name="tabular">
-		<fr:property name="classes" value="tstyle2"/>
-	</fr:layout>
-	<fr:destination name="cancel" path="/siadapPersonnelManagement.do?method=start" />
-</fr:edit>
-</p>
-
+<logic:equal name="isAbleToChangeAnything" value="true">
+	<p>
+	<strong><bean:message key="label.addHarmonizationResponsability" bundle="SIADAP_RESOURCES"/></strong>
+	<fr:edit id="addHarmonizationUnit" name="bean" action="<%= "/siadapPersonnelManagement.do?method=addHarmonizationUnit&personId=" + personId + "&year=" + year.toString() %>">
+		<fr:schema type="myorg.util.VariantBean" bundle="SIADAP_RESOURCES">
+			<fr:slot name="domainObject" layout="autoComplete" key="label.unit" bundle="ORGANIZATION_RESOURCES">
+	        <fr:property name="labelField" value="partyName.content"/>
+			<fr:property name="format" value="${presentationName}"/>
+			<fr:property name="minChars" value="3"/>		
+			<fr:property name="args" value="provider=module.organization.presentationTier.renderers.providers.UnitAutoCompleteProvider"/>
+			<fr:property name="size" value="60"/>
+			<fr:validator name="pt.ist.fenixWebFramework.rendererExtensions.validators.RequiredAutoCompleteSelectionValidator">
+				<fr:property name="message" value="label.pleaseSelectOne.unit"/>
+				<fr:property name="bundle" value="EXPENDITURE_RESOURCES"/>
+				<fr:property name="key" value="true"/>
+			</fr:validator>
+		</fr:slot>
+		</fr:schema>	
+		<fr:layout name="tabular">
+			<fr:property name="classes" value="tstyle2"/>
+		</fr:layout>
+		<fr:destination name="cancel" path="/siadapPersonnelManagement.do?method=start" />
+	</fr:edit>
+	</p>
+</logic:equal>
 <strong> <bean:message key="label.history" bundle="SIADAP_RESOURCES"/>: </strong>
  
 <fr:view name="history">

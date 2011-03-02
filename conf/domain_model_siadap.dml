@@ -29,6 +29,8 @@ class SiadapProcess extends .module.workflow.domain.WorkflowProcess {
 
 class groups.SiadapScheduleEditorsGroup extends .myorg.domain.groups.PersistentGroup {
 }
+class groups.SiadapCCAGroup extends .myorg.domain.groups.PersistentGroup {
+}
 
 class Siadap {
 	Integer year;
@@ -130,6 +132,16 @@ relation SiadapModuleRootMyOrg {
 relation SiadapRootModuleSiadapScheduleEditorsGroup {
 	SiadapRootModule playsRole siadapRootModule;
 	groups.SiadapScheduleEditorsGroup playsRole siadapScheduleEditorsGroup;
+}
+
+relation SiadapRootModuleStatisticsAccessUnionGroup {
+	SiadapRootModule playsRole siadapRootModule;
+	 .myorg.domain.groups.UnionGroup playsRole statisticsAccessUnionGroup;
+}
+
+relation SiadapRootModuleSiadapCCAGroup {
+	SiadapRootModule playsRole siadapRootModule;
+	groups.SiadapCCAGroup playsRole siadapCCAGroup;
 }
 
 relation SiadapRootModuleSiadap {

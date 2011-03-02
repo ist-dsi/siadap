@@ -153,6 +153,16 @@ public class SiadapManagement extends ContextBaseAction {
 	return showConfiguration(mapping, form, request, response);
     }
 
+    public final ActionForward removeSchedulerExtendersMember(final ActionMapping mapping, final ActionForm form,
+	    final HttpServletRequest request, final HttpServletResponse response) {
+
+	SiadapYearConfiguration configuration = getDomainObject(request, "configurationId");
+	Person person = getDomainObject(request, "personId");
+	configuration.removeScheduleExtenders(person);
+	// remove them from the persistent group as well
+	return showConfiguration(mapping, form, request, response);
+    }
+
     public final ActionForward removeSchedulerExtenderMember(final ActionMapping mapping, final ActionForm form,
 	    final HttpServletRequest request, final HttpServletResponse response) {
 

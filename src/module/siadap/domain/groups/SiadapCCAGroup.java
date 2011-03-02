@@ -4,39 +4,32 @@ import java.util.HashSet;
 import java.util.Set;
 
 import module.organization.domain.Person;
-import module.siadap.domain.SiadapRootModule;
 import module.siadap.domain.SiadapYearConfiguration;
 import myorg.domain.User;
 import myorg.util.BundleUtil;
 
 import org.joda.time.LocalDate;
 
-public class SiadapScheduleEditorsGroup extends SiadapScheduleEditorsGroup_Base {
+public class SiadapCCAGroup extends SiadapCCAGroup_Base {
 
-    public SiadapScheduleEditorsGroup() {
+    public SiadapCCAGroup() {
 	super();
-    }
-
-    public static SiadapScheduleEditorsGroup getInstance() {
-	return SiadapRootModule.getInstance().getSiadapScheduleEditorsGroup();
     }
 
     @Override
     public boolean isMember(User user) {
-	//get the current year and use it to assert
 	return isMember(user, new LocalDate().getYear());
     }
 
     public boolean isMember(User user, Integer year) {
 	SiadapYearConfiguration configuration = SiadapYearConfiguration.getSiadapYearConfiguration(year);
-	return configuration.isPersonMemberOfScheduleExtenders(user.getPerson());
+	return configuration.getCcaMembers().contains(user.getPerson());
     }
 
     @Override
     public String getName() {
 	try {
-	    return BundleUtil.getStringFromResourceBundle("resources/SiadapResources",
-		    "siadap.group.name.SiadapScheduleEditorsGroup");
+	    return BundleUtil.getStringFromResourceBundle("resources/SiadapResources", "siadap.group.name.SiadapCCAGroup");
 	} catch (java.util.MissingResourceException ex) {
 	    return this.getClass().getSimpleName();
 	}
@@ -58,7 +51,6 @@ public class SiadapScheduleEditorsGroup extends SiadapScheduleEditorsGroup_Base 
 	}
 
 	return setToReturn;
-
     }
 
 }

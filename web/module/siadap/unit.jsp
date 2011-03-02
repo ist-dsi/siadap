@@ -4,7 +4,7 @@
 <%@page import="module.siadap.domain.Siadap"%>
 <%@page import="module.organization.domain.Person"%>
 <%@page import="module.siadap.domain.SiadapYearConfiguration"%>
-<%@page import="module.siadap.domain.wrappers.SiadapProcessStateEnum"%>
+<%@page import="module.siadap.domain.SiadapProcessStateEnum"%>
 <%@page import="module.siadap.domain.util.SiadapProcessCounter"%>
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html"%>
@@ -129,7 +129,7 @@
 				<p>
 					<logic:present name="unitHarmanizer">
 						<html:link page="<%= "/siadapPersonnelManagement.do?method=viewPerson&year=" + configuration.getYear() %>"
-								paramId="personId" paramName="unitHarmanizer" paramProperty="user.expenditurePerson.externalId"
+								paramId="personId" paramName="unitHarmanizer" paramProperty="externalId"
 								styleClass="secondaryLink">
 							<bean:write name="unitHarmanizer" property="presentationName"/>
 						</html:link>
@@ -152,7 +152,7 @@
 				<p>
 					<logic:present name="unitResponsible">
 						<html:link page="<%= "/siadapPersonnelManagement.do?method=viewPerson&year=" + configuration.getYear() %>"
-								paramId="personId" paramName="unitResponsible" paramProperty="user.expenditurePerson.externalId"
+								paramId="personId" paramName="unitResponsible" paramProperty="externalId"
 								styleClass="secondaryLink">
 							<bean:write name="unitResponsible" property="presentationName"/>
 						</html:link>
@@ -202,14 +202,14 @@
 				</td>
 				<td>
 					<html:link page="<%= "/siadapPersonnelManagement.do?method=viewPerson&year=" + configuration.getYear() %>"
-							paramId="personId" paramName="person" paramProperty="user.expenditurePerson.externalId"
+							paramId="personId" paramName="person" paramProperty="externalId"
 							styleClass="secondaryLink">
 						<bean:write name="person" property="presentationName"/>
 					</html:link>
 				</td>
 				<td>
 					<html:link page="<%= "/siadapPersonnelManagement.do?method=viewPerson&year=" + configuration.getYear() 
-							+ "&personId=" + personSiadapWrapper.getEvaluator().getPerson().getUser().getExpenditurePerson().getExternalId() %>"
+							+ "&personId=" + personSiadapWrapper.getEvaluator().getPerson().getExternalId() %>"
 							styleClass="secondaryLink">
 							<%= personSiadapWrapper.getEvaluator().getPerson().getName() %>
 					</html:link>

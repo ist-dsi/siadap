@@ -3,6 +3,7 @@ package module.siadap.presentationTier.actions;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import module.siadap.domain.SiadapRootModule;
 import module.siadap.domain.SiadapYearConfiguration;
 import myorg.domain.RoleType;
 import myorg.domain.VirtualHost;
@@ -46,7 +47,7 @@ public class InterfaceCreationAction extends BaseAction {
 
 	//use the static group TODO alter this	
 	ActionNode.createActionNode(virtualHost, homeNode, "/siadapPersonnelManagement", "start", "resources.SiadapResources",
-		"link.siadap.structureManagement", managerGroup);
+		"link.siadap.structureManagement", SiadapRootModule.getInstance().getStatisticsAccessUnionGroup());
 
 	//use the static group TODO alter this	
 	ActionNode.createActionNode(virtualHost, homeNode, "/siadapManagement",
@@ -69,7 +70,8 @@ public class InterfaceCreationAction extends BaseAction {
 	final Node node = getDomainObject(request, "parentOfNodesToManageId");
 
 	ActionNode.createActionNode(virtualHost, node, "/siadapProcessCount", "showUnit",
-		"resources.SiadapResources", "link.siadapProcessCount", Role.getRole(RoleType.MANAGER));
+ "resources.SiadapResources",
+		"link.siadapProcessCount", SiadapRootModule.getInstance().getStatisticsAccessUnionGroup());
 
 	return forwardToMuneConfiguration(request, virtualHost, node);
 

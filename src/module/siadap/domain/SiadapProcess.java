@@ -32,8 +32,10 @@ import module.workflow.activities.WorkflowActivity;
 import module.workflow.domain.LabelLog;
 import module.workflow.domain.WorkflowProcess;
 import myorg.applicationTier.Authenticate.UserView;
+import myorg.domain.RoleType;
 import myorg.domain.User;
 import myorg.domain.exceptions.DomainException;
+import myorg.domain.groups.Role;
 import myorg.util.ClassNameBundle;
 import pt.ist.emailNotifier.domain.Email;
 import pt.ist.fenixWebFramework.services.Service;
@@ -72,9 +74,18 @@ public class SiadapProcess extends SiadapProcess_Base {
 	User currentUser = UserView.getCurrentUser();
 	Person possibleEvaluator = currentUser.getPerson();
 	PersonSiadapWrapper evaluator = new PersonSiadapWrapper(evaluated, year).getEvaluator();
+	SiadapYearConfiguration configuration = SiadapYearConfiguration.getSiadapYearConfiguration(year);
 
-	if (evaluator == null || evaluator.getPerson() != possibleEvaluator) {
-	    throw new DomainException("error.onlyEvaluatorCanCreateSiadap");
+	boolean belongsToASuperGroup = false;
+	if ((configuration.getCcaMembers() != null && configuration.getCcaMembers().contains(currentUser.getPerson()))
+		|| (configuration.getScheduleExtenders() != null && configuration.getScheduleExtenders().contains(
+			currentUser.getPerson())) || Role.getRole(RoleType.MANAGER).isMember(currentUser)) {
+	    belongsToASuperGroup = true;
+	}
+	if (!belongsToASuperGroup) {
+	    if (evaluator == null || evaluator.getPerson() != possibleEvaluator) {
+		throw new DomainException("error.onlyEvaluatorCanCreateSiadap");
+	    }
 	}
 
 	setSiadap(new Siadap(year, evaluated));

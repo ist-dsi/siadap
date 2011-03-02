@@ -14,7 +14,8 @@ public class ChangeCustomSchedule extends WorkflowActivity<SiadapProcess, Change
 	Siadap siadap = process.getSiadap();
 	SiadapYearConfiguration configuration = siadap.getSiadapYearConfiguration();
 	//TODO change this into a defined group (?)
-	return configuration.isCurrentUserMemberOfScheduleExtenders();
+	//TODO remove the false
+	return false && configuration.isCurrentUserMemberOfScheduleExtenders();
     }
 
     @Override
