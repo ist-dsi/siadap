@@ -26,7 +26,6 @@
 <schema name="activityInformation.NoEvaluation"
 	bundle="SIADAP_RESOURCES" 
 	type="module.siadap.activities.NoEvaluationActivityInformation">
-	<remove name="type"/>
 	<slot name="noEvaluationJustification" layout="longText"
 		validator="pt.ist.fenixWebFramework.renderers.validators.RequiredValidator">
 		<property name="rows" value="3" />
