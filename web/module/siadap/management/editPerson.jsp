@@ -19,6 +19,7 @@
 <fr:view name="person">
 	<fr:schema type="module.siadap.domain.wrappers.PersonSiadapWrapper" bundle="SIADAP_RESOURCES">
 		<fr:slot name="name" key="label.name " bundle="ORGANIZATION_RESOURCES"/>
+		<fr:slot name="person.user.username" key="label.username" />
 		<fr:slot name="workingUnit" layout="null-as-label" key="label.workingUnit">
 			<fr:property name="subLayout" value="values"/>
 			<fr:property name="subSchema" value="view.UnitSiadapWrapper.name"/>
@@ -28,7 +29,7 @@
 			<fr:property name="subLayout" value="values"/>
 			<fr:property name="subSchema" value="view.PersonSiadapWrapper.name"/>
 		</fr:slot>
-		<fr:slot name="person.user.username" key="label.username" />
+		<fr:slot name="evaluator.person.user.username" layout="null-as-label" key="label.username"/>
 	</fr:schema>
 	<fr:layout name="tabular">
 		<fr:property name="classes" value="tstyle2"/>

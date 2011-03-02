@@ -6,6 +6,7 @@ import java.util.Set;
 
 import module.organization.domain.Person;
 import module.organization.domain.Unit;
+import module.siadap.domain.groups.SiadapScheduleEditorsGroup;
 import module.siadap.domain.wrappers.PersonSiadapWrapper;
 import myorg.domain.ModuleInitializer;
 import myorg.domain.MyOrg;
@@ -155,6 +156,16 @@ public class SiadapRootModule extends SiadapRootModule_Base implements ModuleIni
     private static void setSiadapTestUserGroup(NamedGroup siadapTestUserGroup) {
 	SiadapRootModule.siadapTestUserGroup = siadapTestUserGroup;
     }
+
+    @Override
+    public module.siadap.domain.groups.SiadapScheduleEditorsGroup getSiadapScheduleEditorsGroup() {
+	SiadapScheduleEditorsGroup editorsGroup = super.getSiadapScheduleEditorsGroup();
+	if (editorsGroup == null) {
+	    editorsGroup = new SiadapScheduleEditorsGroup();
+	    setSiadapScheduleEditorsGroup(editorsGroup);
+	}
+	return editorsGroup;
+    };
 
     public NamedGroup getSiadapTestUserGroup() {
 	return siadapTestUserGroup;
