@@ -6,12 +6,14 @@ import java.util.Set;
 
 import module.organization.domain.Person;
 import module.organization.domain.Unit;
+import module.siadap.domain.groups.SiadapCCAGroup;
 import module.siadap.domain.groups.SiadapScheduleEditorsGroup;
 import module.siadap.domain.wrappers.PersonSiadapWrapper;
 import myorg.domain.ModuleInitializer;
 import myorg.domain.MyOrg;
 import myorg.domain.groups.NamedGroup;
 import myorg.domain.groups.PersistentGroup;
+import myorg.domain.groups.UnionGroup;
 import pt.ist.fenixWebFramework.services.Service;
 
 public class SiadapRootModule extends SiadapRootModule_Base implements ModuleInitializer {
@@ -43,7 +45,7 @@ public class SiadapRootModule extends SiadapRootModule_Base implements ModuleIni
     @Override
     public void init(MyOrg root) {
 	if (getSiadapTestUserGroup() == null) {
-	    initializeSiadapTestGroup(root);
+	    initializeSiadapGroups(root);
 	}
     }
 
@@ -113,15 +115,32 @@ public class SiadapRootModule extends SiadapRootModule_Base implements ModuleIni
 
     }
 
-    private void initializeSiadapTestGroup(MyOrg root) {
+    private void initializeSiadapGroups(MyOrg root) {
 	SiadapRootModule.getInstance();
 	for (PersistentGroup group : root.getPersistentGroups()) {
 		if (group instanceof NamedGroup) {
+		//init the named groups
 		    if (((NamedGroup) group).getGroupName().equals(ImportTestUsers.groupName)) {
+		    //init the test user group
 			setSiadapTestUserGroup((NamedGroup) group);
 		    }
 		}
 	    }
+
+	if (getSiadapTestUserGroup() == null) {
+	    //TODO create it ?!
+	}
+	if (getSiadapCCAGroup() == null) {
+	    setSiadapCCAGroup(new SiadapCCAGroup());
+	}
+	if (getSiadapScheduleEditorsGroup() == null) {
+	    setSiadapScheduleEditorsGroup(new SiadapScheduleEditorsGroup());
+	}
+	if (getStatisticsAccessUnionGroup() == null)
+	{
+	    setStatisticsAccessUnionGroup(new UnionGroup(myorg.domain.groups.Role.getRole(myorg.domain.RoleType.MANAGER),
+		    getSiadapScheduleEditorsGroup(), getSiadapCCAGroup()));
+	}
 
     }
 
@@ -157,15 +176,6 @@ public class SiadapRootModule extends SiadapRootModule_Base implements ModuleIni
 	SiadapRootModule.siadapTestUserGroup = siadapTestUserGroup;
     }
 
-    @Override
-    public module.siadap.domain.groups.SiadapScheduleEditorsGroup getSiadapScheduleEditorsGroup() {
-	SiadapScheduleEditorsGroup editorsGroup = super.getSiadapScheduleEditorsGroup();
-	if (editorsGroup == null) {
-	    editorsGroup = new SiadapScheduleEditorsGroup();
-	    setSiadapScheduleEditorsGroup(editorsGroup);
-	}
-	return editorsGroup;
-    };
 
     public NamedGroup getSiadapTestUserGroup() {
 	return siadapTestUserGroup;

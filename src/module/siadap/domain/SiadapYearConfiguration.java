@@ -183,6 +183,18 @@ public class SiadapYearConfiguration extends SiadapYearConfiguration_Base {
 
     @Override
     @Service
+    public void addScheduleExtenders(Person scheduleExtenders) {
+	super.addScheduleExtenders(scheduleExtenders);
+    };
+
+    @Override
+    @Service
+    public void removeScheduleExtenders(Person scheduleExtenders) {
+	super.removeScheduleExtenders(scheduleExtenders);
+    };
+
+    @Override
+    @Service
     public void removeHomologationMembers(Person homologationMembers) {
 	super.removeHomologationMembers(homologationMembers);
     }

@@ -21,6 +21,7 @@ import module.siadap.domain.SiadapProcessStateEnum;
 import module.siadap.domain.SiadapRootModule;
 import module.siadap.domain.SiadapYearConfiguration;
 import myorg.applicationTier.Authenticate.UserView;
+import myorg.domain.User;
 import myorg.domain.exceptions.DomainException;
 
 import org.apache.commons.collections.Predicate;
@@ -74,6 +75,23 @@ public class PersonSiadapWrapper extends PartyWrapper implements Serializable {
     public String getNextStep() {
 	return SiadapProcessStateEnum.getNextStep(getSiadap(), UserView.getCurrentUser());
 
+    }
+
+    public boolean isCurrentUserAbleToSeeDetails() {
+	User currentUser = UserView.getCurrentUser();
+	SiadapYearConfiguration configuration = getConfiguration();
+	if (getSiadap().getProcess().isAccessibleToCurrentUser()) {
+	    if (isResponsibleForHarmonization(currentUser.getPerson())) {
+		return true;
+	    }
+	    if (configuration.getCcaMembers().contains(currentUser.getPerson()))
+		return true;
+	    if (configuration.getHomologationMembers().contains(currentUser.getPerson()))
+		return true;
+	    if (getEvaluator().getPerson().equals(currentUser.getPerson()) || getPerson().equals(currentUser.getPerson()))
+		return true;
+	}
+	return false;
     }
 
     public PersonSiadapWrapper getEvaluator() {
