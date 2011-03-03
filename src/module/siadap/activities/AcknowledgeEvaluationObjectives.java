@@ -2,7 +2,6 @@ package module.siadap.activities;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.ResourceBundle;
 
 import module.organization.domain.Person;
 import module.siadap.domain.Siadap;
@@ -10,13 +9,11 @@ import module.siadap.domain.SiadapProcess;
 import module.workflow.activities.ActivityInformation;
 import module.workflow.activities.WorkflowActivity;
 import myorg.domain.User;
-import myorg.domain.exceptions.DomainException;
 
 import org.joda.time.LocalDate;
 
 import pt.ist.emailNotifier.domain.Email;
 import pt.ist.fenixframework.plugins.remote.domain.exception.RemoteException;
-import pt.utl.ist.fenix.tools.util.i18n.Language;
 
 public class AcknowledgeEvaluationObjectives extends WorkflowActivity<SiadapProcess, ActivityInformation<SiadapProcess>> {
 
@@ -76,8 +73,7 @@ public class AcknowledgeEvaluationObjectives extends WorkflowActivity<SiadapProc
 	    System.out.println("Unable to lookup email address for: "
 		    + activityInformation.getProcess().getSiadap().getEvaluated().getUser().getUsername() + " Error: "
 		    + ex.getMessage());
-	    throw new DomainException("error.message.could.not.send.email.now", ResourceBundle.getBundle(
-		    "resources/SiadapResources", Language.getLocale()));
+	    siadapProcess.addWarningMessage("warning.message.could.not.send.email.now");
 	}
     }
 
