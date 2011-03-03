@@ -1,5 +1,7 @@
 package module.siadap.domain;
 
+import java.util.MissingResourceException;
+
 import myorg.util.BundleUtil;
 import pt.ist.fenixWebFramework.rendererExtensions.util.IPresentableEnum;
 
@@ -17,8 +19,12 @@ public enum SiadapProcessSchedulesEnum implements IPresentableEnum {
 
     @Override
     public String getLocalizedName() {
+	try {
 	return BundleUtil.getStringFromResourceBundle("resources/SiadapResources", SiadapProcessSchedulesEnum.class.getSimpleName() + "."
 		+ name());
+	} catch (MissingResourceException ex) {
+	    return name();
+	}
 
     }
 

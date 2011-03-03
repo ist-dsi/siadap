@@ -28,6 +28,7 @@ import org.apache.commons.collections.Predicate;
 import org.joda.time.LocalDate;
 
 import pt.ist.fenixWebFramework.services.Service;
+import pt.ist.fenixframework.plugins.remote.domain.exception.RemoteException;
 import pt.utl.ist.fenix.tools.util.i18n.MultiLanguageString;
 
 public class PersonSiadapWrapper extends PartyWrapper implements Serializable {
@@ -94,6 +95,32 @@ public class PersonSiadapWrapper extends PartyWrapper implements Serializable {
 	return false;
     }
 
+    private String emailAddress;
+
+    /**
+     * 
+     * @return true if the email is defined or if we just got a remote expcetion
+     *         trying to get it from fenix. False if it is actually null or
+     *         empty
+     */
+    public boolean isEmailDefined() {
+	if (getEmailAddress() == null || getEmailAddress().equalsIgnoreCase("")) {
+	    try {
+		String fetchedEmail = getPerson().getRemotePerson().getEmailForSendingEmails();
+		if (fetchedEmail == null || fetchedEmail.equalsIgnoreCase("")) {
+		    return false;
+		}
+		setEmailAddress(fetchedEmail);
+		return true;
+	    } catch (RemoteException e) {
+		return true;
+	    }
+
+	} else
+	    return true;
+
+    }
+
     public PersonSiadapWrapper getEvaluator() {
 	Person evaluator = null;
 
@@ -120,8 +147,7 @@ public class PersonSiadapWrapper extends PartyWrapper implements Serializable {
 	return getHarmozationUnits(true);
     }
 
-    public boolean hasPendingActions()
-    {
+    public boolean hasPendingActions() {
 	Siadap siadap = getSiadap();
 	if (siadap == null) {
 	    if (isCurrentUserAbleToCreateProcess()) {
@@ -135,7 +161,7 @@ public class PersonSiadapWrapper extends PartyWrapper implements Serializable {
 	}
 	return false;
     }
-    
+
     public int getNrPersonsWithUnreadComments() {
 	int counter = 0;
 	for (PersonSiadapWrapper personSiadapWrapper : getPeopleToEvaluate()) {
@@ -148,7 +174,8 @@ public class PersonSiadapWrapper extends PartyWrapper implements Serializable {
 
     public int getNrPendingProcessActions() {
 	int counterPendingActions = 0;
-	ArrayList<PersonSiadapWrapper> personSiadapWrappers = SiadapRootModule.getInstance().getAssociatedSiadaps(getPerson(), getYear(), false);
+	ArrayList<PersonSiadapWrapper> personSiadapWrappers = SiadapRootModule.getInstance().getAssociatedSiadaps(getPerson(),
+		getYear(), false);
 	for (PersonSiadapWrapper personSiadapWrapper : personSiadapWrappers) {
 	    if (personSiadapWrapper.hasPendingActions())
 		counterPendingActions++;
@@ -189,8 +216,7 @@ public class PersonSiadapWrapper extends PartyWrapper implements Serializable {
     public UnitSiadapWrapper getWorkingUnit() {
 	Collection<Unit> parentUnits = getParentUnits(getConfiguration().getWorkingRelation(), getConfiguration()
 		.getWorkingRelationWithNoQuota());
-	return parentUnits.isEmpty() ? null : new UnitSiadapWrapper(parentUnits
-		.iterator().next(), getConfiguration().getYear());
+	return parentUnits.isEmpty() ? null : new UnitSiadapWrapper(parentUnits.iterator().next(), getConfiguration().getYear());
     }
 
     public boolean isQuotaAware() {
@@ -275,10 +301,8 @@ public class PersonSiadapWrapper extends PartyWrapper implements Serializable {
      * @param dateToVerify
      *            the date to verify
      */
-    private void verifyDate(LocalDate dateToVerify)
- {
-	if (dateToVerify.getYear() != getYear())
-	{
+    private void verifyDate(LocalDate dateToVerify) {
+	if (dateToVerify.getYear() != getYear()) {
 	    throw new DomainException("manage.workingUnitOrEvaluator.invalid.date",
 		    DomainException.getResourceFor("resources/SiadapResources"), String.valueOf(getYear()));
 	}
@@ -291,14 +315,14 @@ public class PersonSiadapWrapper extends PartyWrapper implements Serializable {
 	LocalDate startOfYear = new LocalDate(now.getYear(), 1, 1);
 	LocalDate endOfYear = new LocalDate(now.getYear(), 12, 31);
 	SiadapYearConfiguration configuration = getConfiguration();
-	for (Accountability accountability : getParentAccountabilityTypes(configuration.getWorkingRelation(), configuration
-		.getWorkingRelationWithNoQuota())) {
+	for (Accountability accountability : getParentAccountabilityTypes(configuration.getWorkingRelation(),
+		configuration.getWorkingRelationWithNoQuota())) {
 	    if (accountability.isActiveNow()) {
 		accountability.setEndDate(now.minusDays(1));
 	    }
 	}
-	unit.addChild(getPerson(), withQuotas ? configuration.getWorkingRelation() : configuration
-.getWorkingRelationWithNoQuota(), startOfYear,
+	unit.addChild(getPerson(),
+		withQuotas ? configuration.getWorkingRelation() : configuration.getWorkingRelationWithNoQuota(), startOfYear,
 		endOfYear);
     }
 
@@ -386,10 +410,18 @@ public class PersonSiadapWrapper extends PartyWrapper implements Serializable {
 	int year = getYear();
 	for (SiadapYearConfiguration configuration = SiadapYearConfiguration.getSiadapYearConfiguration(year); configuration != null; configuration = SiadapYearConfiguration
 		.getSiadapYearConfiguration(--year)) {
-	    history.addAll(person.getParentAccountabilities(configuration.getWorkingRelation(), configuration
-		    .getWorkingRelationWithNoQuota()));
+	    history.addAll(person.getParentAccountabilities(configuration.getWorkingRelation(),
+		    configuration.getWorkingRelationWithNoQuota()));
 	}
 
 	return history;
+    }
+
+    public void setEmailAddress(String emailAddress) {
+	this.emailAddress = emailAddress;
+    }
+
+    public String getEmailAddress() {
+	return emailAddress;
     }
 }

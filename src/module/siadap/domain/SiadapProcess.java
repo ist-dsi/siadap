@@ -2,7 +2,9 @@ package module.siadap.domain;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.MissingResourceException;
 
 import module.organization.domain.Person;
 import module.organizationIst.domain.listner.LoginListner;
@@ -36,6 +38,7 @@ import myorg.domain.RoleType;
 import myorg.domain.User;
 import myorg.domain.exceptions.DomainException;
 import myorg.domain.groups.Role;
+import myorg.util.BundleUtil;
 import myorg.util.ClassNameBundle;
 import pt.ist.emailNotifier.domain.Email;
 import pt.ist.fenixWebFramework.services.Service;
@@ -68,6 +71,8 @@ public class SiadapProcess extends SiadapProcess_Base {
 	activities.add(new RevokeExcellencyAward());
     }
 
+    private HashMap<User, ArrayList<String>> userWarningsKey = new HashMap<User, ArrayList<String>>();
+
     public SiadapProcess(Integer year, Person evaluated) {
 	super();
 
@@ -93,6 +98,55 @@ public class SiadapProcess extends SiadapProcess_Base {
 
 	new LabelLog(this, currentUser, this.getClass().getName() + ".creation", "resources/SiadapResources",
 		evaluated.getName(), year.toString());
+    }
+
+    public List<String> getAndClearWarningMessages() {
+	List<String> warningMessages = getWarningMessages();
+	clearWarningMessagesForCurrentUser();
+	return warningMessages;
+    }
+
+    public List<String> getWarningMessages() {
+	User currentUser = UserView.getCurrentUser();
+	ArrayList<String> warningMessagesToReturn = new ArrayList<String>();
+	//for each let's try to translate it using the resources, case it can't be found we print it as it is
+	ArrayList<String> warningMessages = getUserWarningsKey().get(currentUser);
+	if (warningMessages == null) {
+	    warningMessages = new ArrayList<String>();
+	    getUserWarningsKey().put(currentUser, warningMessages);
+	}
+	for (String string : warningMessages) {
+	    try {
+	    warningMessagesToReturn.add(BundleUtil.getFormattedStringFromResourceBundle("resources/SiadapResources", string));
+	    } catch (MissingResourceException e) {
+		warningMessagesToReturn.add(string);
+	    }
+	}
+	    
+	return warningMessagesToReturn;
+    }
+
+    public void addWarningMessage(String messageKeyOrContent) {
+	User currentUser = UserView.getCurrentUser();
+	addWarningMessage(currentUser, messageKeyOrContent);
+    }
+
+    protected void addWarningMessage(User user, String messageKeyOrContent) {
+	ArrayList<String> warningMessages = getUserWarningsKey().get(user);
+	if (warningMessages == null) {
+	    warningMessages = new ArrayList<String>();
+	}
+	warningMessages.add(messageKeyOrContent);
+	getUserWarningsKey().put(user, warningMessages);
+    }
+
+    protected void clearWarningMessagesForCurrentUser() {
+	User currentUser = UserView.getCurrentUser();
+	clearWarningMessages(currentUser);
+    }
+
+    protected void clearWarningMessages(User user) {
+	getUserWarningsKey().put(user, new ArrayList<String>());
     }
 
     @Override
@@ -184,6 +238,12 @@ public class SiadapProcess extends SiadapProcess_Base {
 
     public boolean isNotSubmittedForConfirmation() {
 	return SiadapProcessStateEnum.isNotSubmittedForConfirmation(getSiadap());
+    }
+
+    public HashMap<User, ArrayList<String>> getUserWarningsKey() {
+	if (userWarningsKey == null)
+	    userWarningsKey = new HashMap<User, ArrayList<String>>();
+	return userWarningsKey;
     }
 
 }

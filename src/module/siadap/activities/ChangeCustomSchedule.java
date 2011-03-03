@@ -14,22 +14,36 @@ public class ChangeCustomSchedule extends WorkflowActivity<SiadapProcess, Change
 	Siadap siadap = process.getSiadap();
 	SiadapYearConfiguration configuration = siadap.getSiadapYearConfiguration();
 	//TODO change this into a defined group (?)
-	//TODO remove the false
-	return false && configuration.isCurrentUserMemberOfScheduleExtenders();
+	return configuration.isCurrentUserMemberOfScheduleExtenders();
     }
 
     @Override
     protected void process(ChangeCustomScheduleActivityInformation activityInformation) {
-	/*Siadap.setCustomSchedule(activityInformation.get)
-	
-	
-	ObjectiveEvaluation objectiveEvaluation = new ObjectiveEvaluation(activityInformation.getSiadap(), activityInformation
-		.getObjective(), activityInformation.getType());
+	/*
+	 * Siadap.setCustomSchedule(activityInformation.get)
+	 * 
+	 * 
+	 * ObjectiveEvaluation objectiveEvaluation = new
+	 * ObjectiveEvaluation(activityInformation.getSiadap(),
+	 * activityInformation .getObjective(), activityInformation.getType());
+	 * 
+	 * for (ObjectiveIndicator indicator :
+	 * activityInformation.getIndicators()) {
+	 * objectiveEvaluation.addObjectiveIndicator
+	 * (indicator.getMeasurementIndicator(),
+	 * indicator.getSuperationCriteria(),
+	 * indicator.getBigDecimalPonderationFactor()); }
+	 */
+    }
 
-	for (ObjectiveIndicator indicator : activityInformation.getIndicators()) {
-	    objectiveEvaluation.addObjectiveIndicator(indicator.getMeasurementIndicator(), indicator.getSuperationCriteria(),
-		   indicator.getBigDecimalPonderationFactor());
-	} */
+    @Override
+    public boolean isDefaultInputInterfaceUsed() {
+	return false;
+    }
+
+    @Override
+    public boolean isUserAwarenessNeeded(SiadapProcess process) {
+	return false;
     }
 
     @Override
@@ -41,6 +55,5 @@ public class ChangeCustomSchedule extends WorkflowActivity<SiadapProcess, Change
     public String getUsedBundle() {
 	return "resources/SiadapResources";
     }
-
 
 }

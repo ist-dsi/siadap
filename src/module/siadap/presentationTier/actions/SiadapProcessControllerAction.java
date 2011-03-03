@@ -3,6 +3,7 @@ package module.siadap.presentationTier.actions;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import module.siadap.activities.ChangeCustomScheduleActivityInformation;
 import module.siadap.activities.CreateObjectiveEvaluationActivityInformation;
 import module.workflow.domain.WorkflowProcess;
 import module.workflow.presentationTier.WorkflowLayoutContext;
@@ -25,6 +26,24 @@ public class SiadapProcessControllerAction extends ContextBaseAction {
 	CreateObjectiveEvaluationActivityInformation information = getRenderedObject("activityBean");
 	information.addNewIndicator();
 	RenderUtils.invalidateViewState();
+	return ProcessManagement.performActivityPostback(information, request);
+    }
+
+    public ActionForward addNewScheduleRepresentation(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+	    HttpServletResponse response) throws Exception {
+	ChangeCustomScheduleActivityInformation information = getRenderedObject("activityBean");
+	information.addCustomScheduleRepresentation();
+	RenderUtils.invalidateViewState();
+	return ProcessManagement.performActivityPostback(information, request);
+    }
+
+    public ActionForward removeScheduleRepresentation(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+	    HttpServletResponse response) throws Exception {
+	ChangeCustomScheduleActivityInformation information = getRenderedObject("activityBean");
+	Integer removeIndex = Integer.valueOf(request.getParameter("removeIndex"));
+	RenderUtils.invalidateViewState();
+
+	information.removeCustomScheduleRepresentation(removeIndex);
 	return ProcessManagement.performActivityPostback(information, request);
     }
 

@@ -19,6 +19,23 @@ boolean objectivesVisibileToEvaluated = siadapProcess.getSiadap().getObjectivesA
 request.setAttribute("showObjectivesAndCompetences", showObjectivesAndCompetences);
 request.setAttribute("objectivesVisibleToEvaluated", objectivesVisibileToEvaluated);
 %>
+<logic:notEmpty name="process" property="warningMessages">
+	<div class="highlightBox">
+			<logic:iterate id="warningMessage" name="process" property="andClearWarningMessages" indexId="warningMessage_id">
+				<b><p style="color: darkRed" id="<%="warningMessage_id"+warningMessage_id%>"><bean:write name="warningMessage"/></p></b>
+			</logic:iterate>
+	</div>
+</logic:notEmpty>
+<logic:equal name="evaluatorPersonWrapper" property="emailDefined" value="false">
+<div class="highlightBox"> 
+	<b><p style="color:darkRed">Avaliador sem e-mail definido. Este avaliador não poderá receber notificações automáticas via e-mail. Para corrigir isto, por favor insira um contacto de-mail na secção informação pessoal no Fénix</p> </b>
+</div>
+</logic:equal>
+<logic:equal name="evaluatedPersonWrapper" property="emailDefined" value="false">
+<div class="highlightBox"> 
+	<b><p style="color:darkRed">Avaliado sem e-mail definido. Este avaliado não poderá receber notificações automáticas via e-mail. Para corrigir isto, por favor insira um contacto de-mail na secção informação pessoal no Fénix</p> </b>
+</div>
+</logic:equal>
 <h3><bean:message bundle="SIADAP_RESOURCES" key="label.siadap.schedule" arg0="<%= ((SiadapProcess) processJava).getSiadap().getYear().toString()%>" />:</h3>
 <fr:view name="siadap" property="siadapYearConfiguration" >
 	<fr:schema bundle="SIADAP_RESOURCES" type="module.siadap.domain.SiadapYearConfiguration">

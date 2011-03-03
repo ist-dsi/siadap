@@ -21,7 +21,7 @@ public class ChangeCustomScheduleActivityInformation extends ActivityInformation
     private List<CustomScheduleRepresentation> customScheduleRepresentations;
 
     public static class CustomScheduleRepresentation implements Serializable {
-	private final SiadapProcessSchedulesEnum typeOfSchedule;
+	private SiadapProcessSchedulesEnum typeOfSchedule;
 	private String justification;
 	private LocalDate newDeadlineDate;
 
@@ -51,6 +51,10 @@ public class ChangeCustomScheduleActivityInformation extends ActivityInformation
 	    return typeOfSchedule;
 	}
 
+	public void setTypeOfSchedule(SiadapProcessSchedulesEnum processSchedulesEnum) {
+	    this.typeOfSchedule = processSchedulesEnum;
+	}
+
 	public boolean isComplete() {
 	    return (getTypeOfSchedule() != null && getJustification() != null && getNewDeadlineDate() != null);
 	}
@@ -68,7 +72,7 @@ public class ChangeCustomScheduleActivityInformation extends ActivityInformation
 	super(process, activity);
 	setCustomScheduleRepresentation(new ArrayList<CustomScheduleRepresentation>());
 	if (addCustomScheduleRepresentation) {
-	    addNewCustomScheduleRepresentation();
+	    addCustomScheduleRepresentation();
 	}
     }
 
@@ -131,7 +135,7 @@ public class ChangeCustomScheduleActivityInformation extends ActivityInformation
 
     }
 
-    private void addNewCustomScheduleRepresentation() {
+    public void addCustomScheduleRepresentation() {
 	getCustomScheduleRepresentations().add(new CustomScheduleRepresentation(null, null, null));
 
     }
@@ -165,8 +169,13 @@ public class ChangeCustomScheduleActivityInformation extends ActivityInformation
 
     @Override
     public boolean hasAllneededInfo() {
-	checkCustomScheduleRepresentations();
-	return getSiadap() != null;
+	//	checkCustomScheduleRepresentations();
+	for (CustomScheduleRepresentation scheduleRepresentation : getCustomScheduleRepresentations()) {
+	    if (!scheduleRepresentation.isComplete())
+		return false;
+
+	}
+	return true;
     }
 
     public List<CustomScheduleRepresentation> getCustomScheduleRepresentations() {
@@ -176,4 +185,5 @@ public class ChangeCustomScheduleActivityInformation extends ActivityInformation
     public void setCustomScheduleRepresentation(List<CustomScheduleRepresentation> customScheduleRepresentations) {
 	this.customScheduleRepresentations = customScheduleRepresentations;
     }
+
 }
