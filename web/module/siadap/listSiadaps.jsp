@@ -83,7 +83,7 @@
 <logic:notEmpty name="person" property="peopleToEvaluate">
 	<br/>
 	<h3> <bean:message key="label.responsibleForEvaluationOf" bundle="SIADAP_RESOURCES"/>: </h3>
-<!-- 
+<%-- 
 	<p>
 	</p>
 		<table class="tstyle2">
@@ -116,7 +116,7 @@
 		</logic:greaterThan>
 
 		<html:link page="/siadapManagement.do?method=prepareToCreateNewSiadapProcess" paramId="year" paramName="person" paramProperty="year"> <bean:message key="label.viewAllEvaluated" bundle="SIADAP_RESOURCES"/> </html:link>
- -->
+ --%>
 		<bean:size id="nrOfPersonsToEvaluate" name="person" property="peopleToEvaluate"/>
 		<bean:message bundle="SIADAP_RESOURCES" key="siadap.nr.processes.with.pending.actions.label"/>: <bean:write name="person" property="nrPendingProcessActions"/>
 		<br/>
