@@ -345,21 +345,39 @@ public class Siadap extends Siadap_Base {
     public Interval getAutoEvaluationInterval() {
 	SiadapYearConfiguration configuration = getSiadapYearConfiguration();
 	LocalDate begin = configuration.getAutoEvaluationBegin();
+	if (getCustomAutoEvaluationBegin() != null) {
+	    begin = getCustomAutoEvaluationBegin();
+	}
 	LocalDate end = configuration.getAutoEvaluationEnd();
+	if (getCustomAutoEvaluationEnd() != null) {
+	    end = getCustomAutoEvaluationEnd();
+	}
 	return new Interval(convertDateToBeginOfDay(begin), convertDateToEndOfDay(end));
     }
 
     public Interval getEvaluationInterval() {
 	SiadapYearConfiguration configuration = getSiadapYearConfiguration();
 	LocalDate begin = configuration.getEvaluationBegin();
+	if (getCustomEvaluationBegin() != null) {
+	    begin = getCustomEvaluationBegin();
+	}
 	LocalDate end = configuration.getEvaluationEnd();
+	if (getCustomEvaluationEnd() != null) {
+	    end = getCustomEvaluationEnd();
+	}
 	return new Interval(convertDateToBeginOfDay(begin), convertDateToEndOfDay(end));
     }
 
     public Interval getObjectiveSpecificationInterval() {
 	SiadapYearConfiguration configuration = getSiadapYearConfiguration();
 	LocalDate begin = configuration.getObjectiveSpecificationBegin();
+	if (getCustomObjectiveSpecificationBegin() != null) {
+	    begin = getCustomObjectiveSpecificationBegin();
+	}
 	LocalDate end = configuration.getObjectiveSpecificationEnd();
+	if (getCustomObjectiveSpecificationEnd() != null) {
+	    end = getCustomObjectiveSpecificationEnd();
+	}
 	return new Interval(convertDateToBeginOfDay(begin), convertDateToEndOfDay(end));
     }
 

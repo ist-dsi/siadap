@@ -116,8 +116,8 @@ request.setAttribute("isAbleToChangeAnything", isAbleToChangeAnything);
 		
 		<fr:edit id="changeEvaluator1" name="changeEvaluator" slot="evaluator">
 		<fr:layout name="autoComplete">
-			<fr:property name="labelField" value="partyName.content"/>
-			<fr:property name="format" value="${presentationName}"/>
+	        <fr:property name="labelField" value="name"/>
+			<fr:property name="format" value="${name} (${user.username})"/>
 			<fr:property name="minChars" value="3"/>		
 			<fr:property name="args" value="provider=module.organization.presentationTier.renderers.providers.PersonAutoCompleteProvider"/>
 			<fr:property name="size" value="60"/>

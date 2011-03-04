@@ -57,6 +57,16 @@ public class SiadapProcessControllerAction extends ContextBaseAction {
 	return ProcessManagement.performActivityPostback(information, request);
     }
 
+    //    public ActionForward removeCustomSchedule(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+    //	    HttpServletResponse response) throws Exception {
+    //	SiadapProcess process = getProcess(request);
+    //	SiadapProcessSchedulesEnum processSchedulesEnum = SiadapProcessSchedulesEnum.valueOf(request.getParameter("type"));
+    //	process.removeCustomSchedule(processSchedulesEnum);
+    //	RenderUtils.invalidateViewState();
+    //
+    //	return ProcessManagement.forwardToProcess(process);
+    //    }
+
     @Override
     public Context createContext(String contextPathString, HttpServletRequest request) {
 	WorkflowProcess process = getProcess(request);

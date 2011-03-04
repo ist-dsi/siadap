@@ -1,3 +1,4 @@
+<%@page import="module.siadap.domain.SiadapProcessSchedulesEnum"%>
 <%@page import="module.siadap.domain.SiadapProcess"%>
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html"%>
@@ -37,19 +38,109 @@ request.setAttribute("objectivesVisibleToEvaluated", objectivesVisibileToEvaluat
 </div>
 </logic:equal>
 <h3><bean:message bundle="SIADAP_RESOURCES" key="label.siadap.schedule" arg0="<%= ((SiadapProcess) processJava).getSiadap().getYear().toString()%>" />:</h3>
-<fr:view name="siadap" property="siadapYearConfiguration" >
-	<fr:schema bundle="SIADAP_RESOURCES" type="module.siadap.domain.SiadapYearConfiguration">
-		<fr:slot name="objectiveSpecificationBegin" key="label.config.objectiveSpecificationBegin" />
-		<fr:slot name="objectiveSpecificationEnd" key="label.config.objectiveSpecificationEnd" />
-		<fr:slot name="autoEvaluationBegin" key="label.autoEvaluationBegin" />
-		<fr:slot name="autoEvaluationEnd" key="label.autoEvaluationEnd" />
-		<fr:slot name="evaluationBegin" key="label.evaluationBegin" />
-		<fr:slot name="evaluationEnd" key="label.evaluationEnd" />
-	</fr:schema>
-	<fr:layout>
-		<fr:property name="classes" value="tstyle3 thleft mvert10px"/>
-	</fr:layout>
-</fr:view>
+
+<%-- START: The table with the deadlines and custom deadlines if they are defined --%>
+<table class="tstyle3 thleft mvert10px">
+	<tbody>
+		<tr>
+			<th><bean:message  key="label.config.objectiveSpecificationBegin" bundle="SIADAP_RESOURCES"/></th>
+			<logic:empty name="siadap" property="customObjectiveSpecificationBegin">
+				<logic:notEmpty name="siadap" property="siadapYearConfiguration.objectiveSpecificationBegin">
+					<td><fr:view name="siadap" property="siadapYearConfiguration.objectiveSpecificationBegin" /></td>
+				</logic:notEmpty>
+			</logic:empty>
+			<logic:notEmpty name="siadap" property="customObjectiveSpecificationBegin">
+				<logic:notEmpty name="siadap" property="siadapYearConfiguration.objectiveSpecificationBegin">
+					<td style="text-decoration: line-through"><fr:view name="siadap" property="siadapYearConfiguration.objectiveSpecificationBegin" /></td>
+				</logic:notEmpty>
+				<td style="background: pink"><fr:view name="siadap" property="customObjectiveSpecificationBegin"/></td>
+				<td><wf:activityLink processName="process" activityName="RemoveCustomSchedule" scope="request" paramName0="siadapProcessSchedulesEnumToRemove" paramValue0="<%=SiadapProcessSchedulesEnum.OBJECTIVES_SPECIFICATION_BEGIN_DATE.name()%>"><bean:message bundle="SIADAP_RESOURCES" key="activity.RemoveCustomSchedule" /></wf:activityLink></td>
+			</logic:notEmpty>
+		</tr>
+		
+		<tr>
+			<th><bean:message  key="label.config.objectiveSpecificationEnd" bundle="SIADAP_RESOURCES"/></th>
+			<logic:empty name="siadap" property="customObjectiveSpecificationEnd">
+				<logic:notEmpty name="siadap" property="siadapYearConfiguration.objectiveSpecificationEnd" >
+					<td><fr:view name="siadap" property="siadapYearConfiguration.objectiveSpecificationEnd" /></td>
+				</logic:notEmpty>
+			</logic:empty>
+			<logic:notEmpty name="siadap" property="customObjectiveSpecificationEnd">
+				<logic:notEmpty name="siadap" property="siadapYearConfiguration.objectiveSpecificationEnd" >
+					<td style="text-decoration: line-through"><fr:view name="siadap" property="siadapYearConfiguration.objectiveSpecificationEnd" /></td>
+				</logic:notEmpty>
+				<td style="background: pink"><fr:view name="siadap" property="customObjectiveSpecificationEnd"/></td>
+				<td><wf:activityLink processName="process" activityName="RemoveCustomSchedule" scope="request" paramName0="siadapProcessSchedulesEnumToRemove" paramValue0="<%=SiadapProcessSchedulesEnum.OBJECTIVES_SPECIFICATION_END_DATE.name()%>"><bean:message bundle="SIADAP_RESOURCES" key="activity.RemoveCustomSchedule" /></wf:activityLink></td>
+			</logic:notEmpty>
+		</tr>
+		
+		<tr>
+			<th><bean:message  key="label.autoEvaluationBegin" bundle="SIADAP_RESOURCES"/></th>
+			<logic:empty name="siadap" property="customAutoEvaluationBegin">
+				<logic:notEmpty name="siadap" property="siadapYearConfiguration.autoEvaluationBegin">
+					<td><fr:view name="siadap" property="siadapYearConfiguration.autoEvaluationBegin"/></td>
+				</logic:notEmpty>
+			</logic:empty>
+			<logic:notEmpty name="siadap" property="customAutoEvaluationBegin">
+				<logic:notEmpty name="siadap" property="siadapYearConfiguration.autoEvaluationBegin">
+					<td style="text-decoration: line-through"><fr:view name="siadap" property="siadapYearConfiguration.autoEvaluationBegin" /></td>
+				</logic:notEmpty>
+				<td style="background: pink"><fr:view name="siadap" property="customAutoEvaluationBegin"/></td>
+				<td><wf:activityLink processName="process" activityName="RemoveCustomSchedule" scope="request" paramName0="siadapProcessSchedulesEnumToRemove" paramValue0="<%=SiadapProcessSchedulesEnum.AUTOEVALUATION_BEGIN_DATE.name()%>"><bean:message bundle="SIADAP_RESOURCES" key="activity.RemoveCustomSchedule" /></wf:activityLink></td>
+			</logic:notEmpty>
+		</tr>
+		
+		<tr>
+			<th><bean:message  key="label.autoEvaluationEnd" bundle="SIADAP_RESOURCES"/></th>
+			<logic:empty name="siadap" property="customAutoEvaluationEnd">
+				<logic:notEmpty name="siadap" property="siadapYearConfiguration.autoEvaluationEnd">
+					<td><fr:view name="siadap" property="siadapYearConfiguration.autoEvaluationEnd" /></td>
+				</logic:notEmpty>
+			</logic:empty>
+			<logic:notEmpty name="siadap" property="customAutoEvaluationEnd">
+				<logic:notEmpty name="siadap" property="siadapYearConfiguration.autoEvaluationEnd">
+					<td style="text-decoration: line-through"><fr:view name="siadap" property="siadapYearConfiguration.autoEvaluationEnd" /></td>
+				</logic:notEmpty>
+				<td style="background: pink"><fr:view name="siadap" property="customAutoEvaluationEnd"/></td>
+				<td><wf:activityLink processName="process" activityName="RemoveCustomSchedule" scope="request" paramName0="siadapProcessSchedulesEnumToRemove" paramValue0="<%=SiadapProcessSchedulesEnum.AUTOEVALUATION_END_DATE.name()%>"><bean:message bundle="SIADAP_RESOURCES" key="activity.RemoveCustomSchedule" /></wf:activityLink></td>
+			</logic:notEmpty>
+		</tr>
+		
+		<tr>
+			<th><bean:message  key="label.evaluationBegin" bundle="SIADAP_RESOURCES"/></th>
+			<logic:empty name="siadap" property="customEvaluationBegin">
+				<logic:notEmpty name="siadap" property="siadapYearConfiguration.evaluationBegin">
+					<td><fr:view name="siadap" property="siadapYearConfiguration.evaluationBegin"/></td>
+				</logic:notEmpty>
+			</logic:empty>
+			<logic:notEmpty name="siadap" property="customEvaluationBegin">
+				<logic:notEmpty name="siadap" property="siadapYearConfiguration.evaluationBegin">
+					<td style="text-decoration: line-through"><fr:view name="siadap" property="siadapYearConfiguration.evaluationBegin" /></td>
+				</logic:notEmpty>
+				<td style="background: pink"><fr:view name="siadap" property="customEvaluationBegin"/></td>
+				<td><wf:activityLink processName="process" activityName="RemoveCustomSchedule" scope="request" paramName0="siadapProcessSchedulesEnumToRemove" paramValue0="<%=SiadapProcessSchedulesEnum.EVALUATION_BEGIN_DATE.name()%>"><bean:message bundle="SIADAP_RESOURCES" key="activity.RemoveCustomSchedule" /></wf:activityLink></td>
+			</logic:notEmpty>
+		</tr>
+		
+		<tr>
+			<th><bean:message  key="label.evaluationEnd" bundle="SIADAP_RESOURCES"/></th>
+			<logic:empty name="siadap" property="customEvaluationEnd">
+				<logic:notEmpty name="siadap" property="siadapYearConfiguration.evaluationEnd" >
+					<td><fr:view name="siadap" property="siadapYearConfiguration.evaluationEnd"/></td>
+				</logic:notEmpty>
+			</logic:empty>
+			<logic:notEmpty name="siadap" property="customEvaluationEnd">
+				<logic:notEmpty name="siadap" property="siadapYearConfiguration.evaluationEnd" >
+					<td style="text-decoration: line-through"><fr:view name="siadap" property="siadapYearConfiguration.evaluationEnd" /></td>
+				</logic:notEmpty>
+				<td style="background: pink"><fr:view name="siadap" property="customEvaluationBegin"/></td>
+				<td><wf:activityLink processName="process" activityName="RemoveCustomSchedule" scope="request" paramName0="siadapProcessSchedulesEnumToRemove" paramValue0="<%=SiadapProcessSchedulesEnum.EVALUATION_END_DATE.name()%>"><bean:message bundle="SIADAP_RESOURCES" key="activity.RemoveCustomSchedule" /></wf:activityLink></td>
+			</logic:notEmpty>
+		</tr>
+	
+	</tbody>
+</table>
+<%-- END: The table with the deadlines and custom deadlines if they are defined --%>
 <p><strong><bean:write name="evaluatedPersonWrapper" property="nextStep"/></strong></p>
 
 <logic:equal name="evaluatedPersonWrapper" property="currentUserAbleToSeeDetails" value="true">

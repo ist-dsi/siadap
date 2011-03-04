@@ -22,6 +22,7 @@ import module.siadap.activities.GrantExcellencyAward;
 import module.siadap.activities.Homologate;
 import module.siadap.activities.NoEvaluation;
 import module.siadap.activities.NotValidateEvaluation;
+import module.siadap.activities.RemoveCustomSchedule;
 import module.siadap.activities.RemoveObjectiveEvaluation;
 import module.siadap.activities.RevertNoEvaluation;
 import module.siadap.activities.RevokeExcellencyAward;
@@ -40,6 +41,9 @@ import myorg.domain.exceptions.DomainException;
 import myorg.domain.groups.Role;
 import myorg.util.BundleUtil;
 import myorg.util.ClassNameBundle;
+
+import org.joda.time.LocalDate;
+
 import pt.ist.emailNotifier.domain.Email;
 import pt.ist.fenixWebFramework.services.Service;
 
@@ -50,6 +54,7 @@ public class SiadapProcess extends SiadapProcess_Base {
 
     static {
 	activities.add(new ChangeCustomSchedule());
+	activities.add(new RemoveCustomSchedule());
 	activities.add(new CreateObjectiveEvaluation());
 	activities.add(new RemoveObjectiveEvaluation());
 	activities.add(new CreateCompetenceEvaluation());
@@ -244,6 +249,45 @@ public class SiadapProcess extends SiadapProcess_Base {
 	if (userWarningsKey == null)
 	    userWarningsKey = new HashMap<User, ArrayList<String>>();
 	return userWarningsKey;
+    }
+
+    /**
+     * Changes the custom deadlines as specified by the parameter
+     * processSchedulesEnum which must be one of
+     * {@link SiadapProcessSchedulesEnum}
+     * 
+     * @param processSchedulesEnum
+     *            the representation of which schedule
+     *            {@link SiadapProcessSchedulesEnum}
+     * @param newDate
+     *            the new date to use for this schedule
+     */
+    @Service
+    public void changeCustomSiadapSchedule(SiadapProcessSchedulesEnum processSchedulesEnum, LocalDate newDate) {
+	Siadap siadap = getSiadap();
+	switch (processSchedulesEnum) {
+	case OBJECTIVES_SPECIFICATION_BEGIN_DATE:
+	    siadap.setCustomObjectiveSpecificationBegin(newDate);
+	    break;
+	case OBJECTIVES_SPECIFICATION_END_DATE:
+	    siadap.setCustomObjectiveSpecificationEnd(newDate);
+	    break;
+	case AUTOEVALUATION_BEGIN_DATE:
+	    siadap.setCustomAutoEvaluationBegin(newDate);
+	    break;
+	case AUTOEVALUATION_END_DATE:
+	    siadap.setCustomAutoEvaluationEnd(newDate);
+	    break;
+	case EVALUATION_BEGIN_DATE:
+	    siadap.setCustomEvaluationBegin(newDate);
+	    break;
+	case EVALUATION_END_DATE:
+	    siadap.setCustomEvaluationEnd(newDate);
+	    break;
+	default:
+	    throw new DomainException();
+	}
+
     }
 
 }
