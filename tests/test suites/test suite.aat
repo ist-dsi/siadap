@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<test>
+  <startPoint class="testSuiteStartPoint">
+    <outTransitions/>
+    <id>testsuitestartpoint16172973871296155961225</id>
+    <position>
+      <x>4</x>
+      <y>4</y>
+    </position>
+    <name>Test Suite start point</name>
+  </startPoint>
+  <extensionPoints/>
+  <pages/>
+  <subTests/>
+  <transitions/>
+  <customTestSteps/>
+  <name>Default test suite</name>
+  <description></description>
+  <id>test1296155961225</id>
+  <modelVersion>10</modelVersion>
+</test>

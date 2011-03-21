@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<launchConfiguration type="org.cubictest.recorder.ui.launchConfigurationType">
+<stringAttribute key="CubicTestSeleniumBrowser" value="*firefox"/>
+<booleanAttribute key="CubicTestSeleniumCaptureHtml" value="false"/>
+<stringAttribute key="CubicTestSeleniumName" value="tests/SiadapEvalAndAckTest.aat"/>
+<booleanAttribute key="CubicTestSeleniumNamespaceXpath" value="false"/>
+<booleanAttribute key="CubicTestSeleniumServerAuto" value="true"/>
+<stringAttribute key="CubicTestSeleniumServerHost" value="localhost"/>
+<booleanAttribute key="CubicTestSeleniumServerMultiWindow" value="false"/>
+<stringAttribute key="CubicTestSeleniumServerPort" value="4444"/>
+<booleanAttribute key="CubicTestSeleniumTakeScreenshots" value="false"/>
+<listAttribute key="org.eclipse.debug.core.MAPPED_RESOURCE_PATHS">
+<listEntry value="/SIADAP-test/tests/SiadapEvalAndAckTest.aat"/>
+</listAttribute>
+<listAttribute key="org.eclipse.debug.core.MAPPED_RESOURCE_TYPES">
+<listEntry value="1"/>
+</listAttribute>
+<stringAttribute key="org.eclipse.jdt.launching.PROJECT_ATTR" value="SIADAP-test"/>
+</launchConfiguration>

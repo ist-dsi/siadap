@@ -1,0 +1,1204 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<html>
+  <head>
+    <title>Right click for context menu (expand 'Run As' to record or run test)</title>
+    <style type="text/css">td {padding-right: 25px}
+.comment {color: blue; padding-top: 10px;}</style>
+  </head>
+  <body>
+    <table border="1" cellspacing="0">
+      <tr>
+        <td>setTimeout</td>
+        <td>20000</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td class="comment" colspan="3">Opening URL: http://joantune-workstation:8080/bennu-siadap:</td>
+      </tr>
+      <tr>
+        <td>open</td>
+        <td>http://joantune-workstation:8080/bennu-siadap</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td class="comment" colspan="3">Check present: [TextField: 'username']:</td>
+      </tr>
+      <tr>
+        <td>waitForElementPresent</td>
+        <td>xpath=//input[@type='text' or not(@type)][@name='username']</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td class="comment" colspan="3">Check present: [Button: 'Entrar']:</td>
+      </tr>
+      <tr>
+        <td>waitForElementPresent</td>
+        <td>xpath=//input[@type='button' or @type='submit' or @type='image' or @type='reset'][@value='Entrar']</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td class="comment" colspan="3">Typing text [TextField: 'username']:</td>
+      </tr>
+      <tr>
+        <td>type</td>
+        <td>xpath=//input[@type='text' or not(@type)][@name='username']</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td class="comment" colspan="3">Typing text [TextField: 'username']:</td>
+      </tr>
+      <tr>
+        <td>type</td>
+        <td>xpath=//input[@type='text' or not(@type)][@name='username']</td>
+        <td>ist12048</td>
+      </tr>
+      <tr>
+        <td class="comment" colspan="3">Clicking [Button: 'Entrar']:</td>
+      </tr>
+      <tr>
+        <td>click</td>
+        <td>xpath=//input[@type='button' or @type='submit' or @type='image' or @type='reset'][@value='Entrar']</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td class="comment" colspan="3">Check present: [Text: '']:</td>
+      </tr>
+      <tr>
+        <td>waitForTextPresent</td>
+        <td>&nbsp;</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td class="comment" colspan="3">Check present: [Link: 'SIADAP']:</td>
+      </tr>
+      <tr>
+        <td>waitForElementPresent</td>
+        <td>xpath=//a[(contains(normalize-space(.), 'SIADAP'))]</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td class="comment" colspan="3">Clicking [Link: 'SIADAP']:</td>
+      </tr>
+      <tr>
+        <td>click</td>
+        <td>xpath=//a[(contains(normalize-space(.), 'SIADAP'))]</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>setTimeout</td>
+        <td>5000</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td class="comment" colspan="3">Check present: [Link: 'Consultar todos os avaliados']:</td>
+      </tr>
+      <tr>
+        <td>waitForElementPresent</td>
+        <td>xpath=//a[normalize-space(.)='Consultar todos os avaliados']</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td class="comment" colspan="3">Check present: [Option: '2010']:</td>
+      </tr>
+      <tr>
+        <td>waitForElementPresent</td>
+        <td>xpath=//option[normalize-space(.)='2010']</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td class="comment" colspan="3">Selecting [Option: '2010']:</td>
+      </tr>
+      <tr>
+        <td>select</td>
+        <td>xpath=//select[(contains(@id, 'module.siadap.domain.wrappers.SiadapYearWrapper')) and substring(@name, string-length(@name) - string-length('chosenYear') + 1, string-length('chosenYear')) = 'chosenYear'][descendant-or-self::option[normalize-space(.)='2010']]</td>
+        <td>label=2010</td>
+      </tr>
+      <tr>
+        <td>setTimeout</td>
+        <td>5000</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td class="comment" colspan="3">Check present: [Text: '(mostrados 5 de 34 avaliados)']:</td>
+      </tr>
+      <tr>
+        <td>waitForTextPresent</td>
+        <td>(mostrados 5 de 34 avaliados)</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td class="comment" colspan="3">Check present: [Link: 'Consultar todos os avaliados']:</td>
+      </tr>
+      <tr>
+        <td>waitForElementPresent</td>
+        <td>xpath=//a[normalize-space(.)='Consultar todos os avaliados']</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td class="comment" colspan="3">Clicking [Link: 'Consultar todos os avaliados']:</td>
+      </tr>
+      <tr>
+        <td>click</td>
+        <td>xpath=//a[normalize-space(.)='Consultar todos os avaliados']</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td class="comment" colspan="3">Check present: [Text: 'ist22159']:</td>
+      </tr>
+      <tr>
+        <td>waitForTextPresent</td>
+        <td>ist22159</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td class="comment" colspan="3">Check present: [Link: 'Criar']:</td>
+      </tr>
+      <tr>
+        <td>waitForElementPresent</td>
+        <td>xpath=//a[normalize-space(.)='Criar']</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td class="comment" colspan="3">Clicking [Link: 'Criar']:</td>
+      </tr>
+      <tr>
+        <td>click</td>
+        <td>xpath=//a[normalize-space(.)='Criar']</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td class="comment" colspan="3">Check present: [Link: 'Introduzir novo objectivo']:</td>
+      </tr>
+      <tr>
+        <td>waitForElementPresent</td>
+        <td>xpath=//a[normalize-space(.)='Introduzir novo objectivo']</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td class="comment" colspan="3">Clicking [Link: 'Introduzir novo objectivo']:</td>
+      </tr>
+      <tr>
+        <td>click</td>
+        <td>xpath=//a[normalize-space(.)='Introduzir novo objectivo']</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td class="comment" colspan="3">Check present: [TextArea: ':objective'] id begins with 'module.siadap.activities.CreateObjectiveEvaluationActivityInformation:', name ends with ':objective':</td>
+      </tr>
+      <tr>
+        <td>waitForElementPresent</td>
+        <td>xpath=//textarea[substring(@id, 0, string-length('module.siadap.activities.CreateObjectiveEvaluationActivityInformation:') + 1) = 'module.siadap.activities.CreateObjectiveEvaluationActivityInformation:' and substring(@name, string-length(@name) - string-length(':objective') + 1, string-length(':objective')) = ':objective']</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td class="comment" colspan="3">Check present: [Option: 'Efic‡cia']:</td>
+      </tr>
+      <tr>
+        <td>waitForElementPresent</td>
+        <td>xpath=//option[normalize-space(.)='Efic‡cia']</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td class="comment" colspan="3">Check present: [TextArea: 'measurementIndicator'] id begins with 'module.siadap.activities.CreateObjectiveEvaluationActivityInformation_ObjectiveIndicator:', name ends with 'measurementIndicator':</td>
+      </tr>
+      <tr>
+        <td>waitForElementPresent</td>
+        <td>xpath=//textarea[substring(@id, 0, string-length('module.siadap.activities.CreateObjectiveEvaluationActivityInformation_ObjectiveIndicator:') + 1) = 'module.siadap.activities.CreateObjectiveEvaluationActivityInformation_ObjectiveIndicator:' and substring(@name, string-length(@name) - string-length('measurementIndicator') + 1, string-length('measurementIndicator')) = 'measurementIndicator']</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td class="comment" colspan="3">Check present: [TextArea: 'superationCriteria'] id begins with 'module.siadap.activities.CreateObjectiveEvaluationActivityInformation_ObjectiveIndicator', name ends with 'superationCriteria':</td>
+      </tr>
+      <tr>
+        <td>waitForElementPresent</td>
+        <td>xpath=//textarea[substring(@id, 0, string-length('module.siadap.activities.CreateObjectiveEvaluationActivityInformation_ObjectiveIndicator') + 1) = 'module.siadap.activities.CreateObjectiveEvaluationActivityInformation_ObjectiveIndicator' and substring(@name, string-length(@name) - string-length('superationCriteria') + 1, string-length('superationCriteria')) = 'superationCriteria']</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td class="comment" colspan="3">Check present: [Link: 'Adicionar indicador']:</td>
+      </tr>
+      <tr>
+        <td>waitForElementPresent</td>
+        <td>xpath=//a[normalize-space(.)='Adicionar indicador']</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td class="comment" colspan="3">Check present: [Button: 'Guardar']:</td>
+      </tr>
+      <tr>
+        <td>waitForElementPresent</td>
+        <td>xpath=//input[@type='button' or @type='submit' or @type='image' or @type='reset'][@value='Guardar']</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td class="comment" colspan="3">Typing text [TextArea: ':objective'] id begins with 'module.siadap.activities.CreateObjectiveEvaluationActivityInformation:', name ends with ':objective':</td>
+      </tr>
+      <tr>
+        <td>type</td>
+        <td>xpath=//textarea[substring(@id, 0, string-length('module.siadap.activities.CreateObjectiveEvaluationActivityInformation:') + 1) = 'module.siadap.activities.CreateObjectiveEvaluationActivityInformation:' and substring(@name, string-length(@name) - string-length(':objective') + 1, string-length(':objective')) = ':objective']</td>
+        <td>Objectivo de teste de eficacia</td>
+      </tr>
+      <tr>
+        <td class="comment" colspan="3">Selecting [Option: 'Efic‡cia']:</td>
+      </tr>
+      <tr>
+        <td>select</td>
+        <td>xpath=//select[substring(@id, 0, string-length('module.siadap.activities.CreateObjectiveEvaluationActivityInformation:') + 1) = 'module.siadap.activities.CreateObjectiveEvaluationActivityInformation:' and substring(@name, string-length(@name) - string-length('type') + 1, string-length('type')) = 'type'][descendant-or-self::option[normalize-space(.)='Efic‡cia']]</td>
+        <td>label=Efic‡cia</td>
+      </tr>
+      <tr>
+        <td class="comment" colspan="3">Typing text [TextArea: 'measurementIndicator'] id begins with 'module.siadap.activities.CreateObjectiveEvaluationActivityInformation_ObjectiveIndicator:', name ends with 'measurementIndicator':</td>
+      </tr>
+      <tr>
+        <td>type</td>
+        <td>xpath=//textarea[substring(@id, 0, string-length('module.siadap.activities.CreateObjectiveEvaluationActivityInformation_ObjectiveIndicator:') + 1) = 'module.siadap.activities.CreateObjectiveEvaluationActivityInformation_ObjectiveIndicator:' and substring(@name, string-length(@name) - string-length('measurementIndicator') + 1, string-length('measurementIndicator')) = 'measurementIndicator']</td>
+        <td>Indicador 1</td>
+      </tr>
+      <tr>
+        <td class="comment" colspan="3">Typing text [TextArea: 'superationCriteria'] id begins with 'module.siadap.activities.CreateObjectiveEvaluationActivityInformation_ObjectiveIndicator', name ends with 'superationCriteria':</td>
+      </tr>
+      <tr>
+        <td>type</td>
+        <td>xpath=//textarea[substring(@id, 0, string-length('module.siadap.activities.CreateObjectiveEvaluationActivityInformation_ObjectiveIndicator') + 1) = 'module.siadap.activities.CreateObjectiveEvaluationActivityInformation_ObjectiveIndicator' and substring(@name, string-length(@name) - string-length('superationCriteria') + 1, string-length('superationCriteria')) = 'superationCriteria']</td>
+        <td>Superar o indicador 1</td>
+      </tr>
+      <tr>
+        <td class="comment" colspan="3">Clicking [Button: 'Guardar']:</td>
+      </tr>
+      <tr>
+        <td>click</td>
+        <td>xpath=//input[@type='button' or @type='submit' or @type='image' or @type='reset'][@value='Guardar']</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td class="comment" colspan="3">Check present: [Text: 'Indicador 1']:</td>
+      </tr>
+      <tr>
+        <td>waitForTextPresent</td>
+        <td>Indicador 1</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td class="comment" colspan="3">Check present: [Text: 'Superar o indicador 1']:</td>
+      </tr>
+      <tr>
+        <td>waitForTextPresent</td>
+        <td>Superar o indicador 1</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td class="comment" colspan="3">Check present: [Link: 'Introduzir competncias']:</td>
+      </tr>
+      <tr>
+        <td>waitForElementPresent</td>
+        <td>xpath=//a[normalize-space(.)='Introduzir competncias']</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td class="comment" colspan="3">Check present: [Link: 'Introduzir novo objectivo']:</td>
+      </tr>
+      <tr>
+        <td>waitForElementPresent</td>
+        <td>xpath=//a[normalize-space(.)='Introduzir novo objectivo']</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td class="comment" colspan="3">Clicking [Link: 'Introduzir novo objectivo']:</td>
+      </tr>
+      <tr>
+        <td>click</td>
+        <td>xpath=//a[normalize-space(.)='Introduzir novo objectivo']</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td class="comment" colspan="3">Check present: [Option: 'Eficincia']:</td>
+      </tr>
+      <tr>
+        <td>waitForElementPresent</td>
+        <td>xpath=//option[normalize-space(.)='Eficincia']</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td class="comment" colspan="3">Check present: [TextArea: 'objective'] id begins with 'module.siadap.activities.CreateObjectiveEvaluationActivityInformation:', name ends with 'objective':</td>
+      </tr>
+      <tr>
+        <td>waitForElementPresent</td>
+        <td>xpath=//textarea[substring(@id, 0, string-length('module.siadap.activities.CreateObjectiveEvaluationActivityInformation:') + 1) = 'module.siadap.activities.CreateObjectiveEvaluationActivityInformation:' and substring(@name, string-length(@name) - string-length('objective') + 1, string-length('objective')) = 'objective']</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td class="comment" colspan="3">Check present: [TextArea: ':measurementIndicator'] id begins with 'module.siadap.activities.CreateObjectiveEvaluationActivityInformation_ObjectiveIndicator:', name ends with ':measurementIndicator':</td>
+      </tr>
+      <tr>
+        <td>waitForElementPresent</td>
+        <td>xpath=//textarea[substring(@id, 0, string-length('module.siadap.activities.CreateObjectiveEvaluationActivityInformation_ObjectiveIndicator:') + 1) = 'module.siadap.activities.CreateObjectiveEvaluationActivityInformation_ObjectiveIndicator:' and substring(@name, string-length(@name) - string-length(':measurementIndicator') + 1, string-length(':measurementIndicator')) = ':measurementIndicator']</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td class="comment" colspan="3">Check present: [TextArea: 'superationCriteria'] id begins with 'module.siadap.activities.CreateObjectiveEvaluationActivityInformation_ObjectiveIndicator:', name ends with 'superationCriteria':</td>
+      </tr>
+      <tr>
+        <td>waitForElementPresent</td>
+        <td>xpath=//textarea[substring(@id, 0, string-length('module.siadap.activities.CreateObjectiveEvaluationActivityInformation_ObjectiveIndicator:') + 1) = 'module.siadap.activities.CreateObjectiveEvaluationActivityInformation_ObjectiveIndicator:' and substring(@name, string-length(@name) - string-length('superationCriteria') + 1, string-length('superationCriteria')) = 'superationCriteria']</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td class="comment" colspan="3">Check present: [Link: 'Adicionar indicador']:</td>
+      </tr>
+      <tr>
+        <td>waitForElementPresent</td>
+        <td>xpath=//a[normalize-space(.)='Adicionar indicador']</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td class="comment" colspan="3">Selecting [Option: 'Eficincia']:</td>
+      </tr>
+      <tr>
+        <td>select</td>
+        <td>xpath=//select[(contains(@id, 'module.siadap.activities.CreateObjectiveEvaluationActivityInformation')) and substring(@name, string-length(@name) - string-length('type') + 1, string-length('type')) = 'type'][descendant-or-self::option[normalize-space(.)='Eficincia']]</td>
+        <td>label=Eficincia</td>
+      </tr>
+      <tr>
+        <td class="comment" colspan="3">Typing text [TextArea: 'objective'] id begins with 'module.siadap.activities.CreateObjectiveEvaluationActivityInformation:', name ends with 'objective':</td>
+      </tr>
+      <tr>
+        <td>type</td>
+        <td>xpath=//textarea[substring(@id, 0, string-length('module.siadap.activities.CreateObjectiveEvaluationActivityInformation:') + 1) = 'module.siadap.activities.CreateObjectiveEvaluationActivityInformation:' and substring(@name, string-length(@name) - string-length('objective') + 1, string-length('objective')) = 'objective']</td>
+        <td>Cria‹o de um objectivo de eficincia</td>
+      </tr>
+      <tr>
+        <td class="comment" colspan="3">Typing text [TextArea: ':measurementIndicator'] id begins with 'module.siadap.activities.CreateObjectiveEvaluationActivityInformation_ObjectiveIndicator:', name ends with ':measurementIndicator':</td>
+      </tr>
+      <tr>
+        <td>type</td>
+        <td>xpath=//textarea[substring(@id, 0, string-length('module.siadap.activities.CreateObjectiveEvaluationActivityInformation_ObjectiveIndicator:') + 1) = 'module.siadap.activities.CreateObjectiveEvaluationActivityInformation_ObjectiveIndicator:' and substring(@name, string-length(@name) - string-length(':measurementIndicator') + 1, string-length(':measurementIndicator')) = ':measurementIndicator']</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td class="comment" colspan="3">Typing text [TextArea: ':measurementIndicator'] id begins with 'module.siadap.activities.CreateObjectiveEvaluationActivityInformation_ObjectiveIndicator:', name ends with ':measurementIndicator':</td>
+      </tr>
+      <tr>
+        <td>type</td>
+        <td>xpath=//textarea[substring(@id, 0, string-length('module.siadap.activities.CreateObjectiveEvaluationActivityInformation_ObjectiveIndicator:') + 1) = 'module.siadap.activities.CreateObjectiveEvaluationActivityInformation_ObjectiveIndicator:' and substring(@name, string-length(@name) - string-length(':measurementIndicator') + 1, string-length(':measurementIndicator')) = ':measurementIndicator']</td>
+        <td>indicador 1 de eficincia</td>
+      </tr>
+      <tr>
+        <td class="comment" colspan="3">Typing text [TextArea: 'superationCriteria'] id begins with 'module.siadap.activities.CreateObjectiveEvaluationActivityInformation_ObjectiveIndicator:', name ends with 'superationCriteria':</td>
+      </tr>
+      <tr>
+        <td>type</td>
+        <td>xpath=//textarea[substring(@id, 0, string-length('module.siadap.activities.CreateObjectiveEvaluationActivityInformation_ObjectiveIndicator:') + 1) = 'module.siadap.activities.CreateObjectiveEvaluationActivityInformation_ObjectiveIndicator:' and substring(@name, string-length(@name) - string-length('superationCriteria') + 1, string-length('superationCriteria')) = 'superationCriteria']</td>
+        <td>superar a eficincia</td>
+      </tr>
+      <tr>
+        <td class="comment" colspan="3">Clicking [Link: 'Adicionar indicador']:</td>
+      </tr>
+      <tr>
+        <td>click</td>
+        <td>xpath=//a[normalize-space(.)='Adicionar indicador']</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td class="comment" colspan="3">Check present: [Button: 'Guardar']:</td>
+      </tr>
+      <tr>
+        <td>waitForElementPresent</td>
+        <td>xpath=//input[@type='button' or @type='submit' or @type='image' or @type='reset'][@value='Guardar']</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td class="comment" colspan="3">Clicking [Button: 'Guardar']:</td>
+      </tr>
+      <tr>
+        <td>click</td>
+        <td>xpath=//input[@type='button' or @type='submit' or @type='image' or @type='reset'][@value='Guardar']</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td class="comment" colspan="3">Check present: [Text: 'Campo obrigat—rio']:</td>
+      </tr>
+      <tr>
+        <td>waitForTextPresent</td>
+        <td>Campo obrigat—rio</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td class="comment" colspan="3">Check present: [Link: 'Remover indicador']:</td>
+      </tr>
+      <tr>
+        <td>waitForElementPresent</td>
+        <td>xpath=//a[normalize-space(.)='Remover indicador']</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td class="comment" colspan="3">Check present: [TextArea: 'measurementIndicator'] id begins with 'module.siadap.activities.CreateObjectiveEvaluationActivityInformation_ObjectiveIndicator:', name ends with 'measurementIndicator':</td>
+      </tr>
+      <tr>
+        <td>waitForElementPresent</td>
+        <td>xpath=//textarea[substring(@id, 0, string-length('module.siadap.activities.CreateObjectiveEvaluationActivityInformation_ObjectiveIndicator:') + 1) = 'module.siadap.activities.CreateObjectiveEvaluationActivityInformation_ObjectiveIndicator:' and substring(@name, string-length(@name) - string-length('measurementIndicator') + 1, string-length('measurementIndicator')) = 'measurementIndicator']</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td class="comment" colspan="3">Check present: [TextArea: 'superationCriteria'] id begins with 'module.siadap.activities.CreateObjectiveEvaluationActivityInformation_ObjectiveIndicator:', name ends with 'superationCriteria':</td>
+      </tr>
+      <tr>
+        <td>waitForElementPresent</td>
+        <td>xpath=//textarea[substring(@id, 0, string-length('module.siadap.activities.CreateObjectiveEvaluationActivityInformation_ObjectiveIndicator:') + 1) = 'module.siadap.activities.CreateObjectiveEvaluationActivityInformation_ObjectiveIndicator:' and substring(@name, string-length(@name) - string-length('superationCriteria') + 1, string-length('superationCriteria')) = 'superationCriteria']</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td class="comment" colspan="3">Check present: [TextField: ':ponderationFactor'] id begins with 'module.siadap.activities.CreateObjectiveEvaluationActivityInformation_ObjectiveIndicator:', name ends with ':ponderationFactor':</td>
+      </tr>
+      <tr>
+        <td>waitForElementPresent</td>
+        <td>xpath=//input[@type='text' or not(@type)][substring(@id, 0, string-length('module.siadap.activities.CreateObjectiveEvaluationActivityInformation_ObjectiveIndicator:') + 1) = 'module.siadap.activities.CreateObjectiveEvaluationActivityInformation_ObjectiveIndicator:' and substring(@name, string-length(@name) - string-length(':ponderationFactor') + 1, string-length(':ponderationFactor')) = ':ponderationFactor']</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td class="comment" colspan="3">Check present: [Button: 'Guardar']:</td>
+      </tr>
+      <tr>
+        <td>waitForElementPresent</td>
+        <td>xpath=//input[@type='button' or @type='submit' or @type='image' or @type='reset'][@value='Guardar']</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td class="comment" colspan="3">Typing text [TextArea: 'measurementIndicator'] id begins with 'module.siadap.activities.CreateObjectiveEvaluationActivityInformation_ObjectiveIndicator:', name ends with 'measurementIndicator':</td>
+      </tr>
+      <tr>
+        <td>type</td>
+        <td>xpath=//textarea[substring(@id, 0, string-length('module.siadap.activities.CreateObjectiveEvaluationActivityInformation_ObjectiveIndicator:') + 1) = 'module.siadap.activities.CreateObjectiveEvaluationActivityInformation_ObjectiveIndicator:' and substring(@name, string-length(@name) - string-length('measurementIndicator') + 1, string-length('measurementIndicator')) = 'measurementIndicator']</td>
+        <td>indicador 2 de eficncia</td>
+      </tr>
+      <tr>
+        <td class="comment" colspan="3">Typing text [TextArea: 'superationCriteria'] id begins with 'module.siadap.activities.CreateObjectiveEvaluationActivityInformation_ObjectiveIndicator:', name ends with 'superationCriteria':</td>
+      </tr>
+      <tr>
+        <td>type</td>
+        <td>xpath=//textarea[substring(@id, 0, string-length('module.siadap.activities.CreateObjectiveEvaluationActivityInformation_ObjectiveIndicator:') + 1) = 'module.siadap.activities.CreateObjectiveEvaluationActivityInformation_ObjectiveIndicator:' and substring(@name, string-length(@name) - string-length('superationCriteria') + 1, string-length('superationCriteria')) = 'superationCriteria']</td>
+        <td>superar o indicador 2 de eficincia</td>
+      </tr>
+      <tr>
+        <td class="comment" colspan="3">Typing text [TextField: ':ponderationFactor'] id begins with 'module.siadap.activities.CreateObjectiveEvaluationActivityInformation_ObjectiveIndicator:', name ends with ':ponderationFactor':</td>
+      </tr>
+      <tr>
+        <td>type</td>
+        <td>xpath=//input[@type='text' or not(@type)][substring(@id, 0, string-length('module.siadap.activities.CreateObjectiveEvaluationActivityInformation_ObjectiveIndicator:') + 1) = 'module.siadap.activities.CreateObjectiveEvaluationActivityInformation_ObjectiveIndicator:' and substring(@name, string-length(@name) - string-length(':ponderationFactor') + 1, string-length(':ponderationFactor')) = ':ponderationFactor']</td>
+        <td>0</td>
+      </tr>
+      <tr>
+        <td class="comment" colspan="3">Clicking [Button: 'Guardar']:</td>
+      </tr>
+      <tr>
+        <td>click</td>
+        <td>xpath=//input[@type='button' or @type='submit' or @type='image' or @type='reset'][@value='Guardar']</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td class="comment" colspan="3">Check present: [Text: 'O nœmero deve ser maior ou igual a 1']:</td>
+      </tr>
+      <tr>
+        <td>waitForTextPresent</td>
+        <td>O nœmero deve ser maior ou igual a 1</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td class="comment" colspan="3">Check present: [TextField: 'module.siadap.activities.CreateObjectiveEvaluationActivityInformation_ObjectiveIndicator:1479563343:ponderationFactor']:</td>
+      </tr>
+      <tr>
+        <td>waitForElementPresent</td>
+        <td>xpath=//input[@type='text' or not(@type)][@id='module.siadap.activities.CreateObjectiveEvaluationActivityInformation_ObjectiveIndicator:1479563343:ponderationFactor']</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td class="comment" colspan="3">Check present: [TextArea: 'module.siadap.activities.CreateObjectiveEvaluationActivityInformation_ObjectiveIndicator:840046432:superationCriteria']:</td>
+      </tr>
+      <tr>
+        <td>waitForElementPresent</td>
+        <td>xpath=//textarea[@id='module.siadap.activities.CreateObjectiveEvaluationActivityInformation_ObjectiveIndicator:840046432:superationCriteria']</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td class="comment" colspan="3">Check present: [TextField: 'module.siadap.activities.CreateObjectiveEvaluationActivityInformation_ObjectiveIndicator:840046432:ponderationFactor']:</td>
+      </tr>
+      <tr>
+        <td>waitForElementPresent</td>
+        <td>xpath=//input[@type='text' or not(@type)][@id='module.siadap.activities.CreateObjectiveEvaluationActivityInformation_ObjectiveIndicator:840046432:ponderationFactor']</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td class="comment" colspan="3">Check present: [Button: 'Guardar']:</td>
+      </tr>
+      <tr>
+        <td>waitForElementPresent</td>
+        <td>xpath=//input[@type='button' or @type='submit' or @type='image' or @type='reset'][@value='Guardar']</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td class="comment" colspan="3">Typing text [TextField: 'module.siadap.activities.CreateObjectiveEvaluationActivityInformation_ObjectiveIndicator:1479563343:ponderationFactor']:</td>
+      </tr>
+      <tr>
+        <td>type</td>
+        <td>xpath=//input[@type='text' or not(@type)][@id='module.siadap.activities.CreateObjectiveEvaluationActivityInformation_ObjectiveIndicator:1479563343:ponderationFactor']</td>
+        <td>10</td>
+      </tr>
+      <tr>
+        <td class="comment" colspan="3">Typing text [TextArea: 'module.siadap.activities.CreateObjectiveEvaluationActivityInformation_ObjectiveIndicator:840046432:superationCriteria']:</td>
+      </tr>
+      <tr>
+        <td>type</td>
+        <td>xpath=//textarea[@id='module.siadap.activities.CreateObjectiveEvaluationActivityInformation_ObjectiveIndicator:840046432:superationCriteria']</td>
+        <td>superar a eficincia</td>
+      </tr>
+      <tr>
+        <td class="comment" colspan="3">Typing text [TextField: 'module.siadap.activities.CreateObjectiveEvaluationActivityInformation_ObjectiveIndicator:840046432:ponderationFactor']:</td>
+      </tr>
+      <tr>
+        <td>type</td>
+        <td>xpath=//input[@type='text' or not(@type)][@id='module.siadap.activities.CreateObjectiveEvaluationActivityInformation_ObjectiveIndicator:840046432:ponderationFactor']</td>
+        <td>90</td>
+      </tr>
+      <tr>
+        <td class="comment" colspan="3">Clicking [Button: 'Guardar']:</td>
+      </tr>
+      <tr>
+        <td>click</td>
+        <td>xpath=//input[@type='button' or @type='submit' or @type='image' or @type='reset'][@value='Guardar']</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td class="comment" colspan="3">Check present: [Text: 'indicador 2 de eficncia']:</td>
+      </tr>
+      <tr>
+        <td>waitForTextPresent</td>
+        <td>indicador 2 de eficncia</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td class="comment" colspan="3">Check present: [Text: 'superar o indicador 2 de eficincia']:</td>
+      </tr>
+      <tr>
+        <td>waitForTextPresent</td>
+        <td>superar o indicador 2 de eficincia</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td class="comment" colspan="3">Check present: [Text: '10%']:</td>
+      </tr>
+      <tr>
+        <td>waitForTextPresent</td>
+        <td>10%</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td class="comment" colspan="3">Check present: [Link: 'Introduzir competncias']:</td>
+      </tr>
+      <tr>
+        <td>waitForElementPresent</td>
+        <td>xpath=//a[normalize-space(.)='Introduzir competncias']</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td class="comment" colspan="3">Clicking [Link: 'Introduzir competncias']:</td>
+      </tr>
+      <tr>
+        <td>click</td>
+        <td>xpath=//a[normalize-space(.)='Introduzir competncias']</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td class="comment" colspan="3">Check present: [Option: 'Operacional']:</td>
+      </tr>
+      <tr>
+        <td>waitForElementPresent</td>
+        <td>xpath=//option[normalize-space(.)='Operacional']</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td class="comment" colspan="3">Check present: [Checkbox: 'module.siadap.activities.CreateOrEditCompetenceEvaluationActivityInformation:374206291:competences_0']:</td>
+      </tr>
+      <tr>
+        <td>waitForElementPresent</td>
+        <td>xpath=//input[@type='checkbox'][@id='module.siadap.activities.CreateOrEditCompetenceEvaluationActivityInformation:374206291:competences_0']</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td class="comment" colspan="3">Check present: [Checkbox: 'module.siadap.activities.CreateOrEditCompetenceEvaluationActivityInformation:374206291:competences_1']:</td>
+      </tr>
+      <tr>
+        <td>waitForElementPresent</td>
+        <td>xpath=//input[@type='checkbox'][@id='module.siadap.activities.CreateOrEditCompetenceEvaluationActivityInformation:374206291:competences_1']</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td class="comment" colspan="3">Check present: [RadioButton: 'module.siadap.activities.CreateOrEditCompetenceEvaluationActivityInformation:374206291:evaluatedOnlyByCompetences']:</td>
+      </tr>
+      <tr>
+        <td>waitForElementPresent</td>
+        <td>xpath=//input[@type='radio'][@name='module.siadap.activities.CreateOrEditCompetenceEvaluationActivityInformation:374206291:evaluatedOnlyByCompetences']</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td class="comment" colspan="3">Check present: [Checkbox: 'module.siadap.activities.CreateOrEditCompetenceEvaluationActivityInformation:1943095738:competences_2']:</td>
+      </tr>
+      <tr>
+        <td>waitForElementPresent</td>
+        <td>xpath=//input[@type='checkbox'][@id='module.siadap.activities.CreateOrEditCompetenceEvaluationActivityInformation:1943095738:competences_2']</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td class="comment" colspan="3">Check present: [Checkbox: 'module.siadap.activities.CreateOrEditCompetenceEvaluationActivityInformation:1943095738:competences_3']:</td>
+      </tr>
+      <tr>
+        <td>waitForElementPresent</td>
+        <td>xpath=//input[@type='checkbox'][@id='module.siadap.activities.CreateOrEditCompetenceEvaluationActivityInformation:1943095738:competences_3']</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td class="comment" colspan="3">Check present: [Checkbox: 'module.siadap.activities.CreateOrEditCompetenceEvaluationActivityInformation:1943095738:competences_4']:</td>
+      </tr>
+      <tr>
+        <td>waitForElementPresent</td>
+        <td>xpath=//input[@type='checkbox'][@id='module.siadap.activities.CreateOrEditCompetenceEvaluationActivityInformation:1943095738:competences_4']</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td class="comment" colspan="3">Check present: [Checkbox: 'module.siadap.activities.CreateOrEditCompetenceEvaluationActivityInformation:1943095738:competences_5']:</td>
+      </tr>
+      <tr>
+        <td>waitForElementPresent</td>
+        <td>xpath=//input[@type='checkbox'][@id='module.siadap.activities.CreateOrEditCompetenceEvaluationActivityInformation:1943095738:competences_5']</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td class="comment" colspan="3">Check present: [Button: 'Guardar']:</td>
+      </tr>
+      <tr>
+        <td>waitForElementPresent</td>
+        <td>xpath=//input[@type='button' or @type='submit' or @type='image' or @type='reset'][@value='Guardar']</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td class="comment" colspan="3">Selecting [Option: 'Operacional']:</td>
+      </tr>
+      <tr>
+        <td>select</td>
+        <td>xpath=//select[@id='module.siadap.activities.CreateOrEditCompetenceEvaluationActivityInformation:479351455:competenceType'][descendant-or-self::option[normalize-space(.)='Operacional']]</td>
+        <td>label=Operacional</td>
+      </tr>
+      <tr>
+        <td class="comment" colspan="3">Clicking [Checkbox: 'module.siadap.activities.CreateOrEditCompetenceEvaluationActivityInformation:374206291:competences_0']:</td>
+      </tr>
+      <tr>
+        <td>click</td>
+        <td>xpath=//input[@type='checkbox'][@id='module.siadap.activities.CreateOrEditCompetenceEvaluationActivityInformation:374206291:competences_0']</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td class="comment" colspan="3">Clicking [Checkbox: 'module.siadap.activities.CreateOrEditCompetenceEvaluationActivityInformation:374206291:competences_1']:</td>
+      </tr>
+      <tr>
+        <td>click</td>
+        <td>xpath=//input[@type='checkbox'][@id='module.siadap.activities.CreateOrEditCompetenceEvaluationActivityInformation:374206291:competences_1']</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td class="comment" colspan="3">Clicking [RadioButton: 'module.siadap.activities.CreateOrEditCompetenceEvaluationActivityInformation:374206291:evaluatedOnlyByCompetences']:</td>
+      </tr>
+      <tr>
+        <td>click</td>
+        <td>xpath=//input[@type='radio'][@name='module.siadap.activities.CreateOrEditCompetenceEvaluationActivityInformation:374206291:evaluatedOnlyByCompetences']</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td class="comment" colspan="3">Clicking [Checkbox: 'module.siadap.activities.CreateOrEditCompetenceEvaluationActivityInformation:1943095738:competences_2']:</td>
+      </tr>
+      <tr>
+        <td>click</td>
+        <td>xpath=//input[@type='checkbox'][@id='module.siadap.activities.CreateOrEditCompetenceEvaluationActivityInformation:1943095738:competences_2']</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td class="comment" colspan="3">Clicking [Checkbox: 'module.siadap.activities.CreateOrEditCompetenceEvaluationActivityInformation:1943095738:competences_3']:</td>
+      </tr>
+      <tr>
+        <td>click</td>
+        <td>xpath=//input[@type='checkbox'][@id='module.siadap.activities.CreateOrEditCompetenceEvaluationActivityInformation:1943095738:competences_3']</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td class="comment" colspan="3">Clicking [Checkbox: 'module.siadap.activities.CreateOrEditCompetenceEvaluationActivityInformation:1943095738:competences_4']:</td>
+      </tr>
+      <tr>
+        <td>click</td>
+        <td>xpath=//input[@type='checkbox'][@id='module.siadap.activities.CreateOrEditCompetenceEvaluationActivityInformation:1943095738:competences_4']</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td class="comment" colspan="3">Clicking [Checkbox: 'module.siadap.activities.CreateOrEditCompetenceEvaluationActivityInformation:1943095738:competences_5']:</td>
+      </tr>
+      <tr>
+        <td>click</td>
+        <td>xpath=//input[@type='checkbox'][@id='module.siadap.activities.CreateOrEditCompetenceEvaluationActivityInformation:1943095738:competences_5']</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td class="comment" colspan="3">Checking [Checkbox: 'module.siadap.activities.CreateOrEditCompetenceEvaluationActivityInformation:1943095738:competences_5']:</td>
+      </tr>
+      <tr>
+        <td>check</td>
+        <td>xpath=//input[@type='checkbox'][@id='module.siadap.activities.CreateOrEditCompetenceEvaluationActivityInformation:1943095738:competences_5']</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td class="comment" colspan="3">Checking [Checkbox: 'module.siadap.activities.CreateOrEditCompetenceEvaluationActivityInformation:1943095738:competences_4']:</td>
+      </tr>
+      <tr>
+        <td>check</td>
+        <td>xpath=//input[@type='checkbox'][@id='module.siadap.activities.CreateOrEditCompetenceEvaluationActivityInformation:1943095738:competences_4']</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td class="comment" colspan="3">Clicking [Button: 'Guardar']:</td>
+      </tr>
+      <tr>
+        <td>click</td>
+        <td>xpath=//input[@type='button' or @type='submit' or @type='image' or @type='reset'][@value='Guardar']</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td class="comment" colspan="3">Check present: [Text: 'Nœmero inv‡lido de competncias seleccionado, escolha no m’nimo 8 competncias']:</td>
+      </tr>
+      <tr>
+        <td>waitForTextPresent</td>
+        <td>Nœmero inv‡lido de competncias seleccionado, escolha no m’nimo 8 competncias</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td class="comment" colspan="3">Check present: [Checkbox: 'module.siadap.activities.CreateOrEditCompetenceEvaluationActivityInformation:1838907056:competences_4']:</td>
+      </tr>
+      <tr>
+        <td>waitForElementPresent</td>
+        <td>xpath=//input[@type='checkbox'][@id='module.siadap.activities.CreateOrEditCompetenceEvaluationActivityInformation:1838907056:competences_4']</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td class="comment" colspan="3">Check present: [Checkbox: 'module.siadap.activities.CreateOrEditCompetenceEvaluationActivityInformation:1838907056:competences_5']:</td>
+      </tr>
+      <tr>
+        <td>waitForElementPresent</td>
+        <td>xpath=//input[@type='checkbox'][@id='module.siadap.activities.CreateOrEditCompetenceEvaluationActivityInformation:1838907056:competences_5']</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td class="comment" colspan="3">Check present: [Checkbox: 'module.siadap.activities.CreateOrEditCompetenceEvaluationActivityInformation:1838907056:competences_6']:</td>
+      </tr>
+      <tr>
+        <td>waitForElementPresent</td>
+        <td>xpath=//input[@type='checkbox'][@id='module.siadap.activities.CreateOrEditCompetenceEvaluationActivityInformation:1838907056:competences_6']</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td class="comment" colspan="3">Check present: [Checkbox: 'module.siadap.activities.CreateOrEditCompetenceEvaluationActivityInformation:1838907056:competences_7']:</td>
+      </tr>
+      <tr>
+        <td>waitForElementPresent</td>
+        <td>xpath=//input[@type='checkbox'][@id='module.siadap.activities.CreateOrEditCompetenceEvaluationActivityInformation:1838907056:competences_7']</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td class="comment" colspan="3">Check present: [Button: 'Guardar']:</td>
+      </tr>
+      <tr>
+        <td>waitForElementPresent</td>
+        <td>xpath=//input[@type='button' or @type='submit' or @type='image' or @type='reset'][@value='Guardar']</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td class="comment" colspan="3">Clicking [Checkbox: 'module.siadap.activities.CreateOrEditCompetenceEvaluationActivityInformation:1838907056:competences_4']:</td>
+      </tr>
+      <tr>
+        <td>click</td>
+        <td>xpath=//input[@type='checkbox'][@id='module.siadap.activities.CreateOrEditCompetenceEvaluationActivityInformation:1838907056:competences_4']</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td class="comment" colspan="3">Clicking [Checkbox: 'module.siadap.activities.CreateOrEditCompetenceEvaluationActivityInformation:1838907056:competences_5']:</td>
+      </tr>
+      <tr>
+        <td>click</td>
+        <td>xpath=//input[@type='checkbox'][@id='module.siadap.activities.CreateOrEditCompetenceEvaluationActivityInformation:1838907056:competences_5']</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td class="comment" colspan="3">Clicking [Checkbox: 'module.siadap.activities.CreateOrEditCompetenceEvaluationActivityInformation:1838907056:competences_6']:</td>
+      </tr>
+      <tr>
+        <td>click</td>
+        <td>xpath=//input[@type='checkbox'][@id='module.siadap.activities.CreateOrEditCompetenceEvaluationActivityInformation:1838907056:competences_6']</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td class="comment" colspan="3">Clicking [Checkbox: 'module.siadap.activities.CreateOrEditCompetenceEvaluationActivityInformation:1838907056:competences_7']:</td>
+      </tr>
+      <tr>
+        <td>click</td>
+        <td>xpath=//input[@type='checkbox'][@id='module.siadap.activities.CreateOrEditCompetenceEvaluationActivityInformation:1838907056:competences_7']</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td class="comment" colspan="3">Clicking [Button: 'Guardar']:</td>
+      </tr>
+      <tr>
+        <td>click</td>
+        <td>xpath=//input[@type='button' or @type='submit' or @type='image' or @type='reset'][@value='Guardar']</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td class="comment" colspan="3">Check present: [Text: 'Aten‹o: A avalia‹o foi definida como avalia‹o s— por competncias, no entanto existem objectivos definidos']:</td>
+      </tr>
+      <tr>
+        <td>waitForTextPresent</td>
+        <td>Aten‹o: A avalia‹o foi definida como avalia‹o s— por competncias, no entanto existem objectivos definidos</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td class="comment" colspan="3">Check present: [Text: '1 Comunica‹o 2 Trabalho de equipa e coopera‹o 3 Resoluto 4 Inova‹o e qualidade 5 Comunica‹o 6 XPTO 7 Saltar a corda 8 Lorem ipsum']:</td>
+      </tr>
+      <tr>
+        <td>waitForTextPresent</td>
+        <td>1 Comunica‹o 2 Trabalho de equipa e coopera‹o 3 Resoluto 4 Inova‹o e qualidade 5 Comunica‹o 6 XPTO 7 Saltar a corda 8 Lorem ipsum</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td class="comment" colspan="3">Check present: [Link: 'Editar']:</td>
+      </tr>
+      <tr>
+        <td>waitForElementPresent</td>
+        <td>xpath=//a[normalize-space(.)='Editar']</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td class="comment" colspan="3">Clicking [Link: 'Editar']:</td>
+      </tr>
+      <tr>
+        <td>click</td>
+        <td>xpath=//a[normalize-space(.)='Editar']</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td class="comment" colspan="3">Check present: [TextArea: 'module.siadap.activities.EditObjectiveEvaluationActivityInformation:1453017413:objective']:</td>
+      </tr>
+      <tr>
+        <td>waitForElementPresent</td>
+        <td>xpath=//textarea[@id='module.siadap.activities.EditObjectiveEvaluationActivityInformation:1453017413:objective']</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td class="comment" colspan="3">Check present: [TextArea: 'module.siadap.activities.CreateObjectiveEvaluationActivityInformation_ObjectiveIndicator:1175855710:measurementIndicator']:</td>
+      </tr>
+      <tr>
+        <td>waitForElementPresent</td>
+        <td>xpath=//textarea[@id='module.siadap.activities.CreateObjectiveEvaluationActivityInformation_ObjectiveIndicator:1175855710:measurementIndicator']</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td class="comment" colspan="3">Check present: [Button: 'Guardar']:</td>
+      </tr>
+      <tr>
+        <td>waitForElementPresent</td>
+        <td>xpath=//input[@type='button' or @type='submit' or @type='image' or @type='reset'][@value='Guardar']</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td class="comment" colspan="3">Typing text [TextArea: 'module.siadap.activities.EditObjectiveEvaluationActivityInformation:1453017413:objective']:</td>
+      </tr>
+      <tr>
+        <td>type</td>
+        <td>xpath=//textarea[@id='module.siadap.activities.EditObjectiveEvaluationActivityInformation:1453017413:objective']</td>
+        <td>Objectivo de teste de eficacia - editado</td>
+      </tr>
+      <tr>
+        <td class="comment" colspan="3">Typing text [TextArea: 'module.siadap.activities.CreateObjectiveEvaluationActivityInformation_ObjectiveIndicator:1175855710:measurementIndicator']:</td>
+      </tr>
+      <tr>
+        <td>type</td>
+        <td>xpath=//textarea[@id='module.siadap.activities.CreateObjectiveEvaluationActivityInformation_ObjectiveIndicator:1175855710:measurementIndicator']</td>
+        <td>Indicador 1</td>
+      </tr>
+      <tr>
+        <td class="comment" colspan="3">Clicking [Button: 'Guardar']:</td>
+      </tr>
+      <tr>
+        <td>click</td>
+        <td>xpath=//input[@type='button' or @type='submit' or @type='image' or @type='reset'][@value='Guardar']</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td class="comment" colspan="3">Check present: [Text: 'Objectivo de teste de eficacia - editado']:</td>
+      </tr>
+      <tr>
+        <td>waitForTextPresent</td>
+        <td>Objectivo de teste de eficacia - editado</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td class="comment" colspan="3">Check present: [Link: 'Ver logs']:</td>
+      </tr>
+      <tr>
+        <td>waitForElementPresent</td>
+        <td>xpath=//a[normalize-space(.)='Ver logs']</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td class="comment" colspan="3">Clicking [Link: 'Ver logs']:</td>
+      </tr>
+      <tr>
+        <td>click</td>
+        <td>xpath=//a[normalize-space(.)='Ver logs']</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td class="comment" colspan="3">Check present: [Link: 'Ç Voltar ao processo']:</td>
+      </tr>
+      <tr>
+        <td>waitForElementPresent</td>
+        <td>xpath=//a[normalize-space(.)='Ç Voltar ao processo']</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td class="comment" colspan="3">Check NOT present: [Text: 'Lacrar objectivos/competncias'], not = true:</td>
+      </tr>
+      <tr>
+        <td>waitForTextNotPresent</td>
+        <td>Lacrar objectivos/competncias</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td class="comment" colspan="3">Check NOT present: [Text: 'foi editado'], not = true:</td>
+      </tr>
+      <tr>
+        <td>waitForTextNotPresent</td>
+        <td>foi editado</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td class="comment" colspan="3">Check NOT present: [Text: 'O objectivo'], not = true:</td>
+      </tr>
+      <tr>
+        <td>waitForTextNotPresent</td>
+        <td>O objectivo</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td class="comment" colspan="3">Clicking [Link: 'Ç Voltar ao processo']:</td>
+      </tr>
+      <tr>
+        <td>click</td>
+        <td>xpath=//a[normalize-space(.)='Ç Voltar ao processo']</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td class="comment" colspan="3">Check present: [Link: 'Editar']:</td>
+      </tr>
+      <tr>
+        <td>waitForElementPresent</td>
+        <td>xpath=//a[normalize-space(.)='Editar']</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td class="comment" colspan="3">Clicking [Link: 'Editar']:</td>
+      </tr>
+      <tr>
+        <td>click</td>
+        <td>xpath=//a[normalize-space(.)='Editar']</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td class="comment" colspan="3">Check present: [RadioButton: 'module.siadap.activities.CreateOrEditCompetenceEvaluationActivityInformation:1807638231:evaluatedOnlyByCompetences']:</td>
+      </tr>
+      <tr>
+        <td>waitForElementPresent</td>
+        <td>xpath=//input[@type='radio'][@name='module.siadap.activities.CreateOrEditCompetenceEvaluationActivityInformation:1807638231:evaluatedOnlyByCompetences']</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td class="comment" colspan="3">Check present: [Button: 'Guardar']:</td>
+      </tr>
+      <tr>
+        <td>waitForElementPresent</td>
+        <td>xpath=//input[@type='button' or @type='submit' or @type='image' or @type='reset'][@value='Guardar']</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td class="comment" colspan="3">Clicking [RadioButton: 'module.siadap.activities.CreateOrEditCompetenceEvaluationActivityInformation:1807638231:evaluatedOnlyByCompetences']:</td>
+      </tr>
+      <tr>
+        <td>click</td>
+        <td>xpath=//input[@type='radio'][@name='module.siadap.activities.CreateOrEditCompetenceEvaluationActivityInformation:1807638231:evaluatedOnlyByCompetences']</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td class="comment" colspan="3">Clicking [Button: 'Guardar']:</td>
+      </tr>
+      <tr>
+        <td>click</td>
+        <td>xpath=//input[@type='button' or @type='submit' or @type='image' or @type='reset'][@value='Guardar']</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td class="comment" colspan="3">Check present: [Link: 'Introduzir novo objectivo']:</td>
+      </tr>
+      <tr>
+        <td>waitForElementPresent</td>
+        <td>xpath=//a[normalize-space(.)='Introduzir novo objectivo']</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td class="comment" colspan="3">Check NOT present: [Text: 'Aten‹o: A avalia‹o foi definida como avalia‹o s— por competncias, no entanto existem objectivos definidos'], not = true:</td>
+      </tr>
+      <tr>
+        <td>waitForTextNotPresent</td>
+        <td>Aten‹o: A avalia‹o foi definida como avalia‹o s— por competncias, no entanto existem objectivos definidos</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td class="comment" colspan="3">Check present: [Link: 'linkConfirmationHook('SealObjectivesAndCompetences', 'Ao lacrar os objectivos/competncias, estes e posteriores altera›es passar‹o a estar vis’veis para o avaliado. TambŽm ficar‹o registadas no sistema quaisquer altera›es que sejam efectuadas. Tem a certeza que pretende continuar?','Lacrar objectivos/competncias');Lacrar objectivos/competncias']:</td>
+      </tr>
+      <tr>
+        <td>waitForElementPresent</td>
+        <td>xpath=//a[(contains(normalize-space(.), "linkConfirmationHook('SealObjectivesAndCompetences', 'Ao lacrar os objectivos/competncias, estes e posteriores altera›es passar‹o a estar vis’veis para o avaliado. TambŽm ficar‹o registadas no sistema quaisquer altera›es que sejam efectuadas. Tem a certeza que pretende continuar?','Lacrar objectivos/competncias');Lacrar objectivos/competncias"))]</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td class="comment" colspan="3">Clicking [Link: 'linkConfirmationHook('SealObjectivesAndCompetences', 'Ao lacrar os objectivos/competncias, estes e posteriores altera›es passar‹o a estar vis’veis para o avaliado. TambŽm ficar‹o registadas no sistema quaisquer altera›es que sejam efectuadas. Tem a certeza que pretende continuar?','Lacrar objectivos/competncias');Lacrar objectivos/competncias']:</td>
+      </tr>
+      <tr>
+        <td>click</td>
+        <td>xpath=//a[(contains(normalize-space(.), "linkConfirmationHook('SealObjectivesAndCompetences', 'Ao lacrar os objectivos/competncias, estes e posteriores altera›es passar‹o a estar vis’veis para o avaliado. TambŽm ficar‹o registadas no sistema quaisquer altera›es que sejam efectuadas. Tem a certeza que pretende continuar?','Lacrar objectivos/competncias');Lacrar objectivos/competncias"))]</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td class="comment" colspan="3">Check present: [Button: 'ÊOKÊ']:</td>
+      </tr>
+      <tr>
+        <td>waitForElementPresent</td>
+        <td>xpath=//input[@type='button' or @type='submit' or @type='image' or @type='reset'][@value='ÊOKÊ']</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td class="comment" colspan="3">Clicking [Button: 'ÊOKÊ']:</td>
+      </tr>
+      <tr>
+        <td>click</td>
+        <td>xpath=//input[@type='button' or @type='submit' or @type='image' or @type='reset'][@value='ÊOKÊ']</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td class="comment" colspan="3">Check present: [Link: 'Editar']:</td>
+      </tr>
+      <tr>
+        <td>waitForElementPresent</td>
+        <td>xpath=//a[normalize-space(.)='Editar']</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td class="comment" colspan="3">Clicking [Link: 'Editar']:</td>
+      </tr>
+      <tr>
+        <td>click</td>
+        <td>xpath=//a[normalize-space(.)='Editar']</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td class="comment" colspan="3">Check present: [TextArea: 'module.siadap.activities.EditObjectiveEvaluationActivityInformation:1541312014:objective']:</td>
+      </tr>
+      <tr>
+        <td>waitForElementPresent</td>
+        <td>xpath=//textarea[@id='module.siadap.activities.EditObjectiveEvaluationActivityInformation:1541312014:objective']</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td class="comment" colspan="3">Check present: [Button: 'Guardar']:</td>
+      </tr>
+      <tr>
+        <td>waitForElementPresent</td>
+        <td>xpath=//input[@type='button' or @type='submit' or @type='image' or @type='reset'][@value='Guardar']</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td class="comment" colspan="3">Typing text [TextArea: 'module.siadap.activities.EditObjectiveEvaluationActivityInformation:1541312014:objective']:</td>
+      </tr>
+      <tr>
+        <td>type</td>
+        <td>xpath=//textarea[@id='module.siadap.activities.EditObjectiveEvaluationActivityInformation:1541312014:objective']</td>
+        <td>Cria‹o de um objectivo de eficincia - editado</td>
+      </tr>
+      <tr>
+        <td class="comment" colspan="3">Clicking [Button: 'Guardar']:</td>
+      </tr>
+      <tr>
+        <td>click</td>
+        <td>xpath=//input[@type='button' or @type='submit' or @type='image' or @type='reset'][@value='Guardar']</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td class="comment" colspan="3">Check present: [Link: 'Ver logs']:</td>
+      </tr>
+      <tr>
+        <td>waitForElementPresent</td>
+        <td>xpath=//a[normalize-space(.)='Ver logs']</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td class="comment" colspan="3">Clicking [Link: 'Ver logs']:</td>
+      </tr>
+      <tr>
+        <td>click</td>
+        <td>xpath=//a[normalize-space(.)='Ver logs']</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td class="comment" colspan="3">Check present: [Text: 'Lacrar objectivos/competncias']:</td>
+      </tr>
+      <tr>
+        <td>waitForTextPresent</td>
+        <td>Lacrar objectivos/competncias</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td class="comment" colspan="3">Check present: [Text: 'O objectivo']:</td>
+      </tr>
+      <tr>
+        <td>waitForTextPresent</td>
+        <td>O objectivo</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td class="comment" colspan="3">Check present: [Text: 'foi editado']:</td>
+      </tr>
+      <tr>
+        <td>waitForTextPresent</td>
+        <td>foi editado</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td class="comment" colspan="3">Check present: [Link: 'Ç Voltar ao processo']:</td>
+      </tr>
+      <tr>
+        <td>waitForElementPresent</td>
+        <td>xpath=//a[normalize-space(.)='Ç Voltar ao processo']</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td class="comment" colspan="3">Clicking [Link: 'Ç Voltar ao processo']:</td>
+      </tr>
+      <tr>
+        <td>click</td>
+        <td>xpath=//a[normalize-space(.)='Ç Voltar ao processo']</td>
+        <td>&nbsp;</td>
+      </tr>
+    </table>
+  </body>
+</html>
+
