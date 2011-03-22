@@ -41,7 +41,7 @@ public class ImportSiadapStructure extends ReadCustomTask {
     List<Responsible> responsibles = new ArrayList<Responsible>();
     //    public static Map<String, String> unknownUsersMap = new HashMap<String, String>();
 
-    public static final boolean debugModeOn = true;
+    public static final boolean debugModeOn = false;
 
     /**
      * Contains all of the User objects that have been mapped by this script
@@ -303,7 +303,7 @@ public class ImportSiadapStructure extends ReadCustomTask {
 	    + "8411,ist25125,ist24459,1\n" + "8412,ist23490,ist23000,1\n" + "8412,ist24908,ist23000,1\n"
 	    + "8421,ist46082,ist24421,1\n" + "8431,ist154457,ist24439,1\n" + "8431,ist153877,ist24439,1\n"
 	    + "8510,ist142020,ist12316,1\n" + "8512,ist90411,ist12316,1\n" + "8611,ist90410,ist23012,1\n"
-	    + "8611,8612,ist24044,ist23918,1\n" + "8612,ist24247,ist23918,1\n" + "8612,ist24054,ist23918,1\n"
+	    + "8612,ist24044,ist23918,1\n" + "8612,ist24247,ist23918,1\n" + "8612,ist24054,ist23918,1\n"
 	    + "3301,ist24967,ist12931,1\n" + "1144,ist25134,ist12662,1\n" + "2301,ist24300,ist12268,1\n"
 	    + "2320,ist24079,ist12919,1\n" + "2320,ist24127,ist12919,1\n" + "1604,ist24971,ist12144,1\n"
 	    + "2001,ist24697,ist24597,1\n" + "2001,ist24076,ist23308,1\n" + "2001,ist24119,ist23308,1\n"
@@ -493,10 +493,12 @@ public class ImportSiadapStructure extends ReadCustomTask {
 	    for (Evaluator evaluator : evaluators) {
 		Person evaluatorPerson = evaluator.getUser().getPerson();
 		if (evaluatorPerson == null) {
-		    out.println("WTF: " + evaluator.getUser().getUsername());
+		    out.println("Warning, erroneous working connection detected, no evaluator Person found: "
+			    + evaluator.getUser().getUsername());
 		}
 		if (evaluatorPerson.getParentUnits(evaluationRelation) == null) {
-		    out.println("WTF-relation for: " + evaluator.getUser().getUsername());
+		    out.println("Warning, erroneous working connection detected-relation no units with the eval relation found for the evaluator:"
+			    + evaluator.getUser().getUsername());
 		}
 
 		PartyPredicate parentEvalUnitsCurrentDate = new AccTypeForGivenYearClassPredicate(evaluationRelation, today,
@@ -507,13 +509,12 @@ public class ImportSiadapStructure extends ReadCustomTask {
 		    User user = evaluated.getUser();
 		    boolean adist = evaluated.getAdist();
 		    if (user == null) {
-			out.println(evaluated.istId + " NO USER");
+			out.println("Warning, no User found, istId: " + evaluated.istId + " creating it");
 			user = new User(evaluated.istId);
 		    }
 		    Person evaluatedPerson = user.getPerson();
 		    if (evaluatedPerson == null) {
-			out.println(evaluated.istId + " NO PERSON");
-
+			out.println("Warning, no Person found, istId: " + evaluated.istId + " importing it");
 			if (inDevelopmentSystem) {
 
 			    Person p = Person.create(MultiLanguageString.i18n().add("pt", "DUMMY USER").finish(),
@@ -525,7 +526,8 @@ public class ImportSiadapStructure extends ReadCustomTask {
 			}
 			evaluatedPerson = user.getPerson();
 			if (evaluatedPerson == null)
-			    throw new Error("Error, creation of person for user " + evaluated.istId + " didn't succeeded");
+			    throw new Error("Error, creation/importing of person for user " + evaluated.istId
+				    + " didn't succeeded");
 		    }
 
 		    PartyPredicate workingPartyPredicate = new AccTypeForGivenYearClassPredicate(workingRelation, today, null);
@@ -533,12 +535,23 @@ public class ImportSiadapStructure extends ReadCustomTask {
 			    workingRelationWithNoQuota, today, null);
 
 		    for (Accountability acc : evaluatedPerson.getParentAccountabilities()) {
+			//if we are talking about a different unit with a valid any kind of working relation, let's remove it
 			if (acc.getParent() != unit
 				&& (workingPartyPredicate.eval(null, acc) || workingNoQuotaPartyPredicate.eval(null, acc))
 				&& acc.getParent() instanceof Unit) {
 			    //remove
-			    debug("Going to remove previous working relation for " + acc.getChild().getPartyName() + " "
-				    + acc.getDetailsString() + " from unit " + acc.getParent().getPresentationName(), out);
+			    out.println("Going to remove previous working relation for " + acc.getChild().getPartyName() + " "
+				    + acc.getDetailsString() + " from unit " + acc.getParent().getPresentationName());
+			    evaluatedPerson.removeParent(acc);
+			}
+			//or also, if we are talking about the same unit, but with a different kind of valid working relation, let's remove it
+			if (acc.getParent() == unit
+				&& ((evaluated.getAdist() && workingPartyPredicate.eval(null, acc)) || (!evaluated.getAdist() && workingNoQuotaPartyPredicate
+					.eval(null, acc)))) {
+			    //remove
+			    out.println("Going to remove previous invalid type working relation for "
+				    + acc.getChild().getPartyName() + " " + acc.getDetailsString() + " from unit "
+				    + acc.getParent().getPresentationName());
 			    evaluatedPerson.removeParent(acc);
 			}
 		    }
@@ -555,8 +568,8 @@ public class ImportSiadapStructure extends ReadCustomTask {
 			    if (!acc.getParent().equals(evaluatorPerson) && evalForYearPredicate.eval(evaluatedPerson, acc)
 				    && acc.getChild() instanceof Person && acc.getParent() instanceof Person) {
 				//remove
-				debug("Going to remove previous personal eval rel for " + acc.getChild().getPartyName() + " "
-					+ acc.getDetailsString() + " with unit " + acc.getParent().getPresentationName(), out);
+			    out.println("Going to remove previous personal eval rel for " + acc.getChild().getPartyName() + " "
+				    + acc.getDetailsString() + " with unit " + acc.getParent().getPresentationName());
 				evaluatedPerson.removeParent(acc);
 			    }
 			}
