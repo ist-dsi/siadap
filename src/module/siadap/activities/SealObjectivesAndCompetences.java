@@ -22,6 +22,10 @@ public class SealObjectivesAndCompetences extends WorkflowActivity<SiadapProcess
 	activityInformation.getProcess().getSiadap().setObjectivesAndCompetencesSealedDate(new LocalDate());
     }
 
+    protected static void revertProcess(ActivityInformation<SiadapProcess> activityInformation) {
+	activityInformation.getProcess().getSiadap().setObjectivesAndCompetencesSealedDate(null);
+    }
+
     @Override
     public boolean isConfirmationNeeded(SiadapProcess process) {
     	return true;

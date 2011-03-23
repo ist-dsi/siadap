@@ -22,8 +22,7 @@ public class ChangeCustomSchedule extends WorkflowActivity<SiadapProcess, Change
     public static boolean shouldBeAbleToChangeSchedules(SiadapProcess process, User user) {
 	Siadap siadap = process.getSiadap();
 	SiadapYearConfiguration configuration = siadap.getSiadapYearConfiguration();
-	//TODO change this into a defined group (?)
-	return configuration.isCurrentUserMemberOfScheduleExtenders();
+	return configuration.isPersonMemberOfScheduleExtenders(user.getPerson());
     }
 
     /*

@@ -10,26 +10,28 @@ import myorg.util.BundleUtil;
 
 import org.joda.time.LocalDate;
 
-public class SiadapCCAGroup extends SiadapCCAGroup_Base {
-
-    public SiadapCCAGroup() {
-	super();
+public class SiadapRevertStateGroup extends SiadapRevertStateGroup_Base {
+    
+    public  SiadapRevertStateGroup() {
+        super();
     }
 
     @Override
     public boolean isMember(User user) {
-	return isMember(user, new LocalDate().getYear());
+	// TODO Auto-generated method stub
+	return false;
     }
 
     public boolean isMember(User user, Integer year) {
 	SiadapYearConfiguration configuration = SiadapYearConfiguration.getSiadapYearConfiguration(year);
-	return configuration.getCcaMembers().contains(user.getPerson());
+	return configuration.isPersonMemberOfRevertStateGroup(user.getPerson());
     }
 
     @Override
     public String getName() {
 	try {
-	    return BundleUtil.getStringFromResourceBundle("resources/SiadapResources", "siadap.group.name.SiadapCCAGroup");
+	    return BundleUtil.getStringFromResourceBundle("resources/SiadapResources",
+ "siadap.group.name.SiadapRevertStateGroup");
 	} catch (java.util.MissingResourceException ex) {
 	    return this.getClass().getSimpleName();
 	}
@@ -40,9 +42,9 @@ public class SiadapCCAGroup extends SiadapCCAGroup_Base {
 	return getMembers(new LocalDate().getYear());
     }
 
-    public Set<User> getMembers(Integer year) {
+    private Set<User> getMembers(Integer year) {
 	SiadapYearConfiguration configuration = SiadapYearConfiguration.getSiadapYearConfiguration(year);
-	Set<Person> groupPersons = configuration.getCcaMembersSet();
+	Set<Person> groupPersons = configuration.getRevertStateGroupMemberSet();
 
 	Set<User> setToReturn = new HashSet<User>();
 
@@ -51,6 +53,7 @@ public class SiadapCCAGroup extends SiadapCCAGroup_Base {
 	}
 
 	return setToReturn;
-    }
 
+    }
+    
 }

@@ -183,15 +183,27 @@ public class SiadapYearConfiguration extends SiadapYearConfiguration_Base {
 
     @Override
     @Service
-    public void addScheduleExtenders(Person scheduleExtenders) {
-	super.addScheduleExtenders(scheduleExtenders);
+    public void addScheduleEditors(Person scheduleEditors) {
+	super.addScheduleEditors(scheduleEditors);
     };
 
     @Override
     @Service
-    public void removeScheduleExtenders(Person scheduleExtenders) {
-	super.removeScheduleExtenders(scheduleExtenders);
+    public void addRevertStateGroupMember(Person revertStateGroupMember) {
+	super.addRevertStateGroupMember(revertStateGroupMember);
+    }
+
+    @Override
+    @Service
+    public void removeScheduleEditors(Person scheduleEditor) {
+	super.removeScheduleEditors(scheduleEditor);
     };
+
+    @Override
+    @Service
+    public void removeRevertStateGroupMember(Person revertStateGroupMember) {
+	super.removeRevertStateGroupMember(revertStateGroupMember);
+    }
 
     @Override
     @Service
@@ -205,7 +217,7 @@ public class SiadapYearConfiguration extends SiadapYearConfiguration_Base {
     }
 
     public boolean isPersonMemberOfScheduleExtenders(Person person) {
-	return getScheduleExtenders().contains(person);
+	return getScheduleEditors().contains(person);
     }
 
     public boolean isPersonMemberOfCCA(Person person) {
@@ -226,5 +238,9 @@ public class SiadapYearConfiguration extends SiadapYearConfiguration_Base {
 
     public List<ExcedingQuotaProposal> getSuggestionsForUnit(Unit unit, ExceddingQuotaSuggestionType type) {
 	return new UnitSiadapWrapper(unit, getYear()).getExcedingQuotaProposalSuggestions(type);
+    }
+
+    public boolean isPersonMemberOfRevertStateGroup(Person person) {
+	return getRevertStateGroupMember().contains(person);
     }
 }

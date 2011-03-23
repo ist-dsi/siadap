@@ -14,6 +14,18 @@
 			<property name="trueLabel" value="siadap.true.yes"/>
 		</slot>
 </schema>
+
+<schema bundle="SIADAP_RESOURCES" name="activityInformation.RevertState"
+		type="module.siadap.activities.RevertStateActivityInformation">
+		<slot name="siadapProcessStateEnum" layout="menu-select"
+		validator="pt.ist.fenixWebFramework.renderers.validators.RequiredValidator" key="activity.RevertState.siadapProcessStateToRevertTo.label">
+			<property name="providerClass"
+				value="module.siadap.presentationTier.renderers.providers.RevertStatesProvider" />
+		</slot>
+		<slot name="justification" validator="pt.ist.fenixWebFramework.renderers.validators.RequiredValidator" key="activity.RevertState.justification.label">
+			<property name="bundle" value="SIADAP_RESOURCES"/>
+		</slot>
+</schema>
 		
 <schema name="view.competence.name" bundle="SIADAP_RESOURCES"
 	type="module.siadap.domain.Competence">

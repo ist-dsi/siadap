@@ -123,8 +123,18 @@ public class SiadapManagement extends ContextBaseAction {
 
 	SiadapYearConfiguration configuration = getDomainObject(request, "configurationId");
 	VariantBean bean = getRenderedObject("scheduleExtenderMember");
-	configuration.addScheduleExtenders(((Person) bean.getDomainObject()));
+	configuration.addScheduleEditors(((Person) bean.getDomainObject()));
 	// TODO make the nodes access list to be updated
+	RenderUtils.invalidateViewState("scheduleExtenderMember");
+	return showConfiguration(mapping, form, request, response);
+    }
+
+    public final ActionForward addRevertStateMember(final ActionMapping mapping, final ActionForm form,
+	    final HttpServletRequest request, final HttpServletResponse response) {
+
+	SiadapYearConfiguration configuration = getDomainObject(request, "configurationId");
+	VariantBean bean = getRenderedObject("scheduleExtenderMember");
+	configuration.addRevertStateGroupMember(((Person) bean.getDomainObject()));
 	RenderUtils.invalidateViewState("scheduleExtenderMember");
 	return showConfiguration(mapping, form, request, response);
     }
@@ -158,7 +168,7 @@ public class SiadapManagement extends ContextBaseAction {
 
 	SiadapYearConfiguration configuration = getDomainObject(request, "configurationId");
 	Person person = getDomainObject(request, "personId");
-	configuration.removeScheduleExtenders(person);
+	configuration.removeScheduleEditors(person);
 	// remove them from the persistent group as well
 	return showConfiguration(mapping, form, request, response);
     }
@@ -168,7 +178,17 @@ public class SiadapManagement extends ContextBaseAction {
 
 	SiadapYearConfiguration configuration = getDomainObject(request, "configurationId");
 	Person person = getDomainObject(request, "personId");
-	configuration.removeScheduleExtenders(person);
+	configuration.removeScheduleEditors(person);
+	return showConfiguration(mapping, form, request, response);
+    }
+
+    public final ActionForward removeRevertStateMember(final ActionMapping mapping, final ActionForm form,
+	    final HttpServletRequest request, final HttpServletResponse response) {
+
+	SiadapYearConfiguration configuration = getDomainObject(request, "configurationId");
+	Person person = getDomainObject(request, "personId");
+	configuration.removeRevertStateGroupMember(person);
+	// remove them from the persistent group as well
 	return showConfiguration(mapping, form, request, response);
     }
 

@@ -218,7 +218,7 @@ public class Siadap extends Siadap_Base {
 
     public void setAcknowledgeDate(LocalDate acknowledgeDate) {
 	for (SiadapEvaluationItem item : getCurrentEvaluationItems()) {
-	    if (item.getAcknowledgeDate() == null) {
+	    if (item.getAcknowledgeDate() == null || acknowledgeDate == null) {
 		item.setAcknowledgeDate(acknowledgeDate);
 	    }
 	}

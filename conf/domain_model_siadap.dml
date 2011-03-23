@@ -29,6 +29,10 @@ class SiadapProcess extends .module.workflow.domain.WorkflowProcess {
 
 class groups.SiadapScheduleEditorsGroup extends .myorg.domain.groups.PersistentGroup {
 }
+
+class groups.SiadapRevertStateGroup extends .myorg.domain.groups.PersistentGroup {
+}
+
 class groups.SiadapCCAGroup extends .myorg.domain.groups.PersistentGroup {
 }
 
@@ -132,6 +136,11 @@ relation SiadapModuleRootMyOrg {
 relation SiadapRootModuleSiadapScheduleEditorsGroup {
 	SiadapRootModule playsRole siadapRootModule;
 	groups.SiadapScheduleEditorsGroup playsRole siadapScheduleEditorsGroup;
+}
+
+relation SiadapRootModuleSiadapRevertStateGroup {
+	SiadapRootModule playsRole siadapRootModule;
+	groups.SiadapRevertStateGroup playsRole siadapRevertStateGroup;
 }
 
 relation SiadapRootModuleStatisticsAccessUnionGroup {
@@ -296,19 +305,28 @@ relation HarmonizationForUnitIsTerminated {
 	}
 }
 
-relation CCAMembers {
+relation SiadapYearConfigurationCCAMembers {
 	SiadapYearConfiguration playsRole siadapYearConfigurationForCCAMembers;
 	.module.organization.domain.Person playsRole ccaMembers {
 		multiplicity *;
 	}
 }
 
-relation ScheduleExtendersMembers {
-	SiadapYearConfiguration playsRole siadapYearConfigurationForScheduleExtenders;
-	.module.organization.domain.Person playsRole scheduleExtenders {
+relation SiadapYearConfigurationScheduleEditorsMembers {
+	SiadapYearConfiguration playsRole siadapYearConfigurationForScheduleEditors;
+	.module.organization.domain.Person playsRole scheduleEditors {
 		multiplicity *;
 	}
 }
+
+
+relation SiadapYearConfigurationRevertStateMembers {
+	SiadapYearConfiguration playsRole siadapYearConfigurationForRevertStateGroupMember;
+	.module.organization.domain.Person playsRole revertStateGroupMember {
+		multiplicity *;
+	}
+}
+
 relation HomologationMembers {
 	SiadapYearConfiguration playsRole siadapYearConfigurationForHomologationMembers;
 	.module.organization.domain.Person playsRole homologationMembers {

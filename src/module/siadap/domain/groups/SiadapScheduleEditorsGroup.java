@@ -49,7 +49,7 @@ public class SiadapScheduleEditorsGroup extends SiadapScheduleEditorsGroup_Base 
 
     public Set<User> getMembers(Integer year) {
 	SiadapYearConfiguration configuration = SiadapYearConfiguration.getSiadapYearConfiguration(year);
-	Set<Person> groupPersons = configuration.getScheduleExtendersSet();
+	Set<Person> groupPersons = configuration.getScheduleEditorsSet();
 
 	Set<User> setToReturn = new HashSet<User>();
 

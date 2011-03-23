@@ -25,6 +25,7 @@ import module.siadap.activities.NotValidateEvaluation;
 import module.siadap.activities.RemoveCustomSchedule;
 import module.siadap.activities.RemoveObjectiveEvaluation;
 import module.siadap.activities.RevertNoEvaluation;
+import module.siadap.activities.RevertState;
 import module.siadap.activities.RevokeExcellencyAward;
 import module.siadap.activities.SealObjectivesAndCompetences;
 import module.siadap.activities.SubmitForObjectivesAcknowledge;
@@ -54,6 +55,7 @@ public class SiadapProcess extends SiadapProcess_Base {
 
     static {
 	activities.add(new ChangeCustomSchedule());
+	activities.add(new RevertState());
 	activities.add(new RemoveCustomSchedule());
 	activities.add(new CreateObjectiveEvaluation());
 	activities.add(new RemoveObjectiveEvaluation());
@@ -88,7 +90,7 @@ public class SiadapProcess extends SiadapProcess_Base {
 
 	boolean belongsToASuperGroup = false;
 	if ((configuration.getCcaMembers() != null && configuration.getCcaMembers().contains(currentUser.getPerson()))
-		|| (configuration.getScheduleExtenders() != null && configuration.getScheduleExtenders().contains(
+		|| (configuration.getScheduleEditors() != null && configuration.getScheduleEditors().contains(
 			currentUser.getPerson())) || Role.getRole(RoleType.MANAGER).isMember(currentUser)) {
 	    belongsToASuperGroup = true;
 	}
@@ -206,6 +208,10 @@ public class SiadapProcess extends SiadapProcess_Base {
 	return getSiadap().getEvaluated().getUser() == user;
     }
 
+    public boolean isProcessSealed() {
+	return getSiadap().getObjectivesAndCompetencesSealedDate() != null;
+    }
+
     public boolean isCurrentUserEvaluated() {
 	return isUserEvaluated(UserView.getCurrentUser());
     }
@@ -288,6 +294,14 @@ public class SiadapProcess extends SiadapProcess_Base {
 	    throw new DomainException();
 	}
 
+    }
+
+    public boolean isSubmittedForEvalObjsConfirmation() {
+	return getSiadap().getRequestedAcknowledgeDate() != null;
+    }
+
+    public boolean isEvalObjectivesAcknowledged() {
+	return getSiadap().isEvaluatedWithKnowledgeOfObjectives();
     }
 
 }

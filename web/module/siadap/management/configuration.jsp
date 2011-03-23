@@ -157,7 +157,7 @@
 
 
 <strong><bean:message key="label.schedulerExtenderMembers" bundle="SIADAP_RESOURCES"/>:</strong>
-<fr:view name="configuration" property="scheduleExtenders">
+<fr:view name="configuration" property="scheduleEditors">
 	<fr:schema type="module.organization.domain.Person" bundle="SIADAP_RESOURCES">
 		<fr:slot name="user.username"/>
 		<fr:slot name="partyName"/>
@@ -172,6 +172,46 @@
 	</fr:layout>	
 </fr:view>
 <fr:edit id="scheduleExtenderMember" name="addScheduleExtenderMember" action="<%=  "/siadapManagement.do?method=addScheduleExtenderMember&configurationId=" + configurationId %>">
+	<fr:schema type="module.organization.domain.Person" bundle="SIADAP_RESOURCES">
+		<fr:slot name="user.username"/>
+		<fr:slot name="partyName"/>
+	</fr:schema>
+<fr:schema type="myorg.util.VariantBean" bundle="SIADAP_RESOURCES">
+		<fr:slot name="domainObject" layout="autoComplete" key="label.person" bundle="ORGANIZATION_RESOURCES">
+		<fr:property name="labelField" value="name"/>
+		<fr:property name="format" value="${name} (${user.username})"/>
+		<fr:property name="minChars" value="3"/>		
+		<fr:property name="args" value="provider=module.organization.presentationTier.renderers.providers.PersonAutoCompleteProvider"/>
+		<fr:property name="size" value="60"/>
+		<fr:validator name="pt.ist.fenixWebFramework.rendererExtensions.validators.RequiredAutoCompleteSelectionValidator">
+			<fr:property name="message" value="label.pleaseSelectOne.person"/>
+			<fr:property name="bundle" value="EXPENDITURE_RESOURCES"/>
+			<fr:property name="key" value="true"/>
+		</fr:validator>
+	</fr:slot>
+	</fr:schema>	
+	<fr:layout name="tabular">
+		<fr:property name="classes" value="tstyle2"/>
+	</fr:layout>
+</fr:edit>
+
+
+<strong><bean:message key="label.revertStateMembers" bundle="SIADAP_RESOURCES"/>:</strong>
+<fr:view name="configuration" property="revertStateGroupMemberSet">
+	<fr:schema type="module.organization.domain.Person" bundle="SIADAP_RESOURCES">
+		<fr:slot name="user.username"/>
+		<fr:slot name="partyName"/>
+	</fr:schema>
+	<fr:layout name="tabular">
+		<fr:property name="classes" value="tstyle2"/>
+		<fr:property name="link(remove)" value="<%=  "/siadapManagement.do?method=removeRevertStateMember&configurationId=" + configurationId %>"/>
+		<fr:property name="bundle(remove)" value="MYORG_RESOURCES"/>
+		<fr:property name="key(remove)" value="link.remove"/>
+		<fr:property name="param(remove)" value="externalId/personId"/>
+		<fr:property name="order(remove)" value="1"/>
+	</fr:layout>	
+</fr:view>
+<fr:edit id="scheduleExtenderMember" name="addScheduleExtenderMember" action="<%=  "/siadapManagement.do?method=addRevertStateMember&configurationId=" + configurationId %>">
 	<fr:schema type="module.organization.domain.Person" bundle="SIADAP_RESOURCES">
 		<fr:slot name="user.username"/>
 		<fr:slot name="partyName"/>

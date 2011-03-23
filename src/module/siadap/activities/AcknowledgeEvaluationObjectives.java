@@ -77,6 +77,75 @@ public class AcknowledgeEvaluationObjectives extends WorkflowActivity<SiadapProc
 	}
     }
 
+    static protected void revertProcess(RevertStateActivityInformation activityInformation, boolean notifyIntervenients) {
+	SiadapProcess siadapProcess = activityInformation.getProcess();
+	Siadap siadap = siadapProcess.getSiadap();
+	siadap.setAcknowledgeDate(null);
+
+	if (notifyIntervenients) {
+
+	    ArrayList<String> toAddress = new ArrayList<String>();
+	    ArrayList<String> ccAddress = new ArrayList<String>();
+	    Person evaluatorPerson = null;
+	    String emailEvaluator = null;
+	    Person evaluatedPerson = null;
+	    String emailEvaluated = null;
+	    try {
+
+		evaluatedPerson = activityInformation.getProcess().getSiadap().getEvaluated();
+		siadapProcess.checkEmailExistenceImportAndWarnOnError(evaluatedPerson);
+		emailEvaluated = evaluatedPerson.getRemotePerson().getEmailForSendingEmails();
+
+	    } catch (RemoteException ex) {
+		if (evaluatorPerson != null) {
+		    System.out.println("Could not get e-mail for evaluator " + evaluatorPerson.getName());
+		} else {
+		    System.out.println("Could not get e-mail for evaluator which has no Person object associated!");
+		}
+	    }
+
+	    try {
+		evaluatorPerson = activityInformation.getProcess().getSiadap().getEvaluator().getPerson();
+		siadapProcess.checkEmailExistenceImportAndWarnOnError(evaluatorPerson);
+		emailEvaluator = evaluatorPerson.getRemotePerson().getEmailForSendingEmails();
+		if (emailEvaluated != null) {
+		    toAddress.add(emailEvaluated);
+		    if (emailEvaluator != null) {
+			ccAddress.add(emailEvaluator);
+		    }
+
+		    StringBuilder body = new StringBuilder(
+			    "O processo SIADAP do ano "
+				    + siadap.getYear()
+				    + " do avaliado '"
+				    + activityInformation.getProcess().getSiadap().getEvaluated().getName()
+				    + "' foi revertido para o estado em que necessita novamente de tomar conhecimento dos objectivos e competências");
+		    body.append("\nPara mais informações consulte https://dot.ist.utl.pt\n");
+		    body.append("\n\n---\n");
+		    body.append("Esta mensagem foi enviada por meio das Aplicações Centrais do IST.\n");
+
+		    new Email(
+			    "Aplicação SIADAP do IST",
+			    "noreply@ist.utl.pt",
+			    new String[] {},
+			    toAddress,
+			    ccAddress,
+			    Collections.EMPTY_LIST,
+			    "SIADAP - "
+				    + siadap.getYear()
+				    + " - Processo revertido para o estado anterior ao de tomar conhecimento dos obj./competências",
+			    body.toString());
+		}
+	    } catch (final RemoteException ex) {
+		System.out.println("Unable to lookup email address for: "
+			+ activityInformation.getProcess().getSiadap().getEvaluated().getUser().getUsername() + " Error: "
+			+ ex.getMessage());
+		siadapProcess.addWarningMessage("warning.message.could.not.send.email.now");
+	    }
+	}
+
+    }
+
     @Override
     public boolean isConfirmationNeeded(SiadapProcess process) {
 	return true;
