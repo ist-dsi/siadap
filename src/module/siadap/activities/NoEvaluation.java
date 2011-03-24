@@ -14,7 +14,7 @@ public class NoEvaluation extends WorkflowActivity<SiadapProcess, NoEvaluationAc
 	Siadap siadap = process.getSiadap();
 	return !siadap.isWithSkippedEvaluation() && !siadap.isEvaluationDone()
 		&& siadap.getEvaluator().getPerson().getUser() == user && siadap.getValidated() == null
-		&& siadap.getEvaluationInterval().containsNow();
+		&& (siadap.getEvaluationInterval().containsNow() || siadap.getObjectiveSpecificationInterval().containsNow());
     }
 
     @Override
@@ -30,6 +30,11 @@ public class NoEvaluation extends WorkflowActivity<SiadapProcess, NoEvaluationAc
     @Override
     public boolean isConfirmationNeeded(SiadapProcess process) {
 	return true;
+    }
+
+    @Override
+    public boolean isUserAwarenessNeeded(SiadapProcess process, User user) {
+	return false;
     }
 
     @Override

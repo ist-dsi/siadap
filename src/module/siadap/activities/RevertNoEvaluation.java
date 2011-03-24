@@ -12,7 +12,8 @@ public class RevertNoEvaluation extends WorkflowActivity<SiadapProcess, Activity
     public boolean isActive(SiadapProcess process, User user) {
 	Siadap siadap = process.getSiadap();
 	return siadap.isWithSkippedEvaluation() && siadap.getEvaluator().getPerson().getUser() == user
-		&& siadap.getValidated() == null && siadap.getEvaluationInterval().containsNow();
+		&& siadap.getValidated() == null
+		&& (siadap.getEvaluationInterval().containsNow() || siadap.getObjectiveSpecificationInterval().containsNow());
     }
 
     @Override
