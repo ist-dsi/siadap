@@ -13,8 +13,11 @@ public class NoEvaluation extends WorkflowActivity<SiadapProcess, NoEvaluationAc
     public boolean isActive(SiadapProcess process, User user) {
 	Siadap siadap = process.getSiadap();
 	return !siadap.isWithSkippedEvaluation() && !siadap.isEvaluationDone()
-		&& siadap.getEvaluator().getPerson().getUser() == user && siadap.getValidated() == null
-		&& (siadap.getEvaluationInterval().containsNow() || siadap.getObjectiveSpecificationInterval().containsNow());
+		&& (siadap.getEvaluator().getPerson().getUser() == user || siadap.getSiadapYearConfiguration().getCcaMembers()
+			.contains(user.getPerson())) && siadap.getValidated() == null
+		&& (siadap.getSiadapYearConfiguration().getCcaMembers().contains(user.getPerson())
+			|| siadap.getEvaluationInterval().containsNow() || siadap.getObjectiveSpecificationInterval()
+			.containsNow());
     }
 
     @Override
