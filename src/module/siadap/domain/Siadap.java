@@ -35,6 +35,9 @@ public class Siadap extends Siadap_Base {
 	UnreadCommentsWidget.register(new WorkflowCommentCounter(SiadapProcess.class));
     }
 
+    public static final String APLICACAO_SIADAP_LABEL = "Aplicação SIADAP";
+    public static final String NO_REPLY_EMAIL_ADDRESS = "noreply@ist.utl.pt";
+
     private static final int PRECISION = 3;
     private static final int ROUND_MODE = BigDecimal.ROUND_HALF_EVEN;
 

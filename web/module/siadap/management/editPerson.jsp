@@ -15,13 +15,23 @@
 <bean:define id="year" name="person" property="year"/>
 
 <h2><bean:message key="link.siadap.structureManagement.forAGivenYear" arg0="<%=year.toString()%>" bundle="SIADAP_RESOURCES"/></h2>
+<br/>
+<br/>
 
 <bean:define id="personId" name="person" property="person.externalId"/>
 
-	<html:messages id="message" message="true" bundle="SIADAP_RESOURCES">
-		<p><span class="error0"><bean:write name="message" /></span></p>
+<%-- <h3><bean:message bundle="SIADAP_RESOURCES" property="ERROR" key="label.errors"/>:</h3> --%>
+	<html:messages id="msg" property="message" bundle="SIADAP_RESOURCES" message="true" header="label.errors" >
+<div class="highlightBox">
+		<p style="color: darkRed"><b>.<bean:write name="msg" /></b></p>
+</div>
 	</html:messages>
-
+<%-- <h3><bean:message bundle="SIADAP_RESOURCES" key="label.warnings"/>:</h3> --%>
+	<html:messages id="message" bundle="SIADAP_RESOURCES" property="WARNING" message="true" header="label.warnings">
+<div class="highlightBox"> 
+	<p><b><bean:write name="message" /></b></p>
+</div>
+	</html:messages>
 <p>
 
 <fr:view name="person">
@@ -54,7 +64,7 @@ SiadapYearConfiguration configuration = SiadapYearConfiguration.getSiadapYearCon
 
 boolean isAbleToChangeAnything = false;
 //if (configuration.getCcaMembers().contains(person) || Role.getRole(RoleType.MANAGER).isMember(currentUser) )
-if (Role.getRole(RoleType.MANAGER).isMember(currentUser) )
+if (Role.getRole(RoleType.MANAGER).isMember(currentUser) || configuration.isUserMemberOfStructureManagementGroup(currentUser) )
 {
     isAbleToChangeAnything = true;
 }
@@ -223,6 +233,9 @@ request.setAttribute("isAbleToChangeAnything", isAbleToChangeAnything);
 </logic:notEmpty>
 
 
+<%-- For now, let's also comment the ability to add people to do the harmonization of certain units, I should check the type of accountability
+that is desirable (start and end dates) --%>
+<%-- 
 <logic:equal name="isAbleToChangeAnything" value="true">
 	<p>
 	<strong><bean:message key="label.addHarmonizationResponsability" bundle="SIADAP_RESOURCES"/></strong>
@@ -248,6 +261,11 @@ request.setAttribute("isAbleToChangeAnything", isAbleToChangeAnything);
 	</fr:edit>
 	</p>
 </logic:equal>
+--%>
+<%-- End of isAbleToChangeAnything --%>
+
+
+<%-- For now, let's comment out the history section
 <strong> <bean:message key="label.history" bundle="SIADAP_RESOURCES"/>: </strong>
  
 <fr:view name="history">
@@ -260,6 +278,7 @@ request.setAttribute("isAbleToChangeAnything", isAbleToChangeAnything);
 		<fr:property name="classes" value="tstyle2"/>
 	</fr:layout>
 </fr:view>
+--%>
 <jsp:include page="/module/siadap/tracFeedBackSnip.jsp">	
    <jsp:param name="href" value="https://fenix-ashes.ist.utl.pt/trac/siadap/report/16" />	
 </jsp:include>

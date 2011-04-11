@@ -90,7 +90,7 @@ public class SiadapManagement extends ContextBaseAction {
 
     public final ActionForward showConfiguration(final ActionMapping mapping, final ActionForm form,
 	    final HttpServletRequest request, final HttpServletResponse response) {
-	SiadapYearWrapper siadapYearWrapper = (SiadapYearWrapper) getRenderedObject();
+	SiadapYearWrapper siadapYearWrapper = (SiadapYearWrapper) getRenderedObject("siadapYearWrapper");
 	if (siadapYearWrapper == null) {
 	    int year = new LocalDate().getYear();
 	    siadapYearWrapper = new SiadapYearWrapper(year);
@@ -102,6 +102,7 @@ public class SiadapManagement extends ContextBaseAction {
 	request.setAttribute("addCCAMember", new VariantBean());
 	request.setAttribute("addHomologationMember", new VariantBean());
 	request.setAttribute("addScheduleExtenderMember", new VariantBean());
+	request.setAttribute("addStructureManagementGroupMember", new VariantBean());
 	return forward(request, "/module/siadap/management/configuration.jsp");
     }
 
@@ -149,6 +150,26 @@ public class SiadapManagement extends ContextBaseAction {
 	SiadapYearConfiguration.addHomologationMember(((Person) bean.getDomainObject()).getUser());
 	// TODO make the nodes access list to be updated
 	RenderUtils.invalidateViewState("homologationMember");
+	return showConfiguration(mapping, form, request, response);
+    }
+
+    public final ActionForward addStructureManagementMember(final ActionMapping mapping, final ActionForm form,
+	    final HttpServletRequest request, final HttpServletResponse response) {
+
+	SiadapYearConfiguration configuration = getDomainObject(request, "configurationId");
+	VariantBean bean = getRenderedObject("structureManagementMember");
+	configuration.addStructureManagementGroupMembers(((Person) bean.getDomainObject()));
+	RenderUtils.invalidateViewState("homologationMember");
+	return showConfiguration(mapping, form, request, response);
+    }
+
+
+    public final ActionForward removeStructureManagementMember(final ActionMapping mapping, final ActionForm form,
+	    final HttpServletRequest request, final HttpServletResponse response) {
+
+	SiadapYearConfiguration configuration = getDomainObject(request, "configurationId");
+	Person person = getDomainObject(request, "personId");
+	configuration.removeStructureManagementGroupMembers(person);
 	return showConfiguration(mapping, form, request, response);
     }
 

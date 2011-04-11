@@ -557,10 +557,10 @@ public class ImportSiadapStructure extends ReadCustomTask {
 		    }
 
 		    if (!adist && !unit.getChildren(workingPartyPredicate).contains(evaluatedPerson)) {
-			evaluatedPerson.addParent(unit, workingRelation, minParentExistence(unit, startOfTheYear), endOfTheYear);
+			evaluatedPerson.addParent(unit, workingRelation, minParentBeginningDateExistence(unit, startOfTheYear), endOfTheYear);
 		    }
 		    if (adist && !unit.getChildren(workingNoQuotaPartyPredicate).contains(evaluatedPerson)) {
-			evaluatedPerson.addParent(unit, workingRelationWithNoQuota, minParentExistence(unit, startOfTheYear),
+			evaluatedPerson.addParent(unit, workingRelationWithNoQuota, minParentBeginningDateExistence(unit, startOfTheYear),
 				endOfTheYear);
 		    }
 		    //let's remove any custom eval relations that might be present for this evaluatedPerson
@@ -577,7 +577,7 @@ public class ImportSiadapStructure extends ReadCustomTask {
 
 			if (!evaluatorPerson.getChildren(evalForYearPredicate).contains(evaluatedPerson)) {
 			    evaluatedPerson.addParent(evaluatorPerson, evaluationRelation,
-				    minParentExistence(evaluatorPerson, startOfTheYear), endOfTheYear);
+				    minParentBeginningDateExistence(evaluatorPerson, startOfTheYear), endOfTheYear);
 			}
 		    }
 		}
@@ -587,7 +587,15 @@ public class ImportSiadapStructure extends ReadCustomTask {
 
     }
 
-    public static LocalDate minParentExistence(final Party party, final LocalDate localDate) {
+    /**
+     * 
+     * @param party
+     *            the party to get the date
+     * @param localDate
+     * @return the mininum date between the given localDate and the earliest
+     *         accountability of its parents
+     */
+    public static LocalDate minParentBeginningDateExistence(final Party party, final LocalDate localDate) {
 	LocalDate min = null;
 	for (final Accountability accountability : party.getParentAccountabilitiesSet()) {
 	    final LocalDate beginDate = accountability.getBeginDate();
@@ -633,7 +641,7 @@ public class ImportSiadapStructure extends ReadCustomTask {
 		    }
 		}
 		if (!unit.getChildren(evalForYearPredicate).contains(person)) {
-		    LocalDate startDate = minParentExistence(unit, startOfTheYear);
+		    LocalDate startDate = minParentBeginningDateExistence(unit, startOfTheYear);
 		    person.addParent(unit, evaluationRelation, startDate, endOfTheYear);
 		    debug("Really added the responsible " + responsible.getUser().getUsername() + " to cc "
 			    + responsible.getCenter().getCostCenter() + " starting at " + startDate + " ending at "

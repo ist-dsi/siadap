@@ -18,6 +18,7 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 
+import pt.ist.bennu.vaadin.domain.contents.VaadinNode;
 import pt.ist.fenixWebFramework.servlets.functionalities.CreateNodeAction;
 import pt.ist.fenixWebFramework.struts.annotations.Mapping;
 
@@ -47,7 +48,7 @@ public class InterfaceCreationAction extends BaseAction {
 
 	//use the static group TODO alter this	
 	ActionNode.createActionNode(virtualHost, homeNode, "/siadapPersonnelManagement", "start", "resources.SiadapResources",
-		"link.siadap.structureManagement", SiadapRootModule.getInstance().getStatisticsAccessUnionGroup());
+		"link.siadap.structureManagement", SiadapYearConfiguration.getStructureManagementGroup());
 
 	//use the static group TODO alter this	
 	ActionNode.createActionNode(virtualHost, homeNode, "/siadapManagement",
@@ -58,6 +59,12 @@ public class InterfaceCreationAction extends BaseAction {
 	ActionNode.createActionNode(virtualHost, homeNode, "/siadapManagement",
 		"manageHarmonizationUnitsForMode&mode=homologationDone", "resources.SiadapResources",
 		"link.siadap.homologationProcedure", SiadapYearConfiguration.getHomologationMembersGroup());
+
+	//the help link
+	//	ActionNode.createActionNode(virtualHost, homeNode, "/vaadinContext", "forwardToVaadin#PageView-322122548202",
+	//		"resources.SiadapResources", "label.link.help", UserGroup.getInstance());
+	VaadinNode.createVaadinNode(virtualHost, homeNode, "resources.SiadapResources", "label.link.help",
+		"PageView-322122548202", UserGroup.getInstance());
 
 	return forwardToMuneConfiguration(request, virtualHost, node);
 

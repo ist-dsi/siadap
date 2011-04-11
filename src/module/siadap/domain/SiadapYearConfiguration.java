@@ -4,6 +4,7 @@ import java.util.List;
 
 import module.organization.domain.Person;
 import module.organization.domain.Unit;
+import module.siadap.domain.groups.SiadapStructureManagementGroup;
 import module.siadap.domain.wrappers.UnitSiadapWrapper;
 import myorg.applicationTier.Authenticate.UserView;
 import myorg.domain.MyOrg;
@@ -18,91 +19,102 @@ public class SiadapYearConfiguration extends SiadapYearConfiguration_Base {
     public static final Double DEFAULT_COMPETENCES_PONDERATION = 25.0;
     public static final Double MAXIMUM_HIGH_GRADE_QUOTA = 25.0;
     public static final Double MAXIMUM_EXCELLENCY_GRADE_QUOTA = 5.0; // 1.25; //
-    
+
     private static final String CCA_MEMBERS_GROUPNAME = "CCA Members";
     private static final String HOMOLOGATION_MEMBERS_GROUPNAME = "Homologation Members";
-    
+
     private static NamedGroup ccaMembersGroup;
-    
+    private static SiadapStructureManagementGroup siadapStructureManagementGroup;
+
     public static NamedGroup getCcaMembersGroup() {
-    	initGroups();
-		return ccaMembersGroup;
-	}
-
-	public static NamedGroup getHomologationMembersGroup() {
-		initGroups();
-		return homologationMembersGroup;
-	}
-
-	private static NamedGroup homologationMembersGroup;
-    private static boolean groupsInitialized = false;
-    
-    private static void initGroups() {
-    	if (groupsInitialized)
-    		return;
-    	//get the ccaMembersGroup
-    	for (PersistentGroup group : MyOrg.getInstance().getPersistentGroups()) {
-    		if (group instanceof NamedGroup)
-    		{
-    			if (((NamedGroup) group).getName().equals(CCA_MEMBERS_GROUPNAME))
-    			{
-    				ccaMembersGroup = (NamedGroup) group;
-    			}
-    		}
-		}
-    	//let us create the group if we haven't found it
-    	if (ccaMembersGroup == null)
-    		createCCAMembersGroup();
-    	
-    	//get the homologationMembersGroup
-    	for (PersistentGroup group : MyOrg.getInstance().getPersistentGroups()) {
-    		if (group instanceof NamedGroup)
-    		{
-    			if (((NamedGroup) group).getName().equals(HOMOLOGATION_MEMBERS_GROUPNAME))
-    			{
-    				homologationMembersGroup = (NamedGroup) group;
-    			}
-    		}
-		}
-    	//let us create the group if we haven't found it
-    	if (homologationMembersGroup == null)
-    		createHomologationMembersGroup();
+	initGroups();
+	return ccaMembersGroup;
     }
-    
+
+    public static PersistentGroup getStructureManagementGroup() {
+	initGroups();
+	return SiadapRootModule.getInstance().getSiadapStructureManagementGroup();
+    }
+
+    public static NamedGroup getHomologationMembersGroup() {
+	initGroups();
+	return homologationMembersGroup;
+    }
+
+    private static NamedGroup homologationMembersGroup;
+    private static boolean groupsInitialized = false;
+
+    private static void initGroups() {
+	if (groupsInitialized)
+	    return;
+	//get the ccaMembersGroup
+	for (PersistentGroup group : MyOrg.getInstance().getPersistentGroups()) {
+	    if (group instanceof NamedGroup) {
+		if (((NamedGroup) group).getName().equals(CCA_MEMBERS_GROUPNAME)) {
+		    ccaMembersGroup = (NamedGroup) group;
+		}
+	    }
+	}
+	//let us create the group if we haven't found it
+	if (ccaMembersGroup == null)
+	    createCCAMembersGroup();
+
+	//get the homologationMembersGroup
+	for (PersistentGroup group : MyOrg.getInstance().getPersistentGroups()) {
+	    if (group instanceof NamedGroup) {
+		if (((NamedGroup) group).getName().equals(HOMOLOGATION_MEMBERS_GROUPNAME)) {
+		    homologationMembersGroup = (NamedGroup) group;
+		}
+	    }
+	}
+	//let us create the group if we haven't found it
+	if (homologationMembersGroup == null)
+	    createHomologationMembersGroup();
+	if (siadapStructureManagementGroup == null)
+	    createStructureManagementGroup();
+	groupsInitialized = true;
+    }
+
+    @Service
+    private static void createStructureManagementGroup() {
+	siadapStructureManagementGroup = new SiadapStructureManagementGroup();
+	SiadapRootModule.getInstance().setSiadapStructureManagementGroup(siadapStructureManagementGroup);
+	for (SiadapYearConfiguration siadapYearConfiguration : SiadapRootModule.getInstance().getYearConfigurations()) {
+	    siadapYearConfiguration.setSiadapStructureManagementGroup(siadapStructureManagementGroup);
+	}
+    }
 
     @Service
     private static void createHomologationMembersGroup() {
-    	homologationMembersGroup = new NamedGroup(HOMOLOGATION_MEMBERS_GROUPNAME);
-	}
-
-	@Service
-    private static void createCCAMembersGroup() {
-    		ccaMembersGroup = new NamedGroup(CCA_MEMBERS_GROUPNAME);
+	homologationMembersGroup = new NamedGroup(HOMOLOGATION_MEMBERS_GROUPNAME);
     }
-	
-	@Service
-	public static void addCCAMember(User user)
-	{
-		getCcaMembersGroup().addUsers(user);
-	}
-	@Service
-	public static void addHomologationMember(User user)
-	{
-		getHomologationMembersGroup().addUsers(user);
-	}
-	
-	@Service
-	public static void removeHomologationMember(User user)
-	{
-		getHomologationMembersGroup().removeUsers(user);
-	}
 
-	@Service
-	public static void removeCCAMember(User user)
-	{
-		getCcaMembersGroup().removeUsers(user);
-		
-	}
+    @Service
+    private static void createCCAMembersGroup() {
+	ccaMembersGroup = new NamedGroup(CCA_MEMBERS_GROUPNAME);
+    }
+
+    @Service
+    public static void addCCAMember(User user) {
+	getCcaMembersGroup().addUsers(user);
+    }
+
+    @Service
+    public static void addHomologationMember(User user) {
+	getHomologationMembersGroup().addUsers(user);
+    }
+
+    @Service
+    public static void removeHomologationMember(User user) {
+	getHomologationMembersGroup().removeUsers(user);
+    }
+
+    @Service
+    public static void removeCCAMember(User user) {
+	getCcaMembersGroup().removeUsers(user);
+
+    }
+
     // 5% of
 
     // the 25%
@@ -161,6 +173,18 @@ public class SiadapYearConfiguration extends SiadapYearConfiguration_Base {
 	    harmonizationUnits.add(0, unitSiadapWrapper);
 	}
 	return harmonizationUnits;
+    }
+
+    @Override
+    @Service
+    public void addStructureManagementGroupMembers(Person structureManagementGroupMembers) {
+	super.addStructureManagementGroupMembers(structureManagementGroupMembers);
+    }
+
+    @Override
+    @Service
+    public void removeStructureManagementGroupMembers(Person structureManagementGroupMembers) {
+	super.removeStructureManagementGroupMembers(structureManagementGroupMembers);
     }
 
     @Override
@@ -226,6 +250,18 @@ public class SiadapYearConfiguration extends SiadapYearConfiguration_Base {
 
     public boolean isCurrentUserMemberOfCCA() {
 	return isPersonMemberOfCCA(UserView.getCurrentUser().getPerson());
+    }
+
+    public boolean isCurrentUserMemberOfStructureManagementGroup() {
+	return isPersonMemberOfStructureManagementGroup(UserView.getCurrentUser().getPerson());
+    }
+
+    public boolean isUserMemberOfStructureManagementGroup(User user) {
+	return isPersonMemberOfStructureManagementGroup(user.getPerson());
+    }
+
+    public boolean isPersonMemberOfStructureManagementGroup(Person person) {
+	return getStructureManagementGroupMembers().contains(person);
     }
 
     public boolean isPersonResponsibleForHomologation(Person person) {

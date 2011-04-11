@@ -114,6 +114,7 @@
 		<fr:property name="classes" value="tstyle2" />
 	</fr:layout>
 </fr:edit>
+<br/>
 
 <strong><bean:message key="label.ccaMembers" bundle="SIADAP_RESOURCES"/>:</strong>
 <fr:view name="configuration" property="ccaMembers">
@@ -154,6 +155,7 @@
 		<fr:property name="classes" value="tstyle2"/>
 	</fr:layout>
 </fr:edit>
+<br/>
 
 
 <strong><bean:message key="label.schedulerExtenderMembers" bundle="SIADAP_RESOURCES"/>:</strong>
@@ -194,6 +196,7 @@
 		<fr:property name="classes" value="tstyle2"/>
 	</fr:layout>
 </fr:edit>
+<br/>
 
 
 <strong><bean:message key="label.revertStateMembers" bundle="SIADAP_RESOURCES"/>:</strong>
@@ -234,6 +237,7 @@
 		<fr:property name="classes" value="tstyle2"/>
 	</fr:layout>
 </fr:edit>
+<br/>
 
 <strong><bean:message key="label.homologationMembers" bundle="SIADAP_RESOURCES"/>:</strong>
 <fr:view name="configuration" property="homologationMembers">
@@ -265,6 +269,39 @@
 		<fr:property name="classes" value="tstyle2"/>
 	</fr:layout>
 </fr:edit>
+<br/>
+
+<strong><bean:message key="label.siadapStructureManagementMembers" bundle="SIADAP_RESOURCES"/>:</strong>
+<fr:view name="configuration" property="structureManagementGroupMembers">
+	<fr:layout name="tabular">
+		<fr:property name="classes" value="tstyle2"/>
+		<fr:property name="link(remove)" value="<%=  "/siadapManagement.do?method=removeStructureManagementMember&configurationId=" + configurationId %>"/>
+		<fr:property name="bundle(remove)" value="MYORG_RESOURCES"/>
+		<fr:property name="key(remove)" value="link.remove"/>
+		<fr:property name="param(remove)" value="externalId/personId"/>
+		<fr:property name="order(remove)" value="1"/>
+	</fr:layout>	
+</fr:view>
+<fr:edit id="structureManagementMember" name="addStructureManagementGroupMember" action="<%=  "/siadapManagement.do?method=addStructureManagementMember&configurationId=" + configurationId %>">
+<fr:schema type="myorg.util.VariantBean" bundle="SIADAP_RESOURCES">
+		<fr:slot name="domainObject" layout="autoComplete" key="label.person" bundle="ORGANIZATION_RESOURCES">
+		<fr:property name="labelField" value="name"/>
+		<fr:property name="format" value="${name} (${user.username})"/>
+		<fr:property name="minChars" value="3"/>		
+		<fr:property name="args" value="provider=module.organization.presentationTier.renderers.providers.PersonAutoCompleteProvider"/>
+		<fr:property name="size" value="60"/>
+		<fr:validator name="pt.ist.fenixWebFramework.rendererExtensions.validators.RequiredAutoCompleteSelectionValidator">
+			<fr:property name="message" value="label.pleaseSelectOne.person"/>
+			<fr:property name="bundle" value="EXPENDITURE_RESOURCES"/>
+			<fr:property name="key" value="true"/>
+		</fr:validator>
+	</fr:slot>
+	</fr:schema>	
+	<fr:layout name="tabular">
+		<fr:property name="classes" value="tstyle2"/>
+	</fr:layout>
+</fr:edit>
+<br/>
 
 </logic:present>
 <jsp:include page="/module/siadap/tracFeedBackSnip.jsp">	
