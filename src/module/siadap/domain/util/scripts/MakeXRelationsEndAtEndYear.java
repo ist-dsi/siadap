@@ -39,7 +39,7 @@ public class MakeXRelationsEndAtEndYear extends WriteCustomTask {
 	    LocalDate endDate = accountability.getEndDate();
 	    if (endDate == null) {
 		endDate = new LocalDate((new LocalDate()).getYear(), 12, 31);
-		accountability.setEndDate(endDate);
+		accountability.editDates(accountability.getBeginDate(), endDate);
 		nrOfEvalAccEnded++;
 		out.println("Ended an accountability where parent is " + accountability.getParent().getPartyName()
 			+ " and child is " + accountability.getChild().getPartyName() + " now the accountability is: "

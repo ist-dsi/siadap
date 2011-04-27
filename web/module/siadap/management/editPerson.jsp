@@ -1,3 +1,6 @@
+<%@page import="module.organization.domain.AccountabilityType"%>
+<%@page import="module.organization.domain.Accountability"%>
+<%@page import="java.util.ArrayList"%>
 <%@page import="module.siadap.domain.wrappers.PersonSiadapWrapper"%>
 <%@page import="module.organization.domain.Person"%>
 <%@page import="myorg.domain.RoleType"%>
@@ -16,7 +19,6 @@
 
 <h2><bean:message key="link.siadap.structureManagement.forAGivenYear" arg0="<%=year.toString()%>" bundle="SIADAP_RESOURCES"/></h2>
 <br/>
-<br/>
 
 <bean:define id="personId" name="person" property="person.externalId"/>
 
@@ -32,7 +34,6 @@
 	<p><b><bean:write name="message" /></b></p>
 </div>
 	</html:messages>
-<p>
 
 <fr:view name="person">
 	<fr:schema type="module.siadap.domain.wrappers.PersonSiadapWrapper" bundle="SIADAP_RESOURCES">
@@ -54,7 +55,6 @@
 		<fr:property name="columnClasses" value="aright,aleft,"/>
 	</fr:layout>
 </fr:view>
-</p>
 
 <%-- ACL for the ability to change anything --%>
 <%
@@ -74,11 +74,11 @@ request.setAttribute("isAbleToChangeAnything", isAbleToChangeAnything);
 
 
 <logic:equal name="isAbleToChangeAnything" value="true">
-	<a href="#" id="changeUnit"> <bean:message key="label.changeWorkingUnit" bundle="SIADAP_RESOURCES"/> </a> | <a href="#" id="changeEvaluator"> <bean:message key="label.changeEvaluator" bundle="SIADAP_RESOURCES"/> </a>
+	<p><a href="#" id="changeUnit"> <bean:message key="label.changeWorkingUnit" bundle="SIADAP_RESOURCES"/> </a> | <a href="#" id="changeEvaluator"> <bean:message key="label.changeEvaluator" bundle="SIADAP_RESOURCES"/> </a>
 	<logic:equal name="person" property="customEvaluatorDefined" value="true">
 		| <html:link page="<%="/siadapPersonnelManagement.do?method=removeCustomEvaluator&year=" + year.toString()%>" paramId="personId"  paramName="person"  paramProperty="person.externalId"><bean:message key="label.removeCustomEvaluator" bundle="SIADAP_RESOURCES"/> </html:link>
 	</logic:equal>
-	
+	</p>
 	
 	<div id="changeUnitDiv" style="display: none;">
 		<div class="highlightBox">
@@ -162,8 +162,7 @@ request.setAttribute("isAbleToChangeAnything", isAbleToChangeAnything);
 </script>
 
 <logic:notEmpty name="person" property="peopleToEvaluate"> 
-	<p>
-		<strong> <bean:message key="label.responsibleForEvaluationOf" bundle="SIADAP_RESOURCES"/>: </strong>
+		<p><strong> <bean:message key="label.responsibleForEvaluationOf" bundle="SIADAP_RESOURCES"/></strong></p>
 		
 		<table class="tstyle2">
 			<tr>
@@ -180,35 +179,34 @@ request.setAttribute("isAbleToChangeAnything", isAbleToChangeAnything);
 					<tr>
 						<td><fr:view name="evaluated" property="name"/>
 						<td><fr:view name="evaluated" property="workingUnit.name"/>
-						<td><html:link page="<%= "/siadapPersonnelManagement.do?method=viewPerson&personId=" + evalutedId + "&year=" + year.toString()%>"> Ver avaliado </html:link></td>
 						<td>
-						<logic:present name="evaluated" property="siadap">
-							<html:link page="<%= "/workflowProcessManagement.do?method=viewProcess&year="
-							+ configuration.getYear()
-							+ "&processId="
-							+ ((module.siadap.domain.wrappers.PersonSiadapWrapper)evaluated).getSiadap().getProcess().getExternalId() %>">
-							<bean:message key="link.view" bundle="MYORG_RESOURCES"/>
-						</html:link>
-						</logic:present>
-						<logic:notPresent name="evaluated" property="siadap">
-							<html:link page="<%= "/siadapManagement.do?method=createNewSiadapProcess&year="
+							<html:link page="<%= "/siadapPersonnelManagement.do?method=viewPerson&personId=" + evalutedId + "&year=" + year.toString()%>"> Ver avaliado </html:link>
+							|
+							<logic:present name="evaluated" property="siadap">
+								<html:link page="<%= "/workflowProcessManagement.do?method=viewProcess&year="
 								+ configuration.getYear()
-								+ "&personId="
-								+ ((module.siadap.domain.wrappers.PersonSiadapWrapper)evaluated).getPerson().getExternalId() %>">
-								<bean:message key="link.create" bundle="MYORG_RESOURCES"/>
+								+ "&processId="
+								+ ((module.siadap.domain.wrappers.PersonSiadapWrapper)evaluated).getSiadap().getProcess().getExternalId() %>">
+								<bean:message key="link.view" bundle="MYORG_RESOURCES"/>
 							</html:link>
-						
-						</logic:notPresent>
+							</logic:present>
+							<logic:notPresent name="evaluated" property="siadap">
+								<html:link page="<%= "/siadapManagement.do?method=createNewSiadapProcess&year="
+									+ configuration.getYear()
+									+ "&personId="
+									+ ((module.siadap.domain.wrappers.PersonSiadapWrapper)evaluated).getPerson().getExternalId() %>">
+									<bean:message key="link.create" bundle="MYORG_RESOURCES"/>
+								</html:link>
+							
+							</logic:notPresent>
 						</td>
 					</tr>
 			</logic:iterate>
 		</table>		
-	</p>
 </logic:notEmpty>
 
 <logic:notEmpty name="person" property="harmozationUnits">
-	<p>
-		<strong> <bean:message key="label.responsifleForHarmonizationOf" bundle="SIADAP_RESOURCES"/>: </strong>
+		<p><strong> <bean:message key="label.responsifleForHarmonizationOf" bundle="SIADAP_RESOURCES"/></strong></p>
 		<fr:view name="person" property="harmozationUnits">
 			<fr:schema type="module.siadap.domain.wrappers.UnitSiadapWrapper" bundle="SIADAP_RESOURCES">
 				<fr:slot name="unit.partyName"  key="label.unit" bundle="ORGANIZATION_RESOURCES" />
@@ -229,8 +227,22 @@ request.setAttribute("isAbleToChangeAnything", isAbleToChangeAnything);
 				</logic:equal>
 			</fr:layout>	
 		</fr:view>
-	</p>
 </logic:notEmpty>
+
+
+<p><strong><bean:message key="label.history" bundle="SIADAP_RESOURCES"/></strong></p>
+<jsp:include page="/organization/viewAccountabilityHistory.jsp" flush="true" >
+ <jsp:param value="<%=personId%>" name="parties"/>
+ <jsp:param value="<%=configuration.getEvaluationRelation().getExternalId()%>" name="accountabilities"/>
+ <jsp:param value="<%=configuration.getWorkingRelation().getExternalId()%>" name="accountabilities"/>
+ <jsp:param value="<%=configuration.getWorkingRelationWithNoQuota().getExternalId()%>" name="accountabilities"/>
+ <jsp:param value="<%=year%>" name="startDateYear"/>
+ <jsp:param value="1" name="startDateMonth"/>
+ <jsp:param value="1" name="startDateDay"/>
+ <jsp:param value="<%=year%>" name="endDateYear"/>
+ <jsp:param value="12" name="endDateMonth"/>
+ <jsp:param value="31" name="endDateDay"/>
+</jsp:include>
 
 
 <%-- For now, let's also comment the ability to add people to do the harmonization of certain units, I should check the type of accountability

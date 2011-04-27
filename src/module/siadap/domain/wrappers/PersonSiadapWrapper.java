@@ -318,7 +318,7 @@ public class PersonSiadapWrapper extends PartyWrapper implements Serializable {
 	for (Accountability accountability : getParentAccountabilityTypes(configuration.getWorkingRelation(),
 		configuration.getWorkingRelationWithNoQuota())) {
 	    if (accountability.isActiveNow()) {
-		accountability.setEndDate(dateOfChange);
+		accountability.editDates(accountability.getBeginDate(), dateOfChange);
 	    }
 	}
 	unit.addChild(getPerson(),
@@ -373,7 +373,7 @@ public class PersonSiadapWrapper extends PartyWrapper implements Serializable {
 	for (Accountability accountability : getParentAccountabilityTypes(evaluationRelation)) {
 	    if (accountability.isActiveNow() && accountability.getChild() instanceof Person
 		    && accountability.getParent() instanceof Person) {
-		accountability.setEndDate(now.minusDays(1));
+		accountability.editDates(accountability.getBeginDate(), now.minusDays(1));
 	    }
 	}
     }
