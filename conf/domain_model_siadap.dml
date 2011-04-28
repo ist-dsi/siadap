@@ -250,7 +250,7 @@ relation CompetenceCompentenceType {
 
 relation SiadapYearConfigurationSiadap {
 	SiadapYearConfiguration playsRole siadapYearConfiguration {
-		multiplicity 1;
+		multiplicity 0..1;
 	}
 	Siadap playsRole siadaps {
 		multiplicity *;
