@@ -7,6 +7,13 @@ enum module.siadap.domain.SiadapEvaluationObjectivesType as SiadapEvaluationObje
 enum module.siadap.domain.ExceddingQuotaSuggestionType as ExceddingQuotaSuggestionType;
 enum  module.siadap.domain.SiadapProcessStateEnum as SiadapProcessStateEnum;
 
+valueType java.math.BigDecimal as BigDecimal {
+    externalizeWith {
+        String toString();
+    }
+}
+
+
 class SiadapRootModule {
 	Integer number;
 }
