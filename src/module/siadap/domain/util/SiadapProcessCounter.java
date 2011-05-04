@@ -1,6 +1,7 @@
 package module.siadap.domain.util;
 
 import java.io.Serializable;
+import java.util.HashMap;
 
 import module.organization.domain.Accountability;
 import module.organization.domain.AccountabilityType;
@@ -18,6 +19,8 @@ public class SiadapProcessCounter implements Serializable {
 
     private final int counts[] = new int[SiadapProcessStateEnum.values().length];
 
+    private final HashMap<Boolean, HashMap<String, int[]>> countsByQuotaAndCategories = new HashMap<Boolean, HashMap<String, int[]>>();
+
     private final LocalDate today;
     private final transient SiadapYearConfiguration configuration;
     private final transient AccountabilityType unitRelations;
@@ -25,15 +28,39 @@ public class SiadapProcessCounter implements Serializable {
     private final transient AccountabilityType workingUnitWithQuotaRelation;
     private final transient AccountabilityType workingUnitWithoutQuotaRelation;
 
-    public SiadapProcessCounter(final Unit unit) {
+    public SiadapProcessCounter(final Unit unit, boolean distinguishBetweenUniverses) {
 	today = new LocalDate();
 	configuration = SiadapYearConfiguration.getSiadapYearConfiguration(today.getYear());
 	unitRelations = configuration.getUnitRelations();
 	evaluationRelation = configuration.getEvaluationRelation();
 	workingUnitWithQuotaRelation = configuration.getWorkingRelation();
 	workingUnitWithoutQuotaRelation = configuration.getWorkingRelationWithNoQuota();
+	if (distinguishBetweenUniverses) {
+	count(unit, distinguishBetweenUniverses);
+	} else
+	    count(unit);
+    }
 
-	count(unit);
+    private void count(Unit unit, boolean distinguishBetweenUniverses) {
+	for (final Accountability accountability : unit.getChildAccountabilitiesSet()) {
+	    if (accountability.isActive(today)) {
+		final AccountabilityType accountabilityType = accountability.getAccountabilityType();
+		if (accountabilityType == unitRelations) {
+		    final Unit child = (Unit) accountability.getChild();
+		    count(child, distinguishBetweenUniverses);
+		} else if (accountabilityType == workingUnitWithQuotaRelation) {
+		    final Person person = (Person) accountability.getChild();
+		    count(person, true);
+
+		} else if (accountabilityType == workingUnitWithoutQuotaRelation) {
+		    final Person person = (Person) accountability.getChild();
+		    count(person, false);
+
+		}
+
+	    }
+	}
+
     }
 
     private void count(final Unit unit) {
@@ -54,13 +81,38 @@ public class SiadapProcessCounter implements Serializable {
 
     private void count(final Person person) {
 	final Siadap siadap = configuration.getSiadapFor(person);
-	final SiadapProcessStateEnum state = siadap == null ?
-		SiadapProcessStateEnum.NOT_CREATED : SiadapProcessStateEnum.getState(siadap);
+	final SiadapProcessStateEnum state = siadap == null ? SiadapProcessStateEnum.NOT_CREATED : SiadapProcessStateEnum
+		.getState(siadap);
 	counts[state.ordinal()]++;
     }
 
+    private void count(final Person person, boolean withQuota) {
+	final Siadap siadap = configuration.getSiadapFor(person);
+	final SiadapProcessStateEnum state = siadap == null ? SiadapProcessStateEnum.NOT_CREATED : SiadapProcessStateEnum
+		.getState(siadap);
+	
+	//let's fill the complicated hashmap
+	HashMap<String, int[]> categoryHashMap = getCountsByQuotaAndCategories().get(Boolean.valueOf(withQuota));
+	if ( categoryHashMap == null)
+	//if it doesn't exist for this quotaaware/noquotaaware universe, let's create it
+	{
+	    categoryHashMap = new HashMap<String, int[]>();
+	    getCountsByQuotaAndCategories().put(Boolean.valueOf(withQuota), categoryHashMap);
+	}
+	
+	
+	SiadapStatisticsSummaryBoardUniversesEnum universesEnum = SiadapStatisticsSummaryBoardUniversesEnum.getStatisticsUniverse(state);
+	int[] categoryCounter = categoryHashMap.get(universesEnum.getCategoryString(siadap));
+	if (categoryCounter == null) {
+	    //do we already have a counter for this category?!, if not, we create it
+	    categoryCounter = new int[universesEnum.getNrOfSubCategories()];
+	    categoryHashMap.put(universesEnum.getCategoryString(siadap), categoryCounter);
+	}
+	categoryCounter[universesEnum.getSubCategoryIndex(state)]++;
+    }
+
     public int[] getCounts() {
-        return counts;
+	return counts;
     }
 
     public boolean hasAnyPendingProcesses() {
@@ -70,6 +122,10 @@ public class SiadapProcessCounter implements Serializable {
 	    }
 	}
 	return false;
+    }
+
+    public HashMap<Boolean, HashMap<String, int[]>> getCountsByQuotaAndCategories() {
+	return countsByQuotaAndCategories;
     }
 
 }

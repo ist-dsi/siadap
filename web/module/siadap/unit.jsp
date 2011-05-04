@@ -1,3 +1,4 @@
+<%@page import="org.joda.time.LocalDate"%>
 <%@page import="module.organization.domain.Accountability"%>
 <%@page import="module.siadap.domain.wrappers.PersonSiadapWrapper"%>
 <%@page import="module.organization.domain.Unit"%>
@@ -19,6 +20,9 @@
 	<fr:view name="unit" property="presentationName"/>
 </h2>
 
+<%-- TODO: make this JSP year sensible --%>
+<html:link action="<%="/siadapProcessCount.do?method=showSummaryTables&year="+new org.joda.time.LocalDate().getYear()%>" >Quadro síntese</html:link>
+
 <%
 	final SiadapYearConfiguration configuration = (SiadapYearConfiguration) request.getAttribute("configuration");
 %>
@@ -39,7 +43,7 @@
 							</div>
 						<%			    
 							} else if (party.isUnit()) {
-							    final SiadapProcessCounter counter = new SiadapProcessCounter((Unit) party);
+							    final SiadapProcessCounter counter = new SiadapProcessCounter((Unit) party, false);
 							    final String styleSuffix = counter.hasAnyPendingProcesses() ? "border-color: red;" : "";
 						%>
 							<bean:define id="toolTipTitle" type="java.lang.String"><bean:message key="label.process.state.counts" bundle="SIADAP_RESOURCES"/></bean:define>
@@ -75,7 +79,7 @@
 <table class="tstyle3" align="center" style="width: 100%; text-align: center;">
 	<tr>
 <%
-	final SiadapProcessCounter counter = new SiadapProcessCounter(unit);
+	final SiadapProcessCounter counter = new SiadapProcessCounter(unit, false);
 	for (int i = 0 ; i < counter.getCounts().length; i++) {
 	    final SiadapProcessStateEnum state = SiadapProcessStateEnum.values()[i];
 %>

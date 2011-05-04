@@ -65,6 +65,19 @@ public class SiadapProcessCountAction extends ContextBaseAction {
 	return forward(request, "/module/siadap/unit.jsp");
     }
 
+    public ActionForward showSummaryTables(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+	    HttpServletResponse response) throws Exception {
+
+	final OrganizationalModel organizationalModel = findOrgModel();
+	//get the top unit (IST)
+	final Unit unit = getUnit(organizationalModel, request);
+
+	request.setAttribute("unit", unit);
+
+	return forward(request, "/module/siadap/summaryBoard.jsp");
+
+    }
+
     private Person findUnitChild(final Unit unit, final LocalDate today,
 	    final AccountabilityType accountabilityType, final AccountabilityType unitAccountabilityType) {
 	for (final Accountability accountability : unit.getChildAccountabilitiesSet()) {
