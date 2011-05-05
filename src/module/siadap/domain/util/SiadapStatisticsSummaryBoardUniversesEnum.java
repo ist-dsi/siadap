@@ -50,7 +50,7 @@ public enum SiadapStatisticsSummaryBoardUniversesEnum implements IPresentableEnu
 	    //	    SiadapProcessStateEnum.EVALUATION_NOT_GOING_TO_BE_DONE;
 	    //	    SiadapProcessStateEnum.NOT_YET_SUBMITTED_FOR_ACK;
 	    //WAITING_EVAL_OBJ_ACK,
-	    return SiadapProcessStateEnum.WAITING_EVAL_OBJ_ACK.ordinal() + 1;
+	    return SiadapProcessStateEnum.NOT_YET_SUBMITTED_FOR_ACK.ordinal() + 1;
 	}
 
 	@Override
@@ -84,7 +84,7 @@ public enum SiadapStatisticsSummaryBoardUniversesEnum implements IPresentableEnu
     public abstract int getNrOfSubCategories();
 
     public static SiadapStatisticsSummaryBoardUniversesEnum getStatisticsUniverse(SiadapProcessStateEnum processState) {
-	if (processState.ordinal() < SiadapProcessStateEnum.WAITING_SELF_EVALUATION.ordinal()) {
+	if (processState.ordinal() < SiadapProcessStateEnum.WAITING_EVAL_OBJ_ACK.ordinal()) {
 	    return UNKNOWN_CATEGORY;
 	}
 	return KNOWN_CATEGORY;
