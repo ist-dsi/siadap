@@ -139,7 +139,7 @@ public class SiadapRootModule extends SiadapRootModule_Base implements ModuleIni
 	if (getStatisticsAccessUnionGroup() == null)
 	{
 	    setStatisticsAccessUnionGroup(new UnionGroup(myorg.domain.groups.Role.getRole(myorg.domain.RoleType.MANAGER),
-		    getSiadapScheduleEditorsGroup(), getSiadapCCAGroup()));
+		    getSiadapScheduleEditorsGroup(), getSiadapCCAGroup(), getSiadapStructureManagementGroup()));
 	}
 
     }
