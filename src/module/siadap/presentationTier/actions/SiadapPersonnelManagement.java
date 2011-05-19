@@ -326,6 +326,7 @@ public class SiadapPersonnelManagement extends ContextBaseAction {
 	notificationContent = BundleUtil.getFormattedStringFromResourceBundle(SIADAP_BUNDLE_STRING,
 		"manage.siadapStructure.notification.email.person.changeEvaluator.evaluated.content", String.valueOf(year),
 		evaluator.getName(), evaluatorUser.getUsername(), dateOfChange.toString());
+	notifyUser(request, notificationSubject, notificationContent, evaluated);
 
 	return viewPerson(mapping, form, request, response);
     }
