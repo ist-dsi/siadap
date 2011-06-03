@@ -5,6 +5,7 @@ import java.util.Collections;
 
 import module.organization.domain.Person;
 import module.siadap.domain.Siadap;
+import module.siadap.domain.SiadapEvaluationItem;
 import module.siadap.domain.SiadapProcess;
 import module.workflow.activities.ActivityInformation;
 import module.workflow.activities.WorkflowActivity;
@@ -81,6 +82,12 @@ public class AcknowledgeEvaluationObjectives extends WorkflowActivity<SiadapProc
 	SiadapProcess siadapProcess = activityInformation.getProcess();
 	Siadap siadap = siadapProcess.getSiadap();
 	siadap.setAcknowledgeDate(null);
+	//also do revert the acknowledgeDate on the individual items
+	if (siadap.getCurrentEvaluationItems() == null || siadap.getCurrentEvaluationItems().isEmpty())
+	    return;
+	for (SiadapEvaluationItem item : siadap.getCurrentEvaluationItems()) {
+	    item.setAcknowledgeDate(null);
+	}
 
 	if (notifyIntervenients) {
 
