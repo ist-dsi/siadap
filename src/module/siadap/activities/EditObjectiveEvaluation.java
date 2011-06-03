@@ -4,6 +4,7 @@ import module.siadap.activities.CreateObjectiveEvaluationActivityInformation.Obj
 import module.siadap.domain.ObjectiveEvaluation;
 import module.siadap.domain.Siadap;
 import module.siadap.domain.SiadapProcess;
+import module.siadap.domain.SiadapProcessStateEnum;
 import module.workflow.activities.ActivityInformation;
 import module.workflow.activities.WorkflowActivity;
 import myorg.domain.User;
@@ -14,7 +15,8 @@ public class EditObjectiveEvaluation extends WorkflowActivity<SiadapProcess, Edi
     @Override
     public boolean isActive(SiadapProcess process, User user) {
 	Siadap siadap = process.getSiadap();
-	return siadap.getObjectiveSpecificationInterval().containsNow() && !process.hasBeenExecuted(AutoEvaluation.class)
+	return siadap.getObjectiveSpecificationInterval().containsNow()
+		&& SiadapProcessStateEnum.getState(siadap).ordinal() <= SiadapProcessStateEnum.WAITING_SELF_EVALUATION.ordinal()
 		&& siadap.getEvaluator().getPerson().getUser() == user;
     }
 
@@ -26,6 +28,8 @@ public class EditObjectiveEvaluation extends WorkflowActivity<SiadapProcess, Edi
 	    evaluation.addObjectiveIndicator(indicator.getMeasurementIndicator(), indicator.getSuperationCriteria(),
 		    indicator.getBigDecimalPonderationFactor());
 	}
+	//signal the fact that the evaluation objectives have been changed
+	activityInformation.getProcess().signalChangesInEvaluationObjectives();
     }
 
     @Override
@@ -36,6 +40,31 @@ public class EditObjectiveEvaluation extends WorkflowActivity<SiadapProcess, Edi
     @Override
     protected boolean shouldLogActivity(EditObjectiveEvaluationActivityInformation activityInformation) {
 	return activityInformation.getProcess().getSiadap().getObjectivesAndCompetencesSealedDate() != null;
+    }
+
+    @Override
+    public boolean isConfirmationNeeded(SiadapProcess process) {
+	if (SiadapProcessStateEnum.getState(process.getSiadap()).ordinal() >= SiadapProcessStateEnum.WAITING_EVAL_OBJ_ACK
+		.ordinal())
+	    return true;
+	return false;
+    }
+
+    @Override
+    public String getLocalizedConfirmationMessage(SiadapProcess process) {
+	switch (SiadapProcessStateEnum.getState(process.getSiadap())) {
+	case NOT_CREATED:
+	case INCOMPLETE_OBJ_OR_COMP:
+	    return null;
+	case EVALUATION_NOT_GOING_TO_BE_DONE:
+	    return BundleUtil.getStringFromResourceBundle(getUsedBundle(), "edit.warning.evaluation.not.going.to.be.done");
+	case NOT_YET_SUBMITTED_FOR_ACK:
+	    return null;
+	case WAITING_EVAL_OBJ_ACK:
+	case WAITING_SELF_EVALUATION:
+	    return BundleUtil.getStringFromResourceBundle(getUsedBundle(), "edit.warning.reverts.state");
+	}
+	return null;
     }
 
     @Override

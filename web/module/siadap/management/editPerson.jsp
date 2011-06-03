@@ -16,6 +16,7 @@
 
 <bean:define id="user" name="USER_SESSION_ATTRIBUTE" property="user"/>
 <bean:define id="year" name="person" property="year"/>
+<bean:define id="personWrapper" name="person"  type="module.siadap.domain.wrappers.PersonSiadapWrapper"/>
 
 <h2><bean:message key="link.siadap.structureManagement.forAGivenYear" arg0="<%=year.toString()%>" bundle="SIADAP_RESOURCES"/></h2>
 <br/>
@@ -37,7 +38,7 @@
 
 <fr:view name="person">
 	<fr:schema type="module.siadap.domain.wrappers.PersonSiadapWrapper" bundle="SIADAP_RESOURCES">
-		<fr:slot name="name" key="label.name " bundle="ORGANIZATION_RESOURCES"/>
+		<fr:slot name="name" key="label.name" />
 		<fr:slot name="person.user.username" key="label.username" />
 		<fr:slot name="workingUnit" layout="null-as-label" key="label.workingUnit">
 			<fr:property name="subLayout" value="values"/>
@@ -55,6 +56,26 @@
 		<fr:property name="columnClasses" value="aright,aleft,"/>
 	</fr:layout>
 </fr:view>
+
+<%-- Showing either the create/edit siadap process for this person: --%>
+<p>Processo SIADAP: 
+	<logic:present name="person" property="siadap" >
+		<html:link page="<%= "/workflowProcessManagement.do?method=viewProcess&year="
+			+ personWrapper.getYear()
+			+ "&processId="
+			+ personWrapper.getSiadap().getProcess().getExternalId() %>">
+			<bean:message key="link.view" bundle="MYORG_RESOURCES"/>
+		</html:link>
+	</logic:present>
+	<logic:notPresent name="person" property="siadap">
+		<html:link page="<%= "/siadapManagement.do?method=createNewSiadapProcess&year="
+			+ personWrapper.getYear() 
+			+ "&personId="
+			+  personId%>">
+			<bean:message key="link.create" bundle="MYORG_RESOURCES"/>
+		</html:link>
+	</logic:notPresent>
+</p>
 
 <%-- ACL for the ability to change anything --%>
 <%

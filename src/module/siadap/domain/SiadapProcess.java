@@ -26,6 +26,7 @@ import module.siadap.activities.RemoveCustomSchedule;
 import module.siadap.activities.RemoveObjectiveEvaluation;
 import module.siadap.activities.RevertNoEvaluation;
 import module.siadap.activities.RevertState;
+import module.siadap.activities.RevertStateActivityInformation;
 import module.siadap.activities.RevokeExcellencyAward;
 import module.siadap.activities.SealObjectivesAndCompetences;
 import module.siadap.activities.SubmitForObjectivesAcknowledge;
@@ -124,12 +125,12 @@ public class SiadapProcess extends SiadapProcess_Base {
 	}
 	for (String string : warningMessages) {
 	    try {
-	    warningMessagesToReturn.add(BundleUtil.getFormattedStringFromResourceBundle("resources/SiadapResources", string));
+		warningMessagesToReturn.add(BundleUtil.getFormattedStringFromResourceBundle("resources/SiadapResources", string));
 	    } catch (MissingResourceException e) {
 		warningMessagesToReturn.add(string);
 	    }
 	}
-	    
+
 	return warningMessagesToReturn;
     }
 
@@ -294,6 +295,36 @@ public class SiadapProcess extends SiadapProcess_Base {
 	    throw new DomainException();
 	}
 
+    }
+
+    /**
+     * Method that is called whenever there are changes to the evaluation
+     * objectives (either the objectives or the competences got deleted/edited)
+     * in which case, this method triggers the side effects of doing so. At the
+     * moment it will only revert the status from submitted to the evaluatee to
+     * not submitted and possibly warn the user about it
+     */
+    public void signalChangesInEvaluationObjectives() {
+	int stateOrdinal = SiadapProcessStateEnum.getState(getSiadap()).ordinal();
+	if (stateOrdinal == SiadapProcessStateEnum.WAITING_EVAL_OBJ_ACK.ordinal()
+		|| stateOrdinal == SiadapProcessStateEnum.WAITING_SELF_EVALUATION.ordinal()) {
+	    RevertState revertState = null;
+	    for (WorkflowActivity activity : activities) {
+		if (RevertState.class.isAssignableFrom(activity.getClass())) {
+		    revertState = (RevertState) activity;
+		    break;
+		}
+	    }
+	    if (revertState == null)
+		revertState = new RevertState();
+	    revertState.setSideEffect(true);
+	    RevertStateActivityInformation activityInformation = (RevertStateActivityInformation) revertState
+		    .getActivityInformation(this);
+	    activityInformation.setSiadapProcessStateEnum(SiadapProcessStateEnum.NOT_YET_SUBMITTED_FOR_ACK);
+	    activityInformation.setJustification("Edição/remoção de objectivos/competências");
+	    revertState.execute(activityInformation);
+	    return;
+	}
     }
 
     public boolean isSubmittedForEvalObjsConfirmation() {

@@ -18,8 +18,12 @@ import myorg.domain.exceptions.DomainException;
  */
 public class RevertState extends WorkflowActivity<SiadapProcess, RevertStateActivityInformation> {
 
+    private boolean isSideEffect = false;
+
     @Override
     public boolean isActive(SiadapProcess process, User user) {
+	if (isSideEffect())
+	    return true;
 	return shouldBeAbleToRevertState(process, user);
     }
 
@@ -49,10 +53,14 @@ public class RevertState extends WorkflowActivity<SiadapProcess, RevertStateActi
 	case NOT_CREATED:
 	case UNIMPLEMENTED_STATE:
 	default:
+	    if (isSideEffect())
+		setSideEffect(false);
 	    throw new DomainException("activity.RevertState.error.invalidStateToChangeTo",
 		    DomainException.getResourceFor("resources/SiadapResources"));
 
 	}
+	if (isSideEffect())
+	    setSideEffect(false);
 
     }
 
@@ -75,6 +83,14 @@ public class RevertState extends WorkflowActivity<SiadapProcess, RevertStateActi
     @Override
     public String getUsedBundle() {
 	return "resources/SiadapResources";
+    }
+
+    public void setSideEffect(boolean isSideEffect) {
+	this.isSideEffect = isSideEffect;
+    }
+
+    public boolean isSideEffect() {
+	return isSideEffect;
     }
 
 }

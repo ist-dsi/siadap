@@ -29,7 +29,6 @@ import org.joda.time.LocalDate;
 
 import pt.ist.fenixWebFramework.services.Service;
 import pt.ist.fenixframework.plugins.remote.domain.exception.RemoteException;
-import pt.utl.ist.fenix.tools.util.i18n.MultiLanguageString;
 
 public class PersonSiadapWrapper extends PartyWrapper implements Serializable {
 
@@ -277,8 +276,11 @@ public class PersonSiadapWrapper extends PartyWrapper implements Serializable {
 	return processes;
     }
 
-    public MultiLanguageString getName() {
-	return getPerson().getPartyName();
+    public String getName() {
+	if (getPerson() == null || getPerson().getName() == null) {
+	    throw new DomainException("Person or person's name not defined");
+	}
+	return getPerson().getName();
     }
 
     @Override
