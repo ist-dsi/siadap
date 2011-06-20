@@ -345,42 +345,82 @@ public class Siadap extends Siadap_Base {
 	return SiadapYearConfiguration.getSiadapYearConfiguration(getYear());
     }
 
-    public Interval getAutoEvaluationInterval() {
+    public LocalDate getAutoEvaluationEndDate() {
+	SiadapYearConfiguration configuration = getSiadapYearConfiguration();
+	LocalDate end = configuration.getAutoEvaluationEnd();
+	if (getCustomAutoEvaluationEnd() != null) {
+	    end = getCustomAutoEvaluationEnd();
+	}
+	return end;
+
+    }
+
+    public LocalDate getAutoEvaluationBeginDate() {
 	SiadapYearConfiguration configuration = getSiadapYearConfiguration();
 	LocalDate begin = configuration.getAutoEvaluationBegin();
 	if (getCustomAutoEvaluationBegin() != null) {
 	    begin = getCustomAutoEvaluationBegin();
 	}
-	LocalDate end = configuration.getAutoEvaluationEnd();
-	if (getCustomAutoEvaluationEnd() != null) {
-	    end = getCustomAutoEvaluationEnd();
-	}
+	return begin;
+
+    }
+
+    public Interval getAutoEvaluationInterval() {
+	LocalDate begin = getAutoEvaluationBeginDate();
+	LocalDate end = getAutoEvaluationEndDate();
 	return new Interval(convertDateToBeginOfDay(begin), convertDateToEndOfDay(end));
     }
 
-    public Interval getEvaluationInterval() {
+    public LocalDate getEvaluationEndDate() {
+	SiadapYearConfiguration configuration = getSiadapYearConfiguration();
+	LocalDate end = configuration.getEvaluationEnd();
+	if (getCustomEvaluationEnd() != null) {
+	    end = getCustomEvaluationEnd();
+	}
+	return end;
+
+    }
+
+    public LocalDate getEvaluationBeginDate() {
 	SiadapYearConfiguration configuration = getSiadapYearConfiguration();
 	LocalDate begin = configuration.getEvaluationBegin();
 	if (getCustomEvaluationBegin() != null) {
 	    begin = getCustomEvaluationBegin();
 	}
-	LocalDate end = configuration.getEvaluationEnd();
-	if (getCustomEvaluationEnd() != null) {
-	    end = getCustomEvaluationEnd();
-	}
+	return begin;
+
+    }
+
+    public Interval getEvaluationInterval() {
+	LocalDate begin = getEvaluationBeginDate();
+	LocalDate end = getEvaluationEndDate();
 	return new Interval(convertDateToBeginOfDay(begin), convertDateToEndOfDay(end));
     }
 
-    public Interval getObjectiveSpecificationInterval() {
+    public LocalDate getObjectiveSpecificationEndDate() {
+	SiadapYearConfiguration configuration = getSiadapYearConfiguration();
+	LocalDate end = configuration.getObjectiveSpecificationEnd();
+	if (getCustomObjectiveSpecificationEnd() != null) {
+	    end = getCustomObjectiveSpecificationEnd();
+	}
+	return end;
+
+    }
+
+    public LocalDate getObjectiveSpecificationBeginDate() {
 	SiadapYearConfiguration configuration = getSiadapYearConfiguration();
 	LocalDate begin = configuration.getObjectiveSpecificationBegin();
 	if (getCustomObjectiveSpecificationBegin() != null) {
 	    begin = getCustomObjectiveSpecificationBegin();
 	}
-	LocalDate end = configuration.getObjectiveSpecificationEnd();
-	if (getCustomObjectiveSpecificationEnd() != null) {
-	    end = getCustomObjectiveSpecificationEnd();
-	}
+	return begin;
+    }
+
+    public Interval getObjectiveSpecificationInterval() {
+	LocalDate begin = getObjectiveSpecificationBeginDate();
+
+	LocalDate end = getObjectiveSpecificationEndDate();
+
 	return new Interval(convertDateToBeginOfDay(begin), convertDateToEndOfDay(end));
     }
 

@@ -22,11 +22,15 @@ public class ChangeCustomScheduleActivityInformation extends ActivityInformation
 	private SiadapProcessSchedulesEnum typeOfSchedule;
 	private String justification;
 	private LocalDate newDeadlineDate;
+	private final Siadap siadap;
 
 	public CustomScheduleRepresentation(SiadapProcessSchedulesEnum typeOfSchedule, LocalDate newDeadlineDate,
-		String justification) {
+		String justification, Siadap siadap) {
 	    super();
 	    this.typeOfSchedule = typeOfSchedule;
+	    this.siadap = siadap;
+	    this.newDeadlineDate = newDeadlineDate;
+	    this.justification = justification;
 	}
 
 	public String getJustification() {
@@ -54,7 +58,11 @@ public class ChangeCustomScheduleActivityInformation extends ActivityInformation
 	}
 
 	public boolean isComplete() {
-	    return (getTypeOfSchedule() != null && getJustification() != null && getNewDeadlineDate() != null);
+	    if (getTypeOfSchedule() != null) {
+		getTypeOfSchedule().validateDate(newDeadlineDate, siadap);
+		return (getJustification() != null && getNewDeadlineDate() != null);
+	    } else
+		return false;
 	}
 
     }
@@ -68,6 +76,7 @@ public class ChangeCustomScheduleActivityInformation extends ActivityInformation
 	    WorkflowActivity<? extends WorkflowProcess, ? extends ActivityInformation> activity,
 	    boolean addCustomScheduleRepresentation) {
 	super(process, activity);
+	setSiadap(process.getSiadap());
 	setCustomScheduleRepresentation(new ArrayList<CustomScheduleRepresentation>());
 	if (addCustomScheduleRepresentation) {
 	    addCustomScheduleRepresentation();
@@ -76,7 +85,7 @@ public class ChangeCustomScheduleActivityInformation extends ActivityInformation
 
 
     public void addCustomScheduleRepresentation() {
-	getCustomScheduleRepresentations().add(new CustomScheduleRepresentation(null, null, null));
+	getCustomScheduleRepresentations().add(new CustomScheduleRepresentation(null, null, null, siadap));
 
     }
 
