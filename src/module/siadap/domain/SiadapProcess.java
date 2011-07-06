@@ -39,6 +39,7 @@ import module.workflow.domain.WorkflowProcess;
 import myorg.applicationTier.Authenticate.UserView;
 import myorg.domain.RoleType;
 import myorg.domain.User;
+import myorg.domain.VirtualHost;
 import myorg.domain.exceptions.DomainException;
 import myorg.domain.groups.Role;
 import myorg.util.BundleUtil;
@@ -239,7 +240,9 @@ public class SiadapProcess extends SiadapProcess_Base {
     private void notifyAdmin(String subject, String message) {
 	ArrayList<String> toAddress = new ArrayList<String>();
 	toAddress.add("joao.antunes@tagus.ist.utl.pt");
-	new Email("Aplicação SIADAP", "noreply@ist.utl.pt", new String[] {}, toAddress, Collections.EMPTY_LIST,
+	final VirtualHost virtualHost = VirtualHost.getVirtualHostForThread();
+	new Email(virtualHost.getApplicationSubTitle().getContent(),
+		    virtualHost.getSystemEmailAddress(), new String[] {}, toAddress, Collections.EMPTY_LIST,
 		Collections.EMPTY_LIST, subject, message);
     }
 

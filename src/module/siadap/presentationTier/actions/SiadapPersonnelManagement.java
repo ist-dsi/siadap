@@ -24,6 +24,7 @@ import module.siadap.domain.wrappers.UnitSiadapWrapper;
 import module.siadap.presentationTier.renderers.providers.SiadapYearsFromExistingSiadapConfigurations;
 import myorg.applicationTier.Authenticate.UserView;
 import myorg.domain.User;
+import myorg.domain.VirtualHost;
 import myorg.domain.exceptions.DomainException;
 import myorg.presentationTier.actions.ContextBaseAction;
 import myorg.util.BundleUtil;
@@ -176,7 +177,9 @@ public class SiadapPersonnelManagement extends ContextBaseAction {
     //created because of the faulty dml injector
     @Service
     private void auxNotifyUser(ArrayList<String> usersEmails, String notificationSubject, String notificationContent) {
-	new Email(Siadap.APLICACAO_SIADAP_LABEL, Siadap.NO_REPLY_EMAIL_ADDRESS, new String[] {}, usersEmails,
+	final VirtualHost virtualHost = VirtualHost.getVirtualHostForThread();
+	new Email(virtualHost.getApplicationSubTitle().getContent(),
+		    virtualHost.getSystemEmailAddress(), new String[] {}, usersEmails,
 		Collections.EMPTY_LIST, Collections.EMPTY_LIST, notificationSubject, notificationContent);
 
     }

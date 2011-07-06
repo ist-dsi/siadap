@@ -10,6 +10,7 @@ import module.siadap.domain.SiadapProcess;
 import module.workflow.activities.ActivityInformation;
 import module.workflow.activities.WorkflowActivity;
 import myorg.domain.User;
+import myorg.domain.VirtualHost;
 
 import org.joda.time.LocalDate;
 
@@ -67,7 +68,9 @@ public class AcknowledgeEvaluationObjectives extends WorkflowActivity<SiadapProc
 		body.append("\n\n---\n");
 		body.append("Esta mensagem foi enviada por meio das Aplicações Centrais do IST.\n");
 
-		new Email("Aplicação SIADAP do IST", "noreply@ist.utl.pt", new String[] {}, toAddress, ccAddress,
+		final VirtualHost virtualHost = VirtualHost.getVirtualHostForThread();
+		new Email(virtualHost.getApplicationSubTitle().getContent(),
+			    virtualHost.getSystemEmailAddress(), new String[] {}, toAddress, ccAddress,
 			Collections.EMPTY_LIST, "SIADAP - Tomada de conhecimento de objectivos e competências", body.toString());
 	    }
 	} catch (final RemoteException ex) {
@@ -131,9 +134,9 @@ public class AcknowledgeEvaluationObjectives extends WorkflowActivity<SiadapProc
 		    body.append("\n\n---\n");
 		    body.append("Esta mensagem foi enviada por meio das Aplicações Centrais do IST.\n");
 
-		    new Email(
-			    "Aplicação SIADAP do IST",
-			    "noreply@ist.utl.pt",
+		    final VirtualHost virtualHost = VirtualHost.getVirtualHostForThread();
+		    new Email(virtualHost.getApplicationSubTitle().getContent(),
+				    virtualHost.getSystemEmailAddress(),
 			    new String[] {},
 			    toAddress,
 			    ccAddress,

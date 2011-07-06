@@ -9,6 +9,7 @@ import module.siadap.domain.SiadapProcess;
 import module.workflow.activities.ActivityInformation;
 import module.workflow.activities.WorkflowActivity;
 import myorg.domain.User;
+import myorg.domain.VirtualHost;
 import myorg.domain.exceptions.DomainException;
 
 import org.joda.time.LocalDate;
@@ -70,7 +71,9 @@ public class SubmitForObjectivesAcknowledge extends WorkflowActivity<SiadapProce
 		    body.append("\n\n---\n");
 		    body.append("Esta mensagem foi enviada por meio das Aplicações Centrais do IST.\n");
 
-		    new Email("Aplicação SIADAP do IST", "noreply@ist.utl.pt", new String[] {}, toAddress, ccAddress,
+		    final VirtualHost virtualHost = VirtualHost.getVirtualHostForThread();
+		    new Email(virtualHost.getApplicationSubTitle().getContent(),
+				    virtualHost.getSystemEmailAddress(), new String[] {}, toAddress, ccAddress,
 			    Collections.EMPTY_LIST, "SIADAP - " + year
 				    + " Reversão excepcional do estado do processo SIADAP para o estado anterior ao de ",
 			    body.toString());
@@ -128,7 +131,9 @@ public class SubmitForObjectivesAcknowledge extends WorkflowActivity<SiadapProce
 		body.append("\n\n---\n");
 		body.append("Esta mensagem foi enviada por meio das Aplicações Centrais do IST.\n");
 
-		new Email("Aplicação SIADAP do IST", "noreply@ist.utl.pt", new String[] {}, toAddress, ccAddress,
+		final VirtualHost virtualHost = VirtualHost.getVirtualHostForThread();
+		new Email(virtualHost.getApplicationSubTitle().getContent(),
+			    virtualHost.getSystemEmailAddress(), new String[] {}, toAddress, ccAddress,
 			Collections.EMPTY_LIST, "SIADAP - Tomada de conhecimento de objectivos e competências", body.toString());
 	    }
 	} catch (RemoteException ex) {
