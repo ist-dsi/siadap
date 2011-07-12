@@ -8,6 +8,7 @@ import module.organization.domain.Person;
 import module.organization.domain.Unit;
 import module.siadap.domain.groups.SiadapCCAGroup;
 import module.siadap.domain.groups.SiadapScheduleEditorsGroup;
+import module.siadap.domain.groups.SiadapStructureManagementGroup;
 import module.siadap.domain.wrappers.PersonSiadapWrapper;
 import myorg.domain.ModuleInitializer;
 import myorg.domain.MyOrg;
@@ -135,6 +136,9 @@ public class SiadapRootModule extends SiadapRootModule_Base implements ModuleIni
 	}
 	if (getSiadapScheduleEditorsGroup() == null) {
 	    setSiadapScheduleEditorsGroup(new SiadapScheduleEditorsGroup());
+	}
+	if (getSiadapStructureManagementGroup() == null) {
+	    setSiadapStructureManagementGroup(new SiadapStructureManagementGroup());
 	}
 	if (getStatisticsAccessUnionGroup() == null)
 	{
