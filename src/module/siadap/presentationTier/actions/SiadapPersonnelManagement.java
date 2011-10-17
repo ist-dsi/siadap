@@ -1,5 +1,6 @@
 package module.siadap.presentationTier.actions;
 
+import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -7,6 +8,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
+import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -15,7 +17,7 @@ import module.organization.domain.Accountability;
 import module.organization.domain.AccountabilityType;
 import module.organization.domain.Person;
 import module.organization.domain.Unit;
-import module.siadap.domain.Siadap;
+import module.siadap.domain.SiadapRootModule;
 import module.siadap.domain.SiadapYearConfiguration;
 import module.siadap.domain.groups.SiadapStructureManagementGroup;
 import module.siadap.domain.wrappers.PersonSiadapWrapper;
@@ -32,6 +34,7 @@ import myorg.util.VariantBean;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
@@ -387,6 +390,33 @@ public class SiadapPersonnelManagement extends ContextBaseAction {
 	}
 
 	return viewPerson(mapping, form, request, response);
+    }
+
+    public final ActionForward downloadNormalSIADAPStructure(final ActionMapping mapping, final ActionForm form,
+	  final HttpServletRequest request, final HttpServletResponse response) throws Exception {
+	
+	SiadapRootModule siadapRootModule = SiadapRootModule.getInstance();
+	int year = Integer.parseInt(((String) getAttribute(request, "year")));
+	
+	return streamSpreadsheet(response, "SIADAP_hierarquia_" + year,
+		siadapRootModule.exportSIADAPHierarchy(year, false, true));
+
+
+    }
+
+    private ActionForward streamSpreadsheet(final HttpServletResponse response, final String fileName,
+	    final HSSFWorkbook resultSheet) throws IOException {
+
+	response.setContentType("application/xls ");
+	response.setHeader("Content-disposition", "attachment; filename=" + fileName + ".xls");
+
+	ServletOutputStream outputStream = response.getOutputStream();
+
+	resultSheet.write(outputStream);
+	outputStream.flush();
+	outputStream.close();
+
+	return null;
     }
 
     public static class ChangeEvaluatorBean implements Serializable {

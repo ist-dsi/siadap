@@ -26,6 +26,11 @@
 
 <bean:define id="year" name="siadapYearWrapper" property="chosenYear"/>
 
+<%-- Link for the hierarchy excel file --%>
+<html:link action="/siadapPersonnelManagement.do?method=downloadNormalSIADAPStructure" paramId="year" paramName="siadapYearWrapper" paramProperty="chosenYear">
+Download da listagem de hierarquias SIADAP
+</html:link>
+
 <fr:edit id="searchPerson" name="bean" action="<%="/siadapPersonnelManagement.do?method=viewPerson&year=" + year.toString()%>" >
 <fr:schema type="myorg.util.VariantBean" bundle="SIADAP_RESOURCES">
 		<fr:slot name="domainObject" layout="autoComplete" key="label.person" bundle="ORGANIZATION_RESOURCES">
@@ -46,6 +51,8 @@
 	</fr:layout>
 	<fr:destination name="cancel" path="/siadapPersonnelManagement.do?method=start"/>
 </fr:edit>
+
+
 <jsp:include page="/module/siadap/tracFeedBackSnip.jsp">	
    <jsp:param name="href" value="https://fenix-ashes.ist.utl.pt/trac/siadap/report/16" />	
 </jsp:include>
