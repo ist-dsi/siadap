@@ -96,6 +96,11 @@ public class UnitSiadapWrapper extends PartyWrapper implements Serializable {
 	return people;
     }
 
+    public int getQuotaAwareTotalPeopleWorkingInUnit(boolean continueToSubUnits, boolean withQuota) {
+	return withQuota ? getTotalPeopleWorkingInUnit(getUnit(), continueToSubUnits, getConfiguration().getWorkingRelation())
+		: getTotalPeopleWorkingInUnit(getUnit(), continueToSubUnits, getConfiguration().getWorkingRelationWithNoQuota());
+    }
+
     public int getTotalPeopleWithSiadapWorkingInUnit() {
 	return getTotalPeopleWithSiadapWorkingInUnit(true);
     }

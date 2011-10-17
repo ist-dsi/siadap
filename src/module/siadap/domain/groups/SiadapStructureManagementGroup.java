@@ -24,7 +24,7 @@ public class SiadapStructureManagementGroup extends SiadapStructureManagementGro
 	return isMember(user, new LocalDate().getYear());
     }
 
-    public boolean isMember(User user, int year) {
+    public static boolean isMember(User user, int year) {
 	SiadapYearConfiguration configuration = SiadapYearConfiguration.getSiadapYearConfiguration(year);
 	return configuration.getStructureManagementGroupMembers().contains(user.getPerson());
     }
