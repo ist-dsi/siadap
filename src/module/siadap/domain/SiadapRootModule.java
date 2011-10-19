@@ -7,7 +7,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import module.fileSupport.scripts.SetCacheFileSizeFieldToEachExistingFile;
 import module.organization.domain.Person;
 import module.organization.domain.Unit;
 import module.siadap.domain.exceptions.SiadapException;
@@ -48,7 +47,7 @@ import pt.ist.fenixWebFramework.services.Service;
 
 public class SiadapRootModule extends SiadapRootModule_Base implements ModuleInitializer {
 
-    private static final Logger LOGGER = Logger.getLogger(SetCacheFileSizeFieldToEachExistingFile.class);
+    private static final Logger LOGGER = Logger.getLogger(SiadapRootModule.class);
 
     private static boolean isInitialized = false;
 
