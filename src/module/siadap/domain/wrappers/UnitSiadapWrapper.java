@@ -22,6 +22,7 @@ import myorg.domain.exceptions.DomainException;
 import myorg.util.BundleUtil;
 
 import org.apache.commons.collections.Predicate;
+import org.jfree.data.time.Month;
 import org.joda.time.LocalDate;
 
 import pt.ist.fenixWebFramework.services.Service;
@@ -286,15 +287,21 @@ public class UnitSiadapWrapper extends PartyWrapper implements Serializable {
 	AccountabilityType harmonizationResponsibleRelation = getConfiguration().getHarmonizationResponsibleRelation();
 	Collection<Accountability> childrenAccountabilities = getUnit().getChildrenAccountabilities(
 		Collections.singleton(harmonizationResponsibleRelation));
+	
+	LocalDate end = new LocalDate(getYear(), Month.DECEMBER, 31);
 
 	if (!childrenAccountabilities.isEmpty()) {
 	    for (Accountability accountability : childrenAccountabilities) {
-		if (accountability.getEndDate() == null) {
+		if (accountability.isActive(end)) {
+		    //if we already have that person there, let's just return
+		    if (accountability.getChild().equals(person))
+			return;
+		} else if (!accountability.getChild().equals(person)) {
 		    accountability.editDates(accountability.getBeginDate(), new LocalDate());
 		}
 	    }
 	}
-	getUnit().addChild(person, harmonizationResponsibleRelation, new LocalDate(), null);
+	getUnit().addChild(person, harmonizationResponsibleRelation, new LocalDate(), end);
     }
 
     public boolean isAboveQuotas() {

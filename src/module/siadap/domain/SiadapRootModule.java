@@ -3,6 +3,7 @@ package module.siadap.domain;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -25,6 +26,7 @@ import myorg.domain.groups.UnionGroup;
 
 import org.apache.log4j.Logger;
 import org.apache.poi.hssf.usermodel.HSSFCell;
+import org.apache.poi.hssf.usermodel.HSSFCellStyle;
 import org.apache.poi.hssf.usermodel.HSSFFont;
 import org.apache.poi.hssf.usermodel.HSSFFooter;
 import org.apache.poi.hssf.usermodel.HSSFHeader;
@@ -257,10 +259,12 @@ public class SiadapRootModule extends SiadapRootModule_Base implements ModuleIni
 	HSSFWorkbook hierarchyWorkbook = new HSSFWorkbook();
 	CreationHelper creationHelper = hierarchyWorkbook.getCreationHelper();
 	HSSFSheet workingRelationWithQuotasSheet = hierarchyWorkbook.createSheet("Ordenação por Serviço (IST)");
-	populateSheet(workingRelationWithQuotasSheet, true, wrappedUnit, hierarchyWorkbook);
+	populateSheet(workingRelationWithQuotasSheet, true, wrappedUnit, hierarchyWorkbook, shouldIncludeEndOfRole,
+		includeHarmonizationResponsibles);
 
 	HSSFSheet workingRelationWithoutQuotasSheet = hierarchyWorkbook.createSheet("Ordenação por Serviço (ADIST)");
-	populateSheet(workingRelationWithoutQuotasSheet, false, wrappedUnit, hierarchyWorkbook);
+	populateSheet(workingRelationWithoutQuotasSheet, false, wrappedUnit, hierarchyWorkbook, shouldIncludeEndOfRole,
+		includeHarmonizationResponsibles);
 
 	return hierarchyWorkbook;
     }
@@ -270,7 +274,7 @@ public class SiadapRootModule extends SiadapRootModule_Base implements ModuleIni
     private static final int START_ROW_INDEX = 0;
 
     private void populateSheet(HSSFSheet sheetToWriteTo, boolean considerQuotas, UnitSiadapWrapper unitToSearchIn,
-	    HSSFWorkbook wb) {
+	    HSSFWorkbook wb, boolean shouldIncludeEndOfRole, boolean includeHarmonizationResponsibles) {
 
 	CreationHelper creationHelper = wb.getCreationHelper();
 
@@ -377,6 +381,28 @@ public class SiadapRootModule extends SiadapRootModule_Base implements ModuleIni
 	secondLineStyle.setAlignment(CellStyle.ALIGN_CENTER);
 	secondLineStyle.setVerticalAlignment(CellStyle.VERTICAL_CENTER);
 
+	//the style for Unit Harmonization responsibles - title
+	CellStyle unitHarmonizationTitleStyle = wb.createCellStyle();
+	//the BLUE title font - is equal to 'firstLineFont'
+	unitHarmonizationTitleStyle.setFont(firstLineFont);
+	//now we just have to shade it
+	unitHarmonizationTitleStyle.setFillPattern(HSSFCellStyle.SOLID_FOREGROUND);
+	unitHarmonizationTitleStyle.setFillForegroundColor(HSSFColor.GREY_25_PERCENT.index);
+	unitHarmonizationTitleStyle.setAlignment(CellStyle.ALIGN_CENTER);
+
+	//the style for Unit Harmonization responsibles - normal 
+
+	//let's create the BLUE Arial 14 font for the responsibles of harmonization
+	HSSFFont harmonizationResponsibleFont = wb.createFont();
+	harmonizationResponsibleFont.setColor(HSSFColor.DARK_BLUE.index);
+	harmonizationResponsibleFont.setFontHeightInPoints((short) 14);
+
+	CellStyle unitHarmonizationResponsibleStyle = wb.createCellStyle();
+	unitHarmonizationResponsibleStyle.setFillPattern(HSSFCellStyle.SOLID_FOREGROUND);
+	unitHarmonizationResponsibleStyle.setFillForegroundColor(HSSFColor.GREY_25_PERCENT.index);
+	unitHarmonizationResponsibleStyle.setFont(harmonizationResponsibleFont);
+	unitHarmonizationResponsibleStyle.setAlignment(CellStyle.ALIGN_CENTER);
+
 	/* ** END of styles ** */
 
 	/* ** Immutable IST header ** */
@@ -427,6 +453,40 @@ public class SiadapRootModule extends SiadapRootModule_Base implements ModuleIni
 	footer.setRight("SIADAP - Lista de avaliadores " + unitToSearchIn.getYear());
 
 	for (UnitSiadapWrapper eachUnit : unitToSearchIn.getAllChildUnits()) {
+
+	    Collection<Person> harmonizationResponsibles = eachUnit.getHarmonizationResponsibles();
+	    if (includeHarmonizationResponsibles && !harmonizationResponsibles.isEmpty()) {
+		//let's add the section stating the responsible for Harmonization
+		cellIndex = START_CELL_INDEX;
+		row = sheetToWriteTo.createRow(++rowIndex);
+		//let's merge the row
+		sheetToWriteTo.addMergedRegion(new CellRangeAddress(rowIndex, rowIndex, cellIndex, cellIndex + 3));
+		cell = row.createCell(cellIndex);
+		cell.setCellStyle(unitHarmonizationTitleStyle);
+		cell.setCellValue("UNIDADE DE HARMONIZAÇÃO: " + eachUnit.getName());
+		//a 'blank' styled line
+		row = sheetToWriteTo.createRow(++rowIndex);
+		//merge it
+		sheetToWriteTo.addMergedRegion(new CellRangeAddress(rowIndex, rowIndex, cellIndex, cellIndex + 3));
+		row.createCell(cellIndex).setCellStyle(unitHarmonizationResponsibleStyle);
+		//each responsible has one of the following lines
+		for (Person harmonizationResponsible : harmonizationResponsibles) {
+		    cellIndex = START_CELL_INDEX;
+		    row = sheetToWriteTo.createRow(++rowIndex);
+		    //merge it
+		    sheetToWriteTo.addMergedRegion(new CellRangeAddress(rowIndex, rowIndex, cellIndex, cellIndex + 3));
+		    cell = row.createCell(cellIndex);
+		    cell.setCellStyle(unitHarmonizationResponsibleStyle);
+		    cell.setCellValue("RESPONSÁVEL PELA HARMONIZAÇÃO: " + harmonizationResponsible.getName());
+		}
+		//and let's add an extra 'blank' styled line
+		row = sheetToWriteTo.createRow(++rowIndex);
+		sheetToWriteTo.addMergedRegion(new CellRangeAddress(rowIndex, rowIndex, cellIndex, cellIndex + 3));
+		row.createCell(cellIndex).setCellStyle(unitHarmonizationResponsibleStyle);
+		//and a regular one! (skip one in the index)
+		++rowIndex;
+
+	    }
 	    if (eachUnit.getQuotaAwareTotalPeopleWorkingInUnit(false, considerQuotas) > 0) {
 		
 		row = sheetToWriteTo.createRow(++rowIndex);

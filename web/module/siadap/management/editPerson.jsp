@@ -257,6 +257,7 @@ request.setAttribute("isAbleToChangeAnything", isAbleToChangeAnything);
  <jsp:param value="<%=configuration.getEvaluationRelation().getExternalId()%>" name="accountabilities"/>
  <jsp:param value="<%=configuration.getWorkingRelation().getExternalId()%>" name="accountabilities"/>
  <jsp:param value="<%=configuration.getWorkingRelationWithNoQuota().getExternalId()%>" name="accountabilities"/>
+ <jsp:param value="<%=configuration.getHarmonizationResponsibleRelation().getExternalId()%>" name="accountabilities"/>
  <jsp:param value="<%=year%>" name="startDateYear"/>
  <jsp:param value="1" name="startDateMonth"/>
  <jsp:param value="1" name="startDateDay"/>
@@ -268,7 +269,6 @@ request.setAttribute("isAbleToChangeAnything", isAbleToChangeAnything);
 
 <%-- For now, let's also comment the ability to add people to do the harmonization of certain units, I should check the type of accountability
 that is desirable (start and end dates) --%>
-<%-- 
 <logic:equal name="isAbleToChangeAnything" value="true">
 	<p>
 	<strong><bean:message key="label.addHarmonizationResponsability" bundle="SIADAP_RESOURCES"/></strong>
@@ -294,7 +294,6 @@ that is desirable (start and end dates) --%>
 	</fr:edit>
 	</p>
 </logic:equal>
---%>
 <%-- End of isAbleToChangeAnything --%>
 
 
