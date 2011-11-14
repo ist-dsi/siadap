@@ -24,6 +24,9 @@
 	</logic:equal>
 </logic:equal>
 
+<%-- Let's assert if we should display the autoEvaluation or not - for that, we'll use the wrapper --%>
+<bean:define id="evaluatedWrapper" name="process" property="siadap.evaluatedWrapper"/>
+
 <style>
 .xpto span {
 	background: #fdeaa5; 
@@ -94,7 +97,10 @@
 			<td class="aleft"> <fr:view name="indicator" property="measurementIndicator"/>	</td>
 			<td class="aleft"> <fr:view name="indicator" property="superationCriteria"/>	</td>
 			<td valign="middle">
+			<%-- let's make sure that we can show these details --%>
+			<logic:equal name="evaluatedWrapper" property="currentUserAbleToSeeAutoEvaluationDetails" value="true">
 				<fr:view name="indicator" property="autoEvaluation" type="module.siadap.domain.scoring.SiadapObjectivesEvaluation"/>
+			</logic:equal>
 			</td>
 			<td valign="middle">
 				<fr:view name="indicator" property="evaluation" type="module.siadap.domain.scoring.SiadapObjectivesEvaluation"/>

@@ -207,6 +207,17 @@ public class PersonSiadapWrapper extends PartyWrapper implements Serializable {
 	return getSiadap() == null && isCurrentUserAbleToEvaluate();
     }
 
+    public boolean isCurrentUserAbleToSeeAutoEvaluationDetails() {
+	User currentUser = UserView.getCurrentUser();
+	if (!isCurrentUserAbleToSeeDetails())
+	    return false;
+	if (getSiadap().getEvaluated().equals(currentUser.getPerson()))
+	    return true;
+	if (getSiadap().isAutoEvaliationDone())
+	    return true;
+	return false;
+    }
+
     public BigDecimal getTotalEvaluationScoring() {
 	Siadap siadap = getSiadap();
 	return siadap != null ? (siadap.isEvaluationDone() ? siadap.getTotalEvaluationScoring() : null) : null;

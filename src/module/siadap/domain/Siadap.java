@@ -7,8 +7,8 @@ import java.util.Comparator;
 import java.util.List;
 
 import module.organization.domain.Person;
-import module.siadap.activities.AutoEvaluation;
 import module.siadap.activities.Evaluation;
+import module.siadap.activities.SubmitAutoEvaluation;
 import module.siadap.domain.scoring.IScoring;
 import module.siadap.domain.scoring.SiadapGlobalEvaluation;
 import module.siadap.domain.util.SiadapPendingProcessesCounter;
@@ -101,7 +101,7 @@ public class Siadap extends Siadap_Base {
     }
 
     public boolean isAutoEvaliationDone() {
-	return getProcess().hasBeenExecuted(AutoEvaluation.class);
+	return getProcess().hasBeenExecuted(SubmitAutoEvaluation.class);
     }
 
     public boolean isEvaluationDone() {

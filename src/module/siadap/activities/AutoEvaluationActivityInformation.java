@@ -1,5 +1,6 @@
 package module.siadap.activities;
 
+import module.siadap.domain.SiadapAutoEvaluation;
 import module.siadap.domain.SiadapProcess;
 import module.workflow.activities.ActivityInformation;
 import module.workflow.activities.WorkflowActivity;
@@ -23,6 +24,20 @@ public class AutoEvaluationActivityInformation extends ActivityInformation<Siada
     public AutoEvaluationActivityInformation(SiadapProcess process,
 	    WorkflowActivity<? extends WorkflowProcess, ? extends ActivityInformation> activity) {
 	super(process, activity);
+	SiadapAutoEvaluation autoEvaluationData = process.getSiadap().getAutoEvaluationData();
+
+	setFactorOneClassification(autoEvaluationData.getFactorOneClassification());
+	setFactorTwoClassification(autoEvaluationData.getFactorTwoClassification());
+	setFactorThreeClassification(autoEvaluationData.getFactorThreeClassification());
+	setFactorFourClassification(autoEvaluationData.getFactorFourClassification());
+	setFactorFiveClassification(autoEvaluationData.getFactorFiveClassification());
+	setFactorSixClassification(autoEvaluationData.getFactorSixClassification());
+
+	setObjectivesJustification(autoEvaluationData.getObjectivesJustification());
+	setCompetencesJustification(autoEvaluationData.getCompetencesJustification());
+	setOtherFactorsJustification(autoEvaluationData.getOtherFactorsJustification());
+	setExtremesJustification(autoEvaluationData.getExtremesJustification());
+	setCommentsAndProposals(autoEvaluationData.getCommentsAndProposals());
     }
 
     public String getObjectivesJustification() {

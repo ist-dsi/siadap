@@ -29,6 +29,7 @@ import module.siadap.activities.RevertState;
 import module.siadap.activities.RevertStateActivityInformation;
 import module.siadap.activities.RevokeExcellencyAward;
 import module.siadap.activities.SealObjectivesAndCompetences;
+import module.siadap.activities.SubmitAutoEvaluation;
 import module.siadap.activities.SubmitForObjectivesAcknowledge;
 import module.siadap.activities.ValidateEvaluation;
 import module.siadap.domain.wrappers.PersonSiadapWrapper;
@@ -66,6 +67,7 @@ public class SiadapProcess extends SiadapProcess_Base {
 	activities.add(new SealObjectivesAndCompetences());
 	activities.add(new AcknowledgeEvaluationObjectives());
 	activities.add(new AutoEvaluation());
+	activities.add(new SubmitAutoEvaluation());
 	activities.add(new Evaluation());
 	activities.add(new ValidateEvaluation());
 	activities.add(new AcknowledgeEvaluationValidation());

@@ -191,13 +191,14 @@ request.setAttribute("objectivesVisibleToEvaluated", objectivesVisibileToEvaluat
 			</logic:iterate>
 		
 		<%--  The self evaluation with the justification for the objectives --%>
-		<logic:notEmpty name="process" property="siadap.autoEvaluationData" >
-			<logic:notEmpty name="process" property="siadap.autoEvaluationData.objectivesJustification">
-				<p><strong>(<bean:message key="label.autoEvaluation" bundle="SIADAP_RESOURCES" />) <bean:message key="label.autoEvaluation.objectivesJustification" bundle="SIADAP_RESOURCES"/>:</strong></p>
-				<p><bean:write name="process" property="siadap.autoEvaluationData.objectivesJustification" /></p>
+		<logic:equal name="evaluatedPersonWrapper" property="currentUserAbleToSeeAutoEvaluationDetails" value="true">
+			<logic:notEmpty name="process" property="siadap.autoEvaluationData" >
+				<logic:notEmpty name="process" property="siadap.autoEvaluationData.objectivesJustification">
+					<p><strong>(<bean:message key="label.autoEvaluation" bundle="SIADAP_RESOURCES" />) <bean:message key="label.autoEvaluation.objectivesJustification" bundle="SIADAP_RESOURCES"/>:</strong></p>
+					<p><bean:write name="process" property="siadap.autoEvaluationData.objectivesJustification" /></p>
+				</logic:notEmpty>
 			</logic:notEmpty>
-		</logic:notEmpty>
-		
+		</logic:equal>
 		
 		<logic:equal value="true" name="process" property="siadap.evaluatedOnlyByCompetences" >
 			<p><strong><bean:message bundle="SIADAP_RESOURCES" key="label.evaluatedOnlyByCompetences" /></p></strong>
@@ -217,7 +218,9 @@ request.setAttribute("objectivesVisibleToEvaluated", objectivesVisibileToEvaluat
 					type="module.siadap.domain.CompetenceEvaluation">
 					<fr:slot name="competence.number" />
 					<fr:slot name="competence.name" />
-					<fr:slot name="autoEvaluation" />
+					<logic:equal name="evaluatedPersonWrapper" property="currentUserAbleToSeeAutoEvaluationDetails" value="true"> 
+						<fr:slot name="autoEvaluation" />
+					</logic:equal>
 					<fr:slot name="evaluation" />
 				</fr:schema>
 				<fr:layout name="tabular">
@@ -227,49 +230,56 @@ request.setAttribute("objectivesVisibleToEvaluated", objectivesVisibileToEvaluat
 			</fr:view>
 		
 		<%--  The self evaluation with the justification for the competences --%>
-		<logic:notEmpty name="process" property="siadap.autoEvaluationData" >
-			<logic:notEmpty name="process" property="siadap.autoEvaluationData.competencesJustification">
-				<p><strong>(<bean:message key="label.autoEvaluation" bundle="SIADAP_RESOURCES" />) <bean:message key="label.autoEvaluation.competencesJustification" bundle="SIADAP_RESOURCES"/>:</strong></p>
-				<p><bean:write name="process" property="siadap.autoEvaluationData.objectivesJustification" /></p>
+		<logic:equal name="evaluatedPersonWrapper" property="currentUserAbleToSeeAutoEvaluationDetails" value="true">
+			<logic:notEmpty name="process" property="siadap.autoEvaluationData" >
+				<logic:notEmpty name="process" property="siadap.autoEvaluationData.competencesJustification">
+					<p><strong>(<bean:message key="label.autoEvaluation" bundle="SIADAP_RESOURCES" />) <bean:message key="label.autoEvaluation.competencesJustification" bundle="SIADAP_RESOURCES"/>:</strong></p>
+					<p><bean:write name="process" property="siadap.autoEvaluationData.objectivesJustification" /></p>
+				</logic:notEmpty>
 			</logic:notEmpty>
-		
+		 </logic:equal>
+			
 		<%--  The factors list--%>
-			<logic:notEmpty name="process" property="siadap.autoEvaluationData.factorOneClassification">
-				<p><strong>(<bean:message key="label.autoEvaluation" bundle="SIADAP_RESOURCES" />) <bean:message bundle="SIADAP_RESOURCES" key="label.autoEvaluation.performanceInfluencingFactors" />:</strong></p>
-				<p><bean:message bundle="SIADAP_RESOURCES" key="label.autoEvaluation.performanceInfluencingFactors.show.explanation"/></p>
-				<fr:view name="process" property="siadap.autoEvaluationData" >
-					<fr:schema bundle="SIADAP_RESOURCES" type="module.siadap.domain.SiadapAutoEvaluation">
-						<fr:slot name="factorOneClassification" readOnly="true"
-						key="label.autoEvaluation.factorOneClassification"/>
-						<fr:slot name="factorTwoClassification" readOnly="true" key="label.autoEvaluation.factorTwoClassification"/>
-						<fr:slot name="factorThreeClassification" readOnly="true" key="label.autoEvaluation.factorThreeClassification"/>
-						<fr:slot name="factorFourClassification" readOnly="true" key="label.autoEvaluation.factorFourClassification"/>
-						<fr:slot name="factorFiveClassification" readOnly="true" key="label.autoEvaluation.factorFiveClassification"/>
-						<fr:slot name="factorSixClassification" readOnly="true" key="label.autoEvaluation.factorSixClassification"/>
-					</fr:schema>
-					<fr:layout name="tabular">
-						<fr:property name="classes" value="tstyle3 thleft" />
-					</fr:layout>
-				</fr:view>
-			</logic:notEmpty>	
-			<%-- Other factors --%>
-			<logic:notEmpty name="process" property="siadap.autoEvaluationData.otherFactorsJustification">
-				<p><strong>(<bean:message key="label.autoEvaluation" bundle="SIADAP_RESOURCES" />) <bean:message bundle="SIADAP_RESOURCES" key="label.autoEvaluation.show.otherFactorsJustification" /></strong></p>
-				<p><bean:write name="process" property="siadap.autoEvaluationData.otherFactorsJustification"/></p>
+		<logic:equal name="evaluatedPersonWrapper" property="currentUserAbleToSeeAutoEvaluationDetails" value="true">
+			<logic:notEmpty name="process" property="siadap.autoEvaluationData" >
+				<logic:notEmpty name="process" property="siadap.autoEvaluationData.factorOneClassification">
+					<p><strong>(<bean:message key="label.autoEvaluation" bundle="SIADAP_RESOURCES" />) <bean:message bundle="SIADAP_RESOURCES" key="label.autoEvaluation.performanceInfluencingFactors" />:</strong></p>
+					<p><bean:message bundle="SIADAP_RESOURCES" key="label.autoEvaluation.performanceInfluencingFactors.show.explanation"/></p>
+					<fr:view name="process" property="siadap.autoEvaluationData" >
+						<fr:schema bundle="SIADAP_RESOURCES" type="module.siadap.domain.SiadapAutoEvaluation">
+							<fr:slot name="factorOneClassification" readOnly="true"
+							key="label.autoEvaluation.factorOneClassification"/>
+							<fr:slot name="factorTwoClassification" readOnly="true" key="label.autoEvaluation.factorTwoClassification"/>
+							<fr:slot name="factorThreeClassification" readOnly="true" key="label.autoEvaluation.factorThreeClassification"/>
+							<fr:slot name="factorFourClassification" readOnly="true" key="label.autoEvaluation.factorFourClassification"/>
+							<fr:slot name="factorFiveClassification" readOnly="true" key="label.autoEvaluation.factorFiveClassification"/>
+							<fr:slot name="factorSixClassification" readOnly="true" key="label.autoEvaluation.factorSixClassification"/>
+						</fr:schema>
+						<fr:layout name="tabular">
+							<fr:property name="classes" value="tstyle3 thleft" />
+						</fr:layout>
+					</fr:view>
+				</logic:notEmpty>	
+				
+				<%-- Other factors --%>
+				<logic:notEmpty name="process" property="siadap.autoEvaluationData.otherFactorsJustification">
+					<p><strong>(<bean:message key="label.autoEvaluation" bundle="SIADAP_RESOURCES" />) <bean:message bundle="SIADAP_RESOURCES" key="label.autoEvaluation.show.otherFactorsJustification" /></strong></p>
+					<p><bean:write name="process" property="siadap.autoEvaluationData.otherFactorsJustification"/></p>
+				</logic:notEmpty>
+				
+				<%-- Extreme values of the factors justification --%>
+				<logic:notEmpty name="process" property="siadap.autoEvaluationData.extremesJustification">
+					<p><strong>(<bean:message key="label.autoEvaluation" bundle="SIADAP_RESOURCES" />) <bean:message bundle="SIADAP_RESOURCES" key="label.autoEvaluation.show.extremesJustification" /></strong></p>
+					<p><bean:write name="process" property="siadap.autoEvaluationData.extremesJustification"/></p>
+				</logic:notEmpty>
+				
+				<%-- Suggestions and proposals given by the evaluated person--%>
+				<logic:notEmpty name="process" property="siadap.autoEvaluationData.commentsAndProposals">
+					<p><strong>(<bean:message key="label.autoEvaluation" bundle="SIADAP_RESOURCES" />) <bean:message bundle="SIADAP_RESOURCES" key="label.autoEvaluation.show.commentsAndProposals" /></strong></p>
+					<p><bean:write name="process" property="siadap.autoEvaluationData.commentsAndProposals"/></p>
+				</logic:notEmpty>
 			</logic:notEmpty>
-			
-			<%-- Extreme values of the factors justification --%>
-			<logic:notEmpty name="process" property="siadap.autoEvaluationData.extremesJustification">
-				<p><strong>(<bean:message key="label.autoEvaluation" bundle="SIADAP_RESOURCES" />) <bean:message bundle="SIADAP_RESOURCES" key="label.autoEvaluation.show.extremesJustification" /></strong></p>
-				<p><bean:write name="process" property="siadap.autoEvaluationData.extremesJustification"/></p>
-			</logic:notEmpty>
-			
-			<%-- Suggestions and proposals given by the evaluated person--%>
-			<logic:notEmpty name="process" property="siadap.autoEvaluationData.commentsAndProposals">
-				<p><strong>(<bean:message key="label.autoEvaluation" bundle="SIADAP_RESOURCES" />) <bean:message bundle="SIADAP_RESOURCES" key="label.autoEvaluation.show.commentsAndProposals" /></strong></p>
-				<p><bean:write name="process" property="siadap.autoEvaluationData.commentsAndProposals"/></p>
-			</logic:notEmpty>
-		</logic:notEmpty>
+		</logic:equal>
 		
 		<logic:equal name="process" property="siadap.withSkippedEvaluation" value="false">
 			<p><strong><bean:message key="label.overalEvaluation" bundle="SIADAP_RESOURCES"/>:</strong></p>
