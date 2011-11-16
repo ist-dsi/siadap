@@ -20,6 +20,7 @@ boolean objectivesVisibileToEvaluated = siadapProcess.getSiadap().getObjectivesA
 request.setAttribute("showObjectivesAndCompetences", showObjectivesAndCompetences);
 request.setAttribute("objectivesVisibleToEvaluated", objectivesVisibileToEvaluated);
 %>
+<%--	Warning messages --%>
 <logic:notEmpty name="process" property="warningMessages">
 	<div class="highlightBox">
 			<logic:iterate id="warningMessage" name="process" property="andClearWarningMessages" indexId="warningMessage_id">
@@ -27,6 +28,7 @@ request.setAttribute("objectivesVisibleToEvaluated", objectivesVisibileToEvaluat
 			</logic:iterate>
 	</div>
 </logic:notEmpty>
+
 <logic:equal name="evaluatorPersonWrapper" property="emailDefined" value="false">
 <div class="highlightBox"> 
 	<b><p style="color:darkRed">Avaliador sem e-mail definido. Este avaliador não poderá receber notificações automáticas via e-mail. Para corrigir isto, por favor insira um contacto de-mail na secção informação pessoal no Fénix</p> </b>
@@ -221,7 +223,9 @@ request.setAttribute("objectivesVisibleToEvaluated", objectivesVisibileToEvaluat
 					<logic:equal name="evaluatedPersonWrapper" property="currentUserAbleToSeeAutoEvaluationDetails" value="true"> 
 						<fr:slot name="autoEvaluation" />
 					</logic:equal>
-					<fr:slot name="evaluation" />
+					<logic:equal name="evaluatedPersonWrapper" property="currentUserAbleToSeeEvaluationDetails" value="true">
+						<fr:slot name="evaluation" />
+					</logic:equal>
 				</fr:schema>
 				<fr:layout name="tabular">
 					<fr:property name="classes" value="tstyle2 width100pc" />
@@ -289,48 +293,48 @@ request.setAttribute("objectivesVisibleToEvaluated", objectivesVisibileToEvaluat
 			</p>
 		</logic:equal>
 		
-		<logic:equal name="process" property="siadap.evaluationDone" value="true">
 		
-		<logic:equal name="process" property="siadap.withSkippedEvaluation" value="false">
-		
-			
-			<p>
-				<strong>
-					<bean:message key="label.show.evaluationJustification" bundle="SIADAP_RESOURCES"/>:
-				</strong>
-			</p>
-				<p>
-					<logic:notEmpty name="process" property="siadap.evaluationData.evaluationJustification">
-						<fr:view name="process" property="siadap.evaluationData.evaluationJustification"/>
+		<%-- Evaluation justification --%>
+		<logic:notEmpty name="process" property="siadap.evaluationData">
+			<logic:equal name="process" property="siadap.withSkippedEvaluation" value="false">
+				<logic:equal name="evaluatedPersonWrapper" property="currentUserAbleToSeeEvaluationDetails" value="true">
+					<p>
+						<strong>
+							<bean:message key="label.show.evaluationJustification" bundle="SIADAP_RESOURCES"/>:
+						</strong>
+					</p>
+						<p>
+							<logic:notEmpty name="process" property="siadap.evaluationData.evaluationJustification">
+								<fr:view name="process" property="siadap.evaluationData.evaluationJustification"/>
+							</logic:notEmpty>
+							<logic:empty name="process" property="siadap.evaluationData.evaluationJustification">
+								<em><bean:message key="label.noJustification" bundle="SIADAP_RESOURCES"/></em>
+							</logic:empty>
+						</p>
+				
+					<logic:notEmpty name="process" property="siadap.evaluationData.personalDevelopment">
+						<p>
+							<strong>
+								<bean:message key="label.show.personalDevelopment" bundle="SIADAP_RESOURCES"/>:
+							</strong>
+						</p>
+						<p>
+							<fr:view name="process" property="siadap.evaluationData.personalDevelopment"/>
+						</p>
 					</logic:notEmpty>
-					<logic:empty name="process" property="siadap.evaluationData.evaluationJustification">
-						<em><bean:message key="label.noJustification" bundle="SIADAP_RESOURCES"/></em>
-					</logic:empty>
-				</p>
-		
-			<logic:notEmpty name="process" property="siadap.evaluationData.personalDevelopment">
-				<p>
-					<strong>
-						<bean:message key="label.show.personalDevelopment" bundle="SIADAP_RESOURCES"/>:
-					</strong>
-				</p>
-				<p>
-					<fr:view name="process" property="siadap.evaluationData.personalDevelopment"/>
-				</p>
-			</logic:notEmpty>
-			
-			
-			<logic:notEmpty name="process" property="siadap.evaluationData.trainningNeeds">
-				<p><strong>
-					<bean:message key="label.show.trainingNeeds" bundle="SIADAP_RESOURCES"/>:
-				</strong></p>
-				<p>
-					<fr:view name="process" property="siadap.evaluationData.trainningNeeds"/>
-				</p>
-			</logic:notEmpty>
-			
-		</logic:equal>
-		</logic:equal>
+					
+					
+					<logic:notEmpty name="process" property="siadap.evaluationData.trainningNeeds">
+						<p><strong>
+							<bean:message key="label.show.trainingNeeds" bundle="SIADAP_RESOURCES"/>:
+						</strong></p>
+						<p>
+							<fr:view name="process" property="siadap.evaluationData.trainningNeeds"/>
+						</p>
+					</logic:notEmpty>
+				</logic:equal>
+			</logic:equal>
+		</logic:notEmpty>
 		
 		<logic:equal name="process" property="siadap.withSkippedEvaluation" value="true">
 			<p>

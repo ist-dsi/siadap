@@ -7,8 +7,6 @@ import java.util.Comparator;
 import java.util.List;
 
 import module.organization.domain.Person;
-import module.siadap.activities.Evaluation;
-import module.siadap.activities.SubmitAutoEvaluation;
 import module.siadap.domain.scoring.IScoring;
 import module.siadap.domain.scoring.SiadapGlobalEvaluation;
 import module.siadap.domain.util.SiadapPendingProcessesCounter;
@@ -101,18 +99,28 @@ public class Siadap extends Siadap_Base {
     }
 
     public boolean isAutoEvaliationDone() {
-	return getProcess().hasBeenExecuted(SubmitAutoEvaluation.class);
+	return getAutoEvaluationSealedDate() != null;
     }
 
     public boolean isEvaluationDone() {
-	return getProcess().hasBeenExecuted(Evaluation.class);
+	return getEvaluationSealedDate() != null;
     }
 
+    private boolean isEvaluationScoringComplete(List<? extends SiadapEvaluationItem> evaluations) {
+	for (SiadapEvaluationItem evaluation : evaluations) {
+	    IScoring itemEvaluation = evaluation.getItemEvaluation();
+	    if (itemEvaluation == null || itemEvaluation.getPoints() == null) {
+		return false;
+	    }
+	}
+	return true;
+    }
     private BigDecimal getEvaluationScoring(List<? extends SiadapEvaluationItem> evaluations) {
-	if (!isEvaluationDone()) {
+	
+	if (!isEvaluationScoringComplete(evaluations)) {
 	    return BigDecimal.ZERO;
 	}
-
+	
 	BigDecimal result = new BigDecimal(0);
 	for (SiadapEvaluationItem evaluation : evaluations) {
 	    IScoring itemEvaluation = evaluation.getItemEvaluation();
@@ -122,7 +130,7 @@ public class Siadap extends Siadap_Base {
 	    }
 	    result = result.add(itemEvaluation.getPoints());
 	}
-
+	
 	return result.divide(new BigDecimal(evaluations.size()), Siadap.PRECISION, Siadap.ROUND_MODE);
     }
 
@@ -326,15 +334,16 @@ public class Siadap extends Siadap_Base {
     }
 
     public boolean hasRelevantEvaluation() {
-	return isEvaluationDone() && SiadapGlobalEvaluation.HIGH.accepts(getTotalEvaluationScoring());
+	return SiadapGlobalEvaluation.HIGH.accepts(getTotalEvaluationScoring());
     }
 
     public boolean hasExcellencyAward() {
-	return isEvaluationDone() && getEvaluationData().getExcellencyAward();
+	return getEvaluationData().getExcellencyAward();
     }
 
     public boolean isInadequate() {
-	return isEvaluationDone() && SiadapGlobalEvaluation.LOW.accepts(getTotalEvaluationScoring());
+	return SiadapGlobalEvaluation.LOW.accepts(getTotalEvaluationScoring())
+		|| SiadapGlobalEvaluation.ZERO.accepts(getTotalEvaluationScoring());
     }
 
     @Override

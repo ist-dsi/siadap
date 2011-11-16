@@ -52,8 +52,13 @@ class Siadap {
 	Integer year;
 	Integer currentObjectiveVersion;
 	Boolean evaluatedOnlyByCompetences;
+	
+	/* sealedDate should be replaced by submittedDate... 
+	anyway... it was already in production... let's stick with the term */
 	LocalDate objectivesAndCompetencesSealedDate;
 	LocalDate autoEvaluationSealedDate;
+	LocalDate evaluationSealedDate;
+	
 	LocalDate requestedAcknowledgeDate;
 	LocalDate harmonizationDate;
 	LocalDate acknowledgeValidationDate;

@@ -95,7 +95,10 @@ public class ObjectiveEvaluation extends ObjectiveEvaluation_Base {
 	    public BigDecimal getPoints() {
 		BigDecimal points = new BigDecimal(0);
 		for (ObjectiveEvaluationIndicator indicator : getIndicators()) {
-		    points = points.add(indicator.getEvaluationPoints());
+		    BigDecimal indicatorPoints = indicator.getEvaluationPoints();
+		    if (indicatorPoints == null)
+			return null;
+		    points = points.add(indicatorPoints);
 		}
 
 		return points;

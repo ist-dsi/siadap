@@ -36,6 +36,8 @@ public class ObjectiveEvaluationIndicator extends ObjectiveEvaluationIndicator_B
     }
 
     public BigDecimal getEvaluationPoints() {
+	if (getEvaluation() == null)
+	    return null;
 	return getEvaluation().getPoints().multiply(getPonderationFactor());
     }
 

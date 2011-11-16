@@ -28,20 +28,24 @@
 			property="process.siadap.objectiveEvaluations"
 			type="module.siadap.domain.ObjectiveEvaluation">
 			<tr name="evaluationObjective">
-				<th colspan="3"><fr:view name="evaluation" property="objective" /></th>
+				<th style="white-space: normal !important;" class="aleft" colspan="4"><fr:view name="evaluation" property="objective" /></th>
 			</tr>
 			<logic:iterate id="indicator" name="evaluation" property="indicators">
 				<tr>
-				<th>
-					<fr:view name="indicator" property="measurementIndicator"/>
-				</th>	
-				<td><fr:view name="indicator" property="autoEvaluation"
-					type="module.siadap.domain.scoring.SiadapObjectivesEvaluation" /></td>
+				<td style="white-space: normal !important;">
+					<i><bean:message bundle="SIADAP_RESOURCES" key="label.measurementIndicator.singularLabel"/>:</i><fr:view name="indicator" property="measurementIndicator"/>
+				</td>	
+				<td style="white-space: normal !important;">
+					<i><bean:message bundle="SIADAP_RESOURCES" key="label.superationCriteria"/>:</i> <fr:view name="indicator" property="superationCriteria"/>
+				</td>
+				<td style="white-space: normal !important;">
+					<i><bean:message bundle="SIADAP_RESOURCES" key="label.autoEvaluation"/>:</i><fr:view name="indicator" property="autoEvaluation" type="module.siadap.domain.scoring.SiadapObjectivesEvaluation" />
+				</td>
 				<bean:define id="ponderation" name="indicator" property="ponderationFactor"/>
 				<td name="<%= ponderation %>"><fr:edit name="indicator" slot="evaluation" /></td>
 				</tr>
 			</logic:iterate>
-			
+			<tr><td> </td></tr>
 		</logic:iterate>
 	</table>
 	
@@ -79,8 +83,8 @@
 		bundle="SIADAP_RESOURCES" /></strong>: <fr:edit name="information"
 		slot="evaluationJustification" type="java.lang.String">
 		<fr:layout name="longText">
-			<fr:property name="rows" value="3" />
-			<fr:property name="columns" value="50" />
+			<fr:property name="rows" value="8" />
+			<fr:property name="columns" value="80" />
 		</fr:layout>
 	</fr:edit></div>
 
@@ -94,8 +98,8 @@
 	<p><fr:edit name="information" slot="personalDevelopment"
 		type="java.lang.String">
 		<fr:layout name="longText">
-			<fr:property name="rows" value="3" />
-			<fr:property name="columns" value="50" />
+			<fr:property name="rows" value="8" />
+			<fr:property name="columns" value="80" />
 		</fr:layout>
 	</fr:edit></p>
 	</div>
@@ -105,8 +109,8 @@
 	<p><fr:edit name="information" slot="trainningNeeds"
 		type="java.lang.String">
 		<fr:layout name="longText">
-			<fr:property name="rows" value="3" />
-			<fr:property name="columns" value="50" />
+			<fr:property name="rows" value="8" />
+			<fr:property name="columns" value="80" />
 		</fr:layout>
 	</fr:edit></p>
 	</div>
@@ -138,6 +142,7 @@
 	var highLabel="<bean:message key="module.siadap.domain.scoring.SiadapGlobalEvaluation.HIGH" bundle="SIADAP_RESOURCES"/>";
 	var mediumLabel="<bean:message key="module.siadap.domain.scoring.SiadapGlobalEvaluation.MEDIUM" bundle="SIADAP_RESOURCES"/>";
 	var lowLabel="<bean:message key="module.siadap.domain.scoring.SiadapGlobalEvaluation.LOW" bundle="SIADAP_RESOURCES"/>";
+	var zeroLabel="<bean:message key="module.siadap.domain.scoring.SiadapGlobalEvaluation.LOW" bundle="SIADAP_RESOURCES"/>";
 
 	<%
 		String message = BundleUtil.getStringFromResourceBundle("resources.SiadapResources","label.evaluationLine");
@@ -202,6 +207,10 @@
 	}
 
 	function getScoreLabel(value) {
+		if (value >= 0 && value < 1)
+			{
+			return zeroLabel;
+			}
 		if (value >= 1 && value <2) {
 			return lowLabel;
 		}

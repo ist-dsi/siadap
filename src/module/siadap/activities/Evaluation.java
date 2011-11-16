@@ -2,14 +2,10 @@ package module.siadap.activities;
 
 import module.siadap.domain.Siadap;
 import module.siadap.domain.SiadapEvaluation;
-import module.siadap.domain.SiadapEvaluationItem;
 import module.siadap.domain.SiadapProcess;
-import module.workflow.activities.ActivityException;
 import module.workflow.activities.ActivityInformation;
 import module.workflow.activities.WorkflowActivity;
 import myorg.domain.User;
-import myorg.domain.exceptions.DomainException;
-import myorg.util.BundleUtil;
 
 public class Evaluation extends WorkflowActivity<SiadapProcess, EvaluationActivityInformation> {
 
@@ -29,26 +25,33 @@ public class Evaluation extends WorkflowActivity<SiadapProcess, EvaluationActivi
 	    new SiadapEvaluation(siadap, activityInformation.getEvaluationJustification(), activityInformation
 		    .getPersonalDevelopment(), activityInformation.getTrainningNeeds(), activityInformation.getExcellencyAward());
 	} else {
-	    evaluationData.edit(activityInformation.getEvaluationJustification(), activityInformation.getPersonalDevelopment(),
+	    evaluationData.editWithoutValidation(activityInformation.getEvaluationJustification(),
+		    activityInformation.getPersonalDevelopment(),
 		    activityInformation.getTrainningNeeds(), activityInformation.getExcellencyAward());
 	}
 
-	for (SiadapEvaluationItem item : siadap.getCurrentEvaluationItems()) {
-	    if (item.getItemEvaluation() == null) {
-		throw new ActivityException(BundleUtil.getStringFromResourceBundle(getUsedBundle(),
-			"error.siadapEvaluation.mustFillAllItems"), getLocalizedName());
-	    }
+	//revert the submitted state to unsubmitted
+	if (siadap.isEvaluationDone()) {
+	    siadap.setEvaluationSealedDate(null);
 	}
+
+    }
+
+    @Override
+    public boolean isDefaultInputInterfaceUsed() {
+	return false;
+    }
+
+    @Override
+    protected boolean shouldLogActivity(EvaluationActivityInformation activityInformation) {
+	return false;
     }
 
     @Override
     public boolean isConfirmationNeeded(SiadapProcess process) {
 	Siadap siadap = process.getSiadap();
-	return !siadap.isAutoEvaliationDone() && !siadap.isAutoEvaluationIntervalFinished();
-    }
-
-    @Override
-    public boolean isDefaultInputInterfaceUsed() {
+	if (siadap.isEvaluationDone())
+	    return true;
 	return false;
     }
 

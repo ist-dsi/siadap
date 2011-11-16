@@ -30,7 +30,7 @@ public class CreateCompetenceEvaluation
 	return siadap.getObjectiveSpecificationInterval().containsNow()
 				&& siadap.getEvaluator().getPerson().getUser() == user
 				&& !siadap.hasAnyCompetencesSet()
-				&& !process.hasBeenExecuted(AutoEvaluation.class);
+ && !process.hasLogOfBeingExecuted(AutoEvaluation.class);
 	}
 
 	@Override

@@ -16,25 +16,33 @@ public class SiadapEvaluation extends SiadapEvaluation_Base {
 	    Boolean excellencyAward) {
 	setSiadapRootModule(SiadapRootModule.getInstance());
 	setSiadap(siadap);
-	edit(evaluationJustification, personalDevelopment, trainningNeeds, excellencyAward);
+	editWithoutValidation(evaluationJustification, personalDevelopment, trainningNeeds, excellencyAward);
     }
 
-    public void edit(String evaluationJustification, String personalDevelopment, String trainningNeeds, Boolean excellencyAward) {
+    public void editWithoutValidation(String evaluationJustification, String personalDevelopment, String trainningNeeds,
+	    Boolean excellencyAward) {
 	Siadap siadap = getSiadap();
-	if (siadap.isInadequate() && (StringUtils.isEmpty(personalDevelopment) || StringUtils.isEmpty(trainningNeeds))) {
-
-	    throw new DomainException("error.siadapEvaluation.mustFillDataForBadEvaluation", DomainException
-		    .getResourceFor("resources/SiadapResources"));
-	}
-	if ((siadap.isInadequate() || siadap.hasRelevantEvaluation()) && StringUtils.isEmpty(evaluationJustification)) {
-	    throw new DomainException("error.siadapEvaluation.mustFillEvaluationJustification", DomainException
-		    .getResourceFor("resources/SiadapResources"));
-
-	}
 	setEvaluationJustification(evaluationJustification);
 	setPersonalDevelopment(personalDevelopment);
 	setTrainningNeeds(trainningNeeds);
 	setExcellencyAward(excellencyAward);
+    }
+
+    public void validateData() {
+	Siadap siadap = getSiadap();
+	String personalDevelopment = getPersonalDevelopment();
+	String evaluationJustification = getEvaluationJustification();
+	String trainningNeeds = getTrainningNeeds();
+	if (siadap.isInadequate() && (StringUtils.isEmpty(personalDevelopment) || StringUtils.isEmpty(trainningNeeds))) {
+
+	    throw new DomainException("error.siadapEvaluation.mustFillDataForBadEvaluation",
+		    DomainException.getResourceFor("resources/SiadapResources"));
+	}
+	if ((siadap.isInadequate() || siadap.hasRelevantEvaluation()) && StringUtils.isEmpty(evaluationJustification)) {
+	    throw new DomainException("error.siadapEvaluation.mustFillEvaluationJustification",
+		    DomainException.getResourceFor("resources/SiadapResources"));
+
+	}
     }
 
 }

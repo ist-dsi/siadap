@@ -9,6 +9,8 @@ import module.workflow.activities.ActivityInformation;
 import module.workflow.activities.WorkflowActivity;
 import myorg.domain.User;
 
+import org.joda.time.LocalDate;
+
 /**
  * @author João Antunes (joao.antunes@tagus.ist.utl.pt) - 11 de Nov de 2011
  * 
@@ -29,7 +31,7 @@ public class SubmitAutoEvaluation extends WorkflowActivity<SiadapProcess, Activi
 
     @Override
     protected void process(ActivityInformation<SiadapProcess> activityInformation) {
-	//kinda do nothing is ok! :)
+	activityInformation.getProcess().getSiadap().setAutoEvaluationSealedDate(new LocalDate());
     }
 
     @Override

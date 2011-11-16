@@ -77,6 +77,11 @@ public class PersonSiadapWrapper extends PartyWrapper implements Serializable {
 
     }
 
+    /**
+     * 
+     * @return true if the current user is able to see the details of the
+     *         process, false otherwise
+     */
     public boolean isCurrentUserAbleToSeeDetails() {
 	User currentUser = UserView.getCurrentUser();
 	SiadapYearConfiguration configuration = getConfiguration();
@@ -214,6 +219,17 @@ public class PersonSiadapWrapper extends PartyWrapper implements Serializable {
 	if (getSiadap().getEvaluated().equals(currentUser.getPerson()))
 	    return true;
 	if (getSiadap().isAutoEvaliationDone())
+	    return true;
+	return false;
+    }
+
+    public boolean isCurrentUserAbleToSeeEvaluationDetails() {
+	User currentUser = UserView.getCurrentUser();
+	if (!isCurrentUserAbleToSeeDetails())
+	    return false;
+	if (getSiadap().getEvaluator().getPerson().equals(currentUser.getPerson()))
+	    return true;
+	if (getSiadap().isEvaluationDone())
 	    return true;
 	return false;
     }

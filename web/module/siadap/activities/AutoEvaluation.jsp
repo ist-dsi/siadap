@@ -28,7 +28,7 @@
 			<logic:iterate id="indicator" name="evaluation" property="indicators">
 			<tr>
 				<td  style="white-space: normal !important;" >
-					<i><bean:message bundle="SIADAP_RESOURCES" key="label.measurementIndicator"/>:</i> <fr:view name="indicator" property="measurementIndicator"/>
+					<i><bean:message bundle="SIADAP_RESOURCES" key="label.measurementIndicator.singularLabel"/>:</i> <fr:view name="indicator" property="measurementIndicator"/>
 				</td>	
 				<td style="white-space: normal !important;">
 					<i><bean:message bundle="SIADAP_RESOURCES" key="label.superationCriteria"/>:</i> <fr:view name="indicator" property="superationCriteria"/>
