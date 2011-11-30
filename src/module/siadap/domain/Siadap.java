@@ -23,8 +23,6 @@ import org.joda.time.Interval;
 import org.joda.time.LocalDate;
 import org.joda.time.ReadableInstant;
 
-import pt.ist.fenixWebFramework.services.Service;
-
 public class Siadap extends Siadap_Base {
 
     //register itself in the pending processes widget:
@@ -131,6 +129,8 @@ public class Siadap extends Siadap_Base {
 	    result = result.add(itemEvaluation.getPoints());
 	}
 	
+	if (evaluations.size() == 0)
+	    return BigDecimal.ZERO;
 	return result.divide(new BigDecimal(evaluations.size()), Siadap.PRECISION, Siadap.ROUND_MODE);
     }
 
