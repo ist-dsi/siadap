@@ -340,6 +340,8 @@ public class Siadap extends Siadap_Base {
     }
 
     public boolean hasExcellencyAward() {
+	if (getEvaluationData() == null || getEvaluationData().getExcellencyAward() == null)
+		return false;
 	return getEvaluationData().getExcellencyAward();
     }
 
