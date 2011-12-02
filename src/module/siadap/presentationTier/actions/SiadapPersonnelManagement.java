@@ -18,7 +18,9 @@ import module.organization.domain.Accountability;
 import module.organization.domain.AccountabilityType;
 import module.organization.domain.Person;
 import module.organization.domain.Unit;
+import module.siadap.domain.Siadap;
 import module.siadap.domain.SiadapRootModule;
+import module.siadap.domain.SiadapUniverse;
 import module.siadap.domain.SiadapYearConfiguration;
 import module.siadap.domain.groups.SiadapStructureManagementGroup;
 import module.siadap.domain.wrappers.PersonSiadapWrapper;
@@ -98,6 +100,7 @@ public class SiadapPersonnelManagement extends ContextBaseAction {
 	request.setAttribute("bean", new VariantBean());
 	request.setAttribute("changeWorkingUnit", new ChangeWorkingUnitBean(person, year));
 	request.setAttribute("changeEvaluator", new ChangeEvaluatorBean());
+	request.setAttribute("changeSiadapUniverse", new ChangeSiadapUniverseBean(person, year));
 	request.setAttribute("history", personSiadapWrapper.getAccountabilitiesHistory());
 	return forward(request, "/module/siadap/management/editPerson.jsp");
     }
@@ -338,6 +341,21 @@ public class SiadapPersonnelManagement extends ContextBaseAction {
 	return viewPerson(mapping, form, request, response);
     }
 
+    public final ActionForward changeSiadapUniverse(final ActionMapping mapping, final ActionForm form,
+	    final HttpServletRequest request, final HttpServletResponse response) throws Exception {
+
+	int year = Integer.parseInt(request.getParameter("year"));
+	ChangeSiadapUniverseBean changeUniverseBean = getRenderedObject("changeSiadapUniverse");
+	PersonSiadapWrapper personWrapper = new PersonSiadapWrapper((Person) getDomainObject(request, "personId"), year);
+	try {
+	    SiadapUniverse siadapUniverseToChangeTo = changeUniverseBean.getSiadapUniverse();
+	    personWrapper.changeUniverseTo(siadapUniverseToChangeTo);
+	} catch (DomainException e) {
+	    addMessage(request, e.getKey(), e.getArgs());
+	}
+	return viewPerson(mapping, form, request, response);
+    }
+
     public final ActionForward removeCustomEvaluator(final ActionMapping mapping, final ActionForm form,
 	    final HttpServletRequest request, final HttpServletResponse response) throws Exception {
 
@@ -400,7 +418,17 @@ public class SiadapPersonnelManagement extends ContextBaseAction {
 	int year = Integer.parseInt(((String) getAttribute(request, "year")));
 	
 	return streamSpreadsheet(response, "SIADAP_hierarquia_" + year,
-		siadapRootModule.exportSIADAPHierarchy(year, false, true));
+		siadapRootModule.exportSIADAPHierarchy(year, false, true, false));
+    }
+
+    public final ActionForward downloadSIADAPStructureWithUniverse(final ActionMapping mapping, final ActionForm form,
+	    final HttpServletRequest request, final HttpServletResponse response) throws Exception {
+
+	SiadapRootModule siadapRootModule = SiadapRootModule.getInstance();
+	int year = Integer.parseInt(((String) getAttribute(request, "year")));
+
+	return streamSpreadsheet(response, "SIADAP_hierarquia_" + year,
+		siadapRootModule.exportSIADAPHierarchy(year, false, true, true));
 
 
     }
@@ -418,6 +446,29 @@ public class SiadapPersonnelManagement extends ContextBaseAction {
 	outputStream.close();
 
 	return null;
+    }
+
+    public static class ChangeSiadapUniverseBean implements Serializable {
+	final Person person;
+	final int year;
+
+	private SiadapUniverse siadapUniverse;
+
+	ChangeSiadapUniverseBean(Person person, int year) {
+	    this.person = person;
+	    this.year = year;
+	    SiadapYearConfiguration siadapYearConfiguration = SiadapYearConfiguration.getSiadapYearConfiguration(year);
+	    Siadap siadapFor = siadapYearConfiguration.getSiadapFor(person);
+	    this.setSiadapUniverse(siadapFor.getSiadapUniverse());
+	}
+
+	public SiadapUniverse getSiadapUniverse() {
+	    return siadapUniverse;
+	}
+
+	public void setSiadapUniverse(SiadapUniverse siadapUniverse) {
+	    this.siadapUniverse = siadapUniverse;
+	}
     }
 
     public static class ChangeEvaluatorBean implements Serializable {

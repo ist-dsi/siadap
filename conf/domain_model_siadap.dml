@@ -5,7 +5,8 @@ enum module.siadap.domain.scoring.SiadapCompetencesEvaluation as SiadapCompetenc
 enum module.siadap.domain.scoring.SiadapGlobalEvaluation as SiadapGlobalEvaluation;
 enum module.siadap.domain.SiadapEvaluationObjectivesType as SiadapEvaluationObjectivesType;
 enum module.siadap.domain.ExceddingQuotaSuggestionType as ExceddingQuotaSuggestionType;
-enum  module.siadap.domain.SiadapProcessStateEnum as SiadapProcessStateEnum;
+enum module.siadap.domain.SiadapProcessStateEnum as SiadapProcessStateEnum;
+enum module.siadap.domain.SiadapUniverse as SiadapUniverse;
 
 valueType java.math.BigDecimal as BigDecimal {
     externalizeWith {
@@ -77,6 +78,8 @@ class Siadap {
 	
 	LocalDate customEvaluationBegin;
 	LocalDate customEvaluationEnd;
+	
+	SiadapUniverse siadapUniverse;
 }
 
 

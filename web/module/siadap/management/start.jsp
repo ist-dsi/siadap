@@ -28,7 +28,12 @@
 
 <%-- Link for the hierarchy excel file --%>
 <html:link action="/siadapPersonnelManagement.do?method=downloadNormalSIADAPStructure" paramId="year" paramName="siadapYearWrapper" paramProperty="chosenYear">
-Download da listagem de hierarquias SIADAP
+<p>Download da listagem de hierarquias SIADAP</p>
+</html:link>
+
+<%-- Link for the hierarchy excel file with SIADAP universe--%>
+<html:link action="/siadapPersonnelManagement.do?method=downloadSIADAPStructureWithUniverse" paramId="year" paramName="siadapYearWrapper" paramProperty="chosenYear">
+<p>Download da listagem de hierarquias SIADAP (com universos)</p>
 </html:link>
 
 <fr:edit id="searchPerson" name="bean" action="<%="/siadapPersonnelManagement.do?method=viewPerson&year=" + year.toString()%>" >

@@ -19,6 +19,7 @@ import module.siadap.domain.Siadap;
 import module.siadap.domain.SiadapProcess;
 import module.siadap.domain.SiadapProcessStateEnum;
 import module.siadap.domain.SiadapRootModule;
+import module.siadap.domain.SiadapUniverse;
 import module.siadap.domain.SiadapYearConfiguration;
 import myorg.applicationTier.Authenticate.UserView;
 import myorg.domain.User;
@@ -456,5 +457,11 @@ public class PersonSiadapWrapper extends PartyWrapper implements Serializable {
 
     public String getEmailAddress() {
 	return emailAddress;
+    }
+
+    @Service
+    public void changeUniverseTo(SiadapUniverse siadapUniverseToChangeTo) {
+	getSiadap().setSiadapUniverse(siadapUniverseToChangeTo);
+
     }
 }

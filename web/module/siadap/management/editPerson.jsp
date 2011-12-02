@@ -23,11 +23,11 @@
 
 <bean:define id="personId" name="person" property="person.externalId"/>
 
+<html:messages id="msg" property="message" bundle="SIADAP_RESOURCES" message="true" header="label.errors" >
 <%-- <h3><bean:message bundle="SIADAP_RESOURCES" property="ERROR" key="label.errors"/>:</h3> --%>
-	<html:messages id="msg" property="message" bundle="SIADAP_RESOURCES" message="true" header="label.errors" >
-<div class="highlightBox">
-		<p style="color: darkRed"><b>.<bean:write name="msg" /></b></p>
-</div>
+  <div class="highlightBox">
+		<p style="color: darkRed"><b><bean:write name="msg" /></b></p>
+  </div> 
 	</html:messages>
 <%-- <h3><bean:message bundle="SIADAP_RESOURCES" key="label.warnings"/>:</h3> --%>
 	<html:messages id="message" bundle="SIADAP_RESOURCES" property="WARNING" message="true" header="label.warnings">
@@ -44,6 +44,7 @@
 			<fr:property name="subLayout" value="values"/>
 			<fr:property name="subSchema" value="view.UnitSiadapWrapper.name"/>
 		</fr:slot>
+		<fr:slot name="siadap.siadapUniverse"/>
 		<fr:slot name="quotaAware" key="label.evaluationForQuotas"/> 
 		<fr:slot name="evaluator" layout="null-as-label" key="label.evaluator">
 			<fr:property name="subLayout" value="values"/>
@@ -95,7 +96,7 @@ request.setAttribute("isAbleToChangeAnything", isAbleToChangeAnything);
 
 
 <logic:equal name="isAbleToChangeAnything" value="true">
-	<p><a href="#" id="changeUnit"> <bean:message key="label.changeWorkingUnit" bundle="SIADAP_RESOURCES"/> </a> | <a href="#" id="changeEvaluator"> <bean:message key="label.changeEvaluator" bundle="SIADAP_RESOURCES"/> </a>
+	<p><a href="#" id="changeUnit"> <bean:message key="label.changeWorkingUnit" bundle="SIADAP_RESOURCES"/> </a> | <a href="#" id="changeEvaluator"> <bean:message key="label.changeEvaluator" bundle="SIADAP_RESOURCES"/> </a> | <a href="#" id="changeSiadapUniverse"> <bean:message key="label.changeSiadapUniverse" bundle="SIADAP_RESOURCES"/> </a>
 	<logic:equal name="person" property="customEvaluatorDefined" value="true">
 		| <html:link page="<%="/siadapPersonnelManagement.do?method=removeCustomEvaluator&year=" + year.toString()%>" paramId="personId"  paramName="person"  paramProperty="person.externalId"><bean:message key="label.removeCustomEvaluator" bundle="SIADAP_RESOURCES"/> </html:link>
 	</logic:equal>
@@ -138,6 +139,21 @@ request.setAttribute("isAbleToChangeAnything", isAbleToChangeAnything);
 		</div>
 	</div>
 	
+	<div id="changeSiadapUniverseDiv" style="display: none;">
+		<div class="highlightBox">
+			<fr:form action="<%= "/siadapPersonnelManagement.do?method=changeSiadapUniverse&personId=" + personId + "&year=" + year.toString() %>">
+				<fr:edit id="changeSiadapUniverse" name="changeSiadapUniverse">
+					<fr:schema type="module.siadap.presentationTier.actions.SiadapPersonnelManagement$ChangeSiadapUniverseBean" bundle="SIADAP_RESOURCES">
+						<fr:slot name="siadapUniverse" key="label.changeSiadapUniverse" bundle="SIADAP_RESOURCES" layout="radio">
+							<fr:validator name="pt.ist.fenixWebFramework.renderers.validators.RequiredValidator"/>
+						</fr:slot>
+					</fr:schema>
+				</fr:edit>
+				<html:submit styleClass="inputbutton"><bean:message key="renderers.form.submit.name" bundle="RENDERER_RESOURCES"/></html:submit>
+			</fr:form>
+		</div>
+	</div>
+	
 	<div id="changeEvaluatorDiv" style="display: none;" >
 		<div class="highlightBox">
 		
@@ -173,12 +189,20 @@ request.setAttribute("isAbleToChangeAnything", isAbleToChangeAnything);
 <script type="text/javascript">
 	$("#changeUnit").click(function() {
 		$("#changeEvaluatorDiv").hide();
+		$("#changeSiadapUniverseDiv").hide();
 		$("#changeUnitDiv").slideToggle();
+	});
+	
+	$("#changeSiadapUniverse").click(function() {
+		$("#changeEvaluatorDiv").hide();
+		$("#changeUnitDiv").hide();
+		$("#changeSiadapUniverseDiv").slideToggle();
 	});
 
 	$("#changeEvaluator").click(function() {
-		$("#changeEvaluatorDiv").slideToggle();
 		$("#changeUnitDiv").hide();
+		$("#changeSiadapUniverseDiv").hide();
+		$("#changeEvaluatorDiv").slideToggle();
 	});
 </script>
 

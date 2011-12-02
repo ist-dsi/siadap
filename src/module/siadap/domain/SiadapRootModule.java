@@ -56,7 +56,7 @@ public class SiadapRootModule extends SiadapRootModule_Base implements ModuleIni
     private static NamedGroup siadapTestUserGroup;
 
     private static ThreadLocal<SiadapRootModule> init = null;
-    
+
     private static final byte[] istLogoBytes;
     //let's init the IST logo needed
     static {
@@ -239,13 +239,13 @@ public class SiadapRootModule extends SiadapRootModule_Base implements ModuleIni
      *            for each unit/cost center
      * @return an {@link HSSFWorkbook} with the SIADAP hierarchy
      */
-    public HSSFWorkbook exportSIADAPHierarchy(int year, boolean shouldIncludeEndOfRole, boolean includeHarmonizationResponsibles) {
+    public HSSFWorkbook exportSIADAPHierarchy(int year, boolean shouldIncludeEndOfRole, boolean includeHarmonizationResponsibles,
+	    boolean shouldIncludeUniverse) {
 	User user = UserView.getCurrentUser();
 
 	//let's first verify the current user can actually get the information
 	if (!SiadapStructureManagementGroup.isMember(user, year))
 	    throw new SiadapException("user.not.allowed.to.access.data");
-
 
 	//let's get the SIADAP information
 
@@ -255,16 +255,15 @@ public class SiadapRootModule extends SiadapRootModule_Base implements ModuleIni
 
 	UnitSiadapWrapper wrappedUnit = new UnitSiadapWrapper(siadapStructureTopUnit, year);
 
-
 	HSSFWorkbook hierarchyWorkbook = new HSSFWorkbook();
 	CreationHelper creationHelper = hierarchyWorkbook.getCreationHelper();
 	HSSFSheet workingRelationWithQuotasSheet = hierarchyWorkbook.createSheet("Ordenação por Serviço (IST)");
 	populateSheet(workingRelationWithQuotasSheet, true, wrappedUnit, hierarchyWorkbook, shouldIncludeEndOfRole,
-		includeHarmonizationResponsibles);
+		includeHarmonizationResponsibles, shouldIncludeUniverse);
 
 	HSSFSheet workingRelationWithoutQuotasSheet = hierarchyWorkbook.createSheet("Ordenação por Serviço (ADIST)");
 	populateSheet(workingRelationWithoutQuotasSheet, false, wrappedUnit, hierarchyWorkbook, shouldIncludeEndOfRole,
-		includeHarmonizationResponsibles);
+		includeHarmonizationResponsibles, shouldIncludeUniverse);
 
 	return hierarchyWorkbook;
     }
@@ -274,7 +273,8 @@ public class SiadapRootModule extends SiadapRootModule_Base implements ModuleIni
     private static final int START_ROW_INDEX = 0;
 
     private void populateSheet(HSSFSheet sheetToWriteTo, boolean considerQuotas, UnitSiadapWrapper unitToSearchIn,
-	    HSSFWorkbook wb, boolean shouldIncludeEndOfRole, boolean includeHarmonizationResponsibles) {
+	    HSSFWorkbook wb, boolean shouldIncludeEndOfRole, boolean includeHarmonizationResponsibles,
+	    boolean shouldIncludeUniverse) {
 
 	CreationHelper creationHelper = wb.getCreationHelper();
 
@@ -285,7 +285,6 @@ public class SiadapRootModule extends SiadapRootModule_Base implements ModuleIni
 
 	ps.setFitHeight((short) 1);
 	ps.setFitWidth((short) 1);
-
 
 	/* ** styles ** */
 
@@ -350,18 +349,16 @@ public class SiadapRootModule extends SiadapRootModule_Base implements ModuleIni
 	defaultTextIstIdStyle.setVerticalAlignment(CellStyle.VERTICAL_CENTER);
 	defaultTextIstIdStyle.setAlignment(CellStyle.ALIGN_CENTER);
 	defaultTextIstIdStyle.setFont(defaultFont);
-	
-	
+
 	//header style
-	
+
 	//	CellStyle headerStyle = wb.createCellStyle();
 	//	HSSFFont headerFont = wb.createFont();
 	//	headerFont.setFontName(HSSFFont.FONT_ARIAL);
 	//	headerFont.setFontHeightInPoints((short) 10);
 	//	headerStyle.setFont(headerFont);
 	//	
-	
-	
+
 	//first line style
 	CellStyle firstLineStyle = wb.createCellStyle();
 	HSSFFont firstLineFont = wb.createFont();
@@ -371,7 +368,7 @@ public class SiadapRootModule extends SiadapRootModule_Base implements ModuleIni
 	firstLineStyle.setFont(firstLineFont);
 	firstLineStyle.setAlignment(CellStyle.ALIGN_CENTER);
 	firstLineStyle.setVerticalAlignment(CellStyle.VERTICAL_CENTER);
-	
+
 	//second line style
 	CellStyle secondLineStyle = wb.createCellStyle();
 	HSSFFont secondLineFont = wb.createFont();
@@ -406,7 +403,7 @@ public class SiadapRootModule extends SiadapRootModule_Base implements ModuleIni
 	/* ** END of styles ** */
 
 	/* ** Immutable IST header ** */
-	
+
 	HSSFHeader header = sheetToWriteTo.getHeader();
 	header.setCenter(HSSFHeader.font("Arial", "Normal") + HSSFHeader.fontSize((short) 10));
 	header.setCenter("Instituto Superior Técnico");
@@ -434,7 +431,7 @@ public class SiadapRootModule extends SiadapRootModule_Base implements ModuleIni
 	}
 
 	/* ** write the IST logo ** */
-	
+
 	int pictureIdx = wb.addPicture(istLogoBytes, Workbook.PICTURE_TYPE_PNG);
 	HSSFPatriarch drawingPatriarch = sheetToWriteTo.createDrawingPatriarch();
 	ClientAnchor clientAnchor = creationHelper.createClientAnchor();
@@ -488,7 +485,7 @@ public class SiadapRootModule extends SiadapRootModule_Base implements ModuleIni
 
 	    }
 	    if (eachUnit.getQuotaAwareTotalPeopleWorkingInUnit(false, considerQuotas) > 0) {
-		
+
 		row = sheetToWriteTo.createRow(++rowIndex);
 		cellIndex = START_CELL_INDEX;
 		//write the unit name and cost center
@@ -498,15 +495,14 @@ public class SiadapRootModule extends SiadapRootModule_Base implements ModuleIni
 		sheetToWriteTo.addMergedRegion(new CellRangeAddress(rowIndex, rowIndex, --cellIndex, ++cellIndex));
 		cell.setCellValue(unitNameWithCC);
 		cell.setCellStyle(costCenterStyle);
-		
-		/* **** write the Unit header ***** */
 
+		/* **** write the Unit header ***** */
 
 		//restart the cell's index
 		cellIndex = START_CELL_INDEX;
 
 		//IST id avaliado
-		    int firstLineAfterUnitNameIndex = ++rowIndex;
+		int firstLineAfterUnitNameIndex = ++rowIndex;
 		int secondLineAfterUnitNameIndex = ++rowIndex;
 
 		row = sheetToWriteTo.createRow(firstLineAfterUnitNameIndex);
@@ -536,7 +532,24 @@ public class SiadapRootModule extends SiadapRootModule_Base implements ModuleIni
 		sheetToWriteTo.addMergedRegion(new CellRangeAddress(firstLineAfterUnitNameIndex, secondLineAfterUnitNameIndex,
 			cellIndex, cellIndex));
 
-		//Avaliador
+		if (shouldIncludeUniverse) {
+
+		    //SIADAP do avaliado
+		    row = sheetToWriteTo.getRow(firstLineAfterUnitNameIndex);
+		    cell = row.createCell(++cellIndex);
+		    cell.setCellStyle(unitHeaderStyle);
+		    cell.setCellValue("SIADAP");
+
+		    row = sheetToWriteTo.getRow(secondLineAfterUnitNameIndex);
+		    cell = row.createCell(cellIndex);
+		    cell.setCellStyle(unitHeaderStyle);
+
+		    //merge
+		    sheetToWriteTo.addMergedRegion(new CellRangeAddress(firstLineAfterUnitNameIndex,
+			    secondLineAfterUnitNameIndex, cellIndex, cellIndex));
+		}
+
+		//Ist id do avaliador
 		row = sheetToWriteTo.getRow(firstLineAfterUnitNameIndex);
 		cell = row.createCell(++cellIndex);
 		cell.setCellStyle(unitHeaderStyle);
@@ -550,7 +563,7 @@ public class SiadapRootModule extends SiadapRootModule_Base implements ModuleIni
 		sheetToWriteTo.addMergedRegion(new CellRangeAddress(firstLineAfterUnitNameIndex, secondLineAfterUnitNameIndex,
 			cellIndex, cellIndex));
 
-		//ist id avaliador
+		//avaliador
 		row = sheetToWriteTo.getRow(firstLineAfterUnitNameIndex);
 		cell = row.createCell(++cellIndex);
 		cell.setCellStyle(unitHeaderStyle);
@@ -563,6 +576,8 @@ public class SiadapRootModule extends SiadapRootModule_Base implements ModuleIni
 		//merge
 		sheetToWriteTo.addMergedRegion(new CellRangeAddress(firstLineAfterUnitNameIndex, secondLineAfterUnitNameIndex,
 			cellIndex, cellIndex));
+
+
 
 		List<PersonSiadapWrapper> listToUse = (considerQuotas) ? eachUnit.getUnitEmployeesWithQuotas(false) : eachUnit
 			.getUnitEmployeesWithoutQuotas(true);
@@ -582,6 +597,16 @@ public class SiadapRootModule extends SiadapRootModule_Base implements ModuleIni
 		    cell.setCellValue(nameEvaluatedPerson);
 		    cell.setCellStyle(defaultTextNameStyle);
 
+		    if (shouldIncludeUniverse) {
+
+			Siadap siadap = personWrapper.getSiadap();
+			String siadapUniverseToBeWritten = (siadap == null || siadap.getSiadapUniverse() == null) ? "Não definido"
+				: siadap.getSiadapUniverse().getLocalizedName();
+			cell = row.createCell(cellIndex++);
+			cell.setCellValue(siadapUniverseToBeWritten);
+			cell.setCellStyle(defaultTextNameStyle);
+		    }
+
 		    PersonSiadapWrapper evaluatorWrapper = personWrapper.getEvaluator();
 		    String istIdEvaluator = evaluatorWrapper.getPerson().getUser().getUsername();
 		    cell = row.createCell(cellIndex++);
@@ -592,6 +617,7 @@ public class SiadapRootModule extends SiadapRootModule_Base implements ModuleIni
 		    cell = row.createCell(cellIndex++);
 		    cell.setCellValue(nameEvaluatorWrapper);
 		    cell.setCellStyle(defaultTextNameStyle);
+
 
 		}
 		//let's make a bottom border on the last four cells
@@ -617,6 +643,7 @@ public class SiadapRootModule extends SiadapRootModule_Base implements ModuleIni
 	sheetToWriteTo.autoSizeColumn(START_CELL_INDEX + 1);
 	sheetToWriteTo.autoSizeColumn(START_CELL_INDEX + 2);
 	sheetToWriteTo.autoSizeColumn(START_CELL_INDEX + 3);
+	sheetToWriteTo.autoSizeColumn(START_CELL_INDEX + 4);
 
 	//now let's resize the logo
 	picture.resize();
