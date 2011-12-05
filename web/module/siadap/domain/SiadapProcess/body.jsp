@@ -205,7 +205,19 @@ request.setAttribute("objectivesVisibleToEvaluated", objectivesVisibileToEvaluat
 		<logic:equal value="true" name="process" property="siadap.evaluatedOnlyByCompetences" >
 			<p><strong><bean:message bundle="SIADAP_RESOURCES" key="label.evaluatedOnlyByCompetences" /></p></strong>
 		</logic:equal>
-		<p><b>Carreira, no âmbito do SIADAP (Universo SIADAP):</b> <bean:write name="process" property="siadap.competenceType.name"/> (<bean:write name="process" property="siadap.siadapUniverse"/>)</p>
+		<p><b>Carreira, no âmbito do SIADAP (Universo SIADAP):</b>
+		 <logic:notEmpty name="process" property="siadap.competenceType">
+		  	<bean:write name="process" property="siadap.competenceType.name"/> 
+		 </logic:notEmpty>
+		 <logic:empty name="process" property="siadap.competenceType">
+		 	<bean:message key="competenceType.notDefined" bundle="SIADAP_RESOURCES"/>
+		 </logic:empty>
+		 <logic:empty name="process" property="siadap.siadapUniverse">
+		 	(<bean:message key="label.undefinedUniverse" bundle="SIADAP_RESOURCES"/>)
+		 </logic:empty>
+		 <logic:notEmpty name="process" property="siadap.siadapUniverse">
+		 	(<bean:write name="process" property="siadap.siadapUniverse"/>)</p>
+		 </logic:notEmpty>
 		<h4><bean:message key="label.competences" bundle="SIADAP_RESOURCES" />:</h4>
 			<%-- link to allow to edit the competences--%>
 			<wf:isActive processName="process" activityName="EditCompetenceEvaluation" scope="request">		
