@@ -40,7 +40,8 @@ public class AutoEvaluation extends WorkflowActivity<SiadapProcess, AutoEvaluati
     @Override
     protected void process(AutoEvaluationActivityInformation activityInformation) {
 
-	new SiadapAutoEvaluation(activityInformation.getProcess().getSiadap(), activityInformation.getObjectivesJustification(),
+	new SiadapAutoEvaluation(activityInformation.getProcess().getSiadap(), activityInformation.getProcess().getSiadap()
+		.getDefaultSiadapEvaluationUniverse(), activityInformation.getObjectivesJustification(),
 		activityInformation.getCompetencesJustification(), activityInformation.getOtherFactorsJustification(),
 		activityInformation.getExtremesJustification(), activityInformation.getCommentsAndProposals(),
 		activityInformation.getFactorOneClassification(), activityInformation.getFactorTwoClassification(),

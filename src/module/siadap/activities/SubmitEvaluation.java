@@ -29,7 +29,7 @@ public class SubmitEvaluation extends WorkflowActivity<SiadapProcess, ActivityIn
     public boolean isActive(SiadapProcess process, User user) {
 	Siadap siadap = process.getSiadap();
 	return siadap.getEvaluator().getPerson().getUser().equals(user) && !siadap.isEvaluationDone()
-		&& new Evaluation().isActive(process, user);
+		&& new Evaluation().isActive(process, user) && siadap.getEvaluationData2() != null;
     }
 
     @Override
@@ -44,7 +44,7 @@ public class SubmitEvaluation extends WorkflowActivity<SiadapProcess, ActivityIn
 	}
 
 	//let's make some extra checks on the data inserted
-	siadap.getEvaluationData().validateData();
+	siadap.getEvaluationData2().validateData();
 
 	activityInformation.getProcess().getSiadap().setEvaluationSealedDate(new LocalDate());
 

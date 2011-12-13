@@ -6,7 +6,6 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-import jvstm.cps.ConsistencyPredicate;
 import module.organization.domain.Person;
 import module.siadap.domain.scoring.IScoring;
 import module.siadap.domain.scoring.SiadapGlobalEvaluation;
@@ -615,20 +614,21 @@ public class Siadap extends Siadap_Base {
 	return true;
     }
 
-    @ConsistencyPredicate
-    public boolean validateExistenceOfOnlyOneSetOfEvaluationItemsPerUniverse() {
-	boolean foundOneSet = false;
-	for (SiadapEvaluationUniverse evaluationUniverse : getSiadapEvaluationUniverses()) {
-	    List<SiadapEvaluationItem> siadapEvaluationItems = evaluationUniverse.getSiadapEvaluationItems();
-	    if (siadapEvaluationItems != null && siadapEvaluationItems.size() > 0) {
-		if (foundOneSet) {
-		    return false;
-		}
-		foundOneSet = true;
-	    }
-	}
-	return true;
-    }
+    // TODO: joantune: uncomment once Roxo's work is put in production. For now it's impossible to check this because one cannot access the information in other objects
+    //    @ConsistencyPredicate
+    //    public boolean validateExistenceOfOnlyOneSetOfEvaluationItemsPerUniverse() {
+    //	boolean foundOneSet = false;
+    //	for (SiadapEvaluationUniverse evaluationUniverse : getSiadapEvaluationUniverses()) {
+    //	    List<SiadapEvaluationItem> siadapEvaluationItems = evaluationUniverse.getSiadapEvaluationItems();
+    //	    if (siadapEvaluationItems != null && siadapEvaluationItems.size() > 0) {
+    //		if (foundOneSet) {
+    //		    return false;
+    //		}
+    //		foundOneSet = true;
+    //	    }
+    //	}
+    //	return true;
+    //    }
 
     public boolean validateExistenceOfOnlyOneSetOfEvaluationAndAutoEvaluation() {
 	boolean foundOneSet = false;

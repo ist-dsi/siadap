@@ -43,7 +43,7 @@
 
 	<div><strong><bean:message
 		key="label.autoEvaluation.objectivesJustification"
-		bundle="SIADAP_RESOURCES" />:</strong>
+		bundle="SIADAP_RESOURCES" /> (<bean:message key="label.requiredField" bundle="SIADAP_RESOURCES" />) :</strong>
 	<p><fr:edit name="information" slot="objectivesJustification"
 		type="java.lang.String">
 		<fr:layout name="longText">
@@ -66,7 +66,7 @@
 
 	<div><strong><bean:message
 		key="label.autoEvaluation.competencesJustification"
-		bundle="SIADAP_RESOURCES" />:</strong>
+		bundle="SIADAP_RESOURCES" /> (<bean:message key="label.requiredField" bundle="SIADAP_RESOURCES" />) :</strong>
 
 	<p><fr:edit name="information" slot="competencesJustification">
 		<fr:layout name="longText">
@@ -188,8 +188,8 @@
 	</fr:edit></p>
 	</div>
 	<html:submit styleClass="inputbutton">
-		<bean:message key="renderers.form.submit.name"
-			bundle="RENDERER_RESOURCES" />
+		<bean:message key="label.save"
+			bundle="SIADAP_RESOURCES" />
 	</html:submit>
 </fr:form> 
 <script>

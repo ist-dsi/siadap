@@ -24,7 +24,7 @@ public class AutoEvaluationActivityInformation extends ActivityInformation<Siada
     public AutoEvaluationActivityInformation(SiadapProcess process,
 	    WorkflowActivity<? extends WorkflowProcess, ? extends ActivityInformation> activity) {
 	super(process, activity);
-	SiadapAutoEvaluation autoEvaluationData = process.getSiadap().getAutoEvaluationData();
+	SiadapAutoEvaluation autoEvaluationData = process.getSiadap().getAutoEvaluationData2();
 
 	if (autoEvaluationData != null) {
 

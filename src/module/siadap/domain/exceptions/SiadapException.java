@@ -6,6 +6,7 @@ package module.siadap.domain.exceptions;
 import java.util.ResourceBundle;
 
 import myorg.domain.exceptions.DomainException;
+import pt.utl.ist.fenix.tools.util.i18n.Language;
 
 /**
  * 
@@ -26,7 +27,7 @@ public class SiadapException extends DomainException {
 
     @Override
     public ResourceBundle getBundle() {
-	return ResourceBundle.getBundle("resources/SiadapResources");
+	return ResourceBundle.getBundle("resources/SiadapResources", Language.getLocale());
     }
 
 }

@@ -57,6 +57,8 @@ public class SiadapRootModule extends SiadapRootModule_Base implements ModuleIni
 
     private static ThreadLocal<SiadapRootModule> init = null;
 
+    public static final String SIADAP_RESOURCES = "resources/SiadapResources";
+
     private static final byte[] istLogoBytes;
     //let's init the IST logo needed
     static {

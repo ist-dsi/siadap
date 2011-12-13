@@ -26,11 +26,14 @@ public class SubmitAutoEvaluation extends WorkflowActivity<SiadapProcess, Activi
     public boolean isActive(SiadapProcess process, User user) {
 	Siadap siadap = process.getSiadap();
 	return siadap.getEvaluated().getUser().equals(user) && !siadap.isAutoEvaliationDone()
-		&& new AutoEvaluation().isActive(process, user);
+		&& new AutoEvaluation().isActive(process, user) && siadap.getAutoEvaluationData2() != null;
     }
 
     @Override
     protected void process(ActivityInformation<SiadapProcess> activityInformation) {
+	Siadap siadap = activityInformation.getProcess().getSiadap();
+
+	siadap.getAutoEvaluationData2().validateData();
 	activityInformation.getProcess().getSiadap().setAutoEvaluationSealedDate(new LocalDate());
     }
 
