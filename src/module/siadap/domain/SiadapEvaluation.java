@@ -8,28 +8,29 @@ public class SiadapEvaluation extends SiadapEvaluation_Base {
 
     public SiadapEvaluation(Siadap siadap, String noEvaluationJustification) {
 	setSiadapRootModule(SiadapRootModule.getInstance());
-	setSiadap(siadap);
+	getSiadapEvaluationUniverse().setSiadap(siadap);
 	setNoEvaluationJustification(noEvaluationJustification);
     }
 
     public SiadapEvaluation(Siadap siadap, String evaluationJustification, String personalDevelopment, String trainningNeeds,
 	    Boolean excellencyAward) {
 	setSiadapRootModule(SiadapRootModule.getInstance());
-	setSiadap(siadap);
+	getSiadapEvaluationUniverse().setSiadap(siadap);
 	editWithoutValidation(evaluationJustification, personalDevelopment, trainningNeeds, excellencyAward);
     }
 
     public void editWithoutValidation(String evaluationJustification, String personalDevelopment, String trainningNeeds,
 	    Boolean excellencyAward) {
-	Siadap siadap = getSiadap();
+	Siadap siadap = getSiadapEvaluationUniverse().getSiadap();
 	setEvaluationJustification(evaluationJustification);
 	setPersonalDevelopment(personalDevelopment);
 	setTrainningNeeds(trainningNeeds);
 	setExcellencyAward(excellencyAward);
     }
 
+
     public void validateData() {
-	Siadap siadap = getSiadap();
+	Siadap siadap = getSiadapEvaluationUniverse().getSiadap();
 	String personalDevelopment = getPersonalDevelopment();
 	String evaluationJustification = getEvaluationJustification();
 	String trainningNeeds = getTrainningNeeds();

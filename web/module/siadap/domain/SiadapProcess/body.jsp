@@ -194,10 +194,11 @@ request.setAttribute("objectivesVisibleToEvaluated", objectivesVisibileToEvaluat
 		
 		<%--  The self evaluation with the justification for the objectives --%>
 		<logic:equal name="evaluatedPersonWrapper" property="currentUserAbleToSeeAutoEvaluationDetails" value="true">
-			<logic:notEmpty name="process" property="siadap.autoEvaluationData" >
-				<logic:notEmpty name="process" property="siadap.autoEvaluationData.objectivesJustification">
+		<%-- R1 refactoring autoEvaluationData --%>
+			<logic:notEmpty name="process" property="siadap.autoEvaluationData2" >
+				<logic:notEmpty name="process" property="siadap.autoEvaluationData2.objectivesJustification">
 					<p><strong>(<bean:message key="label.autoEvaluation" bundle="SIADAP_RESOURCES" />) <bean:message key="label.autoEvaluation.objectivesJustification" bundle="SIADAP_RESOURCES"/>:</strong></p>
-					<p><bean:write name="process" property="siadap.autoEvaluationData.objectivesJustification" /></p>
+					<p><bean:write name="process" property="siadap.autoEvaluationData2.objectivesJustification" /></p>
 				</logic:notEmpty>
 			</logic:notEmpty>
 		</logic:equal>
@@ -248,21 +249,24 @@ request.setAttribute("objectivesVisibleToEvaluated", objectivesVisibileToEvaluat
 		
 		<%--  The self evaluation with the justification for the competences --%>
 		<logic:equal name="evaluatedPersonWrapper" property="currentUserAbleToSeeAutoEvaluationDetails" value="true">
-			<logic:notEmpty name="process" property="siadap.autoEvaluationData" >
-				<logic:notEmpty name="process" property="siadap.autoEvaluationData.competencesJustification">
+		<%-- R1 refactoring autoEvaluationData --%>
+			<logic:notEmpty name="process" property="siadap.autoEvaluationData2" >
+				<logic:notEmpty name="process" property="siadap.autoEvaluationData2.competencesJustification">
 					<p><strong>(<bean:message key="label.autoEvaluation" bundle="SIADAP_RESOURCES" />) <bean:message key="label.autoEvaluation.competencesJustification" bundle="SIADAP_RESOURCES"/>:</strong></p>
-					<p><bean:write name="process" property="siadap.autoEvaluationData.objectivesJustification" /></p>
+					<p><bean:write name="process" property="siadap.autoEvaluationData2.objectivesJustification" /></p>
 				</logic:notEmpty>
 			</logic:notEmpty>
 		 </logic:equal>
 			
 		<%--  The factors list--%>
+		<%-- R1 refactoring autoEvaluationData --%>
 		<logic:equal name="evaluatedPersonWrapper" property="currentUserAbleToSeeAutoEvaluationDetails" value="true">
-			<logic:notEmpty name="process" property="siadap.autoEvaluationData" >
-				<logic:notEmpty name="process" property="siadap.autoEvaluationData.factorOneClassification">
+			<logic:notEmpty name="process" property="siadap.autoEvaluationData2" >
+				<logic:notEmpty name="process" property="siadap.autoEvaluationData2.factorOneClassification">
 					<p><strong>(<bean:message key="label.autoEvaluation" bundle="SIADAP_RESOURCES" />) <bean:message bundle="SIADAP_RESOURCES" key="label.autoEvaluation.performanceInfluencingFactors" />:</strong></p>
 					<p><bean:message bundle="SIADAP_RESOURCES" key="label.autoEvaluation.performanceInfluencingFactors.show.explanation"/></p>
-					<fr:view name="process" property="siadap.autoEvaluationData" >
+					<fr:view name="process" property="siadap.autoEvaluationData2" >
+		<%-- R1 refactoring autoEvaluationData --%>
 						<fr:schema bundle="SIADAP_RESOURCES" type="module.siadap.domain.SiadapAutoEvaluation">
 							<fr:slot name="factorOneClassification" readOnly="true"
 							key="label.autoEvaluation.factorOneClassification"/>
@@ -279,21 +283,24 @@ request.setAttribute("objectivesVisibleToEvaluated", objectivesVisibileToEvaluat
 				</logic:notEmpty>	
 				
 				<%-- Other factors --%>
-				<logic:notEmpty name="process" property="siadap.autoEvaluationData.otherFactorsJustification">
+		<%-- R1 refactoring autoEvaluationData --%>
+				<logic:notEmpty name="process" property="siadap.autoEvaluationData2.otherFactorsJustification">
 					<p><strong>(<bean:message key="label.autoEvaluation" bundle="SIADAP_RESOURCES" />) <bean:message bundle="SIADAP_RESOURCES" key="label.autoEvaluation.show.otherFactorsJustification" /></strong></p>
-					<p><bean:write name="process" property="siadap.autoEvaluationData.otherFactorsJustification"/></p>
+					<p><bean:write name="process" property="siadap.autoEvaluationData2.otherFactorsJustification"/></p>
 				</logic:notEmpty>
 				
 				<%-- Extreme values of the factors justification --%>
-				<logic:notEmpty name="process" property="siadap.autoEvaluationData.extremesJustification">
+		<%-- R1 refactoring autoEvaluationData --%>
+				<logic:notEmpty name="process" property="siadap.autoEvaluationData2.extremesJustification">
 					<p><strong>(<bean:message key="label.autoEvaluation" bundle="SIADAP_RESOURCES" />) <bean:message bundle="SIADAP_RESOURCES" key="label.autoEvaluation.show.extremesJustification" /></strong></p>
-					<p><bean:write name="process" property="siadap.autoEvaluationData.extremesJustification"/></p>
+					<p><bean:write name="process" property="siadap.autoEvaluationData2.extremesJustification"/></p>
 				</logic:notEmpty>
 				
 				<%-- Suggestions and proposals given by the evaluated person--%>
-				<logic:notEmpty name="process" property="siadap.autoEvaluationData.commentsAndProposals">
+		<%-- R1 refactoring autoEvaluationData --%>
+				<logic:notEmpty name="process" property="siadap.autoEvaluationData2.commentsAndProposals">
 					<p><strong>(<bean:message key="label.autoEvaluation" bundle="SIADAP_RESOURCES" />) <bean:message bundle="SIADAP_RESOURCES" key="label.autoEvaluation.show.commentsAndProposals" /></strong></p>
-					<p><bean:write name="process" property="siadap.autoEvaluationData.commentsAndProposals"/></p>
+					<p><bean:write name="process" property="siadap.autoEvaluationData2.commentsAndProposals"/></p>
 				</logic:notEmpty>
 			</logic:notEmpty>
 		</logic:equal>
@@ -308,7 +315,8 @@ request.setAttribute("objectivesVisibleToEvaluated", objectivesVisibileToEvaluat
 		
 		
 		<%-- Evaluation justification --%>
-		<logic:notEmpty name="process" property="siadap.evaluationData">
+		<%-- R1 refactoring evaluationData --%>
+		<logic:notEmpty name="process" property="siadap.evaluationData2">
 			<logic:equal name="process" property="siadap.withSkippedEvaluation" value="false">
 				<logic:equal name="evaluatedPersonWrapper" property="currentUserAbleToSeeEvaluationDetails" value="true">
 					<p>
@@ -317,32 +325,37 @@ request.setAttribute("objectivesVisibleToEvaluated", objectivesVisibileToEvaluat
 						</strong>
 					</p>
 						<p>
-							<logic:notEmpty name="process" property="siadap.evaluationData.evaluationJustification">
-								<fr:view name="process" property="siadap.evaluationData.evaluationJustification"/>
+		<%-- R1 refactoring evaluationData --%>
+							<logic:notEmpty name="process" property="siadap.evaluationData2.evaluationJustification">
+								<fr:view name="process" property="siadap.evaluationData2.evaluationJustification"/>
 							</logic:notEmpty>
-							<logic:empty name="process" property="siadap.evaluationData.evaluationJustification">
+							<logic:empty name="process" property="siadap.evaluationData2.evaluationJustification">
 								<em><bean:message key="label.noJustification" bundle="SIADAP_RESOURCES"/></em>
 							</logic:empty>
 						</p>
 				
-					<logic:notEmpty name="process" property="siadap.evaluationData.personalDevelopment">
+		<%-- R1 refactoring evaluationData --%>
+					<logic:notEmpty name="process" property="siadap.evaluationData2.personalDevelopment">
 						<p>
 							<strong>
 								<bean:message key="label.show.personalDevelopment" bundle="SIADAP_RESOURCES"/>:
 							</strong>
 						</p>
 						<p>
-							<fr:view name="process" property="siadap.evaluationData.personalDevelopment"/>
+		<%-- R1 refactoring evaluationData --%>
+							<fr:view name="process" property="siadap.evaluationData2.personalDevelopment"/>
 						</p>
 					</logic:notEmpty>
 					
 					
-					<logic:notEmpty name="process" property="siadap.evaluationData.trainningNeeds">
+		<%-- R1 refactoring evaluationData --%>
+					<logic:notEmpty name="process" property="siadap.evaluationData2.trainningNeeds">
 						<p><strong>
 							<bean:message key="label.show.trainingNeeds" bundle="SIADAP_RESOURCES"/>:
 						</strong></p>
 						<p>
-							<fr:view name="process" property="siadap.evaluationData.trainningNeeds"/>
+		<%-- R1 refactoring evaluationData --%>
+							<fr:view name="process" property="siadap.evaluationData2.trainningNeeds"/>
 						</p>
 					</logic:notEmpty>
 				</logic:equal>
@@ -353,7 +366,8 @@ request.setAttribute("objectivesVisibleToEvaluated", objectivesVisibileToEvaluat
 			<p>
 				<strong><bean:message key="label.noEvaluationJustification" bundle="SIADAP_RESOURCES"/>:</strong>
 				<p>
-					<fr:view name="process" property="siadap.evaluationData.noEvaluationJustification"/>
+		<%-- R1 refactoring evaluationData --%>
+					<fr:view name="process" property="siadap.evaluationData2.noEvaluationJustification"/>
 				</p>
 			</p>
 		</logic:equal>

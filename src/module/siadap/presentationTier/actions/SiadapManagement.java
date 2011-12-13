@@ -60,7 +60,9 @@ public class SiadapManagement extends ContextBaseAction {
 
 	Person person = getDomainObject(request, "personId");
 	Integer year = Integer.parseInt(request.getParameter("year"));
-	SiadapProcess siadapProcess = SiadapProcess.createNewProcess(person, year);
+	//let's try to assert the universe by getting previous SIADAPs, if any exist,
+	//otherwise, let's assign null here
+	SiadapProcess siadapProcess = SiadapProcess.createNewProcess(person, year, Siadap.getLastSiadapUniverseUsedBy(person));
 
 	return ProcessManagement.forwardToProcess(siadapProcess);
     }

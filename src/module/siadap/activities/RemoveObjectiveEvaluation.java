@@ -26,7 +26,7 @@ public class RemoveObjectiveEvaluation extends WorkflowActivity<SiadapProcess, R
 	// it is we will want to add it to some object that will store the old
 	// objectives
 	if (siadap.getObjectivesAndCompetencesSealedDate() == null) {
-	    siadap.removeSiadapEvaluationItems(activityInformation.getEvaluation());
+	    siadap.getDefaultSiadapEvaluationUniverse().removeSiadapEvaluationItems(activityInformation.getEvaluation());
 	    activityInformation.getEvaluation().delete();
 	} else {
 	    Integer currentObjectiveVersion = siadap.getCurrentObjectiveVersion();

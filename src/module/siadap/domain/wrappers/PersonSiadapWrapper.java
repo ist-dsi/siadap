@@ -461,7 +461,7 @@ public class PersonSiadapWrapper extends PartyWrapper implements Serializable {
 
     @Service
     public void changeUniverseTo(SiadapUniverse siadapUniverseToChangeTo) {
-	getSiadap().setSiadapUniverse(siadapUniverseToChangeTo);
+	getSiadap().setDefaultSiadapUniverse(siadapUniverseToChangeTo);
 
     }
 }

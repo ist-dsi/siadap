@@ -12,7 +12,8 @@
 
 <logic:equal name="process" property="siadap.evaluationDone" value="true">			
 
-	<logic:equal name="process" property="siadap.evaluationData.excellencyAward" value="true">
+		<%-- R1 refactoring evaluationData --%>
+	<logic:equal name="process" property="siadap.evaluationData2.excellencyAward" value="true">
 		<div class="highlightBox">
 			<bean:message key="label.suggestedForExcellencyAward" bundle="SIADAP_RESOURCES"/>
 		</div>

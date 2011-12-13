@@ -86,7 +86,7 @@ public class SiadapProcess extends SiadapProcess_Base {
 
     private HashMap<User, ArrayList<String>> userWarningsKey = new HashMap<User, ArrayList<String>>();
 
-    public SiadapProcess(Integer year, Person evaluated) {
+    public SiadapProcess(Integer year, Person evaluated, SiadapUniverse siadapUniverse) {
 	super();
 
 	User currentUser = UserView.getCurrentUser();
@@ -106,7 +106,7 @@ public class SiadapProcess extends SiadapProcess_Base {
 	    }
 	}
 
-	setSiadap(new Siadap(year, evaluated));
+	setSiadap(new Siadap(year, evaluated, siadapUniverse));
 	setProcessNumber("S" + year + "/" + evaluated.getUser().getUsername());
 
 	new LabelLog(this, currentUser, this.getClass().getName() + ".creation", "resources/SiadapResources",
@@ -183,8 +183,8 @@ public class SiadapProcess extends SiadapProcess_Base {
     }
 
     @Service
-    public static SiadapProcess createNewProcess(Person evaluated, Integer year) {
-	return new SiadapProcess(year, evaluated);
+    public static SiadapProcess createNewProcess(Person evaluated, Integer year, SiadapUniverse siadapUniverse) {
+	return new SiadapProcess(year, evaluated, siadapUniverse);
     }
 
     @Override

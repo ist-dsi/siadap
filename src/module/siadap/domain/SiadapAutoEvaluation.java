@@ -8,7 +8,7 @@ public class SiadapAutoEvaluation extends SiadapAutoEvaluation_Base {
 	    Integer factorFourClassification, Integer factorFiveClassification, Integer factorSixClassification) {
 
 	setSiadapRootModule(SiadapRootModule.getInstance());
-	setSiadap(siadap);
+	getSiadapEvaluationUniverse().setSiadap(siadap);
 
 	setObjectivesJustification(objectivesJustification);
 	setCompetencesJustification(competencesJustification);

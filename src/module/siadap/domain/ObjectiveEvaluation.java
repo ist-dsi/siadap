@@ -32,7 +32,7 @@ public class ObjectiveEvaluation extends ObjectiveEvaluation_Base {
     public ObjectiveEvaluation(Siadap siadap, String objective, SiadapEvaluationObjectivesType type) {
 	super();
 	setObjective(objective);
-	setSiadap(siadap);
+	getSiadapEvaluationUniverse().setSiadap(siadap);
 	setFromVersion(siadap.getCurrentObjectiveVersion());
 	setUntilVersion(null);
 	setType(type);
@@ -59,6 +59,11 @@ public class ObjectiveEvaluation extends ObjectiveEvaluation_Base {
 	newObjectiveEvaluation.setOldObjectiveEvaluation(this);
 	setNewObjectiveEvaluation(newObjectiveEvaluation);
 	return newObjectiveEvaluation;
+    }
+
+    @Override
+    public Siadap getSiadap() {
+	return getSiadapEvaluationUniverse().getSiadap();
     }
 
     public void addObjectiveIndicator(String measurementIndicator, String superationCriteria, BigDecimal ponderationFactor) {
@@ -129,7 +134,7 @@ public class ObjectiveEvaluation extends ObjectiveEvaluation_Base {
 	    getOldObjectiveEvaluation().removeNewObjectiveEvaluation();
 	}
 	removeOldObjectiveEvaluation();
-	removeSiadap();
+	removeSiadapEvaluationUniverse();
 	removeSiadapRootModule();
 	deleteDomainObject();
     }

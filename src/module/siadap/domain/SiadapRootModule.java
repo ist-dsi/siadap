@@ -92,6 +92,7 @@ public class SiadapRootModule extends SiadapRootModule_Base implements ModuleIni
 	if (getSiadapTestUserGroup() == null) {
 	    initializeSiadapGroups(root);
 	}
+	migrateDataToNewSiadapEvaluationUniverseClass();
     }
 
     /**
@@ -157,6 +158,44 @@ public class SiadapRootModule extends SiadapRootModule_Base implements ModuleIni
 		init = null;
 	    }
 	}
+
+
+    }
+
+    private static void migrateDataToNewSiadapEvaluationUniverseClass() {
+	//let's do the migration to all of the Siadaps that we find
+	SiadapRootModule siadapRootModule = getInstance();
+
+	int siadapsMigrated = 0;
+	for (Siadap siadap : siadapRootModule.getSiadaps()) {
+	    //let's create a new SiadapEvaluationUniverse, if we have none
+	    List<SiadapEvaluationUniverse> siadapEvaluationUniverses = siadap.getSiadapEvaluationUniverses();
+	    //we only migrate the ones that we need to
+	    if (siadapEvaluationUniverses == null || siadapEvaluationUniverses.size() == 0) {
+		LOGGER.info("Migrating some data");
+		siadapsMigrated++;
+		SiadapEvaluationUniverse siadapEvaluationUniverse = new SiadapEvaluationUniverse(siadap,
+			siadap.getSiadapUniverse(), true);
+
+		//now let's migrate the rest of the items
+
+		//SIADAPEvaluationItems
+		for (SiadapEvaluationItem siadapEvaluationItem : siadap.getSiadapEvaluationItems()) {
+		    siadapEvaluationUniverse.addSiadapEvaluationItems(siadapEvaluationItem);
+		}
+
+		//SIADAPAutoEvaluation
+		SiadapAutoEvaluation autoEvaluationData = siadap.getAutoEvaluationData();
+
+		siadapEvaluationUniverse.setSiadapAutoEvaluation(autoEvaluationData);
+
+		//SIADAPEvaluation
+		SiadapEvaluation siadapEvaluation = siadap.getEvaluationData();
+		siadapEvaluationUniverse.setSiadapEvaluation(siadapEvaluation);
+	    }
+	}
+
+	LOGGER.warn("Migrated " + siadapsMigrated + " SIADAPs");
 
     }
 
@@ -600,8 +639,8 @@ public class SiadapRootModule extends SiadapRootModule_Base implements ModuleIni
 		    if (shouldIncludeUniverse) {
 
 			Siadap siadap = personWrapper.getSiadap();
-			String siadapUniverseToBeWritten = (siadap == null || siadap.getSiadapUniverse() == null) ? "Não definido"
-				: siadap.getSiadapUniverse().getLocalizedName();
+			String siadapUniverseToBeWritten = (siadap == null || siadap.getDefaultSiadapUniverse() == null) ? "Não definido"
+				: siadap.getDefaultSiadapUniverse().getLocalizedName();
 			cell = row.createCell(cellIndex++);
 			cell.setCellValue(siadapUniverseToBeWritten);
 			cell.setCellStyle(defaultTextNameStyle);

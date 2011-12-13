@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Map;
 
 import module.siadap.domain.Siadap;
+import module.siadap.domain.SiadapEvaluationItem;
 import module.siadap.domain.SiadapRootModule;
 import module.siadap.domain.SiadapUniverse;
 import myorg.domain.scheduler.ReadCustomTask;
@@ -47,7 +48,7 @@ public class ConvertCompetencesToSiadapUniverse extends ReadCustomTask {
 	Map<Siadap, SiadapUniverse> auxMap = new HashMap<Siadap, SiadapUniverse>();
 	List<Siadap> siadapsUnableToMigrate = new ArrayList<Siadap>();
 	for (Siadap siadap : siadaps) {
-	    if (siadap.getSiadapUniverse() == null) {
+	    if (getMainSiadapUniverse(siadap) == null) {
 		//let's assert the SIADAP based on the competences
 		if (siadap.getCompetenceType() == null)
 		{
@@ -98,6 +99,21 @@ public class ConvertCompetencesToSiadapUniverse extends ReadCustomTask {
 	printStatus();
     }
 
+    public SiadapUniverse getMainSiadapUniverse(Siadap siadap) {
+	//seen that we only have evaluationItems on one of the SiadapEvaluationUniverses
+	for (SiadapEvaluationItem evaluationItem : siadap.getSiadapEvaluationItems()) {
+	    return evaluationItem.getSiadapEvaluationUniverse().getSiadapUniverse();
+	}
+	return null;
+    }
+
+    public static void setMainSiadapUniverse(Siadap siadap, SiadapUniverse siadapUniverse) {
+	//seen that we only have evaluationItems on one of the SiadapEvaluationUniverses
+	for (SiadapEvaluationItem evaluationItem : siadap.getSiadapEvaluationItems()) {
+	    evaluationItem.getSiadapEvaluationUniverse().setSiadapUniverse(siadapUniverse);
+	}
+    }
+
     private void convertSiadaps(Map<Siadap, SiadapUniverse> siadapsToConvert) {
 	MigrateSiadapProcesses migrateSiadapProcesses = new MigrateSiadapProcesses(siadapsToConvert);
 	migrateSiadapProcesses.start();
@@ -129,7 +145,7 @@ public class ConvertCompetencesToSiadapUniverse extends ReadCustomTask {
 	public void transactionalRun() {
 	    for (Siadap siadap : siadapsToMigrate.keySet()) {
 		SiadapUniverse siadapUniverse = siadapsToMigrate.get(siadap);
-		siadap.setSiadapUniverse(siadapUniverse);
+		setMainSiadapUniverse(siadap, siadapUniverse);
 	    }
 
 	}

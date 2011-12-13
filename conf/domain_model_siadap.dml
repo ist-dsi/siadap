@@ -79,9 +79,24 @@ class Siadap {
 	LocalDate customEvaluationBegin;
 	LocalDate customEvaluationEnd;
 	
-	SiadapUniverse siadapUniverse;
+	 SiadapUniverse siadapUniverse;//R1
 }
 
+class SiadapEvaluationUniverse
+{
+
+	SiadapUniverse siadapUniverse;
+	BigDecimal classification;
+	
+	Boolean defaultEvaluationUniverse (REQUIRED);
+	
+	/* TODO: joantune: Yet to be fully defined the meaning*/
+	BigDecimal evaluatorClassification;
+	BigDecimal harmonizationClassification;
+	BigDecimal ccaClassification;
+	
+
+}
 
 class SiadapEvaluation {
 	String evaluationJustification;	
@@ -224,23 +239,60 @@ relation SiadapProcessSiadap {
 	SiadapProcess playsRole process;
 	Siadap playsRole siadap;
 }
- relation SiadapSiadapEvaluationItems {
- 	Siadap playsRole siadap;
- 	SiadapEvaluationItem playsRole siadapEvaluationItems {
-  		multiplicity *;
- 	}
+ relation SiadapSiadapEvaluationItems {//R1
+ 	Siadap playsRole siadap;//R1
+ 	SiadapEvaluationItem playsRole siadapEvaluationItems {//R1
+ 		multiplicity *;//R1
+	}//R1
+}//R1
+
+relation SiadapEvaluationUniverseSiadapEvaluationItem {
+	SiadapEvaluationUniverse playsRole siadapEvaluationUniverse {
+		multiplicity 1;
+	}
+	SiadapEvaluationItem playsRole siadapEvaluationItems {
+		multiplicity *;
+	}
+}
+
+relation SiadapSiadapEvaluationUniverse{
+	SiadapEvaluationUniverse playsRole siadapEvaluationUniverses {
+		multiplicity *;
+	}
+	Siadap playsRole siadap{
+		multiplicity 1;
+	}
+}
+
+relation SiadapAutoEvaluationSiadap {//R1
+	Siadap playsRole siadap;//R1
+	SiadapAutoEvaluation playsRole autoEvaluationData;//R1
+}//R1
+
+relation SiadapAutoEvaluationSiadapEvaluationUniverse {
+	SiadapEvaluationUniverse playsRole siadapEvaluationUniverse {
+		multiplicity 1;
+	}
+	SiadapAutoEvaluation playsRole siadapAutoEvaluation {
+		multiplicity 0..1;
+	}
 }
 
 
-relation SiadapAutoEvaluationSiadap {
-	Siadap playsRole siadap;
-	SiadapAutoEvaluation playsRole autoEvaluationData;
+relation SiadapSiadapEvaluation {//R1
+	Siadap playsRole siadap;//R1
+	SiadapEvaluation playsRole evaluationData;//R1
+}//R1
+
+relation SiadapEvaluationSiadapEvaluationUniverse {
+	SiadapEvaluationUniverse playsRole siadapEvaluationUniverse {
+		multiplicity 1;
+	}
+	SiadapEvaluation playsRole siadapEvaluation {
+		multiplicity 0..1;
+	}
 }
 
-relation SiadapSiadapEvaluation {
-	Siadap playsRole siadap;
-	SiadapEvaluation playsRole evaluationData;
-}
 
 relation SiadapEvaluated {
 	.module.organization.domain.Person playsRole evaluated;

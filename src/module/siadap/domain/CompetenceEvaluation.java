@@ -6,7 +6,7 @@ public class CompetenceEvaluation extends CompetenceEvaluation_Base {
 
     public CompetenceEvaluation(Siadap siadap, Competence competence) {
 	super();
-	setSiadap(siadap);
+	getSiadapEvaluationUniverse().setSiadap(siadap);
 	setCompetence(competence);
     }
 
@@ -27,7 +27,7 @@ public class CompetenceEvaluation extends CompetenceEvaluation_Base {
 	    // should be thrown here
 	    throw new Error("Error while trying to delete a competence that has evaluation data assigned");
 	}
-	removeSiadap();
+	removeSiadapEvaluationUniverse();
 	removeSiadapRootModule();
 	removeCompetence();
 	deleteDomainObject();

@@ -459,7 +459,7 @@ public class SiadapPersonnelManagement extends ContextBaseAction {
 	    this.year = year;
 	    SiadapYearConfiguration siadapYearConfiguration = SiadapYearConfiguration.getSiadapYearConfiguration(year);
 	    Siadap siadapFor = siadapYearConfiguration.getSiadapFor(person);
-	    this.setSiadapUniverse(siadapFor.getSiadapUniverse());
+	    this.setSiadapUniverse(siadapFor.getDefaultSiadapUniverse());
 	}
 
 	public SiadapUniverse getSiadapUniverse() {
