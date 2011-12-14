@@ -41,8 +41,6 @@
 		<fr:slot name="unitRelations" layout="menu-select" key="label.config.unitRelations">
 			<fr:property name="providerClass"
 				value="module.organization.presentationTier.renderers.providers.AccountabilityTypesProvider" />
-			<fr:property name="choiceType"
-				value="module.organization.domain.AccountabilityType" />
 			<fr:property name="format" value="${name}" />
 			<fr:property name="sortBy" value="name" />
 			<fr:property name="saveOptions" value="true" />
@@ -50,8 +48,6 @@
 		<fr:slot name="harmonizationResponsibleRelation" layout="menu-select" key="label.config.harmonizationResponsibleRelation">
 			<fr:property name="providerClass"
 				value="module.organization.presentationTier.renderers.providers.AccountabilityTypesProvider" />
-			<fr:property name="choiceType"
-				value="module.organization.domain.AccountabilityType" />
 			<fr:property name="format" value="${name}" />
 			<fr:property name="sortBy" value="name" />
 			<fr:property name="saveOptions" value="true" />
@@ -60,8 +56,6 @@
 		<fr:slot name="workingRelation" layout="menu-select" key="label.config.workingRelation">
 			<fr:property name="providerClass"
 				value="module.organization.presentationTier.renderers.providers.AccountabilityTypesProvider" />
-			<fr:property name="choiceType"
-				value="module.organization.domain.AccountabilityType" />
 			<fr:property name="format" value="${name}" />
 			<fr:property name="sortBy" value="name" />
 			<fr:property name="saveOptions" value="true" />
@@ -70,8 +64,6 @@
 		<fr:slot name="workingRelationWithNoQuota" layout="menu-select" key="label.config.workingRelationWithNoQuota">
 			<fr:property name="providerClass"
 				value="module.organization.presentationTier.renderers.providers.AccountabilityTypesProvider" />
-			<fr:property name="choiceType"
-				value="module.organization.domain.AccountabilityType" />
 			<fr:property name="format" value="${name}" />
 			<fr:property name="sortBy" value="name" />
 			<fr:property name="saveOptions" value="true" />
@@ -80,8 +72,6 @@
 		<fr:slot name="evaluationRelation" layout="menu-select" key="label.config.evaluationRelation">
 			<fr:property name="providerClass"
 				value="module.organization.presentationTier.renderers.providers.AccountabilityTypesProvider" />
-			<fr:property name="choiceType"
-				value="module.organization.domain.AccountabilityType" />
 			<fr:property name="format" value="${name}" />
 			<fr:property name="sortBy" value="name" />
 			<fr:property name="saveOptions" value="true" />
