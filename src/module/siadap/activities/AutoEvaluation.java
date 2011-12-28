@@ -24,7 +24,7 @@ public class AutoEvaluation extends WorkflowActivity<SiadapProcess, AutoEvaluati
 
     @Override
     public String getUsedBundle() {
-	return "resources/SiadapResources";
+	return Siadap.SIADAP_BUNDLE_STRING;
     }
 
     @Override

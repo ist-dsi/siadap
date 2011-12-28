@@ -7,6 +7,7 @@ import module.siadap.domain.Siadap;
 import module.siadap.domain.SiadapProcess;
 import module.siadap.domain.SiadapYearConfiguration;
 import module.siadap.domain.scoring.SiadapGlobalEvaluation;
+import module.workflow.activities.ActivityInformation;
 import module.workflow.activities.WorkflowActivity;
 import myorg.domain.User;
 
@@ -52,5 +53,15 @@ public class CurricularPonderationAttribution extends WorkflowActivity<SiadapPro
 		activityInformation.getAssignedGrade().toString(),
 		SiadapGlobalEvaluation.getGlobalEvaluation(activityInformation.getAssignedGrade(),
 			activityInformation.getAssignExcellentGrade().booleanValue()).getLocalizedName(), observations };
+    }
+
+    @Override
+    public ActivityInformation<SiadapProcess> getActivityInformation(SiadapProcess process) {
+	return new CurricularPonderationActivityInformation(process, this);
+    }
+
+    @Override
+    public String getUsedBundle() {
+	return Siadap.SIADAP_BUNDLE_STRING;
     }
 }

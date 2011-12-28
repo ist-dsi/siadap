@@ -1,3 +1,5 @@
+<%@page import="module.siadap.domain.SiadapUniverse"%>
+<%@page import="module.siadap.domain.Siadap"%>
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html"%>
 <%@ taglib uri="/WEB-INF/struts-bean.tld" prefix="bean"%>
@@ -133,11 +135,29 @@
 </fr:form>
 
 </div>
+<%
+Siadap siadapCasted = (Siadap) siadap;
+
+SiadapYearConfiguration configuration = SiadapYearConfiguration.getSiadapYearConfiguration(siadapCasted.getYear());
+SiadapUniverse defaultSiadapUniverse = siadapCasted.getDefaultSiadapUniverse();
+Integer competencesPonderation = null;
+Integer objectivesPonderation = null;
+if (defaultSiadapUniverse.equals(SiadapUniverse.SIADAP2))
+{
+    competencesPonderation = configuration.getSiadap2CompetencesPonderation();
+    objectivesPonderation = configuration.getSiadap2ObjectivesPonderation();
+}
+if (defaultSiadapUniverse.equals(SiadapUniverse.SIADAP3))
+{
+    competencesPonderation = configuration.getSiadap3CompetencesPonderation();
+    objectivesPonderation = configuration.getSiadap3ObjectivesPonderation();
+}
+%>
 
 
 <script type="text/javascript">
-	var objectivesPonderation = <%= SiadapYearConfiguration.DEFAULT_OBJECTIVES_PONDERATION %> / 100;
-	var competencesPonderation = <%= SiadapYearConfiguration.DEFAULT_COMPETENCES_PONDERATION %> / 100;
+	var objectivesPonderation = <%=objectivesPonderation%> / 100;
+	var competencesPonderation = <%= competencesPonderation%> / 100;
 
 	var highLabel="<bean:message key="module.siadap.domain.scoring.SiadapGlobalEvaluation.HIGH" bundle="SIADAP_RESOURCES"/>";
 	var mediumLabel="<bean:message key="module.siadap.domain.scoring.SiadapGlobalEvaluation.MEDIUM" bundle="SIADAP_RESOURCES"/>";

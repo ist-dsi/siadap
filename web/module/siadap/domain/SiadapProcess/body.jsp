@@ -215,7 +215,7 @@ request.setAttribute("objectivesVisibleToEvaluated", objectivesVisibileToEvaluat
 		 <logic:empty name="process" property="siadap.competenceType">
 		 	<bean:message key="competenceType.notDefined" bundle="SIADAP_RESOURCES"/>
 		 </logic:empty>
-		 <logic:empty name="process" property="siadap.siadapUniverse">
+		 <logic:empty name="process" property="siadap.defaultSiadapUniverse">
 		 	(<bean:message key="label.undefinedUniverse" bundle="SIADAP_RESOURCES"/>)
 		 </logic:empty>
 		 <logic:notEmpty name="process" property="siadap.siadapUniverse">

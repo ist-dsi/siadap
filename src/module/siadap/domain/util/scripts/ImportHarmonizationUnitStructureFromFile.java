@@ -44,7 +44,8 @@ public class ImportHarmonizationUnitStructureFromFile extends ReadCustomTask {
 	    + "ist23470;Unidade de harm. da Direcção Técnica Geral;6316\n"
 	    + "ist23470;Unidade de harm. da Direcção Técnica Geral;6331\n"
 	    + "ist23470;Unidade de harm. da Direcção Técnica Geral;6332\n"
-	    + "ist23470;Unidade de harm. da Direcção Técnica Geral;6333\n");
+	    + "ist23470;Unidade de harm. da Direcção Técnica Geral;6333\n"
+	    + "ist12037;Unidade de harm. do Departamento de Engenharia e Gestão;2901\n");
 
     public final static HashMap<String, HarmonizationUnit> inferedUnits = new HashMap<String, HarmonizationUnit>();
     public final int yearToUse = 2011;

@@ -29,8 +29,8 @@
 
 <schema bundle="SIADAP_RESOURCES" name="activityInformation.CurricularPonderationAttribution"
 		type="module.siadap.activities.CurricularPonderationActivityInformation">
-		<slot name="siadapUniverseToApply" layout="menu-select"
-		validator="pt.ist.fenixWebFramework.renderers.validators.RequiredValidator" key="activity.CurricularPonderationAttribution.label.siadapUniverseToApply"/>
+		<slot name="siadap.defaultSiadapUniverse" key="activity.CurricularPonderationAttribution.label.currentSiadapUniverse"/>
+		<slot name="siadapUniverseToApply" validator="pt.ist.fenixWebFramework.renderers.validators.RequiredValidator" key="activity.CurricularPonderationAttribution.label.siadapUniverseToApply"/>
 		<slot name="curricularPonderationRemarks" validator="pt.ist.fenixWebFramework.renderers.validators.RequiredValidator" key="activity.CurricularPonderationAttribution.label.curricularPonderationRemarks">
 			<property name="bundle" value="SIADAP_RESOURCES"/>
 		</slot>

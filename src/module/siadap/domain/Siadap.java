@@ -85,7 +85,9 @@ public class Siadap extends Siadap_Base {
     //    }
 
 
-
+    public List<CompetenceEvaluation> getCompetenceEvaluations() {
+	return getDefaultSiadapEvaluationUniverse().getCompetenceEvaluations();
+    }
     public boolean isAutoEvaliationDone() {
 	return getAutoEvaluationSealedDate() != null;
     }
@@ -410,6 +412,11 @@ public class Siadap extends Siadap_Base {
 	if (getEvaluationData2() == null || getEvaluationData2().getExcellencyAward() == null)
 		return false;
 	return getEvaluationData2().getExcellencyAward();
+    }
+
+
+    public List<ObjectiveEvaluation> getObjectiveEvaluations() {
+	return getDefaultSiadapEvaluationUniverse().getObjectiveEvaluations();
     }
 
     @Override

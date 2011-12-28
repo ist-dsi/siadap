@@ -114,7 +114,7 @@
 
 <%
 Set<PersonSiadapWrapper> peopleWithQuotasSIADAP2 = (Set<PersonSiadapWrapper>) request.getAttribute("people-withQuotas-SIADAP2");
-Set<PersonSiadapWrapper> peopleWithQuotasSIADAP3 = (Set<PersonSiadapWrapper>) request.getAttribute("people-withQuotas-SIADAP2");
+Set<PersonSiadapWrapper> peopleWithQuotasSIADAP3 = (Set<PersonSiadapWrapper>) request.getAttribute("people-withQuotas-SIADAP3");
 Set<PersonSiadapWrapper> peopleWithoutQuotasSIADAP2 = (Set<PersonSiadapWrapper>) request.getAttribute("people-withoutQuotas-SIADAP2");
 Set<PersonSiadapWrapper> peopleWithoutQuotasSIADAP3 = (Set<PersonSiadapWrapper>) request.getAttribute("people-withoutQuotas-SIADAP3");
 
@@ -135,10 +135,167 @@ boolean hasPeopleToHarmonize = ((peopleWithoutQuotasSIADAP2 == null || peopleWit
 	}
 </style>
 <script type="text/javascript">
-	$("input[type=radio]").click(function () {
-		
-	});
+	String.prototype.endsWith = function(str) 
+	{return (this.match(str+"$")==str)}
+	
+	function decreaseOne(elementToChange)
+	{
+		$(elementToChange).text(parseInt($(elementToChange).text(), 10) - 1)
+		$(elementToChange).css("font-weight","bold");
+	}
+	function increaseOne(elementToChange)
+	{
+		$(elementToChange).text(parseInt($(elementToChange).text(), 10) + 1)
+		$(elementToChange).css("font-weight","bold");
+	}
+	function handleWithoutQuotasSIADAP3RadioClick(radioElement)
+	{
+		if ($(radioElement).next().text().trim() == "Não")
+		{
+		//let's check if they had the Yes selected
+		if ($(radioElement).parents("li").prevAll().children().children("input").attr("value") == "true")
+			{
+			//in case they had, we will decrease the corresponding number
+			if ($(radioElement).parents("td").prev().text().trim() == "Desempenho excelente")
+				{
+				 decreaseOne($('.current-excellents-siadap3WithoutQuotas'));
+				}
+			if ($(radioElement).parents("td").prev().text().trim() == "Desempenho relevante")
+				{
+				 decreaseOne($('.current-relevants-siadap3WithoutQuotas'));
+				}
+			}
+		}
+		if ($(radioElement).next().text().trim() == "Sim")
+		{
+			if ($(radioElement).parents("td").prev().text().trim() == "Desempenho excelente")
+			{
+			 increaseOne($('.current-excellents-siadap3WithoutQuotas'));
+			}
+			if ($(radioElement).parents("td").prev().text().trim() == "Desempenho relevante")
+			{
+			 increaseOne($('.current-relevants-siadap3WithoutQuotas'));
+			}
 
+		}
+	}
+	function handleWithQuotasSIADAP3RadioClick(radioElement)
+	{
+		if ($(radioElement).next().text().trim() == "Não")
+		{
+		//let's check if they had the Yes selected
+		if ($(radioElement).parents("li").prevAll().children().children("input").attr("value") == "true")
+			{
+			//in case they had, we will decrease the corresponding number
+			if ($(radioElement).parents("td").prev().text().trim() == "Desempenho excelente")
+				{
+				 decreaseOne($('.current-excellents-siadap3WithQuotas'));
+				}
+			if ($(radioElement).parents("td").prev().text().trim() == "Desempenho relevante")
+				{
+				 decreaseOne($('.current-relevants-siadap3WithQuotas'));
+				}
+			}
+		}
+		if ($(radioElement).next().text().trim() == "Sim")
+		{
+			if ($(radioElement).parents("td").prev().text().trim() == "Desempenho excelente")
+			{
+			 increaseOne($('.current-excellents-siadap3WithQuotas'));
+			}
+			if ($(radioElement).parents("td").prev().text().trim() == "Desempenho relevante")
+			{
+			 increaseOne($('.current-relevants-siadap3WithQuotas'));
+			}
+
+		}
+	}
+	function handleWithoutQuotasSIADAP2RadioClick(radioElement)
+	{
+		if ($(radioElement).next().text().trim() == "Não")
+		{
+		//let's check if they had the Yes selected
+		if ($(radioElement).parents("li").prevAll().children().children("input").attr("value") == "true")
+			{
+			//in case they had, we will decrease the corresponding number
+			if ($(radioElement).parents("td").prev().text().trim() == "Desempenho excelente")
+				{
+				 decreaseOne($('.current-excellents-siadap2WithoutQuotas'));
+				}
+			if ($(radioElement).parents("td").prev().text().trim() == "Desempenho relevante")
+				{
+				 decreaseOne($('.current-relevants-siadap2WithoutQuotas'));
+				}
+			}
+		}
+		if ($(radioElement).next().text().trim() == "Sim")
+		{
+			if ($(radioElement).parents("td").prev().text().trim() == "Desempenho excelente")
+			{
+			 increaseOne($('.current-excellents-siadap2WithoutQuotas'));
+			}
+			if ($(radioElement).parents("td").prev().text().trim() == "Desempenho relevante")
+			{
+			 increaseOne($('.current-relevants-siadap2WithoutQuotas'));
+			}
+
+		}
+	}
+	function handleWithQuotasSIADAP2RadioClick(radioElement)
+	{
+		if ($(radioElement).next().text().trim() == "Não")
+		{
+		//let's check if they had the Yes selected
+		if ($(radioElement).parents("li").prevAll().children().children("input").attr("value") == "true")
+			{
+			//in case they had, we will decrease the corresponding number
+			if ($(radioElement).parents("td").prev().text().trim() == "Desempenho excelente")
+				{
+				 decreaseOne($('.current-excellents-siadap2WithQuotas'));
+				}
+			if ($(radioElement).parents("td").prev().text().trim() == "Desempenho relevante")
+				{
+				 decreaseOne($('.current-relevants-siadap2WithQuotas'));
+				}
+			}
+		}
+		if ($(radioElement).next().text().trim() == "Sim")
+		{
+			if ($(radioElement).parents("td").prev().text().trim() == "Desempenho excelente")
+			{
+			 increaseOne($('.current-excellents-siadap2WithQuotas'));
+			}
+			if ($(radioElement).parents("td").prev().text().trim() == "Desempenho relevante")
+			{
+			 increaseOne($('.current-relevants-siadap2WithQuotas'));
+			}
+
+		}
+	}
+	
+	$(document).ready(function() {
+		$("input[type=radio]").click(function () {
+			if ($(this).parents("li").attr("class") == "withoutQuotasSIADAP3")
+				{
+					handleWithoutQuotasSIADAP3RadioClick(this);
+				}
+			if ($(this).parents("li").attr("class") == "withQuotasSIADAP3")
+				{
+					handleWithQuotasSIADAP3RadioClick(this);
+				}
+			if ($(this).parents("li").attr("class") == "withoutQuotasSIADAP2")
+				{
+					handleWithoutQuotasSIADAP2RadioClick(this);
+				}
+			if ($(this).parents("li").attr("class") == "withQuotasSIADAP2")
+				{
+					handleWithQuotasSIADAP2RadioClick(this);
+				}
+		});
+
+		 });
+	
+	
 </script>
 	
 		<logic:notEmpty name="people-withQuotas-SIADAP2">

@@ -15,6 +15,7 @@ import module.siadap.activities.AutoEvaluation;
 import module.siadap.activities.ChangeCustomSchedule;
 import module.siadap.activities.CreateCompetenceEvaluation;
 import module.siadap.activities.CreateObjectiveEvaluation;
+import module.siadap.activities.CurricularPonderationAttribution;
 import module.siadap.activities.EditCompetenceEvaluation;
 import module.siadap.activities.EditObjectiveEvaluation;
 import module.siadap.activities.Evaluation;
@@ -71,6 +72,7 @@ public class SiadapProcess extends SiadapProcess_Base {
 	activities.add(new SubmitAutoEvaluation());
 	activities.add(new Evaluation());
 	activities.add(new SubmitEvaluation());
+	activities.add(new CurricularPonderationAttribution());
 	activities.add(new ValidateEvaluation());
 	activities.add(new AcknowledgeEvaluationValidation());
 	activities.add(new Homologate());
