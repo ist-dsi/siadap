@@ -309,18 +309,18 @@ public class SiadapManagement extends ContextBaseAction {
 	    final HttpServletRequest request, final HttpServletResponse response) {
 
 	Unit unit = getDomainObject(request, "unitId");
-	LocalDate localDate = new LocalDate();
-
-	UnitSiadapWrapper wrapper = new UnitSiadapWrapper(unit, localDate.getYear());
+	int year = Integer.parseInt(request.getParameter("year"));
+	
+	UnitSiadapWrapper wrapper = new UnitSiadapWrapper(unit, year);
 	try {
 	    wrapper.finishHarmonization();
-	    for (PersonSiadapWrapper person : wrapper.getUnitEmployees(true)) {
-
-		Siadap siadap = person.getSiadap();
-		if (siadap != null) {
-		    siadap.markAsHarmonized(localDate);
-		}
-	    }
+	    //	    for (PersonSiadapWrapper person : wrapper.getUnitEmployees(true)) {
+	    //
+	    //		Siadap siadap = person.getSiadap();
+	    //		if (siadap != null) {
+	    //		    siadap.markAsHarmonized(localDate);
+	    //		}
+	    //	    }
 	} catch (DomainException e) {
 	    addLocalizedMessage(request, e.getLocalizedMessage());
 	}
@@ -332,18 +332,11 @@ public class SiadapManagement extends ContextBaseAction {
 	    final HttpServletRequest request, final HttpServletResponse response) {
 
 	Unit unit = getDomainObject(request, "unitId");
-	LocalDate localDate = new LocalDate();
-	UnitSiadapWrapper wrapper = new UnitSiadapWrapper(unit, localDate.getYear());
+	int year = Integer.parseInt(request.getParameter("year"));
+	UnitSiadapWrapper wrapper = new UnitSiadapWrapper(unit, year);
 	try {
 	    wrapper.reOpenHarmonization();
 
-	    for (PersonSiadapWrapper person : wrapper.getUnitEmployees(true)) {
-
-		Siadap siadap = person.getSiadap();
-		if (siadap != null) {
-		    siadap.removeHarmonizationMark();
-		}
-	    }
 	} catch (DomainException e) {
 	    addLocalizedMessage(request, e.getLocalizedMessage());
 	}

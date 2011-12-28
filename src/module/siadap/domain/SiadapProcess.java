@@ -202,12 +202,24 @@ public class SiadapProcess extends SiadapProcess_Base {
 	return wrapper.isResponsibleForHarmonization(accessor);
     }
 
-    public void markAsHarmonized() {
-	new LabelLog(this, UserView.getCurrentUser(), "label.terminateHarmonization", "resources/SiadapResources");
+    public void markAsHarmonized(SiadapEvaluationUniverse evaluationUniverse) {
+	String siadapUniverseLocalizedName = evaluationUniverse.getSiadapUniverse().getLocalizedName();
+	if (evaluationUniverse.isCurriculumPonderation()) {
+	    siadapUniverseLocalizedName += " ("
+		    + BundleUtil.getStringFromResourceBundle(Siadap.SIADAP_BUNDLE_STRING, "label.curricularPonderation") + " )";
+	}
+	new LabelLog(this, UserView.getCurrentUser(), "label.terminateHarmonization", "resources/SiadapResources",
+		siadapUniverseLocalizedName);
     }
 
-    public void removeHarmonizationMark() {
-	new LabelLog(this, UserView.getCurrentUser(), "label.reOpenHarmonization", "resources/SiadapResources");
+    public void removeHarmonizationMark(SiadapEvaluationUniverse evaluationUniverse) {
+	String siadapUniverseLocalizedName = evaluationUniverse.getSiadapUniverse().getLocalizedName();
+	if (evaluationUniverse.isCurriculumPonderation()) {
+	    siadapUniverseLocalizedName += " ("
+		    + BundleUtil.getStringFromResourceBundle(Siadap.SIADAP_BUNDLE_STRING, "label.curricularPonderation") + " )";
+	}
+	new LabelLog(this, UserView.getCurrentUser(), "label.reOpenHarmonization", "resources/SiadapResources",
+		siadapUniverseLocalizedName);
     }
 
     public boolean isUserEvaluated(User user) {

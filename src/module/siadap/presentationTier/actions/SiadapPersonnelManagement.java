@@ -54,7 +54,6 @@ public class SiadapPersonnelManagement extends ContextBaseAction {
 
     private static Logger logger = Logger.getLogger(SiadapPersonnelManagement.class.getName());
 
-    private static final String SIADAP_BUNDLE_STRING = "resources/SiadapResources";
 
     public final ActionForward start(final ActionMapping mapping, final ActionForm form, final HttpServletRequest request,
 	    final HttpServletResponse response) throws Exception {
@@ -123,21 +122,21 @@ public class SiadapPersonnelManagement extends ContextBaseAction {
 	    }
 	}
 	//notify the users who have access to this interface
-	String notificationSubject = BundleUtil.getFormattedStringFromResourceBundle(SIADAP_BUNDLE_STRING,
+	String notificationSubject = BundleUtil.getFormattedStringFromResourceBundle(Siadap.SIADAP_BUNDLE_STRING,
 		"manage.siadapStructure.notification.email.managers.terminateUnitHarmonization.subject", String.valueOf(year),
 		person.getName(), unit.getPresentationName());
-	String notificationContent = BundleUtil.getFormattedStringFromResourceBundle(SIADAP_BUNDLE_STRING,
+	String notificationContent = BundleUtil.getFormattedStringFromResourceBundle(Siadap.SIADAP_BUNDLE_STRING,
 		"manage.siadapStructure.notification.email.managers.terminateUnitHarmonization.content", person.getName(), person
 			.getUser().getUsername(), unit.getPresentationName(), unit.getAcronym());
 
 	notifySiadapStructureManagementUsers(request, notificationSubject, notificationContent);
 
 	//notify the user
-	notificationSubject = BundleUtil.getFormattedStringFromResourceBundle(SIADAP_BUNDLE_STRING,
+	notificationSubject = BundleUtil.getFormattedStringFromResourceBundle(Siadap.SIADAP_BUNDLE_STRING,
 		"manage.siadapStructure.notification.email.person.terminateUnitHarmonization.subject", String.valueOf(year),
 		unit.getPresentationName());
 
-	notificationContent = BundleUtil.getFormattedStringFromResourceBundle(SIADAP_BUNDLE_STRING,
+	notificationContent = BundleUtil.getFormattedStringFromResourceBundle(Siadap.SIADAP_BUNDLE_STRING,
 		"manage.siadapStructure.notification.email.person.terminateUnitHarmonization.content", String.valueOf(year),
 		unit.getPresentationName(), unit.getAcronym());
 
@@ -208,21 +207,21 @@ public class SiadapPersonnelManagement extends ContextBaseAction {
 	//notify the users who have access to this interface
 	Unit unit = unitWrapper.getHarmonizationUnit();
 
-	String notificationSubject = BundleUtil.getFormattedStringFromResourceBundle(SIADAP_BUNDLE_STRING,
+	String notificationSubject = BundleUtil.getFormattedStringFromResourceBundle(Siadap.SIADAP_BUNDLE_STRING,
 		"manage.siadapStructure.notification.email.managers.addHarmonizationUnit.subject", String.valueOf(year), person
 			.getUser().getUsername(), unit.getAcronym());
-	String notificationContent = BundleUtil.getFormattedStringFromResourceBundle(SIADAP_BUNDLE_STRING,
+	String notificationContent = BundleUtil.getFormattedStringFromResourceBundle(Siadap.SIADAP_BUNDLE_STRING,
 		"manage.siadapStructure.notification.email.managers.addHarmonizationUnit.content", person.getName(), person
 			.getUser().getUsername(), unit.getPresentationName(), unit.getAcronym());
 
 	notifySiadapStructureManagementUsers(request, notificationSubject, notificationContent);
 
 	//notify the user
-	notificationSubject = BundleUtil.getFormattedStringFromResourceBundle(SIADAP_BUNDLE_STRING,
+	notificationSubject = BundleUtil.getFormattedStringFromResourceBundle(Siadap.SIADAP_BUNDLE_STRING,
 		"manage.siadapStructure.notification.email.person.addHarmonizationUnit.subject", String.valueOf(year),
 		unit.getPresentationName());
 
-	notificationContent = BundleUtil.getFormattedStringFromResourceBundle(SIADAP_BUNDLE_STRING,
+	notificationContent = BundleUtil.getFormattedStringFromResourceBundle(Siadap.SIADAP_BUNDLE_STRING,
 		"manage.siadapStructure.notification.email.person.addHarmonizationUnit.content", String.valueOf(year),
 		unit.getPresentationName(), unit.getAcronym());
 
@@ -254,19 +253,19 @@ public class SiadapPersonnelManagement extends ContextBaseAction {
 
 	String quotasString = null;
 	if (quotasApply) {
-	    quotasString = BundleUtil.getFormattedStringFromResourceBundle(SIADAP_BUNDLE_STRING,
+	    quotasString = BundleUtil.getFormattedStringFromResourceBundle(Siadap.SIADAP_BUNDLE_STRING,
 		    "manage.siadapStructure.notification.email.label.quotasApply");
 	} else {
-	    quotasString = BundleUtil.getFormattedStringFromResourceBundle(SIADAP_BUNDLE_STRING,
+	    quotasString = BundleUtil.getFormattedStringFromResourceBundle(Siadap.SIADAP_BUNDLE_STRING,
 		    "manage.siadapStructure.notification.email.label.quotasDontApply");
 
 	}
 
 	//notify the users who have access to this interface
-	String notificationSubject = BundleUtil.getFormattedStringFromResourceBundle(SIADAP_BUNDLE_STRING,
+	String notificationSubject = BundleUtil.getFormattedStringFromResourceBundle(Siadap.SIADAP_BUNDLE_STRING,
 		"manage.siadapStructure.notification.email.managers.changeWorkingUnit.subject", String.valueOf(year), person
 			.getUser().getUsername(), unit.getAcronym());
-	String notificationContent = BundleUtil.getFormattedStringFromResourceBundle(SIADAP_BUNDLE_STRING,
+	String notificationContent = BundleUtil.getFormattedStringFromResourceBundle(Siadap.SIADAP_BUNDLE_STRING,
 		"manage.siadapStructure.notification.email.managers.changeWorkingUnit.content", person.getName(), person
 			.getUser().getUsername(), unit.getPresentationName(), unit.getAcronym(), String.valueOf(year),
 		dateOfChange.toString(), quotasString);
@@ -274,11 +273,11 @@ public class SiadapPersonnelManagement extends ContextBaseAction {
 	notifySiadapStructureManagementUsers(request, notificationSubject, notificationContent);
 
 	//notify the user
-	notificationSubject = BundleUtil.getFormattedStringFromResourceBundle(SIADAP_BUNDLE_STRING,
+	notificationSubject = BundleUtil.getFormattedStringFromResourceBundle(Siadap.SIADAP_BUNDLE_STRING,
 		"manage.siadapStructure.notification.email.person.changeWorkingUnit.subject", String.valueOf(year),
 		unit.getPresentationName());
 
-	notificationContent = BundleUtil.getFormattedStringFromResourceBundle(SIADAP_BUNDLE_STRING,
+	notificationContent = BundleUtil.getFormattedStringFromResourceBundle(Siadap.SIADAP_BUNDLE_STRING,
 		"manage.siadapStructure.notification.email.person.changeWorkingUnit.content", String.valueOf(year),
 		unit.getPresentationName(), unit.getAcronym(), dateOfChange.toString(), quotasString);
 
@@ -306,10 +305,10 @@ public class SiadapPersonnelManagement extends ContextBaseAction {
 	Person evaluator = personWrapper.getEvaluator().getPerson();
 	User evaluatorUser = evaluator.getUser();
 	//notify the users who have access to this interface
-	String notificationSubject = BundleUtil.getFormattedStringFromResourceBundle(SIADAP_BUNDLE_STRING,
+	String notificationSubject = BundleUtil.getFormattedStringFromResourceBundle(Siadap.SIADAP_BUNDLE_STRING,
 		"manage.siadapStructure.notification.email.managers.changeEvaluator.subject", String.valueOf(year),
 		evaluated.getName(), evaluatedUser.getUsername(), evaluator.getName(), evaluatorUser.getUsername());
-	String notificationContent = BundleUtil.getFormattedStringFromResourceBundle(SIADAP_BUNDLE_STRING,
+	String notificationContent = BundleUtil.getFormattedStringFromResourceBundle(Siadap.SIADAP_BUNDLE_STRING,
 		"manage.siadapStructure.notification.email.managers.changeEvaluator.content", String.valueOf(year),
 		evaluated.getName(), evaluatedUser.getUsername(), evaluator.getName(), evaluatorUser.getUsername(),
 		dateOfChange.toString());
@@ -318,22 +317,22 @@ public class SiadapPersonnelManagement extends ContextBaseAction {
 
 	//notify the direct intervenients
 	//notifying the new evaluator
-	notificationSubject = BundleUtil.getFormattedStringFromResourceBundle(SIADAP_BUNDLE_STRING,
+	notificationSubject = BundleUtil.getFormattedStringFromResourceBundle(Siadap.SIADAP_BUNDLE_STRING,
 		"manage.siadapStructure.notification.email.person.changeEvaluator.evaluator.subject", String.valueOf(year),
 		evaluated.getName(), evaluatedUser.getUsername());
 
-	notificationContent = BundleUtil.getFormattedStringFromResourceBundle(SIADAP_BUNDLE_STRING,
+	notificationContent = BundleUtil.getFormattedStringFromResourceBundle(Siadap.SIADAP_BUNDLE_STRING,
 		"manage.siadapStructure.notification.email.person.changeEvaluator.evaluator.content", String.valueOf(year),
 		evaluated.getName(), evaluatedUser.getUsername(), dateOfChange.toString());
 
 	notifyUser(request, notificationSubject, notificationContent, evaluator);
 
 	//notifying the evaluated
-	notificationSubject = BundleUtil.getFormattedStringFromResourceBundle(SIADAP_BUNDLE_STRING,
+	notificationSubject = BundleUtil.getFormattedStringFromResourceBundle(Siadap.SIADAP_BUNDLE_STRING,
 		"manage.siadapStructure.notification.email.person.changeEvaluator.evaluated.subject", String.valueOf(year),
 		evaluator.getName(), evaluatorUser.getUsername());
 
-	notificationContent = BundleUtil.getFormattedStringFromResourceBundle(SIADAP_BUNDLE_STRING,
+	notificationContent = BundleUtil.getFormattedStringFromResourceBundle(Siadap.SIADAP_BUNDLE_STRING,
 		"manage.siadapStructure.notification.email.person.changeEvaluator.evaluated.content", String.valueOf(year),
 		evaluator.getName(), evaluatorUser.getUsername(), dateOfChange.toString());
 	notifyUser(request, notificationSubject, notificationContent, evaluated);
@@ -376,10 +375,10 @@ public class SiadapPersonnelManagement extends ContextBaseAction {
 	    LocalDate dateOfChange = new LocalDate();
 
 	    //notify the users who have access to this interface
-	    String notificationSubject = BundleUtil.getFormattedStringFromResourceBundle(SIADAP_BUNDLE_STRING,
+	    String notificationSubject = BundleUtil.getFormattedStringFromResourceBundle(Siadap.SIADAP_BUNDLE_STRING,
 		    "manage.siadapStructure.notification.email.managers.changeEvaluator.subject", String.valueOf(year),
 		    evaluated.getName(), evaluatedUser.getUsername(), evaluator.getName(), evaluatorUser.getUsername());
-	    String notificationContent = BundleUtil.getFormattedStringFromResourceBundle(SIADAP_BUNDLE_STRING,
+	    String notificationContent = BundleUtil.getFormattedStringFromResourceBundle(Siadap.SIADAP_BUNDLE_STRING,
 		    "manage.siadapStructure.notification.email.managers.changeEvaluator.content", String.valueOf(year),
 		    evaluated.getName(), evaluatedUser.getUsername(), evaluator.getName(), evaluatorUser.getUsername(),
 		    dateOfChange.toString());
@@ -388,22 +387,22 @@ public class SiadapPersonnelManagement extends ContextBaseAction {
 
 	    //notify the direct intervenients
 	    //notifying the new evaluator
-	    notificationSubject = BundleUtil.getFormattedStringFromResourceBundle(SIADAP_BUNDLE_STRING,
+	    notificationSubject = BundleUtil.getFormattedStringFromResourceBundle(Siadap.SIADAP_BUNDLE_STRING,
 		    "manage.siadapStructure.notification.email.person.changeEvaluator.evaluator.subject", String.valueOf(year),
 		    evaluated.getName(), evaluatedUser.getUsername());
 
-	    notificationContent = BundleUtil.getFormattedStringFromResourceBundle(SIADAP_BUNDLE_STRING,
+	    notificationContent = BundleUtil.getFormattedStringFromResourceBundle(Siadap.SIADAP_BUNDLE_STRING,
 		    "manage.siadapStructure.notification.email.person.changeEvaluator.evaluator.content", String.valueOf(year),
 		    evaluated.getName(), evaluatedUser.getUsername(), dateOfChange.toString());
 
 	    notifyUser(request, notificationSubject, notificationContent, evaluator);
 
 	    //notifying the evaluated
-	    notificationSubject = BundleUtil.getFormattedStringFromResourceBundle(SIADAP_BUNDLE_STRING,
+	    notificationSubject = BundleUtil.getFormattedStringFromResourceBundle(Siadap.SIADAP_BUNDLE_STRING,
 		    "manage.siadapStructure.notification.email.person.changeEvaluator.evaluated.subject", String.valueOf(year),
 		    evaluator.getName(), evaluatorUser.getUsername());
 
-	    notificationContent = BundleUtil.getFormattedStringFromResourceBundle(SIADAP_BUNDLE_STRING,
+	    notificationContent = BundleUtil.getFormattedStringFromResourceBundle(Siadap.SIADAP_BUNDLE_STRING,
 		    "manage.siadapStructure.notification.email.person.changeEvaluator.evaluated.content", String.valueOf(year),
 		    evaluator.getName(), evaluatorUser.getUsername(), dateOfChange.toString());
 	}

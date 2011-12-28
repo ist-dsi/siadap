@@ -506,4 +506,34 @@ public class PersonSiadapWrapper extends PartyWrapper implements Serializable {
 	getSiadap().setDefaultSiadapUniverse(siadapUniverseToChangeTo);
 
     }
+
+    private Boolean getHarmonizationCurrentAssessmentFor(SiadapEvaluationUniverse siadapEvaluationUniverse) {
+	return siadapEvaluationUniverse.getHarmonizationAssessment();
+    }
+
+    public Boolean getHarmonizationCurrentAssessmentForSIADAP2() {
+	return getHarmonizationCurrentAssessmentFor(getSiadap().getSiadapEvaluationUniverseForSiadapUniverse(
+		SiadapUniverse.SIADAP2));
+    }
+
+    public Boolean getHarmonizationCurrentAssessmentForSIADAP3() {
+	return getHarmonizationCurrentAssessmentFor(getSiadap().getSiadapEvaluationUniverseForSiadapUniverse(
+		SiadapUniverse.SIADAP3));
+    }
+
+    private void setHarmonizationCurrentAssessment(SiadapUniverse siadapUniverse,
+	    Boolean harmonizationCurrentAssessment) {
+	SiadapEvaluationUniverse siadapEvaluationUniverseForSiadapUniverse = getSiadap()
+		.getSiadapEvaluationUniverseForSiadapUniverse(siadapUniverse);
+	siadapEvaluationUniverseForSiadapUniverse.setHarmonizationAssessment(harmonizationCurrentAssessment);
+    }
+
+    public void setHarmonizationCurrentAssessmentForSIADAP3(Boolean assessment) {
+	setHarmonizationCurrentAssessment(SiadapUniverse.SIADAP3,
+		assessment);
+    }
+
+    public void setHarmonizationCurrentAssessmentForSIADAP2(Boolean assessment) {
+	setHarmonizationCurrentAssessment(SiadapUniverse.SIADAP2, assessment);
+    }
 }

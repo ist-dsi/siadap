@@ -6,9 +6,18 @@ import module.siadap.domain.scoring.IScoring;
 
 public class CurricularPonderationEvaluationItem extends CurricularPonderationEvaluationItem_Base {
     
-    public  CurricularPonderationEvaluationItem() {
+    protected CurricularPonderationEvaluationItem(BigDecimal assignedGrade, Boolean assignedExcellency,
+	    String excellencyAwardJustification, String curricularPonderationJustification,
+	    SiadapEvaluationUniverse siadapEvaluationUniverse) {
         super();
+	setSiadapEvaluationUniverse(siadapEvaluationUniverse);
+	setEvaluation(assignedGrade);
+	setExcellencyAward(assignedExcellency);
+	setExcellencyAwardJustification(excellencyAwardJustification);
+	setCurricularPonderationJustification(curricularPonderationJustification);
     }
+
+    //TODO do the edit (similar to the constructor) with the difference of being associated with an activity (yet to be required)
     
     static public BigDecimal getCurricularPonderationValue(SiadapEvaluationUniverse siadapEvaluationUniverse)
     {

@@ -12,6 +12,7 @@ import module.siadap.domain.scoring.SiadapGlobalEvaluation;
 import myorg.domain.exceptions.DomainException;
 
 import org.apache.commons.collections.Predicate;
+import org.joda.time.LocalDate;
 
 public class SiadapEvaluationUniverse extends SiadapEvaluationUniverse_Base {
 
@@ -203,6 +204,22 @@ public class SiadapEvaluationUniverse extends SiadapEvaluationUniverse_Base {
 	    return excellencyAward.booleanValue();
 	}
 	return false;
+    }
+
+    @Override
+    public void setHarmonizationAssessment(Boolean harmonizationAssessment) {
+	if (getHarmonizationDate() != null)
+	    throw new SiadapException("error.harmonization.closed.cannot.change.assessment.reopen.first");
+	super.setHarmonizationAssessment(harmonizationAssessment);
+    }
+
+    @Override
+    public void setHarmonizationDate(LocalDate harmonizationDate) {
+	if (getHarmonizationAssessment() == null) {
+	    throw new SiadapException("error.harmonization.not.finished.for.person.X"
+		    + getSiadap().getEvaluated().getUser().getUsername());
+	}
+	super.setHarmonizationDate(harmonizationDate);
     }
 
 }

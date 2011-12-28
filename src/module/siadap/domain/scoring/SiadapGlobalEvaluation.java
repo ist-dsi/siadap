@@ -45,6 +45,12 @@ public enum SiadapGlobalEvaluation implements IPresentableEnum, IScoring {
 	    
     }
 
+    public static boolean isValidGrade(BigDecimal grade, boolean excellentAssigned) {
+	if (getGlobalEvaluation(grade, excellentAssigned).equals(NONEXISTING))
+		return false;
+	    return true;
+    }
+
     @Override
     public String getLocalizedName() {
 	return BundleUtil.getStringFromResourceBundle("resources/SiadapResources", getClass().getName() + "." + name());

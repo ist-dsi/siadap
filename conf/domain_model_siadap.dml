@@ -52,6 +52,10 @@ class SiadapYearConfiguration {
 	LocalDate evaluationBegin;
 	LocalDate evaluationEnd;
 	
+	/* dates for the harmonization of all H.U. (except the special one) */
+	LocalDate firstLevelHarmonizationBegin;
+	LocalDate firstLevelHarmonizationEnd;
+	
 	Integer quotaExcellencySiadap2WithQuota;
 	Integer quotaExcellencySiadap3WithQuota;
 	
@@ -104,6 +108,8 @@ class Siadap {
 	
 	LocalDate customEvaluationBegin;
 	LocalDate customEvaluationEnd;
+	
+	
 	
 	 SiadapUniverse siadapUniverse;//R1
 }

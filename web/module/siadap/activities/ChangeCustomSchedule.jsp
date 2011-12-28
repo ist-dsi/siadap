@@ -77,5 +77,5 @@
 			form.attr('action',$("#addIndicator").attr('href'));
 			form.submit();
 		});
-	</script>
+</script>
 	 

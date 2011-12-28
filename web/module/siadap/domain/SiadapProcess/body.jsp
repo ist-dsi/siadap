@@ -29,6 +29,7 @@ request.setAttribute("objectivesVisibleToEvaluated", objectivesVisibileToEvaluat
 	</div>
 </logic:notEmpty>
 
+<%-- TODO uncomment joantune: commented this part because of a missing library in Mac OS X
 <logic:equal name="evaluatorPersonWrapper" property="emailDefined" value="false">
 <div class="highlightBox"> 
 	<b><p style="color:darkRed">Avaliador sem e-mail definido. Este avaliador não poderá receber notificações automáticas via e-mail. Para corrigir isto, por favor insira um contacto de-mail na secção informação pessoal no Fénix</p> </b>
@@ -39,6 +40,7 @@ request.setAttribute("objectivesVisibleToEvaluated", objectivesVisibileToEvaluat
 	<b><p style="color:darkRed">Avaliado sem e-mail definido. Este avaliado não poderá receber notificações automáticas via e-mail. Para corrigir isto, por favor insira um contacto de-mail na secção informação pessoal no Fénix</p> </b>
 </div>
 </logic:equal>
+ --%>
 <h3><bean:message bundle="SIADAP_RESOURCES" key="label.siadap.schedule" arg0="<%= ((SiadapProcess) processJava).getSiadap().getYear().toString()%>" />:</h3>
 
 <%-- START: The table with the deadlines and custom deadlines if they are defined --%>

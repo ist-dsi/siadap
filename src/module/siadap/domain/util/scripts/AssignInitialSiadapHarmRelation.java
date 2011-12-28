@@ -16,6 +16,7 @@ import module.siadap.domain.SiadapEvaluationUniverse;
 import module.siadap.domain.SiadapRootModule;
 import module.siadap.domain.SiadapUniverse;
 import module.siadap.domain.SiadapYearConfiguration;
+import module.siadap.domain.util.SiadapMiscUtilClass;
 import module.siadap.domain.wrappers.PersonSiadapWrapper;
 import module.siadap.domain.wrappers.UnitSiadapWrapper;
 import myorg.domain.scheduler.ReadCustomTask;
@@ -109,7 +110,7 @@ public class AssignInitialSiadapHarmRelation extends ReadCustomTask {
 			//let's add this accountability
 			AccountabilityType accTypeToUse = defaultSiadapEvaluationUniverse.getSiadapUniverse() == SiadapUniverse.SIADAP2 ? siadap2HarmonizationRelation : siadap3HarmonizationRelation;
 			accountabilitiesToApply.add(new AccountabilityAssignmentWrapper(accTypeToUse, new LocalDate(),
-				lastDayOfYear(year), unit, person));
+				SiadapMiscUtilClass.lastDayOfYear(year), unit, person));
 		    }
 			
 		    }
@@ -139,11 +140,6 @@ public class AssignInitialSiadapHarmRelation extends ReadCustomTask {
     private void printStatus() {
 	out.println("Applied the following number of accountabilities: " + accApplied);
 
-    }
-
-
-    private LocalDate lastDayOfYear(int year) {
-	return new LocalDate(year, 12, 31);
     }
 
     class ApplyAccountabilities extends TransactionalThread {

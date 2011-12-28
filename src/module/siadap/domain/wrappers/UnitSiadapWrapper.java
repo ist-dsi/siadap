@@ -19,12 +19,15 @@ import module.organization.domain.Unit;
 import module.siadap.domain.ExceddingQuotaSuggestionType;
 import module.siadap.domain.ExcedingQuotaProposal;
 import module.siadap.domain.Siadap;
+import module.siadap.domain.SiadapUniverse;
 import module.siadap.domain.SiadapYearConfiguration;
-import myorg.domain.exceptions.DomainException;
+import module.siadap.domain.exceptions.SiadapException;
+import module.siadap.domain.util.SiadapMiscUtilClass;
 import myorg.util.BundleUtil;
 
 import org.apache.commons.collections.Predicate;
 import org.jfree.data.time.Month;
+import org.joda.time.Interval;
 import org.joda.time.LocalDate;
 
 import pt.ist.fenixWebFramework.services.Service;
@@ -67,8 +70,8 @@ public class UnitSiadapWrapper extends PartyWrapper implements Serializable {
 		.getWorkingRelationWithNoQuota());
 
 	return BundleUtil.getFormattedStringFromResourceBundle("resources/SiadapResources",
-		"label.totalWorkingPeopleInUnit.description", String.valueOf(peopleWithQuotas + peopleWithNoQuotas), String
-			.valueOf(peopleWithQuotas), String.valueOf(peopleWithNoQuotas));
+		"label.totalWorkingPeopleInUnit.description", String.valueOf(peopleWithQuotas + peopleWithNoQuotas),
+		String.valueOf(peopleWithQuotas), String.valueOf(peopleWithNoQuotas));
     }
 
     public int getTotalPeopleWorkingInUnit() {
@@ -119,10 +122,9 @@ public class UnitSiadapWrapper extends PartyWrapper implements Serializable {
 	AccountabilityType siadap2HarmonizationRelation = siadapYearConfiguration.getSiadap2HarmonizationRelation();
 	AccountabilityType siadap3HarmonizationRelation = siadapYearConfiguration.getSiadap3HarmonizationRelation();
 	getUnitAttachedPersons(getUnit(), personSiadapWrappers, isHarmonizationUnit(),
-		new SiadapStateFilter(excludeResponsibles),
-		siadap2HarmonizationRelation, siadap3HarmonizationRelation);
+		new SiadapStateFilter(excludeResponsibles), siadap2HarmonizationRelation, siadap3HarmonizationRelation);
 	return new HashSet(personSiadapWrappers).size();
-	
+
     }
 
     public int getTotalPeopleWorkingInUnitIncludingNoQuotaPeople() {
@@ -131,10 +133,9 @@ public class UnitSiadapWrapper extends PartyWrapper implements Serializable {
 
     public int getTotalPeopleWorkingInUnitIncludingNoQuotaPeople(boolean continueToSubUnits) {
 	SiadapYearConfiguration configuration = getConfiguration();
-	return getTotalPeopleWorkingInUnit(getUnit(), continueToSubUnits, configuration.getWorkingRelation(), configuration
-		.getWorkingRelationWithNoQuota());
+	return getTotalPeopleWorkingInUnit(getUnit(), continueToSubUnits, configuration.getWorkingRelation(),
+		configuration.getWorkingRelationWithNoQuota());
     }
-
 
     public int getTotalPeopleWorkingInUnit(boolean continueToSubUnits) {
 	return getTotalPeopleWorkingInUnit(getUnit(), continueToSubUnits, getConfiguration().getWorkingRelation());
@@ -183,8 +184,7 @@ public class UnitSiadapWrapper extends PartyWrapper implements Serializable {
 	return people;
     }
 
-    private int getNrEvaluationsBasedOnPredicate(Collection<PersonSiadapWrapper> personsToEvaluatePredicateOn,
-	    Predicate predicate) {
+    private int getNrEvaluationsBasedOnPredicate(Collection<PersonSiadapWrapper> personsToEvaluatePredicateOn, Predicate predicate) {
 	int counter = 0;
 	for (PersonSiadapWrapper siadapWrapper : personsToEvaluatePredicateOn) {
 	    if (predicate.evaluate(siadapWrapper))
@@ -276,19 +276,18 @@ public class UnitSiadapWrapper extends PartyWrapper implements Serializable {
 	    }
 	});
 
-
     }
 
-    public Integer getRelevantSiadap2WithQuotaQuota()
-    {
-	Integer quotaRelevantSiadap2WithQuota = SiadapYearConfiguration.getSiadapYearConfiguration(getYear()).getQuotaRelevantSiadap2WithQuota();
+    public Integer getRelevantSiadap2WithQuotaQuota() {
+	Integer quotaRelevantSiadap2WithQuota = SiadapYearConfiguration.getSiadapYearConfiguration(getYear())
+		.getQuotaRelevantSiadap2WithQuota();
 	int totalPeople = getPeopleHarmonizedInUnitSiadap2WithQuotas();
 	return calculateQuota(totalPeople, quotaRelevantSiadap2WithQuota);
     }
 
     public Integer getNumberCurrentRelevantsSiadap2WithQuota() {
 	return getNrEvaluationsBasedOnPredicate(getSiadap2AndWorkingRelationWithQuotaUniverse(), new Predicate() {
-	    
+
 	    @Override
 	    public boolean evaluate(Object arg0) {
 		PersonSiadapWrapper personSiadapWrapper = (PersonSiadapWrapper) arg0;
@@ -342,7 +341,6 @@ public class UnitSiadapWrapper extends PartyWrapper implements Serializable {
 	    }
 	});
     }
-
 
     //Quotas SIADAP 3 WITH quota
     public Integer getExcellencySiadap3WithQuotaQuota() {
@@ -438,8 +436,7 @@ public class UnitSiadapWrapper extends PartyWrapper implements Serializable {
      * @return how many people it represents, it is never 0 due to SIADAPs rules
      */
     private int calculateQuota(int totalPeople, Integer quota) {
-	BigDecimal result = new BigDecimal(totalPeople).multiply(new BigDecimal(quota)).divide(
-		new BigDecimal(100));
+	BigDecimal result = new BigDecimal(totalPeople).multiply(new BigDecimal(quota)).divide(new BigDecimal(100));
 
 	int value = result.intValue();
 	return value > 0 ? value : 1; //if the quota is 0 the the quota shifts to 1
@@ -527,7 +524,7 @@ public class UnitSiadapWrapper extends PartyWrapper implements Serializable {
 	AccountabilityType harmonizationResponsibleRelation = getConfiguration().getHarmonizationResponsibleRelation();
 	Collection<Accountability> childrenAccountabilities = getUnit().getChildrenAccountabilities(
 		Collections.singleton(harmonizationResponsibleRelation));
-	
+
 	LocalDate end = new LocalDate(getYear(), Month.DECEMBER, 31);
 
 	if (!childrenAccountabilities.isEmpty()) {
@@ -650,10 +647,8 @@ public class UnitSiadapWrapper extends PartyWrapper implements Serializable {
     }
 
     public boolean isHarmonizationUnit() {
-	for (PartyType partyType : getUnit().getPartyTypes())
-	{
-	    if (partyType.getType().equalsIgnoreCase(SIADAP_HARMONIZATION_UNIT_TYPE) )
- {
+	for (PartyType partyType : getUnit().getPartyTypes()) {
+	    if (partyType.getType().equalsIgnoreCase(SIADAP_HARMONIZATION_UNIT_TYPE)) {
 		//seen that we are in the top harmonization unit, we will show info about all of the persons on the sub units
 		return true;
 	    }
@@ -691,8 +686,8 @@ public class UnitSiadapWrapper extends PartyWrapper implements Serializable {
 	    PersonSiadapWrapper personWrapper = (PersonSiadapWrapper) arg0;
 	    boolean quotaAware = personWrapper.isQuotaAware();
 
-	    return (personWrapper.getYear() == year && (!excludeResponsibles || !harmonizationResponsibles.contains(personWrapper
-.getPerson())) && (includeQuota
+	    return (personWrapper.getYear() == year
+		    && (!excludeResponsibles || !harmonizationResponsibles.contains(personWrapper.getPerson())) && (includeQuota
 		    && quotaAware || !includeQuota && !quotaAware));
 	}
     }
@@ -784,7 +779,6 @@ public class UnitSiadapWrapper extends PartyWrapper implements Serializable {
 	    excludeResponsibles = false;
 
 	SiadapUniverseFilter siadapUniverseFilter = new SiadapUniverseFilter(excludeResponsibles, getYear(), this, false);
-
 
 	List<PersonSiadapWrapper> universePersons = new ArrayList<PersonSiadapWrapper>();
 	getUnitAttachedPersons(unit, universePersons, isHarmonizationUnit(), siadapUniverseFilter, siadap3HarmonizationRelation);
@@ -879,37 +873,134 @@ public class UnitSiadapWrapper extends PartyWrapper implements Serializable {
 	return false;
     }
 
+    public boolean isSpecialHarmonizationUnit() {
+	return getUnit().equals(getConfiguration().getSiadapSpecialHarmonizationUnit());
+    }
+
+    public Interval getHarmonizationInterval() {
+	SiadapYearConfiguration configuration = getConfiguration();
+	LocalDate harmonizationBegin = configuration.getFirstLevelHarmonizationBegin();
+	LocalDate harmonizationEnd = configuration.getFirstLevelHarmonizationEnd();
+	return new Interval(SiadapMiscUtilClass.convertDateToBeginOfDay(harmonizationBegin),
+		SiadapMiscUtilClass.convertDateToEndOfDay(harmonizationEnd));
+    }
+
+    public boolean isHarmonizationActive() {
+	SiadapYearConfiguration configuration = getConfiguration();
+	LocalDate harmonizationBegin = configuration.getFirstLevelHarmonizationBegin();
+	LocalDate harmonizationEnd = configuration.getFirstLevelHarmonizationEnd();
+	if (!isHarmonizationUnit())
+	    return false;
+
+	if (!isSpecialHarmonizationUnit()) {
+	    //the special harmonization unit has no date constraints,
+	    //the others have!
+
+	    //we should have all dates defined
+	    if (harmonizationBegin == null || harmonizationEnd == null) {
+		return false;
+	    }
+
+	    if (!getHarmonizationInterval().containsNow())
+		return false;
+	}
+	return true;
+    }
+
     @Service
     public void finishHarmonization() {
-	SiadapYearConfiguration configuration = SiadapYearConfiguration.getSiadapYearConfiguration(getYear());
-	//TODO joantune:
+	if (!isHarmonizationUnit()) {
+	    throw new SiadapException("error.cannot.close.harmonization.in.a.non-harmonization.unit");
+	}
+	LocalDate currentDate = new LocalDate();
+	SiadapYearConfiguration configuration = getConfiguration();
+	if (!isHarmonizationActive())
+	    throw new SiadapException("error.harmonization.period.is.closed");
+	//TODO make possible to check the subunits if they are harmonized
+	if (configuration.getLockHarmonizationOnQuota() && (isSiadap2WithQuotasAboveQuota() || isSiadap3WithQuotasAboveQuota())) {
+	    throw new SiadapException("error.harmonization.unit.is.not.harmonized.for.quota");
+	}
+	if (configuration.getLockHarmonizationOnQuotaOutsideOfQuotaUniverses()
+		&& (isSiadap2WithoutQuotasAboveQuota() || isSiadap3WithoutQuotasAboveQuota())) {
+	    throw new SiadapException("error.harmonization.unit.is.not.harmonized.outside.quotas.universes");
+	}
+
+	//let's make sure we harmonize everybody now
+
+	finishHarmonizationFor(SiadapUniverse.SIADAP2, currentDate);
+	finishHarmonizationFor(SiadapUniverse.SIADAP3, currentDate);
+	getConfiguration().addHarmonizationClosedUnits(getUnit());
+
 	//	if (configuration.getLockHarmonizationOnQuota() && isAboveQuotas()) {
 	//	    throw new DomainException("error.canOnlyCloseHarmonizationWhenQuotasDoNotExceedValues", DomainException
 	//		    .getResourceFor("resources/SiadapResources"));
 	//	}
 
-	for (UnitSiadapWrapper wrapper : getSubHarmonizationUnits()) {
-	    if (!wrapper.isHarmonizationFinished()) {
-		throw new DomainException("error.tryingToFinishHarmonizationWithSubHarmonizationOpen", DomainException
-			.getResourceFor("resources/SiadapResources"), getName().getContent(), wrapper.getName().getContent());
-	    }
+	//	for (UnitSiadapWrapper wrapper : getSubHarmonizationUnits()) {
+	//	    if (!wrapper.isHarmonizationFinished()) {
+	//		throw new DomainException("error.tryingToFinishHarmonizationWithSubHarmonizationOpen", DomainException
+	//			.getResourceFor("resources/SiadapResources"), getName().getContent(), wrapper.getName().getContent());
+	//	    }
+	//	}
+	//	for (UnitSiadapWrapper wrapper : getAllChildUnits()) {
+	//	    if (!wrapper.isWithAllSiadapsFilled(false)) {
+	//		throw new DomainException("error.tryingToFinishHarmonizationWithSiadapProcessYetToBeEvaluated", DomainException
+	//			.getResourceFor("resources/SiadapResources"), getName().getContent(), wrapper.getName().getContent());
+	//	    }
+	//	}
+    }
+
+    public void finishHarmonizationFor(SiadapUniverse siadapUniverse, LocalDate currentDate) {
+	Set<PersonSiadapWrapper> personsToHarmonize = new HashSet<PersonSiadapWrapper>();
+	if (siadapUniverse.equals(SiadapUniverse.SIADAP2)) {
+	    personsToHarmonize.addAll(getSiadap2AndWorkingRelationWithQuotaUniverse());
+	    personsToHarmonize.addAll(getSiadap2AndWorkingRelationWithoutQuotaUniverse());
+	} else if (siadapUniverse.equals(SiadapUniverse.SIADAP3)) {
+	    personsToHarmonize.addAll(getSiadap3AndWorkingRelationWithoutQuotaUniverse());
+	    personsToHarmonize.addAll(getSiadap3AndWorkingRelationWithQuotaUniverse());
 	}
-	for (UnitSiadapWrapper wrapper : getAllChildUnits()) {
-	    if (!wrapper.isWithAllSiadapsFilled(false)) {
-		throw new DomainException("error.tryingToFinishHarmonizationWithSiadapProcessYetToBeEvaluated", DomainException
-			.getResourceFor("resources/SiadapResources"), getName().getContent(), wrapper.getName().getContent());
-	    }
+	for (PersonSiadapWrapper personToHarmonize : personsToHarmonize) {
+	    personToHarmonize.getSiadap().markAsHarmonized(currentDate, siadapUniverse);
 	}
-	getConfiguration().addHarmonizationClosedUnits(getUnit());
+    }
+
+    public void reOpenHarmonizationFor(SiadapUniverse siadapUniverse) {
+	Set<PersonSiadapWrapper> personsToHarmonize = new HashSet<PersonSiadapWrapper>();
+	if (siadapUniverse.equals(SiadapUniverse.SIADAP2)) {
+	    personsToHarmonize.addAll(getSiadap2AndWorkingRelationWithQuotaUniverse());
+	    personsToHarmonize.addAll(getSiadap2AndWorkingRelationWithoutQuotaUniverse());
+	} else if (siadapUniverse.equals(SiadapUniverse.SIADAP3)) {
+	    personsToHarmonize.addAll(getSiadap3AndWorkingRelationWithQuotaUniverse());
+	    personsToHarmonize.addAll(getSiadap3AndWorkingRelationWithoutQuotaUniverse());
+	}
+
+	for (PersonSiadapWrapper personToHarmonize : personsToHarmonize) {
+	    personToHarmonize.getSiadap().removeHarmonizationMark(siadapUniverse);
+	}
+
     }
 
     @Service
     public void reOpenHarmonization() {
-	UnitSiadapWrapper topHarmonization = getTopHarmonizationUnit();
-	if (topHarmonization != null && topHarmonization.isHarmonizationFinished()) {
-	    throw new DomainException("error.unableToReopenTopUnitHasAlreadyFinishedHarmonization", DomainException
-		    .getResourceFor("resources/SiadapResources"), getName().getContent(), topHarmonization.getName().getContent());
+	if (!isHarmonizationActive())
+	    throw new SiadapException("error.harmonization.period.is.closed");
+
+	if (!isHarmonizationFinished())
+	    throw new SiadapException("error.harmonization.can.not.reopen.unclosed.harmonization");
+
+	if (!isHarmonizationUnit()) {
+	    throw new SiadapException("error.cannot.close.harmonization.in.a.non-harmonization.unit");
 	}
+	LocalDate currentDate = new LocalDate();
+	reOpenHarmonizationFor(SiadapUniverse.SIADAP2);
+	reOpenHarmonizationFor(SiadapUniverse.SIADAP3);
+
+	//	UnitSiadapWrapper topHarmonization = getTopHarmonizationUnit();
+	//	if (topHarmonization != null && topHarmonization.isHarmonizationFinished()) {
+	//	    throw new DomainException("error.unableToReopenTopUnitHasAlreadyFinishedHarmonization",
+	//		    DomainException.getResourceFor("resources/SiadapResources"), getName().getContent(), topHarmonization
+	//			    .getName().getContent());
+	//	}
 	getConfiguration().removeHarmonizationClosedUnits(getUnit());
     }
 

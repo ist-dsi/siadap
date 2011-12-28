@@ -5,8 +5,13 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import module.organization.domain.Accountability;
+import module.organization.domain.AccountabilityType;
 import module.organization.domain.Person;
+import module.organization.domain.Unit;
+import module.siadap.domain.exceptions.SiadapException;
 import module.siadap.domain.scoring.SiadapGlobalEvaluation;
+import module.siadap.domain.util.SiadapMiscUtilClass;
 import module.siadap.domain.util.SiadapPendingProcessesCounter;
 import module.siadap.domain.wrappers.PersonSiadapWrapper;
 import module.workflow.domain.utils.WorkflowCommentCounter;
@@ -15,14 +20,14 @@ import module.workflow.widgets.UnreadCommentsWidget;
 
 import org.apache.commons.collections.Predicate;
 import org.apache.commons.lang.StringUtils;
-import org.joda.time.DateTime;
 import org.joda.time.Interval;
 import org.joda.time.LocalDate;
-import org.joda.time.ReadableInstant;
 
 import pt.ist.fenixWebFramework.services.Service;
 
 public class Siadap extends Siadap_Base {
+
+    public static final String SIADAP_BUNDLE_STRING = "resources/SiadapResources";
 
     //register itself in the pending processes widget:
     static {
@@ -73,6 +78,7 @@ public class Siadap extends Siadap_Base {
 	}
 	return null;
     }
+
 
     //    public List<CompetenceEvaluation> getCompetenceEvaluations() {
     //	return getEvaluations(CompetenceEvaluation.class, null, null);
@@ -215,6 +221,71 @@ public class Siadap extends Siadap_Base {
 		return ((CompetenceEvaluation) siadapEvaluationItem).getCompetence().getCompetenceType();
 	}
 	return null;
+    }
+    
+    @Service
+    public void createCurricularPonderation(SiadapUniverse siadapUniverse, BigDecimal gradeToAssign, Boolean assignedExcellency,
+	    String excellencyAwardJustification, String curricularPonderationJustification)
+    {
+	//let's validate everything
+	if (siadapUniverse == null || assignedExcellency == null
+		|| !SiadapGlobalEvaluation.isValidGrade(gradeToAssign, assignedExcellency.booleanValue())
+		|| (assignedExcellency.booleanValue() && StringUtils.isEmpty(excellencyAwardJustification))
+		|| StringUtils.isEmpty(curricularPonderationJustification))
+	    throw new SiadapException("invalid.data.for.creation.of.a.curricular.ponderation");
+
+	SiadapYearConfiguration siadapYearConfiguration = getSiadapYearConfiguration();
+	Unit siadapSpecialHarmonizationUnit = siadapYearConfiguration.getSiadapSpecialHarmonizationUnit();
+	if (siadapSpecialHarmonizationUnit == null)
+	{
+	    throw new SiadapException("error.must.configure.special.harmonnization.unit.first");
+	}
+	
+	AccountabilityType accTypeToReplace = null;
+	if (siadapUniverse.equals(SiadapUniverse.SIADAP2))
+	{
+	    accTypeToReplace =siadapYearConfiguration.getSiadap2HarmonizationRelation();
+	}
+	else if (siadapUniverse.equals(SiadapUniverse.SIADAP3))
+	{
+	    accTypeToReplace = siadapYearConfiguration.getSiadap3HarmonizationRelation();
+	}
+	
+	if (accTypeToReplace == null)
+	{
+	    throw new SiadapException("error.must.configure.SIADAP.2.and.3.harm.relation.types.first");
+	}
+	//let's create the new SiadapEvaluationUniverse
+	SiadapEvaluationUniverse siadapEvaluationUniverse = new SiadapEvaluationUniverse(this, siadapUniverse, false);
+	CurricularPonderationEvaluationItem curricularPonderationEvaluationItem = new CurricularPonderationEvaluationItem(gradeToAssign, assignedExcellency, excellencyAwardJustification, curricularPonderationJustification, siadapEvaluationUniverse);
+	//let's connect this SiadapEvaluationUniverse with the specialunit
+	Person evaluated = getEvaluated();
+	//let's remove the current accountability that it might have for the given SiadapUniverse
+	
+	LocalDate dateToUse = null;
+	//let's search for the previous accountability
+	for (Accountability accountability : evaluated.getParentAccountabilities(accTypeToReplace))
+	{
+	    //let's confirm that in the other end there's a unit, and that the accountability is for this year
+	    if (accountability.getParent() instanceof Unit)
+	    {
+		if (accountability.isActive(SiadapMiscUtilClass.lastDayOfYear(getYear())))
+		{
+		    //this is the one to replace, let's get it's begindate
+		    dateToUse = accountability.getBeginDate();
+		}
+	    }
+	}
+	
+	if (dateToUse == null)
+	{
+	    //let's get a viable date here 30th December of the year
+	    dateToUse = new LocalDate(getYear(), 12, 30);
+	}
+	
+	evaluated.addParent(siadapSpecialHarmonizationUnit, accTypeToReplace, dateToUse,
+		SiadapMiscUtilClass.lastDayOfYear(getYear()));
+
     }
 
     /**
@@ -369,7 +440,7 @@ public class Siadap extends Siadap_Base {
     public Interval getAutoEvaluationInterval() {
 	LocalDate begin = getAutoEvaluationBeginDate();
 	LocalDate end = getAutoEvaluationEndDate();
-	return new Interval(convertDateToBeginOfDay(begin), convertDateToEndOfDay(end));
+	return new Interval(SiadapMiscUtilClass.convertDateToBeginOfDay(begin), SiadapMiscUtilClass.convertDateToEndOfDay(end));
     }
 
     public LocalDate getEvaluationEndDate() {
@@ -395,7 +466,7 @@ public class Siadap extends Siadap_Base {
     public Interval getEvaluationInterval() {
 	LocalDate begin = getEvaluationBeginDate();
 	LocalDate end = getEvaluationEndDate();
-	return new Interval(convertDateToBeginOfDay(begin), convertDateToEndOfDay(end));
+	return new Interval(SiadapMiscUtilClass.convertDateToBeginOfDay(begin), SiadapMiscUtilClass.convertDateToEndOfDay(end));
     }
 
     public LocalDate getObjectiveSpecificationEndDate() {
@@ -422,46 +493,10 @@ public class Siadap extends Siadap_Base {
 
 	LocalDate end = getObjectiveSpecificationEndDate();
 
-	return new Interval(convertDateToBeginOfDay(begin), convertDateToEndOfDay(end));
+	return new Interval(SiadapMiscUtilClass.convertDateToBeginOfDay(begin), SiadapMiscUtilClass.convertDateToEndOfDay(end));
     }
 
-    /**
-     * 
-     * @param date
-     *            the {@link LocalDate} that will be converted to represent the
-     *            date at the beginning of the day
-     * @return an {@link ReadableInstant} with the same day/month/year but the
-     *         first instant of it, that is the first hour, first minute, first
-     *         second etc...
-     */
-    private ReadableInstant convertDateToBeginOfDay(LocalDate date) {
-	ReadableInstant newLocalDate = null;
-	if (date != null)
-	{
-	    return date.toDateTimeAtStartOfDay();
-	}
-	return newLocalDate;
 
-    }
-
-    /**
-     * 
-     * @param date
-     *            the {@link LocalDate} that will be converted to represent the
-     *            date at the beginning of the day
-     * @return an {@link ReadableInstant} with the same day/month/year but the
-     *         last instant of it, that is the last hour, last minute, last
-     *         second etc...
-     */
-    private ReadableInstant convertDateToEndOfDay(LocalDate date) {
-	ReadableInstant newLocalDate = null;
-	if (date != null) {
-	    return new DateTime(date.getYear(), date.getMonthOfYear(), date.getDayOfMonth(), 23, 59, 59, 59);
-
-	}
-	return newLocalDate;
-
-    }
 
     //TODO change this appropriately when Issue #31 is resolved
     private boolean isAutoEvaluationScheduleDefined() {
@@ -517,21 +552,27 @@ public class Siadap extends Siadap_Base {
     }
 
     @Service
-    public void markAsHarmonized(LocalDate harmonizationDate) {
-	//TODO joantune comment this method and see what has to be changed
-	for (SiadapEvaluationUniverse siadapEvaluationUniverse : getSiadapEvaluationUniverses()) {
-	    siadapEvaluationUniverse.setHarmonizationDate(harmonizationDate);
-	}
-	getProcess().markAsHarmonized();
+    public void removeHarmonizationMark(SiadapUniverse siadapUniverse) {
+	SiadapEvaluationUniverse evaluationUniverse = getSiadapEvaluationUniverseForSiadapUniverse(siadapUniverse);
+	evaluationUniverse.setHarmonizationDate(null);
+	getProcess().removeHarmonizationMark(evaluationUniverse);
     }
 
-    @Service
-    public void removeHarmonizationMark() {
-	//TODO joantune comment this method and see what has to be changed
-	for (SiadapEvaluationUniverse siadapEvaluationUniverse : getSiadapEvaluationUniverses()) {
-	    siadapEvaluationUniverse.setHarmonizationDate(null);
+    public boolean hasAnAssociatedCurricularPonderationEval() {
+	for (SiadapEvaluationUniverse evaluationUniverse : getSiadapEvaluationUniverses()) {
+	    if (evaluationUniverse.isCurriculumPonderation())
+		return true;
 	}
-	getProcess().removeHarmonizationMark();
+	return false;
+    }
+    
+    //    public SiadapEvaluationUniverse getCurr
+
+    @Service
+    public void markAsHarmonized(LocalDate harmonizationDate, SiadapUniverse siadapUniverse) {
+	SiadapEvaluationUniverse evaluationUniverse = getSiadapEvaluationUniverseForSiadapUniverse(siadapUniverse);
+	evaluationUniverse.setHarmonizationDate(harmonizationDate);
+	getProcess().markAsHarmonized(evaluationUniverse);
     }
 
     public boolean isHomologated() {

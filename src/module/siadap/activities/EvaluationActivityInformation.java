@@ -17,7 +17,6 @@ public class EvaluationActivityInformation extends ActivityInformation<SiadapPro
     public EvaluationActivityInformation(SiadapProcess process,
 	    WorkflowActivity<? extends WorkflowProcess, ? extends ActivityInformation> activity) {
 	super(process, activity);
-	SiadapEvaluation evaluationData = process.getSiadap().getEvaluationData2();
     }
 
     @Override

@@ -26,6 +26,18 @@
 			<property name="bundle" value="SIADAP_RESOURCES"/>
 		</slot>
 </schema>
+
+<schema bundle="SIADAP_RESOURCES" name="activityInformation.CurricularPonderationAttribution"
+		type="module.siadap.activities.CurricularPonderationActivityInformation">
+		<slot name="siadapUniverseToApply" layout="menu-select"
+		validator="pt.ist.fenixWebFramework.renderers.validators.RequiredValidator" key="activity.CurricularPonderationAttribution.label.siadapUniverseToApply"/>
+		<slot name="curricularPonderationRemarks" validator="pt.ist.fenixWebFramework.renderers.validators.RequiredValidator" key="activity.CurricularPonderationAttribution.label.curricularPonderationRemarks">
+			<property name="bundle" value="SIADAP_RESOURCES"/>
+		</slot>
+		<slot name="assignExcellentGrade" validator="pt.ist.fenixWebFramework.renderers.validators.RequiredValidator" layout="radio" key="activity.CurricularPonderationAttribution.label.assignExcellentGrade"/>
+		<slot name="excellentGradeJustification" key="activity.CurricularPonderationAttribution.label.excellentGradeJustification"/>
+		<slot name="assignedGrade" validator="pt.ist.fenixWebFramework.renderers.validators.RequiredValidator" key="activity.CurricularPonderationAttribution.label.assignedGrade" />
+</schema>
 		
 <schema name="view.competence.name" bundle="SIADAP_RESOURCES"
 	type="module.siadap.domain.Competence">

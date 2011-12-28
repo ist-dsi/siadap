@@ -150,6 +150,8 @@
 		<fr:slot name="autoEvaluationEnd" layout="picker"/>
 		<fr:slot name="evaluationBegin" layout="picker"/>
 		<fr:slot name="evaluationEnd" layout="picker"/>
+		<fr:slot name="firstLevelHarmonizationBegin" layout="picker"/>
+		<fr:slot name="firstLevelHarmonizationEnd" layout="picker"/>
 		<fr:slot name="lockHarmonizationOnQuota" key="label.config.lockHarmonizationOnQuota"/>
 		<fr:slot name="lockHarmonizationOnQuotaOutsideOfQuotaUniverses" key="label.config.lockHarmonizationOnQuotaOutsideOfQuotaUniverses"/>
 		
