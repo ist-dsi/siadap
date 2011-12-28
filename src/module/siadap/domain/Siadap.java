@@ -3,18 +3,15 @@ package module.siadap.domain;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 
 import module.organization.domain.Person;
-import module.siadap.domain.scoring.IScoring;
 import module.siadap.domain.scoring.SiadapGlobalEvaluation;
 import module.siadap.domain.util.SiadapPendingProcessesCounter;
 import module.siadap.domain.wrappers.PersonSiadapWrapper;
 import module.workflow.domain.utils.WorkflowCommentCounter;
 import module.workflow.widgets.ProcessListWidget;
 import module.workflow.widgets.UnreadCommentsWidget;
-import myorg.domain.exceptions.DomainException;
 
 import org.apache.commons.collections.Predicate;
 import org.apache.commons.lang.StringUtils;
@@ -33,8 +30,6 @@ public class Siadap extends Siadap_Base {
 	UnreadCommentsWidget.register(new WorkflowCommentCounter(SiadapProcess.class));
     }
 
-    private static final int PRECISION = 3;
-    private static final int ROUND_MODE = BigDecimal.ROUND_HALF_EVEN;
 
     public static final int MINIMUM_EFICIENCY_OBJECTIVES_NUMBER = 1;
     public static final int MINIMUM_PERFORMANCE_OBJECTIVES_NUMBER = 1;
@@ -53,18 +48,7 @@ public class Siadap extends Siadap_Base {
 	new SiadapEvaluationUniverse(this, siadapUniverse, true);
     }
 
-    public List<ObjectiveEvaluation> getObjectiveEvaluations() {
-	return getEvaluations(ObjectiveEvaluation.class, new Predicate() {
 
-	    @Override
-	    public boolean evaluate(Object arg0) {
-		ObjectiveEvaluation objective = (ObjectiveEvaluation) arg0;
-		return objective.isValidForVersion(getCurrentObjectiveVersion());
-	    }
-
-	}, ObjectiveEvaluation.COMPARATOR_BY_OLDEST_DATE);
-
-    }
 
     public SiadapUniverse getDefaultSiadapUniverse() {
 	SiadapEvaluationUniverse defaultSiadapEvaluationUniverse = getDefaultSiadapEvaluationUniverse();
@@ -72,6 +56,14 @@ public class Siadap extends Siadap_Base {
 	    return null;
 	return defaultSiadapEvaluationUniverse.getSiadapUniverse();
 
+    }
+
+    /**
+     * 
+     * @return the HarmonizationDate of the default SiadapEvaluationUniverse
+     */
+    public LocalDate getHarmonizationDate() {
+	return getDefaultSiadapEvaluationUniverse().getHarmonizationDate();
     }
 
     public SiadapEvaluationUniverse getDefaultSiadapEvaluationUniverse() {
@@ -82,38 +74,11 @@ public class Siadap extends Siadap_Base {
 	return null;
     }
 
-    public List<CompetenceEvaluation> getCompetenceEvaluations() {
-	return getEvaluations(CompetenceEvaluation.class, null, null);
-    }
+    //    public List<CompetenceEvaluation> getCompetenceEvaluations() {
+    //	return getEvaluations(CompetenceEvaluation.class, null, null);
+    //    }
 
-    /**
-     * 
-     * @param <T>
-     * @param clazz
-     *            the class of the SiadapEvaluationItem that one is interested
-     *            in getting
-     * @param predicate
-     *            the predicate that is evaluated for each of the
-     *            SiadapEvaluationItem
-     * @param comparator
-     *            a comparator of {@link SiadapEvaluationItem} or null if we
-     *            want to use the default
-     *            {@link SiadapEvaluationItem#COMPARATOR_BY_DATE}
-     * @return a list of <T> elements
-     */
-    private <T extends SiadapEvaluationItem> List<T> getEvaluations(Class<T> clazz, Predicate predicate, Comparator<T> comparator) {
-	List<T> evaluationItems = new ArrayList<T>();
-	for (SiadapEvaluationItem item : getSiadapEvaluationItems2()) {
-	    if (clazz.isAssignableFrom(item.getClass()) && (predicate == null || predicate.evaluate(item))) {
-		evaluationItems.add((T) item);
-	    }
-	}
-	if (comparator == null) {
-	    Collections.sort(evaluationItems, SiadapEvaluationItem.COMPARATOR_BY_DATE);
-	} else
-	    Collections.sort(evaluationItems, comparator);
-	return evaluationItems;
-    }
+
 
     public boolean isAutoEvaliationDone() {
 	return getAutoEvaluationSealedDate() != null;
@@ -123,81 +88,46 @@ public class Siadap extends Siadap_Base {
 	return getEvaluationSealedDate() != null;
     }
 
-    private boolean isEvaluationScoringComplete(List<? extends SiadapEvaluationItem> evaluations) {
-	for (SiadapEvaluationItem evaluation : evaluations) {
-	    IScoring itemEvaluation = evaluation.getItemEvaluation();
-	    if (itemEvaluation == null || itemEvaluation.getPoints() == null) {
-		return false;
-	    }
-	}
-	return true;
-    }
-    private BigDecimal getEvaluationScoring(List<? extends SiadapEvaluationItem> evaluations) {
-	
-	if (!isEvaluationScoringComplete(evaluations)) {
-	    return BigDecimal.ZERO;
-	}
-	
-	BigDecimal result = new BigDecimal(0);
-	for (SiadapEvaluationItem evaluation : evaluations) {
-	    IScoring itemEvaluation = evaluation.getItemEvaluation();
-	    if (itemEvaluation == null) {
-		throw new DomainException("error.siadapEvaluation.mustFillAllItems",
-			DomainException.getResourceFor("resources/SiadapResources"));
-	    }
-	    result = result.add(itemEvaluation.getPoints());
-	}
-	
-	if (evaluations.size() == 0)
-	    return BigDecimal.ZERO;
-	return result.divide(new BigDecimal(evaluations.size()), Siadap.PRECISION, Siadap.ROUND_MODE);
-    }
 
-    public BigDecimal getObjectivesScoring() {
-	return getEvaluationScoring(getObjectiveEvaluations());
-    }
 
-    private BigDecimal getPonderationResult(BigDecimal scoring, Double usedPercentage) {
-	BigDecimal percentage = BigDecimal.valueOf(usedPercentage).divide(new BigDecimal(100));
 
-	BigDecimal result = percentage.multiply(scoring);
-	return result.setScale(Siadap.PRECISION, Siadap.ROUND_MODE);
-    }
 
-    public BigDecimal getPonderatedObjectivesScoring() {
-	return getPonderationResult(getObjectivesScoring(), getObjectivesPonderation());
-    }
 
-    public BigDecimal getCompetencesScoring() {
-	return getEvaluationScoring(getCompetenceEvaluations());
-    }
-
-    public BigDecimal getPonderatedCompetencesScoring() {
-	return getPonderationResult(getCompetencesScoring(), getCompetencesPonderation());
-    }
-
-    public BigDecimal getTotalEvaluationScoring() {
-	return getPonderatedCompetencesScoring().add(getPonderatedObjectivesScoring());
-    }
-
-    public Double getObjectivesPonderation() {
-	return getSiadapYearConfiguration().getObjectivesPonderation();
-    }
-
-    public Double getCompetencesPonderation() {
-	return getSiadapYearConfiguration().getCompetencesPonderation();
-    }
-
+//    public BigDecimal getPonderatedObjectivesScoring() {
+    //	return getPonderationResult(getObjectivesScoring(), getObjectivesPonderation());
+    //    }
+    //
+    //    public BigDecimal getCompetencesScoring() {
+    //	return getEvaluationScoring(getCompetenceEvaluations());
+    //    }
+    //
+    //    public BigDecimal getPonderatedCompetencesScoring() {
+    //	return getPonderationResult(getCompetencesScoring(), getCompetencesPonderation());
+    //    }
+    //
+    //    public BigDecimal getTotalEvaluationScoring() {
+    //	return getPonderatedCompetencesScoring().add(getPonderatedObjectivesScoring());
+    //    }
+    //
+    //    public Double getCompetencesPonderation() {
+    //	return getSiadapYearConfiguration().getCompetencesPonderation();
+    //    }
+    //
     public List<SiadapEvaluationItem> getCurrentEvaluationItems() {
-	return getEvaluations(SiadapEvaluationItem.class, new Predicate() {
+	
+	ArrayList<SiadapEvaluationItem> currentEvaluationItems = new ArrayList<SiadapEvaluationItem>();
+	for (SiadapEvaluationUniverse evaluationUniverse : getSiadapEvaluationUniverses())
+	{
+	    currentEvaluationItems.addAll(evaluationUniverse.getEvaluations(SiadapEvaluationItem.class, new Predicate() {
 
-	    @Override
-	    public boolean evaluate(Object arg0) {
-		return (arg0 instanceof ObjectiveEvaluation) ? ((ObjectiveEvaluation) arg0)
-			.isValidForVersion(getCurrentObjectiveVersion()) : true;
-	    }
-	}, null);
-
+		    @Override
+		    public boolean evaluate(Object arg0) {
+			return (arg0 instanceof ObjectiveEvaluation) ? ((ObjectiveEvaluation) arg0)
+				.isValidForVersion(getCurrentObjectiveVersion()) : true;
+		    }
+		}, null));
+	}
+	return currentEvaluationItems;
     }
 
     /**
@@ -359,19 +289,56 @@ public class Siadap extends Siadap_Base {
 
     }
 
-    public boolean hasRelevantEvaluation() {
-	return SiadapGlobalEvaluation.HIGH.accepts(getTotalEvaluationScoring());
+
+    public BigDecimal getDefaultTotalEvaluationScoring() {
+	return getDefaultSiadapEvaluationUniverse().getTotalEvaluationScoring();
+    }
+    public SiadapEvaluationUniverse getSiadapEvaluationUniverseForSiadapUniverse(SiadapUniverse siadapUniverse) {
+	for (SiadapEvaluationUniverse siadapEvaluationUniverse : getSiadapEvaluationUniverses()) {
+	    if (siadapEvaluationUniverse.getSiadapUniverse().equals(siadapUniverse))
+		return siadapEvaluationUniverse;
+	}
+	return null;
+    }
+
+    public boolean hasRelevantSiadap2Evaluation() {
+	SiadapEvaluationUniverse siadapEvaluationUniverseForSiadapUniverse = getSiadapEvaluationUniverseForSiadapUniverse(SiadapUniverse.SIADAP2);
+	if (siadapEvaluationUniverseForSiadapUniverse == null) {
+	    return false;
+	}
+	return SiadapGlobalEvaluation.HIGH.accepts(siadapEvaluationUniverseForSiadapUniverse.getTotalEvaluationScoring());
+    }
+
+    public boolean hasRelevantSiadap3Evaluation() {
+	SiadapEvaluationUniverse siadapEvaluationUniverseForSiadapUniverse = getSiadapEvaluationUniverseForSiadapUniverse(SiadapUniverse.SIADAP3);
+	if (siadapEvaluationUniverseForSiadapUniverse == null) {
+	    return false;
+	}
+	return SiadapGlobalEvaluation.HIGH.accepts(siadapEvaluationUniverseForSiadapUniverse.getTotalEvaluationScoring());
+
+    }
+
+    public boolean hasExcellentSiadap3Evaluation() {
+	SiadapEvaluationUniverse siadapEvaluationUniverseForSiadapUniverse = getSiadapEvaluationUniverseForSiadapUniverse(SiadapUniverse.SIADAP3);
+	if (siadapEvaluationUniverseForSiadapUniverse == null) {
+	    return false;
+	}
+	return siadapEvaluationUniverseForSiadapUniverse.hasExcellencyAwarded();
+
+    }
+
+    public boolean hasExcellentSiadap2Evaluation() {
+	SiadapEvaluationUniverse siadapEvaluationUniverseForSiadapUniverse = getSiadapEvaluationUniverseForSiadapUniverse(SiadapUniverse.SIADAP2);
+	if (siadapEvaluationUniverseForSiadapUniverse == null) {
+	    return false;
+	}
+	return siadapEvaluationUniverseForSiadapUniverse.hasExcellencyAwarded();
     }
 
     public boolean hasExcellencyAward() {
-	if (getEvaluationData() == null || getEvaluationData().getExcellencyAward() == null)
+	if (getEvaluationData2() == null || getEvaluationData2().getExcellencyAward() == null)
 		return false;
-	return getEvaluationData().getExcellencyAward();
-    }
-
-    public boolean isInadequate() {
-	return SiadapGlobalEvaluation.LOW.accepts(getTotalEvaluationScoring())
-		|| SiadapGlobalEvaluation.ZERO.accepts(getTotalEvaluationScoring());
+	return getEvaluationData2().getExcellencyAward();
     }
 
     @Override
@@ -551,13 +518,19 @@ public class Siadap extends Siadap_Base {
 
     @Service
     public void markAsHarmonized(LocalDate harmonizationDate) {
-	setHarmonizationDate(harmonizationDate);
+	//TODO joantune comment this method and see what has to be changed
+	for (SiadapEvaluationUniverse siadapEvaluationUniverse : getSiadapEvaluationUniverses()) {
+	    siadapEvaluationUniverse.setHarmonizationDate(harmonizationDate);
+	}
 	getProcess().markAsHarmonized();
     }
 
     @Service
     public void removeHarmonizationMark() {
-	setHarmonizationDate(null);
+	//TODO joantune comment this method and see what has to be changed
+	for (SiadapEvaluationUniverse siadapEvaluationUniverse : getSiadapEvaluationUniverses()) {
+	    siadapEvaluationUniverse.setHarmonizationDate(null);
+	}
 	getProcess().removeHarmonizationMark();
     }
 
@@ -566,12 +539,12 @@ public class Siadap extends Siadap_Base {
     }
 
     public boolean isSuggestedForExcellencyAward() {
-	SiadapEvaluation evaluationData = getEvaluationData();
+	SiadapEvaluation evaluationData = getEvaluationData2();
 	return evaluationData != null && evaluationData.getExcellencyAward() == Boolean.TRUE;
     }
 
     public boolean isWithSkippedEvaluation() {
-	SiadapEvaluation evaluationData = getEvaluationData();
+	SiadapEvaluation evaluationData = getEvaluationData2();
 	return evaluationData != null && !StringUtils.isEmpty(evaluationData.getNoEvaluationJustification());
     }
 
@@ -585,10 +558,11 @@ public class Siadap extends Siadap_Base {
     }
 
     public boolean hasAllEvaluationItemsValid() {
-	for (ObjectiveEvaluation objectiveEvaluation : getObjectiveEvaluations()) {
-	    if (!objectiveEvaluation.isValid())
-		return false;
-
+	for (SiadapEvaluationUniverse evaluationUniverse : getSiadapEvaluationUniverses()) {
+	    for (ObjectiveEvaluation objectiveEvaluation : evaluationUniverse.getObjectiveEvaluations()) {
+		if (!objectiveEvaluation.isValid())
+		    return false;
+	    }
 	}
 	return true;
     }
@@ -608,8 +582,10 @@ public class Siadap extends Siadap_Base {
      *         has no objectives, false otherwise
      */
     public boolean isCoherentOnTypeOfEvaluation() {
-	if ((getEvaluatedOnlyByCompetences() != null && getEvaluatedOnlyByCompetences()) && getObjectiveEvaluations() != null
-		&& getObjectiveEvaluations().size() != 0)
+	SiadapEvaluationUniverse defaultSiadapEvaluationUniverse = getDefaultSiadapEvaluationUniverse();
+	if ((getEvaluatedOnlyByCompetences() != null && getEvaluatedOnlyByCompetences())
+		&& defaultSiadapEvaluationUniverse.getObjectiveEvaluations() != null
+		&& defaultSiadapEvaluationUniverse.getObjectiveEvaluations().size() != 0)
 	    return false;
 	return true;
     }

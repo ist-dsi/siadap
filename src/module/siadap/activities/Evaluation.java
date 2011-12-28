@@ -20,7 +20,7 @@ public class Evaluation extends WorkflowActivity<SiadapProcess, EvaluationActivi
     @Override
     protected void process(EvaluationActivityInformation activityInformation) {
 	Siadap siadap = activityInformation.getProcess().getSiadap();
-	SiadapEvaluation evaluationData = siadap.getEvaluationData();
+	SiadapEvaluation evaluationData = siadap.getEvaluationData2();
 	if (evaluationData == null) {
 	    new SiadapEvaluation(siadap, activityInformation.getEvaluationJustification(), activityInformation
 		    .getPersonalDevelopment(), activityInformation.getTrainningNeeds(), activityInformation.getExcellencyAward());

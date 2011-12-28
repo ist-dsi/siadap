@@ -64,7 +64,8 @@
  		<fr:schema type="module.siadap.domain.Siadap" bundle="SIADAP_RESOURCES">
  			<fr:slot name="process.processNumber" key="label.processNumber" bundle="WORKFLOW_RESOURCES"/>
  			<fr:slot name="year"/>
- 			<fr:slot name="totalEvaluationScoring"/>
+ 			<%-- TODO joantune: SIADAP-145 --%>
+ 			<fr:slot name="defaultTotalEvaluationScoring"/>
  		</fr:schema>
  		<fr:layout name="tabular">
  			<fr:property name="classes" value="tstyle2"/>
@@ -132,10 +133,8 @@ SiadapYearWrapper siadapYearWrapper = (SiadapYearWrapper) request.getAttribute("
 </logic:notEmpty>
 
 <%-- TODO: Until all of the features of the interfaces contained within are checked, this harmonization part should stay commented  --%>
-<%--
 <logic:notEmpty name="person" property="harmozationUnits">
 <%-- Defining the year here so that it can be more easily passed on the links below that use it --%> 
-<%--
 <bean:define id="year" name="siadapYearWrapper" property="chosenYear"/>
 		<h3> <bean:message key="label.responsifleForHarmonizationOf" bundle="SIADAP_RESOURCES"/>: </h3>
 	<p>
@@ -143,10 +142,11 @@ SiadapYearWrapper siadapYearWrapper = (SiadapYearWrapper) request.getAttribute("
 			<fr:schema type="module.siadap.domain.wrappers.UnitSiadapWrapper" bundle="SIADAP_RESOURCES">
 				<fr:slot name="unit.partyName"  key="label.unit" bundle="ORGANIZATION_RESOURCES" />
 				<fr:slot name="unit.acronym" key="label.acronym" bundle="ORGANIZATION_RESOURCES" />
-				<fr:slot name="relevantEvaluationPercentage"/>
+				<%-- <fr:slot name="relevantEvaluationPercentage"/>
 				<fr:slot name="excellencyEvaluationPercentage"/>
-				<fr:slot name="totalPeopleWorkingInUnitIncludingNoQuotaPeople" key="label.totalEvaluated"/>
-				<fr:slot name="totalPeopleWithSiadapWorkingInUnit"/>
+				--%>
+				<fr:slot name="totalPeopleHarmonizedInUnit" key="label.totalEvaluated"/>
+				<fr:slot name="totalPeopleHarmonizedInUnitWithSiadapStarted" key="label.totalPeopleWithSiadapHarmonizedInUnit"/>
 			</fr:schema>
 			<fr:layout name="tabular">
 				<fr:property name="classes" value="tstyle2"/>
@@ -159,7 +159,6 @@ SiadapYearWrapper siadapYearWrapper = (SiadapYearWrapper) request.getAttribute("
 		</fr:view>
 	</p>
 </logic:notEmpty>
---%>
 </logic:present>
 <logic:notPresent name="person">
 <strong><bean:message bundle="SIADAP_RESOURCES" key="label.noconfiguration"/> <a href="mailto:suporte@ist.utl.pt" ><bean:message bundle="SIADAP_RESOURCES" key="label.here" /></a></strong>

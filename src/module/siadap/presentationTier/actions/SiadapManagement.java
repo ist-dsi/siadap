@@ -23,7 +23,6 @@ import myorg.domain.exceptions.DomainException;
 import myorg.presentationTier.actions.ContextBaseAction;
 import myorg.util.VariantBean;
 
-import org.apache.commons.collections.Predicate;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
@@ -247,8 +246,12 @@ public class SiadapManagement extends ContextBaseAction {
 
 	SiadapYearConfiguration configuration = SiadapYearConfiguration.getSiadapYearConfiguration(year);
 
-	request.setAttribute("people-withQuotas", wrapper.getUnitEmployeesWithQuotas(false));
-	request.setAttribute("people-withoutQuotas", wrapper.getUnitEmployeesWithoutQuotas(false));
+	request.setAttribute("people-withQuotas-SIADAP2", wrapper.getSiadap2AndWorkingRelationWithQuotaUniverse());
+	request.setAttribute("people-withQuotas-SIADAP3", wrapper.getSiadap3AndWorkingRelationWithQuotaUniverse());
+	request.setAttribute("people-withoutQuotas-SIADAP2", wrapper.getSiadap2AndWorkingRelationWithoutQuotaUniverse());
+	request.setAttribute("people-withoutQuotas-SIADAP3", wrapper.getSiadap3AndWorkingRelationWithoutQuotaUniverse());
+	//	request.setAttribute("people-withQuotas", wrapper.getUnitEmployeesWithQuotas(false));
+	//	request.setAttribute("people-withoutQuotas", wrapper.getUnitEmployeesWithoutQuotas(false));
 
 	List<UnitSiadapWrapper> unitSiadapEvaluations = new ArrayList<UnitSiadapWrapper>();
 
@@ -257,50 +260,50 @@ public class SiadapManagement extends ContextBaseAction {
 	}
 	request.setAttribute("subUnits", unitSiadapEvaluations);
 
-	return forward(request, "/module/siadap/harmonization/viewUnit.jsp");
+	    return forward(request, "/module/siadap/harmonization/viewUnit.jsp");
     }
 
-    private final ActionForward listGlobalEvaluations(final HttpServletRequest request, Predicate predicate) {
+    //    private final ActionForward listGlobalEvaluations(final HttpServletRequest request, Predicate predicate) {
+    //
+    //	int year = Integer.parseInt(request.getParameter("year"));
+    //	Unit unit = getDomainObject(request, "unitId");
+    //	UnitSiadapWrapper unitSiadapWrapper = new UnitSiadapWrapper(unit, year);
+    //
+    //	request.setAttribute("unit", unitSiadapWrapper);
+    //	request.setAttribute("employees", unitSiadapWrapper.getUnitEmployees(predicate));
+    //
+    //	return forward(request, "/module/siadap/harmonization/listEvaluations.jsp");
+    //    }
+    //
+    //    public final ActionForward listHighGlobalEvaluations(final ActionMapping mapping, final ActionForm form,
+    //	    final HttpServletRequest request, final HttpServletResponse response) {
+    //	request.setAttribute("label", "relevant");
+    //	return listGlobalEvaluations(request, new Predicate() {
+    //
+    //	    @Override
+    //	    public boolean evaluate(Object arg0) {
+    //		PersonSiadapWrapper person = (PersonSiadapWrapper) arg0;
+    //		return person.getSiadap() != null && person.isQuotaAware() && person.getSiadap().hasRelevantEvaluation();
+    //	    }
+    //
+    //	});
+    //
+    //    }
 
-	int year = Integer.parseInt(request.getParameter("year"));
-	Unit unit = getDomainObject(request, "unitId");
-	UnitSiadapWrapper unitSiadapWrapper = new UnitSiadapWrapper(unit, year);
-
-	request.setAttribute("unit", unitSiadapWrapper);
-	request.setAttribute("employees", unitSiadapWrapper.getUnitEmployees(predicate));
-
-	return forward(request, "/module/siadap/harmonization/listEvaluations.jsp");
-    }
-
-    public final ActionForward listHighGlobalEvaluations(final ActionMapping mapping, final ActionForm form,
-	    final HttpServletRequest request, final HttpServletResponse response) {
-	request.setAttribute("label", "relevant");
-	return listGlobalEvaluations(request, new Predicate() {
-
-	    @Override
-	    public boolean evaluate(Object arg0) {
-		PersonSiadapWrapper person = (PersonSiadapWrapper) arg0;
-		return person.getSiadap() != null && person.isQuotaAware() && person.getSiadap().hasRelevantEvaluation();
-	    }
-
-	});
-
-    }
-
-    public final ActionForward listExcellencyGlobalEvaluations(final ActionMapping mapping, final ActionForm form,
-	    final HttpServletRequest request, final HttpServletResponse response) {
-
-	request.setAttribute("label", "excellency");
-	return listGlobalEvaluations(request, new Predicate() {
-
-	    @Override
-	    public boolean evaluate(Object arg0) {
-		PersonSiadapWrapper person = (PersonSiadapWrapper) arg0;
-		return person.getSiadap() != null && person.isQuotaAware() && person.getSiadap().hasExcellencyAward();
-	    }
-
-	});
-    }
+    //    public final ActionForward listExcellencyGlobalEvaluations(final ActionMapping mapping, final ActionForm form,
+    //	    final HttpServletRequest request, final HttpServletResponse response) {
+    //
+    //	request.setAttribute("label", "excellency");
+    //	return listGlobalEvaluations(request, new Predicate() {
+    //
+    //	    @Override
+    //	    public boolean evaluate(Object arg0) {
+    //		PersonSiadapWrapper person = (PersonSiadapWrapper) arg0;
+    //		return person.getSiadap() != null && person.isQuotaAware() && person.getSiadap().hasExcellencyAward();
+    //	    }
+    //
+    //	});
+    //    }
 
     public final ActionForward terminateHarmonization(final ActionMapping mapping, final ActionForm form,
 	    final HttpServletRequest request, final HttpServletResponse response) {

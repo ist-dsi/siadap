@@ -51,7 +51,7 @@ public class EditCompetenceEvaluation extends
 	Siadap siadap = activityInformation.getSiadap();
 	// TODO ist154457 make this more efficient, for now, let's just remove
 	// and set them again
-	List<CompetenceEvaluation> previousCompetences = siadap.getCompetenceEvaluations();
+	List<CompetenceEvaluation> previousCompetences = siadap.getDefaultSiadapEvaluationUniverse().getCompetenceEvaluations();
 	List<Competence> competencesToAdd = activityInformation.getCompetences();
 	for (CompetenceEvaluation competence : previousCompetences) {
 	    if (!competencesToAdd.contains(competence.getCompetence())) {

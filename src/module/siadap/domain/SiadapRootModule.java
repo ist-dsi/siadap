@@ -95,6 +95,31 @@ public class SiadapRootModule extends SiadapRootModule_Base implements ModuleIni
 	    initializeSiadapGroups(root);
 	}
 	migrateDataToNewSiadapEvaluationUniverseClass();
+	migrateDataSoThatTheYearsHaveNewPonderationPercentages();
+	migrateCurrentObjectiveVersion();
+    }
+
+    private void migrateCurrentObjectiveVersion() {
+	int counter = 0;
+	for (Siadap siadap : getSiadaps()) {
+	    SiadapEvaluationUniverse defaultSiadapEvaluationUniverse = siadap.getDefaultSiadapEvaluationUniverse();
+	    Integer currentObjectiveVersion = siadap.getCurrentObjectiveVersion();
+	    if (defaultSiadapEvaluationUniverse != null && defaultSiadapEvaluationUniverse.getCurrentObjectiveVersion() == null
+		    && currentObjectiveVersion != null) {
+		defaultSiadapEvaluationUniverse.setCurrentObjectiveVersion(currentObjectiveVersion);
+		counter++;
+	    }
+	}
+	LOGGER.warn("Migrated " + counter + " SIADAP's current objective versions");
+
+    }
+
+    private void migrateDataSoThatTheYearsHaveNewPonderationPercentages() {
+	for (SiadapYearConfiguration siadapYearConfiguration : getYearConfigurations()) {
+	    if (siadapYearConfiguration.initializePonderationsIfNeeded())
+		LOGGER.warn("MIGRATED SiadapYearConfiguration for year: " + siadapYearConfiguration.getYear());
+	}
+
     }
 
     /**

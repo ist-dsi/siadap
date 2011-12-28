@@ -38,20 +38,46 @@ class groups.SiadapStructureManagementGroup extends .myorg.domain.groups.Persist
 
 class SiadapYearConfiguration {
 	int year;
-	Double objectivesPonderation;
-	Double competencesPonderation;
+	
+	Integer siadap2ObjectivesPonderation;
+	Integer siadap2CompetencesPonderation;
+	
+	Integer siadap3ObjectivesPonderation;
+	Integer siadap3CompetencesPonderation;
+	
 	LocalDate objectiveSpecificationBegin;
 	LocalDate objectiveSpecificationEnd;	
 	LocalDate autoEvaluationBegin;
 	LocalDate autoEvaluationEnd;
 	LocalDate evaluationBegin;
 	LocalDate evaluationEnd;
+	
+	Integer quotaExcellencySiadap2WithQuota;
+	Integer quotaExcellencySiadap3WithQuota;
+	
+	Integer quotaRelevantSiadap2WithQuota;
+	Integer quotaRelevantSiadap3WithQuota;
+	
+	Integer quotaRegularSiadap2WithQuota;
+	Integer quotaRegularSiadap3WithQuota;
+	
+	Integer quotaExcellencySiadap3WithoutQuota;
+	Integer quotaExcellencySiadap2WithoutQuota;
+	
+	Integer quotaRelevantSiadap2WithoutQuota;
+	Integer quotaRelevantSiadap3WithoutQuota;
+	
+	Integer quotaRegularSiadap2WithoutQuota;
+	Integer quotaRegularSiadap3WithoutQuota;
+	
 	Boolean lockHarmonizationOnQuota;
+	
+	Boolean lockHarmonizationOnQuotaOutsideOfQuotaUniverses;
 }
 
 class Siadap {
 	Integer year;
-	Integer currentObjectiveVersion;
+	Integer currentObjectiveVersion; //R3
 	Boolean evaluatedOnlyByCompetences;
 	
 	/* sealedDate should be replaced by submittedDate... 
@@ -61,7 +87,7 @@ class Siadap {
 	LocalDate evaluationSealedDate;
 	
 	LocalDate requestedAcknowledgeDate;
-	LocalDate harmonizationDate;
+	/*LocalDate harmonizationDate;*/
 	LocalDate acknowledgeValidationDate;
 	LocalDate homologationDate;
 	LocalDate acknowledgeHomologationDate;
@@ -90,6 +116,11 @@ class SiadapEvaluationUniverse
 	
 	Boolean defaultEvaluationUniverse (REQUIRED);
 	
+	Integer currentObjectiveVersion; //R3 - do not delete
+	
+	LocalDate harmonizationDate;
+	Boolean harmonizationAssessment;
+	
 	/* TODO: joantune: Yet to be fully defined the meaning*/
 	BigDecimal evaluatorClassification;
 	BigDecimal harmonizationClassification;
@@ -104,6 +135,7 @@ class SiadapEvaluation {
 	Boolean excellencyAward;
 	String personalDevelopment;
 	String trainningNeeds;
+	String excellencyAwardJustification;
 }
 
 class SiadapAutoEvaluation {
@@ -125,6 +157,14 @@ class SiadapAutoEvaluation {
 class SiadapEvaluationItem {
 	DateTime whenCreated;	
 	LocalDate acknowledgeDate;
+}
+
+class CurricularPonderationEvaluationItem extends SiadapEvaluationItem {
+	Boolean excellencyAward;
+	String excellencyAwardJustification;
+	String curricularPonderationJustification;
+	
+	BigDecimal evaluation;
 }
 
 class ObjectiveEvaluation extends SiadapEvaluationItem {
@@ -374,6 +414,13 @@ relation EvaluationAccountabilityType {
 	.module.organization.domain.AccountabilityType playsRole evaluationRelation;
 }
 
+relation SiadapSpecialHarmonizationUnit {
+	SiadapYearConfiguration playsRole yearConfigurationsForSpecialHarmonizationUnit {
+		multiplicity *;
+	}
+	.module.organization.domain.Unit playsRole siadapSpecialHarmonizationUnit;
+}
+
 relation SiadapTopUnit {
 	SiadapYearConfiguration playsRole yearConfigurationsForTopUnit {
 		multiplicity *;
@@ -386,6 +433,20 @@ relation HarmonizationForUnitIsTerminated {
 	.module.organization.domain.Unit playsRole harmonizationClosedUnits {
 		multiplicity *;
 	}
+}
+
+relation Siadap3HarmonizationSiadapYearConfiguration {
+	SiadapYearConfiguration playsRole yearConfigurationsForSiadap3HarmonizationRelation {
+		multiplicity *;
+	}
+	.module.organization.domain.AccountabilityType playsRole siadap3HarmonizationRelation;
+}
+
+relation Siadap2HarmonizationSiadapYearConfiguration {
+	SiadapYearConfiguration playsRole yearConfigurationsForSiadap2HarmonizationRelation {
+		multiplicity *;
+	}
+	.module.organization.domain.AccountabilityType playsRole siadap2HarmonizationRelation;
 }
 
 relation SiadapYearConfigurationCCAMembers {

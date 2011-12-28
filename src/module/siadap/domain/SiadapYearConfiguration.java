@@ -2,6 +2,7 @@ package module.siadap.domain;
 
 import java.util.List;
 
+import jvstm.cps.ConsistencyPredicate;
 import module.organization.domain.Person;
 import module.organization.domain.Unit;
 import module.siadap.domain.groups.SiadapStructureManagementGroup;
@@ -15,10 +16,12 @@ import pt.ist.fenixWebFramework.services.Service;
 
 public class SiadapYearConfiguration extends SiadapYearConfiguration_Base {
 
-    public static final Double DEFAULT_OBJECTIVES_PONDERATION = 75.0;
-    public static final Double DEFAULT_COMPETENCES_PONDERATION = 25.0;
-    public static final Double MAXIMUM_HIGH_GRADE_QUOTA = 25.0;
-    public static final Double MAXIMUM_EXCELLENCY_GRADE_QUOTA = 5.0; // 1.25; //
+    public static final Integer DEFAULT_SIADAP2_OBJECTIVES_PONDERATION = 75;
+    public static final Integer DEFAULT_SIADAP2_COMPETENCES_PONDERATION = 25;
+    public static final Integer DEFAULT_SIADAP3_OBJECTIVES_PONDERATION = 60;
+    public static final Integer DEFAULT_SIADAP3_COMPETENCES_PONDERATION = 40;
+    //    public static final Double MAXIMUM_HIGH_GRADE_QUOTA = 25.0;
+    //    public static final Double MAXIMUM_EXCELLENCY_GRADE_QUOTA = 5.0; // 1.25; //
 
     private static final String CCA_MEMBERS_GROUPNAME = "CCA Members";
     private static final String HOMOLOGATION_MEMBERS_GROUPNAME = "Homologation Members";
@@ -119,11 +122,16 @@ public class SiadapYearConfiguration extends SiadapYearConfiguration_Base {
 
     // the 25%
 
-    public SiadapYearConfiguration(Integer year, Double objectivesPonderation, Double competencesPonderation) {
+    public SiadapYearConfiguration(Integer year, int siadap2ObjectivesPonderation, int siadap2CompetencesPonderation,
+	    int siadap3CompetencesPonderdation, int siadap3ObjectivesPonderation) {
 	super();
 	setYear(year);
-	setObjectivesPonderation(objectivesPonderation);
-	setCompetencesPonderation(competencesPonderation);
+	setSiadap2CompetencesPonderation(siadap2CompetencesPonderation);
+	setSiadap2ObjectivesPonderation(siadap2ObjectivesPonderation);
+
+	setSiadap3CompetencesPonderation(siadap3CompetencesPonderdation);
+	setSiadap3ObjectivesPonderation(siadap3ObjectivesPonderation);
+
 	setSiadapRootModule(SiadapRootModule.getInstance());
 	setLockHarmonizationOnQuota(Boolean.FALSE);
     }
@@ -131,10 +139,44 @@ public class SiadapYearConfiguration extends SiadapYearConfiguration_Base {
     public static SiadapYearConfiguration getSiadapYearConfiguration(Integer year) {
 	for (SiadapYearConfiguration configuration : SiadapRootModule.getInstance().getYearConfigurations()) {
 	    if (configuration.getYear() == year) {
+		//TODO remove these lines after a while
+		//R2
+		configuration.initializePonderationsIfNeeded();
 		return configuration;
 	    }
 	}
 	return null;
+    }
+
+    @ConsistencyPredicate
+    public boolean ponderationCorrectness() {
+	if ((getSiadap2CompetencesPonderation() + getSiadap2ObjectivesPonderation()) != 100)
+	    return false;
+	if ((getSiadap3CompetencesPonderation() + getSiadap3ObjectivesPonderation()) != 100)
+	    return false;
+	return true;
+    }
+
+    @Service
+    public Boolean initializePonderationsIfNeeded() {
+	Boolean migratedAnything = Boolean.FALSE;
+	if (getSiadap2CompetencesPonderation() == null) {
+	    setSiadap2CompetencesPonderation(Integer.valueOf(DEFAULT_SIADAP2_COMPETENCES_PONDERATION));
+	    migratedAnything = Boolean.TRUE;
+	}
+	if (getSiadap2ObjectivesPonderation() == null) {
+	    setSiadap2ObjectivesPonderation(Integer.valueOf(DEFAULT_SIADAP2_OBJECTIVES_PONDERATION));
+	    migratedAnything = Boolean.TRUE;
+	}
+	if (getSiadap3ObjectivesPonderation() == null) {
+	    setSiadap3ObjectivesPonderation(Integer.valueOf(DEFAULT_SIADAP3_OBJECTIVES_PONDERATION));
+	    migratedAnything = Boolean.TRUE;
+	}
+	if (getSiadap3CompetencesPonderation() == null) {
+	    setSiadap3CompetencesPonderation(Integer.valueOf(DEFAULT_SIADAP3_COMPETENCES_PONDERATION));
+	    migratedAnything = Boolean.TRUE;
+	}
+	return migratedAnything;
     }
 
     @Service
@@ -143,7 +185,8 @@ public class SiadapYearConfiguration extends SiadapYearConfiguration_Base {
 	if (configuration != null) {
 	    return configuration;
 	}
-	return new SiadapYearConfiguration(year, DEFAULT_OBJECTIVES_PONDERATION, DEFAULT_COMPETENCES_PONDERATION);
+	return new SiadapYearConfiguration(year, DEFAULT_SIADAP2_OBJECTIVES_PONDERATION, DEFAULT_SIADAP2_COMPETENCES_PONDERATION,
+		DEFAULT_SIADAP3_COMPETENCES_PONDERATION, DEFAULT_SIADAP3_OBJECTIVES_PONDERATION);
     }
 
     public Siadap getSiadapFor(Person person, Integer year) {
@@ -153,6 +196,51 @@ public class SiadapYearConfiguration extends SiadapYearConfiguration_Base {
 	    }
 	}
 	return null;
+    }
+
+    @ConsistencyPredicate
+    boolean checkQuotasPredicate() {
+	Integer quotaExcellencySiadap2WithoutQuota = getQuotaExcellencySiadap2WithoutQuota();
+	Integer quotaRelevantSiadap2WithoutQuota = getQuotaRelevantSiadap2WithoutQuota();
+	Integer quotaRegularSiadap2WithoutQuota = getQuotaRegularSiadap2WithoutQuota();
+	
+	Integer quotaExcellencySiadap2WithQuota = getQuotaExcellencySiadap2WithQuota();
+	Integer quotaRelevantSiadap2WithQuota = getQuotaRelevantSiadap2WithQuota();
+	Integer quotaRegularSiadap2WithQuota = getQuotaRegularSiadap2WithQuota();
+
+	Integer quotaExcellencySiadap3WithoutQuota = getQuotaExcellencySiadap3WithoutQuota();
+	Integer quotaRelevantSiadap3WithoutQuota = getQuotaRelevantSiadap3WithoutQuota();
+	Integer quotaRegularSiadap3WithoutQuota = getQuotaRegularSiadap3WithoutQuota();
+
+	Integer quotaExcellencySiadap3WithQuota = getQuotaExcellencySiadap3WithQuota();
+	Integer quotaRelevantSiadap3WithQuota = getQuotaRelevantSiadap3WithQuota();
+	Integer quotaRegularSiadap3WithQuota = getQuotaRegularSiadap3WithQuota();
+
+	return checkQuotaInts(quotaExcellencySiadap2WithoutQuota, quotaRelevantSiadap2WithoutQuota,
+		quotaRegularSiadap2WithoutQuota)
+		&& checkQuotaInts(quotaExcellencySiadap2WithQuota, quotaRelevantSiadap2WithQuota, quotaRegularSiadap2WithQuota)
+		&& checkQuotaInts(quotaExcellencySiadap3WithQuota, quotaRelevantSiadap3WithQuota, quotaRegularSiadap3WithQuota)
+		&& checkQuotaInts(quotaExcellencySiadap3WithoutQuota, quotaRelevantSiadap3WithoutQuota,
+			quotaRegularSiadap3WithoutQuota);
+
+    }
+
+    /**
+     * 
+     * @param quotaOne
+     * @param quotaTwo
+     * @param quotaThree
+     * @return false if the three arguments are different from null and their
+     *         sum is greater than 100. True otherwise
+     */
+    private boolean checkQuotaInts(Integer quotaOne, Integer quotaTwo, Integer quotaThree) {
+	if (quotaOne != null && quotaTwo != null && quotaThree != null) {
+	    //all of them are set, so the sum must be less or equal than 100
+	    //as the quotas are expressed in percentual points
+	    if (quotaOne.intValue() + quotaTwo.intValue() + quotaThree.intValue() > 100)
+		return false;
+	}
+	return true;
     }
 
     public Siadap getSiadapFor(final Person person) {

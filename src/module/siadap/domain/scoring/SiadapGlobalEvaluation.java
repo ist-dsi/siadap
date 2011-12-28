@@ -7,7 +7,8 @@ import pt.ist.fenixWebFramework.rendererExtensions.util.IPresentableEnum;
 
 public enum SiadapGlobalEvaluation implements IPresentableEnum, IScoring {
 
-    HIGH(5, new BigDecimal(4), new BigDecimal(5)), MEDIUM(3, new BigDecimal(2), new BigDecimal(3.999)), LOW(1, new BigDecimal(1),
+    NONEXISTING(0, null, null), EXCELLENCY(5, new BigDecimal(4), new BigDecimal(4)), HIGH(5, new BigDecimal(4), new BigDecimal(5)), MEDIUM(
+	    3, new BigDecimal(2), new BigDecimal(3.999)), LOW(1, new BigDecimal(1),
 	    new BigDecimal(1.999)), ZERO(0, new BigDecimal(0), new BigDecimal(0.999));
 
     private BigDecimal points;
@@ -23,6 +24,25 @@ public enum SiadapGlobalEvaluation implements IPresentableEnum, IScoring {
     @Override
     public BigDecimal getPoints() {
 	return points;
+    }
+
+    public static SiadapGlobalEvaluation getGlobalEvaluation(BigDecimal totalEvaluationScoring, boolean excellencyRequested)
+    {
+	if (totalEvaluationScoring == null)
+	    return NONEXISTING;
+	if (excellencyRequested && HIGH.accepts(totalEvaluationScoring))
+	    return EXCELLENCY;
+	else if (HIGH.accepts(totalEvaluationScoring))
+	    return HIGH;
+	else if (MEDIUM.accepts(totalEvaluationScoring))
+	    return MEDIUM;
+	else if (LOW.accepts(totalEvaluationScoring))
+	    return LOW;
+	else if (ZERO.accepts(totalEvaluationScoring))
+	    return ZERO;
+	else
+	    return NONEXISTING;
+	    
     }
 
     @Override

@@ -15,6 +15,7 @@ public enum SiadapCompetencesEvaluation implements IPresentableEnum, IScoring {
 	this.points = new BigDecimal(points);
     }
 
+    @Override
     public BigDecimal getPoints() {
 	return points;
     }

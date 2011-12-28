@@ -76,6 +76,28 @@
 			<fr:property name="sortBy" value="name" />
 			<fr:property name="saveOptions" value="true" />
 		</fr:slot>
+		
+		<fr:slot name="siadap2HarmonizationRelation" layout="menu-select" key="label.config.siadap2HarmonizationRelation">
+			<fr:property name="providerClass"
+				value="module.organization.presentationTier.renderers.providers.AccountabilityTypesProvider" />
+			<fr:property name="choiceType"
+				value="module.organization.domain.AccountabilityType" />
+			<fr:property name="format" value="${name}" />
+			<fr:property name="sortBy" value="name" />
+			<fr:property name="saveOptions" value="true" />
+		</fr:slot>
+		
+		<fr:slot name="siadap3HarmonizationRelation" layout="menu-select" key="label.config.siadap3HarmonizationRelation">
+			<fr:property name="providerClass"
+				value="module.organization.presentationTier.renderers.providers.AccountabilityTypesProvider" />
+			<fr:property name="choiceType"
+				value="module.organization.domain.AccountabilityType" />
+			<fr:property name="format" value="${name}" />
+			<fr:property name="sortBy" value="name" />
+			<fr:property name="saveOptions" value="true" />
+		</fr:slot>
+		
+		
 		<fr:slot name="siadapStructureTopUnit" layout="autoComplete" key="label.config.siadapStructureTopUnit">
 			<fr:property name="labelField" value="partyName.content" />
 			<fr:property name="format" value="${presentationName}" />
@@ -86,11 +108,42 @@
 			<fr:validator
 				name="pt.ist.fenixWebFramework.rendererExtensions.validators.RequiredAutoCompleteSelectionValidator">
 				<fr:property name="message" value="label.pleaseSelectOne.unit" />
-				<fr:property name="bundle" value="EXPENDITURE_RESOURCES" />
+				<fr:property name="bundle" value="SIADAP_RESOURCES" />
+				<fr:property name="key" value="true" />
+			</fr:validator>
+		</fr:slot>
+		
+		<fr:slot name="siadapSpecialHarmonizationUnit" layout="autoComplete" key="label.config.siadapSpecialHarmonizationUnit">
+			<fr:property name="labelField" value="partyName.content" />
+			<fr:property name="format" value="${presentationName}" />
+			<fr:property name="minChars" value="3" />
+			<fr:property name="args"
+				value="provider=module.organization.presentationTier.renderers.providers.UnitAutoCompleteProvider" />
+			<fr:property name="size" value="60" />
+			<fr:validator
+				name="pt.ist.fenixWebFramework.rendererExtensions.validators.RequiredAutoCompleteSelectionValidator">
+				<fr:property name="message" value="label.pleaseSelectOne.specialHarmonizationUnit" />
+				<fr:property name="bundle" value="SIADAP_RESOURCES" />
 				<fr:property name="key" value="true" />
 			</fr:validator>
 		</fr:slot>
 
+		<fr:slot name="quotaExcellencySiadap2WithQuota" key="label.config.quotaExcellencySiadap2WithQuota"/>
+		<fr:slot name="quotaRelevantSiadap2WithQuota" key="label.config.quotaRelevantSiadap2WithQuota"/>
+		<fr:slot name="quotaRegularSiadap2WithQuota" key="label.config.quotaRegularSiadap2WithQuota"/>
+		
+		<fr:slot name="quotaExcellencySiadap2WithoutQuota" key="label.config.quotaExcellencySiadap2WithoutQuota"/>
+		<fr:slot name="quotaRelevantSiadap2WithoutQuota" key="label.config.quotaRelevantSiadap2WithoutQuota"/>
+		<fr:slot name="quotaRegularSiadap2WithoutQuota" key="label.config.quotaRegularSiadap2WithoutQuota"/>
+		
+		<fr:slot name="quotaExcellencySiadap3WithQuota" key="label.config.quotaExcellencySiadap3WithQuota"/>
+		<fr:slot name="quotaRelevantSiadap3WithQuota" key="label.config.quotaRelevantSiadap3WithQuota"/>
+		<fr:slot name="quotaRegularSiadap3WithQuota" key="label.config.quotaRegularSiadap3WithQuota"/>
+		
+		<fr:slot name="quotaExcellencySiadap3WithoutQuota" key="label.config.quotaExcellencySiadap3WithoutQuota"/>
+		<fr:slot name="quotaRelevantSiadap3WithoutQuota" key="label.config.quotaRelevantSiadap3WithoutQuota"/>
+		<fr:slot name="quotaRegularSiadap3WithoutQuota" key="label.config.quotaRegularSiadap3WithoutQuota"/>
+		
 		<fr:slot name="objectiveSpecificationBegin" layout="picker" key="label.config.objectiveSpecificationBegin"/>
 		<fr:slot name="objectiveSpecificationEnd" layout="picker" key="label.config.objectiveSpecificationEnd"/>
 		<fr:slot name="autoEvaluationBegin" layout="picker"/>
@@ -98,6 +151,9 @@
 		<fr:slot name="evaluationBegin" layout="picker"/>
 		<fr:slot name="evaluationEnd" layout="picker"/>
 		<fr:slot name="lockHarmonizationOnQuota" key="label.config.lockHarmonizationOnQuota"/>
+		<fr:slot name="lockHarmonizationOnQuotaOutsideOfQuotaUniverses" key="label.config.lockHarmonizationOnQuotaOutsideOfQuotaUniverses"/>
+		
+		
 	</fr:schema>
 
 	<fr:layout name="tabular">

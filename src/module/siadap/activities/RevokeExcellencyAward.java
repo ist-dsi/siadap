@@ -13,7 +13,7 @@ public class RevokeExcellencyAward extends WorkflowActivity<SiadapProcess, Activ
 	Siadap siadap = process.getSiadap();
 	return siadap.getSiadapYearConfiguration().isPersonMemberOfCCA(user.getPerson())
 		&& Boolean.TRUE.equals(siadap.getValidated())
-		&& Boolean.TRUE.equals(siadap.getEvaluationData().getExcellencyAward());
+		&& Boolean.TRUE.equals(siadap.getEvaluationData2().getExcellencyAward());
     }
 
     @Override
@@ -28,7 +28,7 @@ public class RevokeExcellencyAward extends WorkflowActivity<SiadapProcess, Activ
 
     @Override
     protected void process(ActivityInformation<SiadapProcess> activityInformation) {
-	activityInformation.getProcess().getSiadap().getEvaluationData().setExcellencyAward(Boolean.FALSE);
+	activityInformation.getProcess().getSiadap().getEvaluationData2().setExcellencyAward(Boolean.FALSE);
     }
 
 }

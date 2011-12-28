@@ -17,13 +17,13 @@ public class EvaluationActivityInformation extends ActivityInformation<SiadapPro
     public EvaluationActivityInformation(SiadapProcess process,
 	    WorkflowActivity<? extends WorkflowProcess, ? extends ActivityInformation> activity) {
 	super(process, activity);
-	SiadapEvaluation evaluationData = process.getSiadap().getEvaluationData();
+	SiadapEvaluation evaluationData = process.getSiadap().getEvaluationData2();
     }
 
     @Override
     public void setProcess(SiadapProcess process) {
 	super.setProcess(process);
-	SiadapEvaluation evaluationData = process.getSiadap().getEvaluationData();
+	SiadapEvaluation evaluationData = process.getSiadap().getEvaluationData2();
 	if (evaluationData != null) {
 	    setNoEvaluationJustification(evaluationData.getNoEvaluationJustification());
 	    setPersonalDevelopment(evaluationData.getPersonalDevelopment());

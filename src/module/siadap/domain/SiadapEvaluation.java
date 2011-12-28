@@ -34,12 +34,15 @@ public class SiadapEvaluation extends SiadapEvaluation_Base {
 	String personalDevelopment = getPersonalDevelopment();
 	String evaluationJustification = getEvaluationJustification();
 	String trainningNeeds = getTrainningNeeds();
-	if (siadap.isInadequate() && (StringUtils.isEmpty(personalDevelopment) || StringUtils.isEmpty(trainningNeeds))) {
+	if (siadap.getDefaultSiadapEvaluationUniverse().isInadequate()
+		&& (StringUtils.isEmpty(personalDevelopment) || StringUtils.isEmpty(trainningNeeds))) {
 
 	    throw new DomainException("error.siadapEvaluation.mustFillDataForBadEvaluation",
 		    DomainException.getResourceFor("resources/SiadapResources"));
 	}
-	if ((siadap.isInadequate() || siadap.hasRelevantEvaluation()) && StringUtils.isEmpty(evaluationJustification)) {
+	if ((siadap.getDefaultSiadapEvaluationUniverse().isInadequate() || siadap.getDefaultSiadapEvaluationUniverse()
+		.hasRelevantEvaluation())
+		&& StringUtils.isEmpty(evaluationJustification)) {
 	    throw new DomainException("error.siadapEvaluation.mustFillEvaluationJustification",
 		    DomainException.getResourceFor("resources/SiadapResources"));
 

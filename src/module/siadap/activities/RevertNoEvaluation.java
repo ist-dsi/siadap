@@ -22,7 +22,7 @@ public class RevertNoEvaluation extends WorkflowActivity<SiadapProcess, Activity
 
     @Override
     protected void process(ActivityInformation<SiadapProcess> activityInformation) {
-	activityInformation.getProcess().getSiadap().getEvaluationData().setNoEvaluationJustification(null);
+	activityInformation.getProcess().getSiadap().getEvaluationData2().setNoEvaluationJustification(null);
     }
 
     @Override
