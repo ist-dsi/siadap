@@ -21,6 +21,20 @@ public enum SiadapProcessStateEnum implements IPresentableEnum {
 
     NOT_YET_EVALUATED,
 
+    WAITING_HARMONIZATION, //
+
+    WAITING_VALIDATION,
+
+    WAITING_SUBMITTAL_BY_EVALUATOR_AFTER_VALIDATION,
+
+    WAITING_VALIDATION_ACKNOWLEDGMENT_BY_EVALUATED,
+
+    WAITING_HOMOLOGATION,
+
+    WAITING_ACKNOWLEDGEMENT_OF_HOMOLOGATION,
+
+    FINAL_STATE,
+
     UNIMPLEMENTED_STATE;
 
     private SiadapProcessStateEnum() {
@@ -55,8 +69,12 @@ public enum SiadapProcessStateEnum implements IPresentableEnum {
 	    return "siadap.state.waiting.self.evaluation";
 	case NOT_YET_EVALUATED:
 	    return "siadap.state.not.evaluted.yet";
-	case UNIMPLEMENTED_STATE:
-	    return "siadap.state.unimplemented";
+	case WAITING_HARMONIZATION:
+	    return "siadap.state.waiting.harmonization";
+	case WAITING_VALIDATION:
+	    return "siadap.state.waiting.validation";
+	    //	case UNIMPLEMENTED_STATE:
+	    //	    return "siadap.state.unimplemented";
 	}
 	return null;
 
@@ -79,6 +97,10 @@ public enum SiadapProcessStateEnum implements IPresentableEnum {
 	    return WAITING_SELF_EVALUATION;
 	else if (!siadap.isEvaluationDone())
 	    return NOT_YET_EVALUATED;
+	else if (siadap.getHarmonizationDate() == null)
+	    return WAITING_HARMONIZATION;
+	else if (siadap.getValidated() == null)
+	    return WAITING_VALIDATION;
 	return UNIMPLEMENTED_STATE;
 
     }

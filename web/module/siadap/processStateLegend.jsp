@@ -13,4 +13,5 @@
   <li><bean:message bundle="SIADAP_RESOURCES" key="siadap.state.unimplemented"/> - <bean:message bundle="SIADAP_RESOURCES" key="siadap.state.unimplemented.explanation"/>;</li> 
   <li><bean:message bundle="SIADAP_RESOURCES" key="siadap.state.waiting.evaluation.objectives.acknowledgement"/> - <bean:message bundle="SIADAP_RESOURCES" key="siadap.state.waiting.evaluation.objectives.acknowledgement.explanation"/>;</li>
   <li><bean:message bundle="SIADAP_RESOURCES" key="siadap.state.waiting.self.evaluation"/> - <bean:message bundle="SIADAP_RESOURCES" key="siadap.state.waiting.self.evaluation.explanation"/>;</li>
+  <li><bean:message bundle="SIADAP_RESOURCES" key="siadap.state.waiting.harmonization"/> - <bean:message bundle="SIADAP_RESOURCES" key="siadap.state.waiting.harmonization.explanation"/>;</li>
 </ul>

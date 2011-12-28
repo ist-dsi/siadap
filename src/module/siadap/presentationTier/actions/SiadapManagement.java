@@ -11,8 +11,10 @@ import module.organization.domain.Unit;
 import module.siadap.domain.ExcedingQuotaProposal;
 import module.siadap.domain.Siadap;
 import module.siadap.domain.SiadapProcess;
+import module.siadap.domain.SiadapUniverse;
 import module.siadap.domain.SiadapYearConfiguration;
 import module.siadap.domain.wrappers.PersonSiadapWrapper;
+import module.siadap.domain.wrappers.SiadapUniverseWrapper;
 import module.siadap.domain.wrappers.SiadapYearWrapper;
 import module.siadap.domain.wrappers.UnitSiadapWrapper;
 import module.siadap.presentationTier.renderers.providers.SiadapYearsFromExistingSiadapConfigurations;
@@ -246,10 +248,27 @@ public class SiadapManagement extends ContextBaseAction {
 
 	SiadapYearConfiguration configuration = SiadapYearConfiguration.getSiadapYearConfiguration(year);
 
-	request.setAttribute("people-withQuotas-SIADAP2", wrapper.getSiadap2AndWorkingRelationWithQuotaUniverse());
-	request.setAttribute("people-withQuotas-SIADAP3", wrapper.getSiadap3AndWorkingRelationWithQuotaUniverse());
-	request.setAttribute("people-withoutQuotas-SIADAP2", wrapper.getSiadap2AndWorkingRelationWithoutQuotaUniverse());
-	request.setAttribute("people-withoutQuotas-SIADAP3", wrapper.getSiadap3AndWorkingRelationWithoutQuotaUniverse());
+	SiadapUniverseWrapper peopleWithQuotasSIADAP2 = new SiadapUniverseWrapper(
+		wrapper.getSiadap2AndWorkingRelationWithQuotaUniverse(), "people-withQuotas-SIADAP2",
+		SiadapUniverse.SIADAP2, configuration.getQuotaExcellencySiadap2WithQuota(),
+		configuration.getQuotaRelevantSiadap2WithQuota());
+	SiadapUniverseWrapper peopleWithQuotasSIADAP3 = new SiadapUniverseWrapper(
+		wrapper.getSiadap3AndWorkingRelationWithQuotaUniverse(), "people-withQuotas-SIADAP3",
+		SiadapUniverse.SIADAP3, configuration.getQuotaExcellencySiadap3WithQuota(),
+		configuration.getQuotaRelevantSiadap3WithQuota());
+	SiadapUniverseWrapper peopleWithoutQuotasSIADAP2 = new SiadapUniverseWrapper(
+		wrapper.getSiadap2AndWorkingRelationWithoutQuotaUniverse(), "people-withoutQuotas-SIADAP2",
+		SiadapUniverse.SIADAP2, configuration.getQuotaExcellencySiadap2WithoutQuota(),
+		configuration.getQuotaRelevantSiadap2WithoutQuota());
+	SiadapUniverseWrapper peopleWithoutQuotasSIADAP3 = new SiadapUniverseWrapper(
+		wrapper.getSiadap3AndWorkingRelationWithoutQuotaUniverse(), "people-withoutQuotas-SIADAP3",
+		SiadapUniverse.SIADAP3, configuration.getQuotaExcellencySiadap3WithoutQuota(),
+		configuration.getQuotaRelevantSiadap3WithoutQuota());
+
+	request.setAttribute("people-withQuotas-SIADAP2", peopleWithQuotasSIADAP2);
+	request.setAttribute("people-withQuotas-SIADAP3", peopleWithQuotasSIADAP3);
+	request.setAttribute("people-withoutQuotas-SIADAP2", peopleWithoutQuotasSIADAP2);
+	request.setAttribute("people-withoutQuotas-SIADAP3", peopleWithoutQuotasSIADAP3);
 	//	request.setAttribute("people-withQuotas", wrapper.getUnitEmployeesWithQuotas(false));
 	//	request.setAttribute("people-withoutQuotas", wrapper.getUnitEmployeesWithoutQuotas(false));
 

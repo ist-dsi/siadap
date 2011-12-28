@@ -15,6 +15,30 @@
 		</slot>
 </schema>
 
+<schema bundle="SIADAP_RESOURCES" name="SiadapUniverseWrapper-currentState"
+		type="module.siadap.domain.wrappers.SiadapUniverseWrapper">
+		<slot name="numberPeopleInUniverse" key="label.harmonization.totalHarmonizedInUniverse"/>
+		
+		<slot name="excellencyQuota" key="label.harmonization.quota.excellents">
+			<property name="classes" value="quota-excellents"/>
+		</slot>
+		<slot name="currentEvaluationExcellents" key="label.harmonization.current.excellents.used.quota">
+			<property name="classes" value="current-evaluation-excellents"/>
+		</slot>
+		<slot name="relevantQuota" key="label.harmonization.quota.relevant">
+			<property name="classes" value="quota-relevants"/>
+		</slot>
+		<slot name="currentEvaluationRelevants" key="label.harmonization.current.relevant.used.quota">
+			<property name="classes" value="current-evaluation-relevants"/>
+		</slot>
+		<slot name="currentHarmonizedRelevants" key="label.harmonization.current.relevants.harmonized" >
+			<property name="classes" value="current-harmonized-relevants"/>
+		</slot>
+		<slot name="currentHarmonizedExcellents" key="label.harmonization.current.excellents.harmonized">
+			<property name="classes" value="current-harmonized-excellents"/>
+		</slot>
+</schema>
+
 <schema bundle="SIADAP_RESOURCES" name="activityInformation.RevertState"
 		type="module.siadap.activities.RevertStateActivityInformation">
 		<slot name="siadapProcessStateEnum" layout="menu-select"

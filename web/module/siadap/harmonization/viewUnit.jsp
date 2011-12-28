@@ -1,3 +1,4 @@
+<%@page import="module.siadap.domain.wrappers.SiadapUniverseWrapper"%>
 <%@page import="java.util.Set"%>
 <%@page import="module.siadap.domain.wrappers.PersonSiadapWrapper"%>
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
@@ -113,13 +114,13 @@
 
 
 <%
-Set<PersonSiadapWrapper> peopleWithQuotasSIADAP2 = (Set<PersonSiadapWrapper>) request.getAttribute("people-withQuotas-SIADAP2");
-Set<PersonSiadapWrapper> peopleWithQuotasSIADAP3 = (Set<PersonSiadapWrapper>) request.getAttribute("people-withQuotas-SIADAP3");
-Set<PersonSiadapWrapper> peopleWithoutQuotasSIADAP2 = (Set<PersonSiadapWrapper>) request.getAttribute("people-withoutQuotas-SIADAP2");
-Set<PersonSiadapWrapper> peopleWithoutQuotasSIADAP3 = (Set<PersonSiadapWrapper>) request.getAttribute("people-withoutQuotas-SIADAP3");
+SiadapUniverseWrapper peopleWithQuotasSIADAP2 = (SiadapUniverseWrapper) request.getAttribute("people-withQuotas-SIADAP2");
+SiadapUniverseWrapper peopleWithQuotasSIADAP3 = (SiadapUniverseWrapper) request.getAttribute("people-withQuotas-SIADAP3");
+SiadapUniverseWrapper peopleWithoutQuotasSIADAP2 = (SiadapUniverseWrapper) request.getAttribute("people-withoutQuotas-SIADAP2");
+SiadapUniverseWrapper peopleWithoutQuotasSIADAP3 = (SiadapUniverseWrapper) request.getAttribute("people-withoutQuotas-SIADAP3");
 
 //if we have no listings for some reason, there's no point in having a form
-boolean hasPeopleToHarmonize = ((peopleWithoutQuotasSIADAP2 == null || peopleWithoutQuotasSIADAP2.size() == 0) && (peopleWithQuotasSIADAP3 == null || peopleWithQuotasSIADAP3.size() == 0) && (peopleWithQuotasSIADAP2 == null || peopleWithQuotasSIADAP2.size() == 0) && (peopleWithoutQuotasSIADAP3 == null || peopleWithoutQuotasSIADAP3.size() ==0)) ? false : true;
+boolean hasPeopleToHarmonize = ((peopleWithoutQuotasSIADAP2.getSiadapUniverse() == null || peopleWithoutQuotasSIADAP2.getSiadapUniverse().size() == 0) && (peopleWithQuotasSIADAP3.getSiadapUniverse() == null || peopleWithQuotasSIADAP3.getSiadapUniverse().size() == 0) && (peopleWithQuotasSIADAP2.getSiadapUniverse() == null || peopleWithQuotasSIADAP2.getSiadapUniverse().size() == 0) && (peopleWithoutQuotasSIADAP3.getSiadapUniverse() == null || peopleWithoutQuotasSIADAP3.getSiadapUniverse().size() ==0)) ? false : true;
 
 	request.setAttribute("hasPeopleToHarmonize", hasPeopleToHarmonize);
 %>
@@ -298,55 +299,79 @@ boolean hasPeopleToHarmonize = ((peopleWithoutQuotasSIADAP2 == null || peopleWit
 	
 </script>
 	
-		<logic:notEmpty name="people-withQuotas-SIADAP2">
-			<strong>
+		<logic:notEmpty name="people-withQuotas-SIADAP2" property="siadapUniverse">
+ 			<strong>
 				<bean:message key="label.unitEmployees.withQuotasSIADAP2" bundle="SIADAP_RESOURCES"/>:
 			</strong>
 		<div class="infobox">
-			<fr:view name="currentUnit">
-				<fr:schema type="module.siadap.domain.wrappers.UnitSiadapWrapper" bundle="SIADAP_RESOURCES">
-					<fr:slot name="peopleHarmonizedInUnitSiadap2WithQuotas" key="label.harmonization.totalHarmonizedInUniverse"/>
-					<fr:slot name="excellencySiadap2WithQuotaQuota" key="label.harmonization.quota.excellents">
-						<fr:property name="classes" value="quota-excellents-siadap2WithQuotas"/>
+			<fr:view name="people-withQuotas-SIADAP2">
+				<fr:schema bundle="SIADAP_RESOURCES" type="module.siadap.domain.wrappers.SiadapUniverseWrapper">
+					<fr:slot name="numberPeopleInUniverse" key="label.harmonization.totalHarmonizedInUniverse"/>
+					<fr:slot name="excellencyQuota" key="label.harmonization.quota.excellents">
+						<fr:property name="classes" value="quota-excellents"/>
 					</fr:slot>
-					<fr:slot name="numberCurrentExcellentsSiadap2WithQuota" key="label.harmonization.current.excellents.used.quota">
-						<fr:property name="classes" value="current-excellents-siadap2WithQuotas"/>
+					<fr:slot name="currentEvaluationExcellents" key="label.harmonization.current.excellents.used.quota">
+						<fr:property name="classes" value="current-evaluation-excellents"/>
 					</fr:slot>
-					<fr:slot name="relevantSiadap2WithQuotaQuota" key="label.harmonization.quota.relevant">
-						<fr:property name="classes" value="quota-relevants-siadap2WithQuotas"/>
+					<fr:slot name="relevantQuota" key="label.harmonization.quota.relevant">
+						<fr:property name="classes" value="quota-relevants"/>
 					</fr:slot>
-					<fr:slot name="numberCurrentRelevantsSiadap2WithQuota" key="label.harmonization.current.relevant.used.quota">
-						<fr:property name="classes" value="current-relevants-siadap2WithQuotas"/>
+					<fr:slot name="currentEvaluationRelevants" key="label.harmonization.current.relevant.used.quota">
+						<fr:property name="classes" value="current-evaluation-relevants"/>
 					</fr:slot>
-					<%-- TODO ? joantune
-					<fr:slot name="relevantEvaluationPercentage"/>--%>
-					<%-- TODO ? joantune
-					<fr:slot name="excellencyEvaluationPercentage"/> --%>
+					<fr:slot name="currentHarmonizedRelevants" key="label.harmonization.current.relevants.harmonized" >
+						<fr:property name="classes" value="current-harmonized-relevants"/>
+					</fr:slot>
+					<fr:slot name="currentHarmonizedExcellents" key="label.harmonization.current.excellents.harmonized">
+						<fr:property name="classes" value="current-harmonized-excellents"/>
+					</fr:slot>
 				</fr:schema>
-				<fr:layout name="tabular">
-					<fr:property name="columnClasses" value="aright,,"/>
-					<fr:property name="classes" value="tstyle2"/>
+				<fr:layout name="matrix">
+					<fr:property name="classes" value="tstyle5 thlight thright mtop05 mbottom05 thmiddle" />				
+				
+					<fr:property name="slot(excellencyQuota)" value="excellencyQuota"/>
+					<fr:property name="row(excellencyQuota)" value="0"/>
+					<fr:property name="column(excellencyQuota)" value="0"/>
+					
+					<fr:property name="slot(currentEvaluationExcellents)" value="currentEvaluationExcellents"/>
+					<fr:property name="row(currentEvaluationExcellents)" value="1"/>
+					<fr:property name="column(currentEvaluationExcellents)" value="0"/>
+					
+					<fr:property name="slot(relevantQuota)" value="relevantQuota"/>
+					<fr:property name="row(relevantQuota)" value="2"/>
+					<fr:property name="column(relevantQuota)" value="0"/>
+					
+					<fr:property name="slot(currentEvaluationRelevants)" value="currentEvaluationRelevants"/>
+					<fr:property name="row(currentEvaluationRelevants)" value="3"/>
+					<fr:property name="column(currentEvaluationRelevants)" value="0"/>
+					
+					<fr:property name="slot(currentHarmonizedExcellents)" value="currentHarmonizedExcellents"/>
+					<fr:property name="row(currentHarmonizedExcellents)" value="0"/>
+					<fr:property name="column(currentHarmonizedExcellents)" value="1"/>
+					
+				 	<fr:property name="slot(currentHarmonizedRelevants)" value="currentHarmonizedRelevants"/>
+					<fr:property name="row(currentHarmonizedRelevants)" value="1"/>
+					<fr:property name="column(currentHarmonizedRelevants)" value="1"/>
+					
 				</fr:layout>
 			</fr:view>
 		</div>
-			<p>
-			<logic:equal name="currentUnit" property="siadap2WithQuotasAboveQuota" value="true">
+	 		<logic:equal name="people-withQuotas-SIADAP2" property="siadapUniverseWithQuotasAboveQuota" value="true">
 			
-				<bean:define id="currentRelevantSiadap2WithQuotaQuota" name="currentUnit" property="relevantSiadap2WithQuotaQuota"/>
-				<bean:define id="numberCurrentRelevantsSiadap2WithQuota" name="currentUnit" property="numberCurrentRelevantsSiadap2WithQuota"/>
-				<bean:define id="numberCurrentExcellentsSiadap2WithQuota" name="currentUnit" property="numberCurrentExcellentsSiadap2WithQuota"/>
-				<bean:define id="excellencySiadap2WithQuotaQuota" name="currentUnit" property="excellencySiadap2WithQuotaQuota"/>
+				<bean:define id="relevantQuota" name="people-withQuotas-SIADAP2" property="relevantQuota"/>
+				
+				<bean:define id="currentHarmonizedRelevants" name="people-withQuotas-SIADAP2" property="currentHarmonizedRelevants"/>
+				<bean:define id="currentHarmonizedExcellents" name="people-withQuotas-SIADAP2" property="currentHarmonizedExcellents"/>
+				<bean:define id="excellencyQuota" name="people-withQuotas-SIADAP2" property="excellencyQuota"/>
 				
 				<div class="highlightBox">
-					<bean:message key="warning.harmonizationUnitAboveQuotas" bundle="SIADAP_RESOURCES" arg0="<%= numberCurrentRelevantsSiadap2WithQuota.toString() %>" arg1="<%= currentRelevantSiadap2WithQuotaQuota.toString() %>" arg2="<%= numberCurrentExcellentsSiadap2WithQuota.toString() %>" arg3="<%= excellencySiadap2WithQuotaQuota.toString() %>"/>
+					<bean:message key="warning.harmonizationUnitAboveQuotas" bundle="SIADAP_RESOURCES" arg0="<%= currentHarmonizedRelevants.toString() %>" arg1="<%= relevantQuota.toString() %>" arg2="<%= currentHarmonizedExcellents.toString() %>" arg3="<%= excellencyQuota.toString() %>"/>
 				</div>
 			</logic:equal>
-				<fr:edit id="people-withQuotas-SIADAP2" name="people-withQuotas-SIADAP2" nested="true">
+				<fr:edit id="people-withQuotas-SIADAP2" name="people-withQuotas-SIADAP2" property="siadapUniverse" nested="true">
 					<fr:schema type="module.siadap.domain.wrappers.PersonSiadapWrapper" bundle="SIADAP_RESOURCES">
 						<fr:slot name="person.partyName" key="label.evaluated" readOnly="true"/>
 						<fr:slot name="person.user.username" key="label.login.username" bundle="MYORG_RESOURCES" readOnly="true"/>
-						<%-- <fr:slot name="evaluator.name" key="label.evaluator"/>
-						<fr:slot name="evaluator.person.user.username" key="label.login.username" bundle="MYORG_RESOURCES"/> --%>
 						<fr:slot name="totalEvaluationScoringSiadap2" layout="null-as-label" key="label.totalEvaluationScoring" readOnly="true">
 							<fr:property name="subLayout" value=""/>
 						</fr:slot>
@@ -389,54 +414,56 @@ boolean hasPeopleToHarmonize = ((peopleWithoutQuotasSIADAP2 == null || peopleWit
 						
 					</fr:layout>
 				</fr:edit>
-			</p>
-		</logic:notEmpty>
+		 </logic:notEmpty>
 		
-		<logic:notEmpty name="people-withQuotas-SIADAP3">
+		<logic:notEmpty name="people-withQuotas-SIADAP3" property="siadapUniverse">
 			<strong>
 				<bean:message key="label.unitEmployees.withQuotasSIADAP3" bundle="SIADAP_RESOURCES"/>:
 			</strong>
 			
 		<div class="infobox">
-			<fr:view name="currentUnit">
-				<fr:schema type="module.siadap.domain.wrappers.UnitSiadapWrapper" bundle="SIADAP_RESOURCES">
-					<fr:slot name="peopleHarmonizedInUnitSiadap3WithQuotas" key="label.harmonization.totalHarmonizedInUniverse"/>
-					<fr:slot name="excellencySiadap3WithQuotaQuota" key="label.harmonization.quota.excellents">
-						<fr:property name="classes" value="quota-excellents-siadap3WithQuotas"/>
-					</fr:slot>
-					<fr:slot name="numberCurrentExcellentsSiadap3WithQuota" key="label.harmonization.current.excellents.used.quota">
-						<fr:property name="classes" value="current-excellents-siadap3WithQuotas"/>
-					</fr:slot>
-					<fr:slot name="relevantSiadap3WithQuotaQuota" key="label.harmonization.quota.relevant">
-						<fr:property name="classes" value="quota-relevants-siadap3WithQuotas"/>
-					</fr:slot>
-					<fr:slot name="numberCurrentRelevantsSiadap3WithQuota" key="label.harmonization.current.relevant.used.quota">
-						<fr:property name="classes" value="current-relevants-siadap3WithQuotas"/>
-					</fr:slot>
-					<%-- TODO ? joantune
-					<fr:slot name="relevantEvaluationPercentage"/>--%>
-					<%-- TODO ? joantune
-					<fr:slot name="excellencyEvaluationPercentage"/> --%>
-				</fr:schema>
-				<fr:layout name="tabular">
-					<fr:property name="columnClasses" value="aright,,"/>
-					<fr:property name="classes" value="tstyle2"/>
+			<fr:view name="people-withQuotas-SIADAP3" schema="SiadapUniverseWrapper-currentState">
+				<fr:layout name="matrix">
+					<fr:property name="slot(excellencyQuota)" value="excellencyQuota"/>
+					<fr:property name="row(excellencyQuota)" value="0"/>
+					<fr:property name="column(excellencyQuota)" value="0"/>
+					
+					<fr:property name="slot(currentEvaluationExcellents)" value="currentEvaluationExcellents"/>
+					<fr:property name="row(currentEvaluationExcellents)" value="1"/>
+					<fr:property name="column(currentEvaluationExcellents)" value="0"/>
+					
+					<fr:property name="slot(relevantQuota)" value="relevantQuota"/>
+					<fr:property name="row(relevantQuota)" value="3"/>
+					<fr:property name="column(relevantQuota)" value="0"/>
+					
+					<fr:property name="slot(currentEvaluationRelevants)" value="currentEvaluationRelevants"/>
+					<fr:property name="row(currentEvaluationRelevants)" value="4"/>
+					<fr:property name="column(currentEvaluationRelevants)" value="0"/>
+					
+					<fr:property name="slot(currentHarmonizedExcellents)" value="currentHarmonizedExcellents"/>
+					<fr:property name="row(currentHarmonizedExcellents)" value="1"/>
+					<fr:property name="column(currentHarmonizedExcellents)" value="1"/>
+					
+					<fr:property name="slot(currentHarmonizedRelevants)" value="currentHarmonizedRelevants"/>
+					<fr:property name="row(currentHarmonizedRelevants)" value="4"/>
+					<fr:property name="column(currentHarmonizedRelevants)" value="1"/>
 				</fr:layout>
 			</fr:view>
 		</div>
 			<p>
-			<logic:equal name="currentUnit" property="siadap3WithQuotasAboveQuota" value="true">
+			<logic:equal name="people-withQuotas-SIADAP3" property="siadapUniverseWithQuotasAboveQuota" value="true">
 			
-				<bean:define id="currentRelevantSiadap3WithQuotaQuota" name="currentUnit" property="relevantSiadap3WithQuotaQuota"/>
-				<bean:define id="numberCurrentRelevantsSiadap3WithQuota" name="currentUnit" property="numberCurrentRelevantsSiadap3WithQuota"/>
-				<bean:define id="numberCurrentExcellentsSiadap3WithQuota" name="currentUnit" property="numberCurrentExcellentsSiadap3WithQuota"/>
-				<bean:define id="excellencySiadap3WithQuotaQuota" name="currentUnit" property="excellencySiadap3WithQuotaQuota"/>
+				<bean:define id="relevantQuota" name="people-withQuotas-SIADAP3" property="relevantQuota"/>
+				
+				<bean:define id="currentHarmonizedRelevants" name="people-withQuotas-SIADAP3" property="currentHarmonizedRelevants"/>
+				<bean:define id="currentHarmonizedExcellents" name="people-withQuotas-SIADAP3" property="currentHarmonizedExcellents"/>
+				<bean:define id="excellencyQuota" name="people-withQuotas-SIADAP3" property="excellencyQuota"/>
 				
 				<div class="highlightBox">
-					<bean:message key="warning.harmonizationUnitAboveQuotas" bundle="SIADAP_RESOURCES" arg0="<%= numberCurrentRelevantsSiadap3WithQuota.toString() %>" arg1="<%= currentRelevantSiadap3WithQuotaQuota.toString() %>" arg2="<%= numberCurrentExcellentsSiadap3WithQuota.toString() %>" arg3="<%= excellencySiadap3WithQuotaQuota.toString() %>"/>
+					<bean:message key="warning.harmonizationUnitAboveQuotas" bundle="SIADAP_RESOURCES" arg0="<%= currentHarmonizedRelevants.toString() %>" arg1="<%= relevantQuota.toString() %>" arg2="<%= currentHarmonizedExcellents.toString() %>" arg3="<%= excellencyQuota.toString() %>"/>
 				</div>
 			</logic:equal>
-				<fr:edit id="people-withQuotas-SIADAP3" name="people-withQuotas-SIADAP3" nested="true">
+				<fr:edit id="people-withQuotas-SIADAP3" name="people-withQuotas-SIADAP3" property="siadapUniverse" nested="true">
 					<fr:schema type="module.siadap.domain.wrappers.PersonSiadapWrapper" bundle="SIADAP_RESOURCES">
 						<fr:slot name="person.partyName" key="label.evaluated" readOnly="true" />
 						<fr:slot name="person.user.username" key="label.login.username" bundle="MYORG_RESOURCES" readOnly="true" />
@@ -487,51 +514,54 @@ boolean hasPeopleToHarmonize = ((peopleWithoutQuotasSIADAP2 == null || peopleWit
 			</p>
 		</logic:notEmpty>
 		
-		<logic:notEmpty name="people-withoutQuotas-SIADAP2">
+		<logic:notEmpty name="people-withoutQuotas-SIADAP2" property="siadapUniverse">
 			<strong>
 				<bean:message key="label.unitEmployees.withoutQuotasSIADAP2" bundle="SIADAP_RESOURCES"/>:
 			</strong>
 		<div class="infobox">
-			<fr:view name="currentUnit">
-				<fr:schema type="module.siadap.domain.wrappers.UnitSiadapWrapper" bundle="SIADAP_RESOURCES">
-					<fr:slot name="peopleHarmonizedInUnitSiadap2WithoutQuotas" key="label.harmonization.totalHarmonizedInUniverse"/>
-					<fr:slot name="excellencySiadap2WithoutQuotaQuota" key="label.harmonization.quota.excellents" >
-						<fr:property name="classes" value="quota-excellents-siadap2WithoutQuotas"/>
-					</fr:slot>
-					<fr:slot name="numberCurrentExcellentsSiadap2WithoutQuota" key="label.harmonization.current.excellents.used.quota">
-						<fr:property name="classes" value="current-excellents-siadap2WithoutQuotas"/>
-					</fr:slot>
-					<fr:slot name="relevantSiadap2WithoutQuotaQuota" key="label.harmonization.quota.relevant">
-						<fr:property name="classes" value="quota-relevants-siadap2WithoutQuotas"/>
-					</fr:slot>
-					<fr:slot name="numberCurrentRelevantsSiadap2WithoutQuota" key="label.harmonization.current.relevant.used.quota">
-						<fr:property name="classes" value="current-relevants-siadap2WithoutQuotas"/>
-					</fr:slot>
-					<%-- TODO ? joantune
-					<fr:slot name="relevantEvaluationPercentage"/>--%>
-					<%-- TODO ? joantune
-					<fr:slot name="excellencyEvaluationPercentage"/> --%>
-				</fr:schema>
-				<fr:layout name="tabular">
-					<fr:property name="columnClasses" value="aright,,"/>
-					<fr:property name="classes" value="tstyle2"/>
+			<fr:view name="people-withoutQuotas-SIADAP2" schema="SiadapUniverseWrapper-currentState" >
+				<fr:layout name="matrix">
+					<fr:property name="slot(excellencyQuota)" value="excellencyQuota"/>
+					<fr:property name="row(excellencyQuota)" value="0"/>
+					<fr:property name="column(excellencyQuota)" value="0"/>
+						
+					<fr:property name="slot(currentEvaluationExcellents)" value="currentEvaluationExcellents"/>
+					<fr:property name="row(currentEvaluationExcellents)" value="1"/>
+					<fr:property name="column(currentEvaluationExcellents)" value="0"/>
+						
+					<fr:property name="slot(relevantQuota)" value="relevantQuota"/>
+					<fr:property name="row(relevantQuota)" value="3"/>
+					<fr:property name="column(relevantQuota)" value="0"/>
+						
+					<fr:property name="slot(currentEvaluationRelevants)" value="currentEvaluationRelevants"/>
+					<fr:property name="row(currentEvaluationRelevants)" value="4"/>
+					<fr:property name="column(currentEvaluationRelevants)" value="0"/>
+						
+					<fr:property name="slot(currentHarmonizedExcellents)" value="currentHarmonizedExcellents"/>
+					<fr:property name="row(currentHarmonizedExcellents)" value="1"/>
+					<fr:property name="column(currentHarmonizedExcellents)" value="1"/>
+						
+					<fr:property name="slot(currentHarmonizedRelevants)" value="currentHarmonizedRelevants"/>
+					<fr:property name="row(currentHarmonizedRelevants)" value="4"/>
+					<fr:property name="column(currentHarmonizedRelevants)" value="1"/>
 				</fr:layout>
 			</fr:view>
 		</div>
 			<p>
-			<logic:equal name="currentUnit" property="siadap2WithoutQuotasAboveQuota" value="true">
+			<logic:equal name="people-withoutQuotas-SIADAP2" property="siadapUniverseWithQuotasAboveQuota" value="true">
 			
-				<bean:define id="currentRelevantSiadap2WithoutQuotaQuota" name="currentUnit" property="relevantSiadap2WithoutQuotaQuota"/>
-				<bean:define id="numberCurrentRelevantsSiadap2WithoutQuota" name="currentUnit" property="numberCurrentRelevantsSiadap2WithoutQuota"/>
-				<bean:define id="numberCurrentExcellentsSiadap2WithoutQuota" name="currentUnit" property="numberCurrentExcellentsSiadap2WithoutQuota"/>
-				<bean:define id="excellencySiadap2WithoutQuotaQuota" name="currentUnit" property="excellencySiadap2WithoutQuotaQuota"/>
+				<bean:define id="relevantQuota" name="people-withoutQuotas-SIADAP2" property="relevantQuota"/>
+				
+				<bean:define id="currentHarmonizedRelevants" name="people-withoutQuotas-SIADAP2" property="currentHarmonizedRelevants"/>
+				<bean:define id="currentHarmonizedExcellents" name="people-withoutQuotas-SIADAP2" property="currentHarmonizedExcellents"/>
+				<bean:define id="excellencyQuota" name="people-withoutQuotas-SIADAP2" property="excellencyQuota"/>
 				
 				<div class="highlightBox">
-					<bean:message key="warning.harmonizationUnitAboveQuotas" bundle="SIADAP_RESOURCES" arg0="<%= numberCurrentRelevantsSiadap2WithoutQuota.toString() %>" arg1="<%= currentRelevantSiadap2WithoutQuotaQuota.toString() %>" arg2="<%= numberCurrentExcellentsSiadap2WithoutQuota.toString() %>" arg3="<%= excellencySiadap2WithoutQuotaQuota.toString() %>"/>
+					<bean:message key="warning.harmonizationUnitAboveQuotas" bundle="SIADAP_RESOURCES" arg0="<%= currentHarmonizedRelevants.toString() %>" arg1="<%= relevantQuota.toString() %>" arg2="<%= currentHarmonizedExcellents.toString() %>" arg3="<%= excellencyQuota.toString() %>"/>
 				</div>
 			</logic:equal>
 			
-				<fr:edit id="people-withoutQuotas-SIADAP2" name="people-withoutQuotas-SIADAP2" nested="true">
+				<fr:edit id="people-withoutQuotas-SIADAP2" name="people-withoutQuotas-SIADAP2" property="siadapUniverse" nested="true">
 					<fr:schema type="module.siadap.domain.wrappers.PersonSiadapWrapper" bundle="SIADAP_RESOURCES">
 						<fr:slot name="person.partyName" key="label.evaluated" readOnly="true" />
 						<fr:slot name="person.user.username" key="label.login.username" bundle="MYORG_RESOURCES" readOnly="true"/>
@@ -582,50 +612,52 @@ boolean hasPeopleToHarmonize = ((peopleWithoutQuotasSIADAP2 == null || peopleWit
 			</p>
 		</logic:notEmpty>
 		
-		<logic:notEmpty name="people-withoutQuotas-SIADAP3">
+		<logic:notEmpty name="people-withoutQuotas-SIADAP3" property="siadapUniverse">
 			<strong>
 				<bean:message key="label.unitEmployees.withoutQuotasSIADAP3" bundle="SIADAP_RESOURCES"/>:
 			</strong>
 		<div class="infobox">
-			<fr:view name="currentUnit">
-				<fr:schema type="module.siadap.domain.wrappers.UnitSiadapWrapper" bundle="SIADAP_RESOURCES">
-					<fr:slot name="peopleHarmonizedInUnitSiadap3WithoutQuotas" key="label.harmonization.totalHarmonizedInUniverse"/>
-					<fr:slot name="excellencySiadap3WithoutQuotaQuota" key="label.harmonization.quota.excellents">
-						<fr:property name="classes" value="quota-excellents-siadap3WithoutQuotas"/>
-					</fr:slot>
-					<fr:slot name="numberCurrentExcellentsSiadap3WithoutQuota"  key="label.harmonization.current.excellents.used.quota">
-						<fr:property name="classes" value="current-excellents-siadap3WithoutQuotas"/>
-					</fr:slot>
-					<fr:slot name="relevantSiadap3WithoutQuotaQuota" key="label.harmonization.quota.relevant">
-						<fr:property name="classes" value="quota-relevants-siadap3WithoutQuotas"/>
-					</fr:slot>
-					<fr:slot name="numberCurrentRelevantsSiadap3WithoutQuota" key="label.harmonization.current.relevant.used.quota">
-						<fr:property name="classes" value="current-relevants-siadap3WithoutQuotas"/>
-					</fr:slot>
-					<%-- TODO ? joantune
-					<fr:slot name="relevantEvaluationPercentage"/>--%>
-					<%-- TODO ? joantune
-					<fr:slot name="excellencyEvaluationPercentage"/> --%>
-				</fr:schema>
-				<fr:layout name="tabular">
-					<fr:property name="columnClasses" value="aright,,"/>
-					<fr:property name="classes" value="tstyle2"/>
+			<fr:view name="people-withoutQuotas-SIADAP3" schema="SiadapUniverseWrapper-currentState" >
+				<fr:layout name="matrix">
+					<fr:property name="slot(excellencyQuota)" value="excellencyQuota"/>
+					<fr:property name="row(excellencyQuota)" value="0"/>
+					<fr:property name="column(excellencyQuota)" value="0"/>
+					
+					<fr:property name="slot(currentEvaluationExcellents)" value="currentEvaluationExcellents"/>
+					<fr:property name="row(currentEvaluationExcellents)" value="1"/>
+					<fr:property name="column(currentEvaluationExcellents)" value="0"/>
+					
+					<fr:property name="slot(relevantQuota)" value="relevantQuota"/>
+					<fr:property name="row(relevantQuota)" value="3"/>
+					<fr:property name="column(relevantQuota)" value="0"/>
+					
+					<fr:property name="slot(currentEvaluationRelevants)" value="currentEvaluationRelevants"/>
+					<fr:property name="row(currentEvaluationRelevants)" value="4"/>
+					<fr:property name="column(currentEvaluationRelevants)" value="0"/>
+					
+					<fr:property name="slot(currentHarmonizedExcellents)" value="currentHarmonizedExcellents"/>
+					<fr:property name="row(currentHarmonizedExcellents)" value="1"/>
+					<fr:property name="column(currentHarmonizedExcellents)" value="1"/>
+					
+					<fr:property name="slot(currentHarmonizedRelevants)" value="currentHarmonizedRelevants"/>
+					<fr:property name="row(currentHarmonizedRelevants)" value="4"/>
+					<fr:property name="column(currentHarmonizedRelevants)" value="1"/>				
 				</fr:layout>
 			</fr:view>
 		</div>	
 			<p>
-			<logic:equal name="currentUnit" property="siadap3WithoutQuotasAboveQuota" value="true">
-			
-				<bean:define id="currentRelevantSiadap3WithoutQuotaQuota" name="currentUnit" property="relevantSiadap3WithoutQuotaQuota"/>
-				<bean:define id="numberCurrentRelevantsSiadap3WithoutQuota" name="currentUnit" property="numberCurrentRelevantsSiadap3WithoutQuota"/>
-				<bean:define id="numberCurrentExcellentsSiadap3WithoutQuota" name="currentUnit" property="numberCurrentExcellentsSiadap3WithoutQuota"/>
-				<bean:define id="excellencySiadap3WithoutQuotaQuota" name="currentUnit" property="excellencySiadap3WithoutQuotaQuota"/>
+			<logic:equal name="people-withoutQuotas-SIADAP3" property="siadapUniverseWithQuotasAboveQuota" value="true">
+				
+				<bean:define id="relevantQuota" name="people-withoutQuotas-SIADAP3" property="relevantQuota"/>
+				<bean:define id="currentHarmonizedRelevants" name="people-withoutQuotas-SIADAP3" property="currentHarmonizedRelevants"/>
+				<bean:define id="currentHarmonizedExcellents" name="people-withoutQuotas-SIADAP3" property="currentHarmonizedExcellents"/>
+				<bean:define id="excellencyQuota" name="people-withoutQuotas-SIADAP3" property="excellencyQuota"/>
 				
 				<div class="highlightBox">
-					<bean:message key="warning.harmonizationUnitAboveQuotas" bundle="SIADAP_RESOURCES" arg0="<%= numberCurrentRelevantsSiadap3WithoutQuota.toString() %>" arg1="<%= currentRelevantSiadap3WithoutQuotaQuota.toString() %>" arg2="<%= numberCurrentExcellentsSiadap3WithoutQuota.toString() %>" arg3="<%= excellencySiadap3WithoutQuotaQuota.toString() %>"/>
+					<bean:message key="warning.harmonizationUnitAboveQuotas" bundle="SIADAP_RESOURCES" arg0="<%= currentHarmonizedRelevants.toString() %>" arg1="<%= relevantQuota.toString() %>" arg2="<%= currentHarmonizedExcellents.toString() %>" arg3="<%= excellencyQuota.toString() %>"/>
 				</div>
 			</logic:equal>
-				<fr:edit id="people-withoutQuotas-SIADAP3" name="people-withoutQuotas-SIADAP3" nested="true">
+				<fr:edit id="people-withoutQuotas-SIADAP3" name="people-withoutQuotas-SIADAP3" property="siadapUniverse" nested="true">
 					<fr:schema type="module.siadap.domain.wrappers.PersonSiadapWrapper" bundle="SIADAP_RESOURCES">
 						<fr:slot name="person.partyName" key="label.evaluated" readOnly="true" />
 						<fr:slot name="person.user.username" key="label.login.username" bundle="MYORG_RESOURCES" readOnly="true"/>
