@@ -420,6 +420,7 @@ boolean hasPeopleToHarmonize = ((peopleWithoutQuotasSIADAP2 == null || peopleWit
 				</fr:schema>
 				<fr:layout name="tabular">
 					<fr:property name="columnClasses" value="aright,,"/>
+					<fr:property name="classes" value="tstyle2"/>
 				</fr:layout>
 			</fr:view>
 		</div>
@@ -513,6 +514,7 @@ boolean hasPeopleToHarmonize = ((peopleWithoutQuotasSIADAP2 == null || peopleWit
 				</fr:schema>
 				<fr:layout name="tabular">
 					<fr:property name="columnClasses" value="aright,,"/>
+					<fr:property name="classes" value="tstyle2"/>
 				</fr:layout>
 			</fr:view>
 		</div>
@@ -607,6 +609,7 @@ boolean hasPeopleToHarmonize = ((peopleWithoutQuotasSIADAP2 == null || peopleWit
 				</fr:schema>
 				<fr:layout name="tabular">
 					<fr:property name="columnClasses" value="aright,,"/>
+					<fr:property name="classes" value="tstyle2"/>
 				</fr:layout>
 			</fr:view>
 		</div>	

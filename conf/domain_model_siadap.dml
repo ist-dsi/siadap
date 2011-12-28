@@ -96,7 +96,14 @@ class Siadap {
 	LocalDate homologationDate;
 	LocalDate acknowledgeHomologationDate;
 	
+	
+	/* Validação da avaliação - feita pelo CCA */
 	Boolean validated;
+	
+	/* a data em que foi submetida, após validação pelo CCA, ao avaliado para que este possa vê-la na
+	plataforma. (este passo intermédio é importante porque o avaliador deve comunicar antes deste a ter
+	disponível, a avaliação ao avaliado) */
+	LocalDate submittedForValidationEvaluationAcknowledgementDate;
 	
 	/* custom dates for exceptional reasons */
 	
@@ -142,7 +149,6 @@ class SiadapEvaluation {
 	String excellencyAwardJustification;
 	String personalDevelopment;
 	String trainningNeeds;
-	String excellencyAwardJustification;
 }
 
 class SiadapAutoEvaluation {

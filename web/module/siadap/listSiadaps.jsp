@@ -64,8 +64,9 @@
  		<fr:schema type="module.siadap.domain.Siadap" bundle="SIADAP_RESOURCES">
  			<fr:slot name="process.processNumber" key="label.processNumber" bundle="WORKFLOW_RESOURCES"/>
  			<fr:slot name="year"/>
- 			<%-- TODO joantune: SIADAP-145 --%>
+ 			<%-- TODO joantune: SIADAP-145 
  			<fr:slot name="defaultTotalEvaluationScoring"/>
+ 			--%>
  		</fr:schema>
  		<fr:layout name="tabular">
  			<fr:property name="classes" value="tstyle2"/>

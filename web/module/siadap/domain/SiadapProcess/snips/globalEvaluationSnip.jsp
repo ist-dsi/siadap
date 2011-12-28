@@ -39,13 +39,13 @@
 				<bean:message key="label.results" bundle="SIADAP_RESOURCES"/>
 			</td>
 			<td>
-				<fr:view name="siadap" property="objectivesScoring"/>
+				<fr:view name="siadap" property="defaultSiadapEvaluationUniverse.objectivesScoring"/>
 			</td>
 			<td>
-				<fr:view name="siadap" property="objectivesPonderation"/>%
+				<fr:view name="siadap" property="defaultSiadapEvaluationUniverse.objectivesPonderation"/>%
 			</td>
 			<td>
-				<fr:view name="siadap" property="ponderatedObjectivesScoring"/> 
+				<fr:view name="siadap" property="defaultSiadapEvaluationUniverse.ponderatedObjectivesScoring"/> 
 			</td>
 		</tr>
 		<tr>
@@ -53,20 +53,20 @@
 				<bean:message key="label.competences" bundle="SIADAP_RESOURCES"/>
 			</td>
 			<td>
-				<fr:view name="siadap" property="competencesScoring"/>
+				<fr:view name="siadap" property="defaultSiadapEvaluationUniverse.competencesScoring"/>
 			</td>
 			<td>
-				<fr:view name="siadap" property="competencesPonderation"/>%
+				<fr:view name="siadap" property="defaultSiadapEvaluationUniverse.competencesPonderation"/>%
 			</td>
 			<td>
-				<fr:view name="siadap" property="ponderatedCompetencesScoring"/> 
+				<fr:view name="siadap" property="defaultSiadapEvaluationUniverse.ponderatedCompetencesScoring"/> 
 			</td>
 		</tr>
 		<tr>
 			<td colspan="3">
 			</td>
 			<td>
-				<strong><fr:view name="siadap" property="totalEvaluationScoring"/> </strong>
+				<strong><fr:view name="siadap" property="defaultSiadapEvaluationUniverse.totalEvaluationScoring"/> </strong>
 			</td>
 		</tr>	
 	</table>

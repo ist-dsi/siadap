@@ -174,6 +174,23 @@ if (defaultSiadapUniverse.equals(SiadapUniverse.SIADAP3))
 	var lowLabel="<bean:message key="module.siadap.domain.scoring.SiadapGlobalEvaluation.LOW" bundle="SIADAP_RESOURCES"/>";
 	var zeroLabel="<bean:message key="module.siadap.domain.scoring.SiadapGlobalEvaluation.LOW" bundle="SIADAP_RESOURCES"/>";
 
+	 function excellencyAwardProcessEvent()
+	{
+		if ($("input[type=checkbox][name$='excellencyAward']").attr("checked"))
+		{
+		$("#excellencyAwardJustificationDiv").slideDown();
+		}
+		else {
+		$("#excellencyAwardJustificationDiv").slideUp();
+		}
+		
+	}
+	 $(document).ready(function() {
+		$("input[type=checkbox][name$='excellencyAward']").click(function(){
+			excellencyAwardProcessEvent();
+		});
+		excellencyAwardProcessEvent();
+	 });
 	<%
 		String message = BundleUtil.getStringFromResourceBundle("resources.SiadapResources","label.evaluationLine");
 	%>

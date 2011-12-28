@@ -102,7 +102,7 @@ public class SiadapEvaluationUniverse extends SiadapEvaluationUniverse_Base {
 
     }
 
-    private int getObjectivesPonderation() {
+    public int getObjectivesPonderation() {
 	if (getSiadapUniverse() == SiadapUniverse.SIADAP2)
 	    return getSiadap().getSiadapYearConfiguration().getSiadap2ObjectivesPonderation();
 	if (getSiadapUniverse() == SiadapUniverse.SIADAP3)
@@ -110,12 +110,16 @@ public class SiadapEvaluationUniverse extends SiadapEvaluationUniverse_Base {
 	return 0;
     }
 
-    private int getCompetencesPonderation() {
+    public int getCompetencesPonderation() {
 	if (getSiadapUniverse() == SiadapUniverse.SIADAP2)
 	    return getSiadap().getSiadapYearConfiguration().getSiadap2CompetencesPonderation();
 	if (getSiadapUniverse() == SiadapUniverse.SIADAP3)
 	    return getSiadap().getSiadapYearConfiguration().getSiadap3CompetencesPonderation();
 	return 0;
+    }
+
+    public BigDecimal getCompetencesScoring() {
+	return getEvaluationScoring(getCompetenceEvaluations());
     }
 
     private boolean isEvaluationScoringComplete(List<? extends SiadapEvaluationItem> evaluations) {

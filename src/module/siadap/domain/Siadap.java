@@ -362,7 +362,6 @@ public class Siadap extends Siadap_Base {
 
     }
 
-
     public BigDecimal getDefaultTotalEvaluationScoring() {
 	return getDefaultSiadapEvaluationUniverse().getTotalEvaluationScoring();
     }

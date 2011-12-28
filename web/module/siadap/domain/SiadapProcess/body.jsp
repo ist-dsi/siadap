@@ -40,7 +40,6 @@ request.setAttribute("objectivesVisibleToEvaluated", objectivesVisibileToEvaluat
 </div>
 </logic:equal>
 <h3><bean:message bundle="SIADAP_RESOURCES" key="label.siadap.schedule" arg0="<%= ((SiadapProcess) processJava).getSiadap().getYear().toString()%>" />:</h3>
-
 <%-- START: The table with the deadlines and custom deadlines if they are defined --%>
 <table class="tstyle3 thleft mvert10px">
 	<tbody>
@@ -306,11 +305,13 @@ request.setAttribute("objectivesVisibleToEvaluated", objectivesVisibileToEvaluat
 		</logic:equal>
 		
 		<logic:equal name="process" property="siadap.withSkippedEvaluation" value="false">
-			<p><strong><bean:message key="label.overalEvaluation" bundle="SIADAP_RESOURCES"/>:</strong></p>
-			<p>
-				<bean:define id="siadap" name="process" property="siadap" toScope="request"/>
-				<jsp:include page="snips/globalEvaluationSnip.jsp" flush="true"/>
-			</p>
+			<logic:equal name="evaluatedPersonWrapper" property="currentUserAbleToSeeEvaluationDetails" value="true">
+				<p><strong><bean:message key="label.overalEvaluation" bundle="SIADAP_RESOURCES"/>:</strong></p>
+				<p>
+					<bean:define id="siadap" name="process" property="siadap" toScope="request"/>
+					<jsp:include page="snips/globalEvaluationSnip.jsp" flush="true"/>
+				</p>
+			 </logic:equal>
 		</logic:equal>
 		
 		
