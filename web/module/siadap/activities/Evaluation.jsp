@@ -74,6 +74,16 @@
 	<p>
 		<bean:message key="label.propouseExcellencyAward" bundle="SIADAP_RESOURCES"/>: <fr:edit name="information" slot="excellencyAward" type="java.lang.String"/>
 	</p>
+	<div id="excellencyAwardJustificationDiv">
+		<strong><bean:message key="label.qualitativeEvaluation.excellencyAwardJustification"
+			bundle="SIADAP_RESOURCES" /></strong>: <fr:edit name="information"
+			slot="excellencyAwardJustification" type="java.lang.String">
+			<fr:layout name="longText">
+				<fr:property name="rows" value="8" />
+				<fr:property name="columns" value="80" />
+			</fr:layout>
+		</fr:edit>
+	</div>
 	
 	<div id="value" class="highlightBox">
 
@@ -121,8 +131,8 @@
 	</p>
 	
 	<html:submit styleClass="inputbutton">
-		<bean:message key="renderers.form.submit.name"
-			bundle="RENDERER_RESOURCES" />
+		<bean:message key="label.save"
+			bundle="SIADAP_RESOURCES" />
 	</html:submit>
 </fr:form> 
 <fr:form

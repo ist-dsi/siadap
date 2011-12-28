@@ -27,7 +27,9 @@ public class NoEvaluation extends WorkflowActivity<SiadapProcess, NoEvaluationAc
 
     @Override
     protected void process(NoEvaluationActivityInformation activityInformation) {
-	new SiadapEvaluation(activityInformation.getProcess().getSiadap(), activityInformation.getNoEvaluationJustification());
+	Siadap siadap = activityInformation.getProcess().getSiadap();
+	new SiadapEvaluation(siadap, activityInformation.getNoEvaluationJustification(),
+		siadap.getDefaultSiadapEvaluationUniverse());
     }
 
     @Override

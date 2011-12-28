@@ -23,11 +23,14 @@ public class Evaluation extends WorkflowActivity<SiadapProcess, EvaluationActivi
 	SiadapEvaluation evaluationData = siadap.getEvaluationData2();
 	if (evaluationData == null) {
 	    new SiadapEvaluation(siadap, activityInformation.getEvaluationJustification(), activityInformation
-		    .getPersonalDevelopment(), activityInformation.getTrainningNeeds(), activityInformation.getExcellencyAward());
+.getPersonalDevelopment(), activityInformation.getTrainningNeeds(),
+		    activityInformation.getExcellencyAward(), activityInformation.getExcellencyAwardJustification(),
+		    siadap.getDefaultSiadapEvaluationUniverse());
 	} else {
 	    evaluationData.editWithoutValidation(activityInformation.getEvaluationJustification(),
 		    activityInformation.getPersonalDevelopment(),
-		    activityInformation.getTrainningNeeds(), activityInformation.getExcellencyAward());
+ activityInformation.getTrainningNeeds(),
+		    activityInformation.getExcellencyAward(), activityInformation.getExcellencyAwardJustification());
 	}
 
 	//revert the submitted state to unsubmitted

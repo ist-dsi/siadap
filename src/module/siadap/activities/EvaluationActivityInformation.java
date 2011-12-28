@@ -13,6 +13,7 @@ public class EvaluationActivityInformation extends ActivityInformation<SiadapPro
     private String trainningNeeds;
     private String evaluationJustification;
     private Boolean excellencyAward;
+    private String excellencyAwardJustification;
 
     public EvaluationActivityInformation(SiadapProcess process,
 	    WorkflowActivity<? extends WorkflowProcess, ? extends ActivityInformation> activity) {
@@ -29,6 +30,7 @@ public class EvaluationActivityInformation extends ActivityInformation<SiadapPro
 	    setTrainningNeeds(evaluationData.getTrainningNeeds());
 	    setEvaluationJustification(evaluationData.getEvaluationJustification());
 	    setExcellencyAward(evaluationData.getExcellencyAward());
+	    setExcellencyAwardJustification(evaluationData.getExcellencyAwardJustification());
 	}
 
     }
@@ -80,5 +82,13 @@ public class EvaluationActivityInformation extends ActivityInformation<SiadapPro
 	 * module.siadap.domain.SiadapEvaluation.edit(...) method
 	 */
 	return isForwardedFromInput();
+    }
+
+    public String getExcellencyAwardJustification() {
+	return excellencyAwardJustification;
+    }
+
+    public void setExcellencyAwardJustification(String excellencyAwardJustification) {
+	this.excellencyAwardJustification = excellencyAwardJustification;
     }
 }

@@ -139,6 +139,7 @@ class SiadapEvaluation {
 	String evaluationJustification;	
 	String noEvaluationJustification;
 	Boolean excellencyAward;
+	String excellencyAwardJustification;
 	String personalDevelopment;
 	String trainningNeeds;
 	String excellencyAwardJustification;
