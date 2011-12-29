@@ -101,6 +101,11 @@ public class RemoveObjectiveEvaluation extends WorkflowActivity<SiadapProcess, R
     }
 
     @Override
+    protected String[] getArgumentsDescription(RemoveObjectiveEvaluationActivityInformation activityInformation) {
+	return new String[] { activityInformation.getEvaluation().getObjective() };
+    }
+
+    @Override
     public String getUsedBundle() {
 	return "resources/SiadapResources";
     }
