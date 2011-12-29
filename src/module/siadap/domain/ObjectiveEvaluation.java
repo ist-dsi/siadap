@@ -32,8 +32,11 @@ public class ObjectiveEvaluation extends ObjectiveEvaluation_Base {
     public ObjectiveEvaluation(Siadap siadap, String objective, SiadapEvaluationObjectivesType type) {
 	super();
 	setObjective(objective);
+	SiadapEvaluationUniverse defaultSiadapEvaluationUniverse = siadap.getDefaultSiadapEvaluationUniverse();
+	if (getSiadapEvaluationUniverse() == null)
+	    setSiadapEvaluationUniverse(defaultSiadapEvaluationUniverse);
 	getSiadapEvaluationUniverse().setSiadap(siadap);
-	setFromVersion(siadap.getCurrentObjectiveVersion());
+	setFromVersion(getSiadapEvaluationUniverse().getCurrentObjectiveVersion());
 	setUntilVersion(null);
 	setType(type);
     }
@@ -50,10 +53,11 @@ public class ObjectiveEvaluation extends ObjectiveEvaluation_Base {
 
     public ObjectiveEvaluation edit(String objective, String editionJustification, SiadapEvaluationObjectivesType type) {
 	Siadap siadap = getSiadap();
-	Integer currentObjectiveVersion = siadap.getCurrentObjectiveVersion();
+	SiadapEvaluationUniverse siadapEvaluationUniverse = getSiadapEvaluationUniverse();
+	Integer currentObjectiveVersion = siadapEvaluationUniverse.getCurrentObjectiveVersion();
 	int newVersion = currentObjectiveVersion + 1;
 	setUntilVersion(currentObjectiveVersion);
-	siadap.setCurrentObjectiveVersion(newVersion);
+	siadapEvaluationUniverse.setCurrentObjectiveVersion(newVersion);
 	ObjectiveEvaluation newObjectiveEvaluation = new ObjectiveEvaluation(siadap, objective, editionJustification, type);
 	//set the oldest and newest references
 	newObjectiveEvaluation.setOldObjectiveEvaluation(this);

@@ -133,9 +133,9 @@ SiadapYearWrapper siadapYearWrapper = (SiadapYearWrapper) request.getAttribute("
 	</jsp:include>
 </logic:notEmpty>
 
-<%-- <%-- TODO: Until all of the features of the interfaces contained within are checked, this harmonization part should stay commented 
+ <%-- TODO: Until all of the features of the interfaces contained within are checked, this harmonization part should stay commented
 <logic:notEmpty name="person" property="harmozationUnits">
-Defining the year here so that it can be more easily passed on the links below that use it 
+<%-- Defining the year here so that it can be more easily passed on the links below that use it 
 <bean:define id="year" name="siadapYearWrapper" property="chosenYear"/>
 		<h3> <bean:message key="label.responsifleForHarmonizationOf" bundle="SIADAP_RESOURCES"/>: </h3>
 	<p>
@@ -143,8 +143,8 @@ Defining the year here so that it can be more easily passed on the links below t
 			<fr:schema type="module.siadap.domain.wrappers.UnitSiadapWrapper" bundle="SIADAP_RESOURCES">
 				<fr:slot name="unit.partyName"  key="label.unit" bundle="ORGANIZATION_RESOURCES" />
 				<fr:slot name="unit.acronym" key="label.acronym" bundle="ORGANIZATION_RESOURCES" />
-				<fr:slot name="relevantEvaluationPercentage"/>
-				<fr:slot name="excellencyEvaluationPercentage"/>
+			<%-- 	<fr:slot name="relevantEvaluationPercentage"/>
+				<fr:slot name="excellencyEvaluationPercentage"/> 
 				
 				<fr:slot name="totalPeopleHarmonizedInUnit" key="label.totalEvaluated"/>
 				<fr:slot name="totalPeopleHarmonizedInUnitWithSiadapStarted" key="label.totalPeopleWithSiadapHarmonizedInUnit"/>

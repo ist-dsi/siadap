@@ -1,10 +1,13 @@
 package module.siadap.activities;
 
 import module.siadap.domain.Siadap;
+import module.siadap.domain.SiadapEvaluationUniverse;
 import module.siadap.domain.SiadapProcess;
 import module.siadap.domain.SiadapProcessStateEnum;
+import module.siadap.domain.SiadapYearConfiguration;
 import module.workflow.activities.ActivityInformation;
 import module.workflow.activities.WorkflowActivity;
+import myorg.applicationTier.Authenticate.UserView;
 import myorg.domain.User;
 import myorg.util.BundleUtil;
 
@@ -13,7 +16,9 @@ public class RemoveObjectiveEvaluation extends WorkflowActivity<SiadapProcess, R
     @Override
     public boolean isActive(SiadapProcess process, User user) {
 	Siadap siadap = process.getSiadap();
-	return siadap.getObjectiveSpecificationInterval().containsNow() && siadap.getEvaluator().getPerson().getUser() == user
+	SiadapYearConfiguration siadapYearConfiguration = siadap.getSiadapYearConfiguration();
+	return siadapYearConfiguration.isCurrentUserMemberOfCCA() || siadap.getObjectiveSpecificationInterval().containsNow()
+		&& siadap.getEvaluator().getPerson().getUser() == user
 		&& SiadapProcessStateEnum.getState(siadap).ordinal() <= SiadapProcessStateEnum.WAITING_EVAL_OBJ_ACK.ordinal();
     }
 
@@ -29,14 +34,18 @@ public class RemoveObjectiveEvaluation extends WorkflowActivity<SiadapProcess, R
 	    siadap.getDefaultSiadapEvaluationUniverse().removeSiadapEvaluationItems(activityInformation.getEvaluation());
 	    activityInformation.getEvaluation().delete();
 	} else {
-	    Integer currentObjectiveVersion = siadap.getCurrentObjectiveVersion();
+	    SiadapEvaluationUniverse siadapEvaluationUniverse = activityInformation.getEvaluation().getSiadapEvaluationUniverse();
+	    Integer currentObjectiveVersion = siadapEvaluationUniverse.getCurrentObjectiveVersion();
 	    int newVersion = currentObjectiveVersion + 1;
 	    activityInformation.getEvaluation().setUntilVersion(currentObjectiveVersion);
-	    siadap.setCurrentObjectiveVersion(newVersion);
+	    siadapEvaluationUniverse.setCurrentObjectiveVersion(newVersion);
 
 	}
-	//whatever the case, notify that there have been changes
-	process.signalChangesInEvaluationObjectives();
+	//notify that there have been changes - if we are not a member of the CCA
+	SiadapYearConfiguration siadapYearConfiguration = siadap.getSiadapYearConfiguration();
+	if (!siadapYearConfiguration.isCurrentUserMemberOfCCA()
+		|| siadap.getEvaluator().getPerson().getUser().equals(UserView.getCurrentUser()))
+	    process.signalChangesInEvaluationObjectives();
     }
 
     @Override
@@ -64,6 +73,8 @@ public class RemoveObjectiveEvaluation extends WorkflowActivity<SiadapProcess, R
 
     @Override
     public String getLocalizedConfirmationMessage(SiadapProcess process) {
+	Siadap siadap = process.getSiadap();
+	SiadapYearConfiguration siadapYearConfiguration = siadap.getSiadapYearConfiguration();
 	SiadapProcessStateEnum currentState = SiadapProcessStateEnum.getState(process.getSiadap());
 	switch (currentState) {
 	case NOT_CREATED:
@@ -76,6 +87,8 @@ public class RemoveObjectiveEvaluation extends WorkflowActivity<SiadapProcess, R
 	case WAITING_SELF_EVALUATION:
 	case NOT_YET_EVALUATED:
 	case UNIMPLEMENTED_STATE:
+	    if (!siadapYearConfiguration.isCurrentUserMemberOfCCA()
+		    || siadap.getEvaluator().getPerson().getUser().equals(UserView.getCurrentUser()))
 	    return BundleUtil.getStringFromResourceBundle(getUsedBundle(), "edit.warning.removing.will.change.state");
 	}
 	return super.getLocalizedConfirmationMessage(process);

@@ -23,6 +23,7 @@ public class SiadapEvaluationUniverse extends SiadapEvaluationUniverse_Base {
 	super();
 	setSiadap(siadap);
 	setSiadapUniverse(siadapUniverse);
+	setCurrentObjectiveVersion(0);
 	setDefaultEvaluationUniverse(defaultUniverse);
     }
 

@@ -48,7 +48,6 @@ public class Siadap extends Siadap_Base {
 	super();
 	setYear(year);
 	setEvaluated(evaluated);
-	setCurrentObjectiveVersion(0);
 	setSiadapRootModule(SiadapRootModule.getInstance());
 	new SiadapEvaluationUniverse(this, siadapUniverse, true);
     }
@@ -126,12 +125,14 @@ public class Siadap extends Siadap_Base {
 	ArrayList<SiadapEvaluationItem> currentEvaluationItems = new ArrayList<SiadapEvaluationItem>();
 	for (SiadapEvaluationUniverse evaluationUniverse : getSiadapEvaluationUniverses())
 	{
+	    final SiadapEvaluationUniverse evalUniverse = evaluationUniverse;
 	    currentEvaluationItems.addAll(evaluationUniverse.getEvaluations(SiadapEvaluationItem.class, new Predicate() {
 
 		    @Override
 		    public boolean evaluate(Object arg0) {
 			return (arg0 instanceof ObjectiveEvaluation) ? ((ObjectiveEvaluation) arg0)
-				.isValidForVersion(getCurrentObjectiveVersion()) : true;
+.isValidForVersion(evalUniverse
+			    .getCurrentObjectiveVersion()) : true;
 		    }
 		}, null));
 	}
@@ -326,7 +327,7 @@ public class Siadap extends Siadap_Base {
 	int performanceObjectives = 0;
 	int qualityObjectives = 0;
 
-	Integer currentObjectiveVersion = getCurrentObjectiveVersion();
+	Integer currentObjectiveVersion = getDefaultSiadapEvaluationUniverse().getCurrentObjectiveVersion();
 
 	for (SiadapEvaluationItem item : getSiadapEvaluationItems2()) {
 

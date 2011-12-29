@@ -159,11 +159,11 @@ boolean hasPeopleToHarmonize = ((peopleWithoutQuotasSIADAP2.getSiadapUniverse() 
 			//in case they had, we will decrease the corresponding number
 			if ($(radioElement).parents("td").prev().text().trim() == "Desempenho excelente")
 				{
-				 decreaseOne($('.current-excellents-siadap3WithoutQuotas'));
+				 decreaseOne($('.current-harmonized-excellents-siadap3WithoutQuotas'));
 				}
 			if ($(radioElement).parents("td").prev().text().trim() == "Desempenho relevante")
 				{
-				 decreaseOne($('.current-relevants-siadap3WithoutQuotas'));
+				 decreaseOne($('.current-harmonized-relevants-siadap3WithoutQuotas'));
 				}
 			}
 		}
@@ -171,11 +171,11 @@ boolean hasPeopleToHarmonize = ((peopleWithoutQuotasSIADAP2.getSiadapUniverse() 
 		{
 			if ($(radioElement).parents("td").prev().text().trim() == "Desempenho excelente")
 			{
-			 increaseOne($('.current-excellents-siadap3WithoutQuotas'));
+			 increaseOne($('.current-harmonized-excellents-siadap3WithoutQuotas'));
 			}
 			if ($(radioElement).parents("td").prev().text().trim() == "Desempenho relevante")
 			{
-			 increaseOne($('.current-relevants-siadap3WithoutQuotas'));
+			 increaseOne($('.current-harmonized-relevants-siadap3WithoutQuotas'));
 			}
 
 		}
@@ -190,11 +190,11 @@ boolean hasPeopleToHarmonize = ((peopleWithoutQuotasSIADAP2.getSiadapUniverse() 
 			//in case they had, we will decrease the corresponding number
 			if ($(radioElement).parents("td").prev().text().trim() == "Desempenho excelente")
 				{
-				 decreaseOne($('.current-excellents-siadap3WithQuotas'));
+				 decreaseOne($('.current-harmonized-excellents-siadap3WithQuotas'));
 				}
 			if ($(radioElement).parents("td").prev().text().trim() == "Desempenho relevante")
 				{
-				 decreaseOne($('.current-relevants-siadap3WithQuotas'));
+				 decreaseOne($('.current-harmonized-relevants-siadap3WithQuotas'));
 				}
 			}
 		}
@@ -202,11 +202,11 @@ boolean hasPeopleToHarmonize = ((peopleWithoutQuotasSIADAP2.getSiadapUniverse() 
 		{
 			if ($(radioElement).parents("td").prev().text().trim() == "Desempenho excelente")
 			{
-			 increaseOne($('.current-excellents-siadap3WithQuotas'));
+			 increaseOne($('.current-harmonized-excellents-siadap3WithQuotas'));
 			}
 			if ($(radioElement).parents("td").prev().text().trim() == "Desempenho relevante")
 			{
-			 increaseOne($('.current-relevants-siadap3WithQuotas'));
+			 increaseOne($('.current-harmonized-relevants-siadap3WithQuotas'));
 			}
 
 		}
@@ -221,11 +221,11 @@ boolean hasPeopleToHarmonize = ((peopleWithoutQuotasSIADAP2.getSiadapUniverse() 
 			//in case they had, we will decrease the corresponding number
 			if ($(radioElement).parents("td").prev().text().trim() == "Desempenho excelente")
 				{
-				 decreaseOne($('.current-excellents-siadap2WithoutQuotas'));
+				 decreaseOne($('.current-harmonized-excellents-siadap2WithoutQuotas'));
 				}
 			if ($(radioElement).parents("td").prev().text().trim() == "Desempenho relevante")
 				{
-				 decreaseOne($('.current-relevants-siadap2WithoutQuotas'));
+				 decreaseOne($('.current-harmonized-relevants-siadap2WithoutQuotas'));
 				}
 			}
 		}
@@ -233,11 +233,11 @@ boolean hasPeopleToHarmonize = ((peopleWithoutQuotasSIADAP2.getSiadapUniverse() 
 		{
 			if ($(radioElement).parents("td").prev().text().trim() == "Desempenho excelente")
 			{
-			 increaseOne($('.current-excellents-siadap2WithoutQuotas'));
+			 increaseOne($('.current-harmonized-excellents-siadap2WithoutQuotas'));
 			}
 			if ($(radioElement).parents("td").prev().text().trim() == "Desempenho relevante")
 			{
-			 increaseOne($('.current-relevants-siadap2WithoutQuotas'));
+			 increaseOne($('.current-harmonized-relevants-siadap2WithoutQuotas'));
 			}
 
 		}
@@ -252,11 +252,11 @@ boolean hasPeopleToHarmonize = ((peopleWithoutQuotasSIADAP2.getSiadapUniverse() 
 			//in case they had, we will decrease the corresponding number
 			if ($(radioElement).parents("td").prev().text().trim() == "Desempenho excelente")
 				{
-				 decreaseOne($('.current-excellents-siadap2WithQuotas'));
+				 decreaseOne($('.current-harmonized-excellents-siadap2WithQuotas'));
 				}
 			if ($(radioElement).parents("td").prev().text().trim() == "Desempenho relevante")
 				{
-				 decreaseOne($('.current-relevants-siadap2WithQuotas'));
+				 decreaseOne($('.current-harmonized-relevants-siadap2WithQuotas'));
 				}
 			}
 		}
@@ -264,11 +264,11 @@ boolean hasPeopleToHarmonize = ((peopleWithoutQuotasSIADAP2.getSiadapUniverse() 
 		{
 			if ($(radioElement).parents("td").prev().text().trim() == "Desempenho excelente")
 			{
-			 increaseOne($('.current-excellents-siadap2WithQuotas'));
+			 increaseOne($('.current-harmonized-excellents-siadap2WithQuotas'));
 			}
 			if ($(radioElement).parents("td").prev().text().trim() == "Desempenho relevante")
 			{
-			 increaseOne($('.current-relevants-siadap2WithQuotas'));
+			 increaseOne($('.current-harmonized-relevants-siadap2WithQuotas'));
 			}
 
 		}
@@ -304,57 +304,32 @@ boolean hasPeopleToHarmonize = ((peopleWithoutQuotasSIADAP2.getSiadapUniverse() 
 				<bean:message key="label.unitEmployees.withQuotasSIADAP2" bundle="SIADAP_RESOURCES"/>:
 			</strong>
 		<div class="infobox">
-			<fr:view name="people-withQuotas-SIADAP2">
-				<fr:schema bundle="SIADAP_RESOURCES" type="module.siadap.domain.wrappers.SiadapUniverseWrapper">
-					<fr:slot name="numberPeopleInUniverse" key="label.harmonization.totalHarmonizedInUniverse"/>
-					<fr:slot name="excellencyQuota" key="label.harmonization.quota.excellents">
-						<fr:property name="classes" value="quota-excellents"/>
-					</fr:slot>
-					<fr:slot name="currentEvaluationExcellents" key="label.harmonization.current.excellents.used.quota">
-						<fr:property name="classes" value="current-evaluation-excellents"/>
-					</fr:slot>
-					<fr:slot name="relevantQuota" key="label.harmonization.quota.relevant">
-						<fr:property name="classes" value="quota-relevants"/>
-					</fr:slot>
-					<fr:slot name="currentEvaluationRelevants" key="label.harmonization.current.relevant.used.quota">
-						<fr:property name="classes" value="current-evaluation-relevants"/>
-					</fr:slot>
-					<fr:slot name="currentHarmonizedRelevants" key="label.harmonization.current.relevants.harmonized" >
-						<fr:property name="classes" value="current-harmonized-relevants"/>
-					</fr:slot>
-					<fr:slot name="currentHarmonizedExcellents" key="label.harmonization.current.excellents.harmonized">
-						<fr:property name="classes" value="current-harmonized-excellents"/>
-					</fr:slot>
-				</fr:schema>
-				<fr:layout name="matrix">
-					<fr:property name="classes" value="tstyle5 thlight thright mtop05 mbottom05 thmiddle" />				
-				
-					<fr:property name="slot(excellencyQuota)" value="excellencyQuota"/>
-					<fr:property name="row(excellencyQuota)" value="0"/>
-					<fr:property name="column(excellencyQuota)" value="0"/>
-					
-					<fr:property name="slot(currentEvaluationExcellents)" value="currentEvaluationExcellents"/>
-					<fr:property name="row(currentEvaluationExcellents)" value="1"/>
-					<fr:property name="column(currentEvaluationExcellents)" value="0"/>
-					
-					<fr:property name="slot(relevantQuota)" value="relevantQuota"/>
-					<fr:property name="row(relevantQuota)" value="2"/>
-					<fr:property name="column(relevantQuota)" value="0"/>
-					
-					<fr:property name="slot(currentEvaluationRelevants)" value="currentEvaluationRelevants"/>
-					<fr:property name="row(currentEvaluationRelevants)" value="3"/>
-					<fr:property name="column(currentEvaluationRelevants)" value="0"/>
-					
-					<fr:property name="slot(currentHarmonizedExcellents)" value="currentHarmonizedExcellents"/>
-					<fr:property name="row(currentHarmonizedExcellents)" value="0"/>
-					<fr:property name="column(currentHarmonizedExcellents)" value="1"/>
-					
-				 	<fr:property name="slot(currentHarmonizedRelevants)" value="currentHarmonizedRelevants"/>
-					<fr:property name="row(currentHarmonizedRelevants)" value="1"/>
-					<fr:property name="column(currentHarmonizedRelevants)" value="1"/>
-					
-				</fr:layout>
-			</fr:view>
+			<table class="tstyle2">
+				<tr>
+					<th><bean:message key="label.harmonization.totalHarmonizedInUniverse" bundle="SIADAP_RESOURCES" />
+					<td><fr:view name="people-withQuotas-SIADAP2" property="numberPeopleInUniverse"/></td>
+				</tr>
+				<tr>
+					<th><bean:message key="label.harmonization.quota.excellents" bundle="SIADAP_RESOURCES" />
+					<td><fr:view name="people-withQuotas-SIADAP2" property="excellencyQuota"/></td>
+				</tr>
+				<tr>
+					<th><bean:message key="label.harmonization.current.excellents.used.quota" bundle="SIADAP_RESOURCES" />
+					<td><fr:view name="people-withQuotas-SIADAP2" property="currentEvaluationExcellents"/></td>
+					<th><bean:message key="label.harmonized" bundle="SIADAP_RESOURCES" /></th>
+					<td class="<%=peopleWithQuotasSIADAP2.getCurrentHarmonizedExcellentsHTMLClass()%>"><fr:view name="people-withQuotas-SIADAP2" property="currentHarmonizedExcellents"/></td>
+				</tr>
+				<tr>
+					<th><bean:message key="label.harmonization.quota.relevant" bundle="SIADAP_RESOURCES" />
+					<td><fr:view name="people-withQuotas-SIADAP2" property="relevantQuota"/></td>
+				</tr>
+				<tr>
+					<th><bean:message key="label.harmonization.current.relevant.used.quota" bundle="SIADAP_RESOURCES" />
+					<td><fr:view name="people-withQuotas-SIADAP2" property="currentEvaluationRelevants"/></td>
+					<th><bean:message key="label.harmonized" bundle="SIADAP_RESOURCES" /></th>
+					<td class="<%=peopleWithQuotasSIADAP2.getCurrentHarmonizedRelevantsHTMLClass()%>"><fr:view name="people-withQuotas-SIADAP2" property="currentHarmonizedRelevants"/></td>
+				</tr>
+			</table>
 		</div>
 	 		<logic:equal name="people-withQuotas-SIADAP2" property="siadapUniverseWithQuotasAboveQuota" value="true">
 			
@@ -422,33 +397,32 @@ boolean hasPeopleToHarmonize = ((peopleWithoutQuotasSIADAP2.getSiadapUniverse() 
 			</strong>
 			
 		<div class="infobox">
-			<fr:view name="people-withQuotas-SIADAP3" schema="SiadapUniverseWrapper-currentState">
-				<fr:layout name="matrix">
-					<fr:property name="slot(excellencyQuota)" value="excellencyQuota"/>
-					<fr:property name="row(excellencyQuota)" value="0"/>
-					<fr:property name="column(excellencyQuota)" value="0"/>
-					
-					<fr:property name="slot(currentEvaluationExcellents)" value="currentEvaluationExcellents"/>
-					<fr:property name="row(currentEvaluationExcellents)" value="1"/>
-					<fr:property name="column(currentEvaluationExcellents)" value="0"/>
-					
-					<fr:property name="slot(relevantQuota)" value="relevantQuota"/>
-					<fr:property name="row(relevantQuota)" value="3"/>
-					<fr:property name="column(relevantQuota)" value="0"/>
-					
-					<fr:property name="slot(currentEvaluationRelevants)" value="currentEvaluationRelevants"/>
-					<fr:property name="row(currentEvaluationRelevants)" value="4"/>
-					<fr:property name="column(currentEvaluationRelevants)" value="0"/>
-					
-					<fr:property name="slot(currentHarmonizedExcellents)" value="currentHarmonizedExcellents"/>
-					<fr:property name="row(currentHarmonizedExcellents)" value="1"/>
-					<fr:property name="column(currentHarmonizedExcellents)" value="1"/>
-					
-					<fr:property name="slot(currentHarmonizedRelevants)" value="currentHarmonizedRelevants"/>
-					<fr:property name="row(currentHarmonizedRelevants)" value="4"/>
-					<fr:property name="column(currentHarmonizedRelevants)" value="1"/>
-				</fr:layout>
-			</fr:view>
+			<table class="tstyle2">
+				<tr>
+					<th><bean:message key="label.harmonization.totalHarmonizedInUniverse" bundle="SIADAP_RESOURCES" />
+					<td><fr:view name="people-withQuotas-SIADAP3" property="numberPeopleInUniverse"/></td>
+				</tr>
+				<tr>
+					<th><bean:message key="label.harmonization.quota.excellents" bundle="SIADAP_RESOURCES" />
+					<td><fr:view name="people-withQuotas-SIADAP3" property="excellencyQuota"/></td>
+				</tr>
+				<tr>
+					<th><bean:message key="label.harmonization.current.excellents.used.quota" bundle="SIADAP_RESOURCES" />
+					<td><fr:view name="people-withQuotas-SIADAP3" property="currentEvaluationExcellents"/></td>
+					<th><bean:message key="label.harmonized" bundle="SIADAP_RESOURCES" /></th>
+					<td class="<%=peopleWithQuotasSIADAP3.getCurrentHarmonizedExcellentsHTMLClass()%>"><fr:view name="people-withQuotas-SIADAP3" property="currentHarmonizedExcellents"/></td>
+				</tr>
+				<tr>
+					<th><bean:message key="label.harmonization.quota.relevant" bundle="SIADAP_RESOURCES" />
+					<td><fr:view name="people-withQuotas-SIADAP3" property="relevantQuota"/></td>
+				</tr>
+				<tr>
+					<th><bean:message key="label.harmonization.current.relevant.used.quota" bundle="SIADAP_RESOURCES" />
+					<td><fr:view name="people-withQuotas-SIADAP3" property="currentEvaluationRelevants"/></td>
+					<th><bean:message key="label.harmonized" bundle="SIADAP_RESOURCES" /></th>
+					<td class="<%=peopleWithQuotasSIADAP3.getCurrentHarmonizedRelevantsHTMLClass()%>"><fr:view name="people-withQuotas-SIADAP3" property="currentHarmonizedRelevants"/></td>
+				</tr>
+			</table>
 		</div>
 			<p>
 			<logic:equal name="people-withQuotas-SIADAP3" property="siadapUniverseWithQuotasAboveQuota" value="true">
@@ -519,33 +493,32 @@ boolean hasPeopleToHarmonize = ((peopleWithoutQuotasSIADAP2.getSiadapUniverse() 
 				<bean:message key="label.unitEmployees.withoutQuotasSIADAP2" bundle="SIADAP_RESOURCES"/>:
 			</strong>
 		<div class="infobox">
-			<fr:view name="people-withoutQuotas-SIADAP2" schema="SiadapUniverseWrapper-currentState" >
-				<fr:layout name="matrix">
-					<fr:property name="slot(excellencyQuota)" value="excellencyQuota"/>
-					<fr:property name="row(excellencyQuota)" value="0"/>
-					<fr:property name="column(excellencyQuota)" value="0"/>
-						
-					<fr:property name="slot(currentEvaluationExcellents)" value="currentEvaluationExcellents"/>
-					<fr:property name="row(currentEvaluationExcellents)" value="1"/>
-					<fr:property name="column(currentEvaluationExcellents)" value="0"/>
-						
-					<fr:property name="slot(relevantQuota)" value="relevantQuota"/>
-					<fr:property name="row(relevantQuota)" value="3"/>
-					<fr:property name="column(relevantQuota)" value="0"/>
-						
-					<fr:property name="slot(currentEvaluationRelevants)" value="currentEvaluationRelevants"/>
-					<fr:property name="row(currentEvaluationRelevants)" value="4"/>
-					<fr:property name="column(currentEvaluationRelevants)" value="0"/>
-						
-					<fr:property name="slot(currentHarmonizedExcellents)" value="currentHarmonizedExcellents"/>
-					<fr:property name="row(currentHarmonizedExcellents)" value="1"/>
-					<fr:property name="column(currentHarmonizedExcellents)" value="1"/>
-						
-					<fr:property name="slot(currentHarmonizedRelevants)" value="currentHarmonizedRelevants"/>
-					<fr:property name="row(currentHarmonizedRelevants)" value="4"/>
-					<fr:property name="column(currentHarmonizedRelevants)" value="1"/>
-				</fr:layout>
-			</fr:view>
+			<table class="tstyle2">
+				<tr>
+					<th><bean:message key="label.harmonization.totalHarmonizedInUniverse" bundle="SIADAP_RESOURCES" />
+					<td><fr:view name="people-withoutQuotas-SIADAP2" property="numberPeopleInUniverse"/></td>
+				</tr>
+				<tr>
+					<th><bean:message key="label.harmonization.quota.excellents" bundle="SIADAP_RESOURCES" />
+					<td><fr:view name="people-withoutQuotas-SIADAP2" property="excellencyQuota"/></td>
+				</tr>
+				<tr>
+					<th><bean:message key="label.harmonization.current.excellents.used.quota" bundle="SIADAP_RESOURCES" />
+					<td><fr:view name="people-withoutQuotas-SIADAP2" property="currentEvaluationExcellents"/></td>
+					<th><bean:message key="label.harmonized" bundle="SIADAP_RESOURCES" /></th>
+					<td class="<%=peopleWithoutQuotasSIADAP2.getCurrentHarmonizedExcellentsHTMLClass()%>"><fr:view name="people-withoutQuotas-SIADAP2" property="currentHarmonizedExcellents"/></td>
+				</tr>
+				<tr>
+					<th><bean:message key="label.harmonization.quota.relevant" bundle="SIADAP_RESOURCES" />
+					<td><fr:view name="people-withoutQuotas-SIADAP2" property="relevantQuota"/></td>
+				</tr>
+				<tr>
+					<th><bean:message key="label.harmonization.current.relevant.used.quota" bundle="SIADAP_RESOURCES" />
+					<td><fr:view name="people-withoutQuotas-SIADAP2" property="currentEvaluationRelevants"/></td>
+					<th><bean:message key="label.harmonized" bundle="SIADAP_RESOURCES" /></th>
+					<td class="<%=peopleWithoutQuotasSIADAP2.getCurrentHarmonizedRelevantsHTMLClass()%>"><fr:view name="people-withoutQuotas-SIADAP2" property="currentHarmonizedRelevants"/></td>
+				</tr>
+			</table>
 		</div>
 			<p>
 			<logic:equal name="people-withoutQuotas-SIADAP2" property="siadapUniverseWithQuotasAboveQuota" value="true">
@@ -617,33 +590,32 @@ boolean hasPeopleToHarmonize = ((peopleWithoutQuotasSIADAP2.getSiadapUniverse() 
 				<bean:message key="label.unitEmployees.withoutQuotasSIADAP3" bundle="SIADAP_RESOURCES"/>:
 			</strong>
 		<div class="infobox">
-			<fr:view name="people-withoutQuotas-SIADAP3" schema="SiadapUniverseWrapper-currentState" >
-				<fr:layout name="matrix">
-					<fr:property name="slot(excellencyQuota)" value="excellencyQuota"/>
-					<fr:property name="row(excellencyQuota)" value="0"/>
-					<fr:property name="column(excellencyQuota)" value="0"/>
-					
-					<fr:property name="slot(currentEvaluationExcellents)" value="currentEvaluationExcellents"/>
-					<fr:property name="row(currentEvaluationExcellents)" value="1"/>
-					<fr:property name="column(currentEvaluationExcellents)" value="0"/>
-					
-					<fr:property name="slot(relevantQuota)" value="relevantQuota"/>
-					<fr:property name="row(relevantQuota)" value="3"/>
-					<fr:property name="column(relevantQuota)" value="0"/>
-					
-					<fr:property name="slot(currentEvaluationRelevants)" value="currentEvaluationRelevants"/>
-					<fr:property name="row(currentEvaluationRelevants)" value="4"/>
-					<fr:property name="column(currentEvaluationRelevants)" value="0"/>
-					
-					<fr:property name="slot(currentHarmonizedExcellents)" value="currentHarmonizedExcellents"/>
-					<fr:property name="row(currentHarmonizedExcellents)" value="1"/>
-					<fr:property name="column(currentHarmonizedExcellents)" value="1"/>
-					
-					<fr:property name="slot(currentHarmonizedRelevants)" value="currentHarmonizedRelevants"/>
-					<fr:property name="row(currentHarmonizedRelevants)" value="4"/>
-					<fr:property name="column(currentHarmonizedRelevants)" value="1"/>				
-				</fr:layout>
-			</fr:view>
+			<table class="tstyle2">
+				<tr>
+					<th><bean:message key="label.harmonization.totalHarmonizedInUniverse" bundle="SIADAP_RESOURCES" />
+					<td><fr:view name="people-withoutQuotas-SIADAP3" property="numberPeopleInUniverse"/></td>
+				</tr>
+				<tr>
+					<th><bean:message key="label.harmonization.quota.excellents" bundle="SIADAP_RESOURCES" />
+					<td><fr:view name="people-withoutQuotas-SIADAP3" property="excellencyQuota"/></td>
+				</tr>
+				<tr>
+					<th><bean:message key="label.harmonization.current.excellents.used.quota" bundle="SIADAP_RESOURCES" />
+					<td><fr:view name="people-withoutQuotas-SIADAP3" property="currentEvaluationExcellents"/></td>
+					<th><bean:message key="label.harmonized" bundle="SIADAP_RESOURCES" /></th>
+					<td class="<%=peopleWithoutQuotasSIADAP3.getCurrentHarmonizedExcellentsHTMLClass()%>"><fr:view name="people-withoutQuotas-SIADAP3" property="currentHarmonizedExcellents"/></td>
+				</tr>
+				<tr>
+					<th><bean:message key="label.harmonization.quota.relevant" bundle="SIADAP_RESOURCES" />
+					<td><fr:view name="people-withoutQuotas-SIADAP3" property="relevantQuota"/></td>
+				</tr>
+				<tr>
+					<th><bean:message key="label.harmonization.current.relevant.used.quota" bundle="SIADAP_RESOURCES" />
+					<td><fr:view name="people-withoutQuotas-SIADAP3" property="currentEvaluationRelevants"/></td>
+					<th><bean:message key="label.harmonized" bundle="SIADAP_RESOURCES" /></th>
+					<td class="<%=peopleWithoutQuotasSIADAP3.getCurrentHarmonizedRelevantsHTMLClass()%>"><fr:view name="people-withoutQuotas-SIADAP3" property="currentHarmonizedRelevants"/></td>
+				</tr>
+			</table>
 		</div>	
 			<p>
 			<logic:equal name="people-withoutQuotas-SIADAP3" property="siadapUniverseWithQuotasAboveQuota" value="true">

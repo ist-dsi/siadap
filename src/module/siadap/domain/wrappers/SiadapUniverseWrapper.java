@@ -52,6 +52,14 @@ public class SiadapUniverseWrapper implements Serializable {
 	this.currentHarmonizedRelevants = getCurrentExcellents(universeToConsider, true);
     }
 
+    public String getCurrentHarmonizedRelevantsHTMLClass() {
+	return "current-harmonized-relevants-" + universeDescription;
+    }
+
+    public String getCurrentHarmonizedExcellentsHTMLClass() {
+	return "current-harmonized-excellents-" + universeDescription;
+    }
+
     public boolean isSiadapUniverseWithQuotasAboveQuota() {
 	return (currentHarmonizedRelevants > relevantQuota || currentHarmonizedExcellents > excellencyQuota);
     }
