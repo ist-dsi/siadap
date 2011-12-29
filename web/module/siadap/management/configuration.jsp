@@ -120,12 +120,12 @@
 			<fr:property name="args"
 				value="provider=module.organization.presentationTier.renderers.providers.UnitAutoCompleteProvider" />
 			<fr:property name="size" value="60" />
-			<fr:validator
+			<%--<fr:validator
 				name="pt.ist.fenixWebFramework.rendererExtensions.validators.RequiredAutoCompleteSelectionValidator">
 				<fr:property name="message" value="label.pleaseSelectOne.specialHarmonizationUnit" />
 				<fr:property name="bundle" value="SIADAP_RESOURCES" />
 				<fr:property name="key" value="true" />
-			</fr:validator>
+			</fr:validator>--%>
 		</fr:slot>
 
 		<fr:slot name="quotaExcellencySiadap2WithQuota" key="label.config.quotaExcellencySiadap2WithQuota"/>
