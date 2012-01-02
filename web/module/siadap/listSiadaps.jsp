@@ -53,7 +53,7 @@
 </fr:view>
 
 <div class="infobox">
-	<bean:message key="label.data.owners.warning" bundle="SIADAP_RESOURCES"/> <a href="mailto:ci@ist.utl.pt?subject=SIADAP%20dados%20hierarquicos%20incorrectos">drh@drh.ist.utl.pt</a>
+	<bean:message key="label.data.owners.warning" bundle="SIADAP_RESOURCES"/> <a href="mailto:drh@drh.ist.utl.pt?subject=SIADAP%20dados%20hierarquicos%20incorrectos">drh@drh.ist.utl.pt</a>
 </div>
 
  <logic:notEmpty name="person" property="allSiadaps">
