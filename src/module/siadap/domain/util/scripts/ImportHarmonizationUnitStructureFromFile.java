@@ -49,6 +49,7 @@ public class ImportHarmonizationUnitStructureFromFile extends ReadCustomTask {
 
     public final static HashMap<String, HarmonizationUnit> inferedUnits = new HashMap<String, HarmonizationUnit>();
     public final int yearToUse = 2011;
+    private static final LocalDate DATE_TO_USE = new LocalDate(2011, 12, 20);
 
     class HarmonizationUnit {
 	private final String unitName;
@@ -177,7 +178,7 @@ public class ImportHarmonizationUnitStructureFromFile extends ReadCustomTask {
 		    debugLn(" -- creating it");
 		    unitToUse = Unit.create(siadapStructureTopUnit, new MultiLanguageString(harmonizationUnit.getUnitName()),
 			    "SIADAP - U.H." + String.valueOf(unitsCount++), siadapHarmonizationUnitType, unitRelations,
-			    new LocalDate(), lastDayOfYear(yearToUse), organizationModelToUse);
+			    DATE_TO_USE, lastDayOfYear(yearToUse), organizationModelToUse);
 		} else
 		    debugLn(" -- It already existed");
 		//so now let's just add all of the subunits
@@ -185,7 +186,7 @@ public class ImportHarmonizationUnitStructureFromFile extends ReadCustomTask {
 		for (Unit subUnit : harmonizationUnit.getSubUnits()) {
 		    if (!previousChildUnits.contains(subUnit)) {
 			debugLn(" ---- creating the relation with " + subUnit.getPartyName().getContent());
-			subUnit.addParent(unitToUse, unitRelations, new LocalDate(), lastDayOfYear(yearToUse));
+			subUnit.addParent(unitToUse, unitRelations, DATE_TO_USE, lastDayOfYear(yearToUse));
 		    } else {
 			debugLn(" ---- relation with " + subUnit.getPartyName().getContent() + " already existed");
 		    }
@@ -224,8 +225,8 @@ public class ImportHarmonizationUnitStructureFromFile extends ReadCustomTask {
 			else if (acc.isActiveNow())
 			{
 			    //let's 'remove' it
-			    debugLn(" ------ Acc. for previous responsible ended now");
-			    acc.editDates(acc.getBeginDate(), new LocalDate());
+			    debugLn(" ------ Acc. for previous responsible ended on the date to use: " + DATE_TO_USE.toString());
+			    acc.editDates(acc.getBeginDate(), DATE_TO_USE);
 			}
 		    }
 		}
@@ -233,7 +234,7 @@ public class ImportHarmonizationUnitStructureFromFile extends ReadCustomTask {
 		{
 		    //let's add the responsible
 		    unitToUse.addChild(harmonizationUnit.getHarmonizationResponsible().getPerson(),
-			    harmonizationResponsibleRelation, new LocalDate(), lastDayOfYear(yearToUse));
+			    harmonizationResponsibleRelation, DATE_TO_USE, lastDayOfYear(yearToUse));
 		    debugLn(" ------ Added the responsible, no previous relation was found");
 		}
 

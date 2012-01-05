@@ -7,7 +7,7 @@
 <%@ taglib uri="/WEB-INF/struts-logic.tld" prefix="logic"%>
 <%@ taglib uri="/WEB-INF/fenix-renderers.tld" prefix="fr"%>
 
-<h2> SIADAP </h2>
+<h2> SIADAP <bean:write name="siadapYearWrapper" property="chosenYear"/></h2>
 
 <%-- The year chooser: --%>
 <fr:form action="/siadapManagement.do?method=manageSiadap">
@@ -133,33 +133,35 @@ SiadapYearWrapper siadapYearWrapper = (SiadapYearWrapper) request.getAttribute("
 	</jsp:include>
 </logic:notEmpty>
 
- <%-- TODO: Until all of the features of the interfaces contained within are checked, this harmonization part should stay commented
 <logic:notEmpty name="person" property="harmozationUnits">
-<%-- Defining the year here so that it can be more easily passed on the links below that use it 
-<bean:define id="year" name="siadapYearWrapper" property="chosenYear"/>
-		<h3> <bean:message key="label.responsifleForHarmonizationOf" bundle="SIADAP_RESOURCES"/>: </h3>
-	<p>
-		<fr:view name="person" property="harmozationUnits">
-			<fr:schema type="module.siadap.domain.wrappers.UnitSiadapWrapper" bundle="SIADAP_RESOURCES">
-				<fr:slot name="unit.partyName"  key="label.unit" bundle="ORGANIZATION_RESOURCES" />
-				<fr:slot name="unit.acronym" key="label.acronym" bundle="ORGANIZATION_RESOURCES" />
-			<%-- 	<fr:slot name="relevantEvaluationPercentage"/>
-				<fr:slot name="excellencyEvaluationPercentage"/> 
-				
-				<fr:slot name="totalPeopleHarmonizedInUnit" key="label.totalEvaluated"/>
-				<fr:slot name="totalPeopleHarmonizedInUnitWithSiadapStarted" key="label.totalPeopleWithSiadapHarmonizedInUnit"/>
-			</fr:schema>
-			<fr:layout name="tabular">
-				<fr:property name="classes" value="tstyle2"/>
-				<fr:property name="link(view)" value="<%="/siadapManagement.do?method=viewUnitHarmonizationData&year=" + year.toString() %>"/>
-				<fr:property name="bundle(view)" value="MYORG_RESOURCES"/>
-				<fr:property name="key(view)" value="link.view"/>
-				<fr:property name="param(view)" value="unit.externalId/unitId"/>
-				<fr:property name="order(view)" value="1"/>
-			</fr:layout>	
-		</fr:view>
-	</p>
-</logic:notEmpty> --%>
+	<%-- <logic:equal value="true" name="person" property="harmonizationPeriodOpen"> --%>
+		<%-- Defining the year here so that it can be more easily passed on the links below that use it --%>
+		<bean:define id="year" name="siadapYearWrapper" property="chosenYear"/>
+				<h3> <bean:message key="label.responsifleForHarmonizationOf" bundle="SIADAP_RESOURCES"/>: </h3>
+			<p>
+				<fr:view name="person" property="harmozationUnits">
+					<fr:schema type="module.siadap.domain.wrappers.UnitSiadapWrapper" bundle="SIADAP_RESOURCES">
+						<fr:slot name="unit.partyName"  key="label.unit" bundle="ORGANIZATION_RESOURCES" />
+						<fr:slot name="unit.acronym" key="label.acronym" bundle="ORGANIZATION_RESOURCES" />
+					<%-- 	<fr:slot name="relevantEvaluationPercentage"/>
+						<fr:slot name="excellencyEvaluationPercentage"/> --%> 
+						
+						<fr:slot name="totalPeopleHarmonizedInUnit" key="label.totalEvaluated"/>
+						<fr:slot name="totalPeopleHarmonizedInUnitWithSiadapStarted" key="label.totalPeopleWithSiadapHarmonizedInUnit"/>
+					</fr:schema>
+					<fr:layout name="tabular">
+						<fr:property name="classes" value="tstyle2"/>
+						<logic:equal value="true" name="person" property="harmonizationPeriodOpen">
+							<fr:property name="link(view)" value="<%="/siadapManagement.do?method=viewUnitHarmonizationData&year=" + year.toString() %>"/>
+							<fr:property name="bundle(view)" value="MYORG_RESOURCES"/>
+							<fr:property name="key(view)" value="link.view"/>
+							<fr:property name="param(view)" value="unit.externalId/unitId"/>
+							<fr:property name="order(view)" value="1"/>
+						</logic:equal>
+					</fr:layout>	
+				</fr:view>
+			</p>
+</logic:notEmpty>
 </logic:present>
 <logic:notPresent name="person">
 <strong><bean:message bundle="SIADAP_RESOURCES" key="label.noconfiguration"/> <a href="mailto:suporte@ist.utl.pt" ><bean:message bundle="SIADAP_RESOURCES" key="label.here" /></a></strong>

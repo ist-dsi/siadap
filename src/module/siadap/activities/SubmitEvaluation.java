@@ -28,7 +28,7 @@ public class SubmitEvaluation extends WorkflowActivity<SiadapProcess, ActivityIn
     @Override
     public boolean isActive(SiadapProcess process, User user) {
 	Siadap siadap = process.getSiadap();
-	return siadap.getEvaluator().getPerson().getUser().equals(user) && !siadap.isEvaluationDone()
+	return siadap.getEvaluator().getPerson().getUser().equals(user) && !siadap.isDefaultEvaluationDone()
 		&& new Evaluation().isActive(process, user) && siadap.getEvaluationData2() != null;
     }
 

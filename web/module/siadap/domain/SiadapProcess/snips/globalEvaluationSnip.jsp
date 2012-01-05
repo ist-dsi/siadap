@@ -4,13 +4,13 @@
 <%@ taglib uri="/WEB-INF/struts-logic.tld" prefix="logic"%>
 <%@ taglib uri="/WEB-INF/fenix-renderers.tld" prefix="fr"%>
 
-<logic:equal name="process" property="siadap.evaluationDone" value="false">
+<logic:equal name="process" property="siadap.defaultEvaluationDone" value="false">
 	<em>
 		<bean:message key="label.notEvaluatedYet" bundle="SIADAP_RESOURCES"/>
 	</em>			
 </logic:equal>
 
-<logic:equal name="process" property="siadap.evaluationDone" value="true">			
+<logic:equal name="process" property="siadap.defaultEvaluationDone" value="true">			
 
 		<%-- R1 refactoring evaluationData --%>
 	<logic:equal name="process" property="siadap.evaluationData2.excellencyAward" value="true">

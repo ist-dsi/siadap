@@ -34,7 +34,7 @@ public class Evaluation extends WorkflowActivity<SiadapProcess, EvaluationActivi
 	}
 
 	//revert the submitted state to unsubmitted
-	if (siadap.isEvaluationDone()) {
+	if (siadap.isDefaultEvaluationDone()) {
 	    siadap.setEvaluationSealedDate(null);
 	}
 
@@ -53,7 +53,7 @@ public class Evaluation extends WorkflowActivity<SiadapProcess, EvaluationActivi
     @Override
     public boolean isConfirmationNeeded(SiadapProcess process) {
 	Siadap siadap = process.getSiadap();
-	if (siadap.isEvaluationDone())
+	if (siadap.isDefaultEvaluationDone())
 	    return true;
 	return false;
     }

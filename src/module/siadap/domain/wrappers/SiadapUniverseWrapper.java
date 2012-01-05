@@ -10,6 +10,7 @@ import java.util.Set;
 
 import module.siadap.domain.Siadap;
 import module.siadap.domain.SiadapUniverse;
+import module.siadap.domain.scoring.SiadapGlobalEvaluation;
 
 import org.apache.commons.collections.Predicate;
 
@@ -36,10 +37,12 @@ public class SiadapUniverseWrapper implements Serializable {
     private final int currentEvaluationRelevants;
     private final int currentHarmonizedRelevants;
 
+
     public SiadapUniverseWrapper(Set<PersonSiadapWrapper> siadapUniverseOfPeople, String universeDescription,
 	    SiadapUniverse universeToConsider, int excellencyQuotaPercentagePoints, int relevantQuotaPercentagePoints) {
 	this.siadapUniverse = siadapUniverseOfPeople;
 	this.universeDescription = universeDescription;
+
 
 	this.numberPeopleInUniverse = siadapUniverseOfPeople.size();
 	this.excellencyQuota = calculateQuota(this.numberPeopleInUniverse, excellencyQuotaPercentagePoints);
@@ -49,7 +52,8 @@ public class SiadapUniverseWrapper implements Serializable {
 	this.currentEvaluationRelevants = getCurrentRelevants(universeToConsider, false);
 	
 	this.currentHarmonizedExcellents = getCurrentExcellents(universeToConsider, true);
-	this.currentHarmonizedRelevants = getCurrentExcellents(universeToConsider, true);
+	this.currentHarmonizedRelevants = getCurrentRelevants(universeToConsider, true);
+
     }
 
     public String getCurrentHarmonizedRelevantsHTMLClass() {
@@ -64,23 +68,14 @@ public class SiadapUniverseWrapper implements Serializable {
 	return (currentHarmonizedRelevants > relevantQuota || currentHarmonizedExcellents > excellencyQuota);
     }
     private int getCurrentExcellents(SiadapUniverse siadapUniverse, boolean considerHarmonizedOnly) {
-	Predicate predicateToUse = null;
-	if (siadapUniverse.equals(SiadapUniverse.SIADAP2)) {
-	    predicateToUse = new Siadap2ExcellentPredicate(considerHarmonizedOnly);
-	} else if (siadapUniverse.equals(SiadapUniverse.SIADAP3)) {
-	    predicateToUse = new Siadap3ExcellentPredicate(considerHarmonizedOnly);
-	}
+	Predicate predicateToUse = new SiadapGradePredicate(considerHarmonizedOnly, siadapUniverse,
+		SiadapGlobalEvaluation.EXCELLENCY);
 	return getNrEvaluationsBasedOnPredicate(this.siadapUniverse, predicateToUse);
 
     }
 
     private int getCurrentRelevants(SiadapUniverse siadapUniverse, boolean considerHarmonizedOnly) {
-	Predicate predicateToUse = null;
-	if (siadapUniverse.equals(SiadapUniverse.SIADAP2)) {
-	    predicateToUse = new Siadap2RelevantPredicate(considerHarmonizedOnly);
-	} else if (siadapUniverse.equals(SiadapUniverse.SIADAP3)) {
-	    predicateToUse = new Siadap3RelevantPredicate(considerHarmonizedOnly);
-	}
+	Predicate predicateToUse = new SiadapGradePredicate(considerHarmonizedOnly, siadapUniverse, SiadapGlobalEvaluation.HIGH);
 	return getNrEvaluationsBasedOnPredicate(this.siadapUniverse, predicateToUse);
 
     }
@@ -110,11 +105,24 @@ public class SiadapUniverseWrapper implements Serializable {
     }
 
 
-    private class Siadap2RelevantPredicate implements Predicate {
+    /**
+     * 
+     * @author João Antunes (joao.antunes@tagus.ist.utl.pt) - 4 de Jan de 2012
+     * 
+     *         Predicate used to test against a certain grade for a given
+     *         universe and also consider the different stages of the grade
+     * 
+     */
+    private class SiadapGradePredicate implements Predicate {
 	private final boolean considerHarmonizedOnly;
+	private final SiadapUniverse siadapUniverseToConsider;
+	private final SiadapGlobalEvaluation siadapGlobalEvaluation;
 
-	Siadap2RelevantPredicate(boolean considerHarmonizedOnly) {
+	SiadapGradePredicate(boolean considerHarmonizedOnly, SiadapUniverse siadapUniverseToConsider,
+		SiadapGlobalEvaluation siadapGlobalEvaluation) {
 	    this.considerHarmonizedOnly = considerHarmonizedOnly;
+	    this.siadapUniverseToConsider = siadapUniverseToConsider;
+	    this.siadapGlobalEvaluation = siadapGlobalEvaluation;
 	}
 
 	@Override
@@ -122,9 +130,11 @@ public class SiadapUniverseWrapper implements Serializable {
 	    PersonSiadapWrapper personSiadapWrapper = (PersonSiadapWrapper) arg0;
 	    Siadap siadap = personSiadapWrapper.getSiadap();
 	    if (siadap != null
-		    && siadap.hasRelevantSiadap2Evaluation()
-		    && (!considerHarmonizedOnly || (siadap.getSiadapEvaluationUniverseForSiadapUniverse(SiadapUniverse.SIADAP2) != null && siadap
-			    .getSiadapEvaluationUniverseForSiadapUniverse(SiadapUniverse.SIADAP2).getHarmonizationAssessment()))) {
+		    && siadap.hasGivenSiadapGlobalEvaluation(siadapGlobalEvaluation, siadapUniverseToConsider)
+		    && (!considerHarmonizedOnly || (siadap.getSiadapEvaluationUniverseForSiadapUniverse(siadapUniverseToConsider) != null && siadap
+.getSiadapEvaluationUniverseForSiadapUniverse(siadapUniverseToConsider)
+				    .getHarmonizationAssessment() != null && siadap.getSiadapEvaluationUniverseForSiadapUniverse(
+			    siadapUniverseToConsider).getHarmonizationAssessment()))) {
 		return true;
 	    }
 	    return false;
@@ -132,73 +142,6 @@ public class SiadapUniverseWrapper implements Serializable {
 
     }
 
-    private class Siadap3RelevantPredicate implements Predicate {
-	private final boolean considerHarmonizedOnly;
-
-	Siadap3RelevantPredicate(boolean considerHarmonizedOnly) {
-	    this.considerHarmonizedOnly = considerHarmonizedOnly;
-	}
-
-   	@Override
-   	public boolean evaluate(Object arg0) {
-   	    PersonSiadapWrapper personSiadapWrapper = (PersonSiadapWrapper) arg0;
-   	    Siadap siadap = personSiadapWrapper.getSiadap();
-	    if (siadap != null
-		    && siadap.hasRelevantSiadap3Evaluation()
-		    && (!considerHarmonizedOnly || (siadap.getSiadapEvaluationUniverseForSiadapUniverse(SiadapUniverse.SIADAP2) != null && siadap
-			    .getSiadapEvaluationUniverseForSiadapUniverse(SiadapUniverse.SIADAP2).getHarmonizationAssessment()))) {
-   		return true;
-   	    }
-   	    return false;
-   	}
-
-       }
-
-    private class Siadap3ExcellentPredicate implements Predicate {
-
-	private final boolean considerHarmonizedOnly;
-
-	Siadap3ExcellentPredicate(boolean considerHarmonizedOnly) {
-	    this.considerHarmonizedOnly = considerHarmonizedOnly;
-	}
-
-	@Override
-	public boolean evaluate(Object arg0) {
-	    PersonSiadapWrapper personSiadapWrapper = (PersonSiadapWrapper) arg0;
-	    Siadap siadap = personSiadapWrapper.getSiadap();
-	    if (siadap != null
-		    && siadap.hasExcellentSiadap3Evaluation()
-		    && (!considerHarmonizedOnly || (siadap.getSiadapEvaluationUniverseForSiadapUniverse(SiadapUniverse.SIADAP2) != null && siadap
-			    .getSiadapEvaluationUniverseForSiadapUniverse(SiadapUniverse.SIADAP2).getHarmonizationAssessment()))) {
-		return true;
-	    }
-	    return false;
-	}
-
-    }
-
-    private class Siadap2ExcellentPredicate implements Predicate {
-
-	private final boolean considerHarmonizedOnly;
-
-	Siadap2ExcellentPredicate(boolean considerHarmonizedOnly) {
-	    this.considerHarmonizedOnly = considerHarmonizedOnly;
-	}
-
-	@Override
-	public boolean evaluate(Object arg0) {
-	    PersonSiadapWrapper personSiadapWrapper = (PersonSiadapWrapper) arg0;
-	    Siadap siadap = personSiadapWrapper.getSiadap();
-	    if (siadap != null
-		    && siadap.hasExcellentSiadap2Evaluation()
-		    && (!considerHarmonizedOnly || (siadap.getSiadapEvaluationUniverseForSiadapUniverse(SiadapUniverse.SIADAP2) != null && siadap
-			    .getSiadapEvaluationUniverseForSiadapUniverse(SiadapUniverse.SIADAP2).getHarmonizationAssessment()))) {
-		return true;
-	    }
-	    return false;
-	}
-
-    }
 
     public Set<PersonSiadapWrapper> getSiadapUniverse() {
 	return siadapUniverse;

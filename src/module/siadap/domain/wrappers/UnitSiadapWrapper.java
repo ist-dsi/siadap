@@ -22,6 +22,7 @@ import module.siadap.domain.Siadap;
 import module.siadap.domain.SiadapUniverse;
 import module.siadap.domain.SiadapYearConfiguration;
 import module.siadap.domain.exceptions.SiadapException;
+import module.siadap.domain.scoring.SiadapGlobalEvaluation;
 import module.siadap.domain.util.SiadapMiscUtilClass;
 import myorg.util.BundleUtil;
 
@@ -268,7 +269,8 @@ public class UnitSiadapWrapper extends PartyWrapper implements Serializable {
 	    public boolean evaluate(Object arg0) {
 		PersonSiadapWrapper personSiadapWrapper = (PersonSiadapWrapper) arg0;
 		Siadap siadap = personSiadapWrapper.getSiadap();
-		if (siadap != null && siadap.hasExcellentSiadap2Evaluation()) {
+		if (siadap != null
+			&& siadap.hasGivenSiadapGlobalEvaluation(SiadapGlobalEvaluation.EXCELLENCY, SiadapUniverse.SIADAP2)) {
 		    return true;
 		}
 		return false;
@@ -292,7 +294,7 @@ public class UnitSiadapWrapper extends PartyWrapper implements Serializable {
 	    public boolean evaluate(Object arg0) {
 		PersonSiadapWrapper personSiadapWrapper = (PersonSiadapWrapper) arg0;
 		Siadap siadap = personSiadapWrapper.getSiadap();
-		if (siadap != null && siadap.hasRelevantSiadap2Evaluation())
+		if (siadap != null && siadap.hasGivenSiadapGlobalEvaluation(SiadapGlobalEvaluation.HIGH, SiadapUniverse.SIADAP2))
 		    return true;
 		return false;
 	    }
@@ -314,7 +316,8 @@ public class UnitSiadapWrapper extends PartyWrapper implements Serializable {
 	    public boolean evaluate(Object arg0) {
 		PersonSiadapWrapper personSiadapWrapper = (PersonSiadapWrapper) arg0;
 		Siadap siadap = personSiadapWrapper.getSiadap();
-		if (siadap != null && siadap.hasExcellentSiadap2Evaluation())
+		if (siadap != null
+			&& siadap.hasGivenSiadapGlobalEvaluation(SiadapGlobalEvaluation.EXCELLENCY, SiadapUniverse.SIADAP2))
 		    return true;
 		return false;
 	    }
@@ -335,7 +338,7 @@ public class UnitSiadapWrapper extends PartyWrapper implements Serializable {
 	    public boolean evaluate(Object arg0) {
 		PersonSiadapWrapper personSiadapWrapper = (PersonSiadapWrapper) arg0;
 		Siadap siadap = personSiadapWrapper.getSiadap();
-		if (siadap != null && siadap.hasRelevantSiadap2Evaluation())
+		if (siadap != null && siadap.hasGivenSiadapGlobalEvaluation(SiadapGlobalEvaluation.HIGH, SiadapUniverse.SIADAP2))
 		    return true;
 		return false;
 	    }
@@ -357,7 +360,8 @@ public class UnitSiadapWrapper extends PartyWrapper implements Serializable {
 	    public boolean evaluate(Object arg0) {
 		PersonSiadapWrapper personSiadapWrapper = (PersonSiadapWrapper) arg0;
 		Siadap siadap = personSiadapWrapper.getSiadap();
-		if (siadap != null && siadap.hasExcellentSiadap3Evaluation())
+		if (siadap != null
+			&& siadap.hasGivenSiadapGlobalEvaluation(SiadapGlobalEvaluation.EXCELLENCY, SiadapUniverse.SIADAP3))
 		    return true;
 		return false;
 	    }
@@ -371,6 +375,8 @@ public class UnitSiadapWrapper extends PartyWrapper implements Serializable {
 	return calculateQuota(totalPeople, quotaRelevantSiadap3WithQuota);
     }
 
+    //TODO: joantune: these getNumberCurrent... could be done in a different way with a more generic predicate with a constructor, 
+    //buttttt it is done this way because there was a refactor on this and no time to change this
     public Integer getNumberCurrentRelevantsSiadap3WithQuota() {
 	return getNrEvaluationsBasedOnPredicate(getSiadap3AndWorkingRelationWithQuotaUniverse(), new Predicate() {
 
@@ -378,7 +384,7 @@ public class UnitSiadapWrapper extends PartyWrapper implements Serializable {
 	    public boolean evaluate(Object arg0) {
 		PersonSiadapWrapper personSiadapWrapper = (PersonSiadapWrapper) arg0;
 		Siadap siadap = personSiadapWrapper.getSiadap();
-		if (siadap != null && siadap.hasRelevantSiadap3Evaluation())
+		if (siadap != null && siadap.hasGivenSiadapGlobalEvaluation(SiadapGlobalEvaluation.HIGH, SiadapUniverse.SIADAP3))
 		    return true;
 		return false;
 	    }
@@ -400,7 +406,8 @@ public class UnitSiadapWrapper extends PartyWrapper implements Serializable {
 	    public boolean evaluate(Object arg0) {
 		PersonSiadapWrapper personSiadapWrapper = (PersonSiadapWrapper) arg0;
 		Siadap siadap = personSiadapWrapper.getSiadap();
-		if (siadap != null && siadap.hasExcellentSiadap3Evaluation())
+		if (siadap != null
+			&& siadap.hasGivenSiadapGlobalEvaluation(SiadapGlobalEvaluation.EXCELLENCY, SiadapUniverse.SIADAP3))
 		    return true;
 		return false;
 	    }
@@ -421,7 +428,7 @@ public class UnitSiadapWrapper extends PartyWrapper implements Serializable {
 	    public boolean evaluate(Object arg0) {
 		PersonSiadapWrapper personSiadapWrapper = (PersonSiadapWrapper) arg0;
 		Siadap siadap = personSiadapWrapper.getSiadap();
-		if (siadap != null && siadap.hasRelevantSiadap3Evaluation())
+		if (siadap != null && siadap.hasGivenSiadapGlobalEvaluation(SiadapGlobalEvaluation.HIGH, SiadapUniverse.SIADAP3))
 		    return true;
 		return false;
 	    }
@@ -849,7 +856,7 @@ public class UnitSiadapWrapper extends PartyWrapper implements Serializable {
 	for (Person person : getChildPersons(getConfiguration().getWorkingRelation(), getConfiguration()
 		.getWorkingRelationWithNoQuota())) {
 	    Siadap siadap = new PersonSiadapWrapper(person, getYear()).getSiadap();
-	    if ((siadap == null && checkForUsersWithoutSiadap) || (siadap != null && !siadap.isEvaluationDone())) {
+	    if ((siadap == null && checkForUsersWithoutSiadap) || (siadap != null && !siadap.isDefaultEvaluationDone())) {
 		return false;
 	    }
 	}

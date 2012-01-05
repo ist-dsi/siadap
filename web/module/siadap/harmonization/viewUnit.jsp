@@ -154,7 +154,7 @@ boolean hasPeopleToHarmonize = ((peopleWithoutQuotasSIADAP2.getSiadapUniverse() 
 		if ($(radioElement).next().text().trim() == "Não")
 		{
 		//let's check if they had the Yes selected
-		if ($(radioElement).parents("li").prevAll().children().children("input").attr("value") == "true")
+		if ($(radioElement).parents("li").prevAll().children().children("input")[0].wasSetToTrue)
 			{
 			//in case they had, we will decrease the corresponding number
 			if ($(radioElement).parents("td").prev().text().trim() == "Desempenho excelente")
@@ -185,7 +185,7 @@ boolean hasPeopleToHarmonize = ((peopleWithoutQuotasSIADAP2.getSiadapUniverse() 
 		if ($(radioElement).next().text().trim() == "Não")
 		{
 		//let's check if they had the Yes selected
-		if ($(radioElement).parents("li").prevAll().children().children("input").attr("value") == "true")
+		if ($(radioElement).parents("li").prevAll().children().children("input")[0].wasSetToTrue)
 			{
 			//in case they had, we will decrease the corresponding number
 			if ($(radioElement).parents("td").prev().text().trim() == "Desempenho excelente")
@@ -216,7 +216,7 @@ boolean hasPeopleToHarmonize = ((peopleWithoutQuotasSIADAP2.getSiadapUniverse() 
 		if ($(radioElement).next().text().trim() == "Não")
 		{
 		//let's check if they had the Yes selected
-		if ($(radioElement).parents("li").prevAll().children().children("input").attr("value") == "true")
+		if ($(radioElement).parents("li").prevAll().children().children("input")[0].wasSetToTrue)
 			{
 			//in case they had, we will decrease the corresponding number
 			if ($(radioElement).parents("td").prev().text().trim() == "Desempenho excelente")
@@ -247,7 +247,7 @@ boolean hasPeopleToHarmonize = ((peopleWithoutQuotasSIADAP2.getSiadapUniverse() 
 		if ($(radioElement).next().text().trim() == "Não")
 		{
 		//let's check if they had the Yes selected
-		if ($(radioElement).parents("li").prevAll().children().children("input").attr("value") == "true")
+		if ($(radioElement).parents("li").prevAll().children().children("input")[0].wasSetToTrue)
 			{
 			//in case they had, we will decrease the corresponding number
 			if ($(radioElement).parents("td").prev().text().trim() == "Desempenho excelente")
@@ -275,6 +275,13 @@ boolean hasPeopleToHarmonize = ((peopleWithoutQuotasSIADAP2.getSiadapUniverse() 
 	}
 	
 	$(document).ready(function() {
+		$("input[type=radio]").each(function(indexInArray, radioInput) {
+			if (radioInput.checked && $(radioInput).next().text().trim() == "Sim"){
+				//it is checked, let's mark it that way
+				radioInput.wasSetToTrue=true;
+				
+			}
+		});
 		$("input[type=radio]").click(function () {
 			if ($(this).parents("li").attr("class") == "withoutQuotasSIADAP3")
 				{

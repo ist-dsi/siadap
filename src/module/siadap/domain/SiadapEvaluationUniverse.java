@@ -54,12 +54,12 @@ public class SiadapEvaluationUniverse extends SiadapEvaluationUniverse_Base {
     }
 
     public boolean hasRelevantEvaluation() {
-	return SiadapGlobalEvaluation.HIGH.accepts(getTotalEvaluationScoring());
+	return SiadapGlobalEvaluation.HIGH.accepts(getTotalEvaluationScoring(), hasExcellencyAwarded());
     }
 
     public boolean isInadequate() {
-	return SiadapGlobalEvaluation.LOW.accepts(getTotalEvaluationScoring())
-		|| SiadapGlobalEvaluation.ZERO.accepts(getTotalEvaluationScoring());
+	return SiadapGlobalEvaluation.LOW.accepts(getTotalEvaluationScoring(), hasExcellencyAwarded())
+		|| SiadapGlobalEvaluation.ZERO.accepts(getTotalEvaluationScoring(), hasExcellencyAwarded());
     }
 
     public BigDecimal getTotalEvaluationScoring() {
@@ -201,7 +201,7 @@ public class SiadapEvaluationUniverse extends SiadapEvaluationUniverse_Base {
 		return excellencyAward.booleanValue();
 	    }
 	} else {
-	    if (getSiadapEvaluation() == null || !getSiadap().isEvaluationDone())
+	    if (getSiadapEvaluation() == null || !getSiadap().isDefaultEvaluationDone())
 		return false;
 	    Boolean excellencyAward = getSiadapEvaluation().getExcellencyAward();
 	    if (excellencyAward == null)

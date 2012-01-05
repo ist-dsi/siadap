@@ -7,7 +7,7 @@ import pt.ist.fenixWebFramework.rendererExtensions.util.IPresentableEnum;
 
 public enum SiadapGlobalEvaluation implements IPresentableEnum, IScoring {
 
-    NONEXISTING(0, null, null), EXCELLENCY(5, new BigDecimal(4), new BigDecimal(4)), HIGH(5, new BigDecimal(4), new BigDecimal(5)), MEDIUM(
+    NONEXISTING(0, null, null), EXCELLENCY(5, new BigDecimal(4), new BigDecimal(5)), HIGH(5, new BigDecimal(4), new BigDecimal(5)), MEDIUM(
 	    3, new BigDecimal(2), new BigDecimal(3.999)), LOW(1, new BigDecimal(1),
 	    new BigDecimal(1.999)), ZERO(0, new BigDecimal(0), new BigDecimal(0.999));
 
@@ -28,21 +28,12 @@ public enum SiadapGlobalEvaluation implements IPresentableEnum, IScoring {
 
     public static SiadapGlobalEvaluation getGlobalEvaluation(BigDecimal totalEvaluationScoring, boolean excellencyRequested)
     {
-	if (totalEvaluationScoring == null)
-	    return NONEXISTING;
-	if (excellencyRequested && HIGH.accepts(totalEvaluationScoring))
-	    return EXCELLENCY;
-	else if (HIGH.accepts(totalEvaluationScoring))
-	    return HIGH;
-	else if (MEDIUM.accepts(totalEvaluationScoring))
-	    return MEDIUM;
-	else if (LOW.accepts(totalEvaluationScoring))
-	    return LOW;
-	else if (ZERO.accepts(totalEvaluationScoring))
-	    return ZERO;
-	else
-	    return NONEXISTING;
-	    
+	for (SiadapGlobalEvaluation siadapGlobalEval : SiadapGlobalEvaluation.values()) {
+	    if (siadapGlobalEval.accepts(totalEvaluationScoring, excellencyRequested)) {
+		return siadapGlobalEval;
+	    }
+	}
+	return NONEXISTING;
     }
 
     public static boolean isValidGrade(BigDecimal grade, boolean excellentAssigned) {
@@ -56,7 +47,14 @@ public enum SiadapGlobalEvaluation implements IPresentableEnum, IScoring {
 	return BundleUtil.getStringFromResourceBundle("resources/SiadapResources", getClass().getName() + "." + name());
     }
 
-    public boolean accepts(BigDecimal totalEvaluationScoring) {
-	return lowerBound.compareTo(totalEvaluationScoring) <= 0 && upperBound.compareTo(totalEvaluationScoring) >= 0;
+    public boolean accepts(BigDecimal totalEvaluationScoring, boolean excellencyAwarded) {
+	if (this.equals(NONEXISTING)) {
+	    if (totalEvaluationScoring == null) {
+		return true;
+	    } else
+		return false;
+	}
+	return lowerBound.compareTo(totalEvaluationScoring) <= 0 && upperBound.compareTo(totalEvaluationScoring) >= 0
+		&& ((excellencyAwarded && this.equals(EXCELLENCY)) || (!excellencyAwarded && !this.equals(EXCELLENCY)));
     }
 }

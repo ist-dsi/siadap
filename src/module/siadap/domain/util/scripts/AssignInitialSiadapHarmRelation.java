@@ -37,6 +37,7 @@ import org.joda.time.LocalDate;
  */
 public class AssignInitialSiadapHarmRelation extends ReadCustomTask {
     
+    private static final LocalDate DATE_TO_USE = new LocalDate(2011, 12, 20);
     int accApplied = 0;
 
     class AccountabilityAssignmentWrapper {
@@ -78,7 +79,7 @@ public class AssignInitialSiadapHarmRelation extends ReadCustomTask {
 	{
 	    ++totalNrSiadaps;
 	    Integer year = siadap.getYear();
-	    if (year < new LocalDate().getYear()) {
+	    if (year < DATE_TO_USE.getYear()) {
 		totalNrSiadapsSkippedDueToDifferentYear++;
 		continue;
 	    }
@@ -109,7 +110,7 @@ public class AssignInitialSiadapHarmRelation extends ReadCustomTask {
 			totalNrSiadapsToInfer++;
 			//let's add this accountability
 			AccountabilityType accTypeToUse = defaultSiadapEvaluationUniverse.getSiadapUniverse() == SiadapUniverse.SIADAP2 ? siadap2HarmonizationRelation : siadap3HarmonizationRelation;
-			accountabilitiesToApply.add(new AccountabilityAssignmentWrapper(accTypeToUse, new LocalDate(),
+			accountabilitiesToApply.add(new AccountabilityAssignmentWrapper(accTypeToUse, DATE_TO_USE,
 				SiadapMiscUtilClass.lastDayOfYear(year), unit, person));
 		    }
 			

@@ -91,8 +91,22 @@ public class Siadap extends Siadap_Base {
 	return getAutoEvaluationSealedDate() != null;
     }
 
-    public boolean isEvaluationDone() {
+    public boolean isDefaultEvaluationDone() {
 	return getEvaluationSealedDate() != null;
+    }
+
+    public boolean isEvaluationDone(SiadapUniverse siadapUniverse)
+    {
+	SiadapEvaluationUniverse siadapEvaluationUniverseForSiadapUniverse = getSiadapEvaluationUniverseForSiadapUniverse(siadapUniverse);
+	if (siadapEvaluationUniverseForSiadapUniverse.getDefaultEvaluationUniverse().booleanValue())
+	{
+	    return isDefaultEvaluationDone();
+	}
+	
+	else
+	    return (siadapEvaluationUniverseForSiadapUniverse.isCurriculumPonderation()
+		    && siadapEvaluationUniverseForSiadapUniverse.getSiadapEvaluationItems() != null && siadapEvaluationUniverseForSiadapUniverse
+		    .getSiadapEvaluationItems().size() > 0);
     }
 
 
@@ -374,39 +388,44 @@ public class Siadap extends Siadap_Base {
 	return null;
     }
 
-    public boolean hasRelevantSiadap2Evaluation() {
-	SiadapEvaluationUniverse siadapEvaluationUniverseForSiadapUniverse = getSiadapEvaluationUniverseForSiadapUniverse(SiadapUniverse.SIADAP2);
-	if (siadapEvaluationUniverseForSiadapUniverse == null) {
-	    return false;
+    //    public boolean hasRelevantSiadapEvaluation(SiadapUniverse siadapUniverseToConsider) {
+    //	SiadapEvaluationUniverse siadapEvaluationUniverseForSiadapUniverse = getSiadapEvaluationUniverseForSiadapUniverse(siadapUniverseToConsider);
+    //	if (siadapEvaluationUniverseForSiadapUniverse == null) {
+    //	    return false;
+    //	}
+    //	return SiadapGlobalEvaluation.HIGH.accepts(siadapEvaluationUniverseForSiadapUniverse.getTotalEvaluationScoring());
+    //
+    //    }
+
+    /**
+     * @param siadapGlobalEvaluation
+     *            the {@link SiadapGlobalEvaluation} which we are testing
+     * @param siadapUniverseToConsider
+     *            the siadap universe to test for
+     * @return true if the parsed siadapGlobalEvaluation is the global
+     *         evaluation for the given siadapUniverseToConsider
+     */
+    public boolean hasGivenSiadapGlobalEvaluation(SiadapGlobalEvaluation siadapGlobalEvaluation, SiadapUniverse siadapUniverseToConsider)
+    {
+	SiadapEvaluationUniverse siadapEvaluationUniverseForSiadapUniverse = getSiadapEvaluationUniverseForSiadapUniverse(siadapUniverseToConsider);
+	if (siadapEvaluationUniverseForSiadapUniverse == null && siadapGlobalEvaluation.equals(SiadapGlobalEvaluation.NONEXISTING)) {
+	    return true;
 	}
-	return SiadapGlobalEvaluation.HIGH.accepts(siadapEvaluationUniverseForSiadapUniverse.getTotalEvaluationScoring());
+	if (siadapEvaluationUniverseForSiadapUniverse == null) return false;
+
+	return siadapGlobalEvaluation.accepts(siadapEvaluationUniverseForSiadapUniverse.getTotalEvaluationScoring(),
+		siadapEvaluationUniverseForSiadapUniverse.hasExcellencyAwarded());
     }
 
-    public boolean hasRelevantSiadap3Evaluation() {
-	SiadapEvaluationUniverse siadapEvaluationUniverseForSiadapUniverse = getSiadapEvaluationUniverseForSiadapUniverse(SiadapUniverse.SIADAP3);
-	if (siadapEvaluationUniverseForSiadapUniverse == null) {
-	    return false;
-	}
-	return SiadapGlobalEvaluation.HIGH.accepts(siadapEvaluationUniverseForSiadapUniverse.getTotalEvaluationScoring());
-
-    }
-
-    public boolean hasExcellentSiadap3Evaluation() {
-	SiadapEvaluationUniverse siadapEvaluationUniverseForSiadapUniverse = getSiadapEvaluationUniverseForSiadapUniverse(SiadapUniverse.SIADAP3);
-	if (siadapEvaluationUniverseForSiadapUniverse == null) {
-	    return false;
-	}
-	return siadapEvaluationUniverseForSiadapUniverse.hasExcellencyAwarded();
-
-    }
-
-    public boolean hasExcellentSiadap2Evaluation() {
-	SiadapEvaluationUniverse siadapEvaluationUniverseForSiadapUniverse = getSiadapEvaluationUniverseForSiadapUniverse(SiadapUniverse.SIADAP2);
-	if (siadapEvaluationUniverseForSiadapUniverse == null) {
-	    return false;
-	}
-	return siadapEvaluationUniverseForSiadapUniverse.hasExcellencyAwarded();
-    }
+    //    public boolean hasExcellentSiadapEvaluation(SiadapUniverse siadapUniverseToConsider) {
+    //	SiadapEvaluationUniverse siadapEvaluationUniverseForSiadapUniverse = getSiadapEvaluationUniverseForSiadapUniverse(siadapUniverseToConsider);
+    //	if (siadapEvaluationUniverseForSiadapUniverse == null) {
+    //	    return false;
+    //	}
+    //	return siadapEvaluationUniverseForSiadapUniverse.hasExcellencyAwarded()
+    //		&& SiadapGlobalEvaluation.EXCELLENCY.accepts(siadapEvaluationUniverseForSiadapUniverse
+    //			.getTotalEvaluationScoring());
+    //    }
 
     public boolean hasExcellencyAward() {
 	if (getEvaluationData2() == null || getEvaluationData2().getExcellencyAward() == null)

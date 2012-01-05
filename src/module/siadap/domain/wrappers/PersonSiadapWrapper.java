@@ -23,11 +23,13 @@ import module.siadap.domain.SiadapRootModule;
 import module.siadap.domain.SiadapUniverse;
 import module.siadap.domain.SiadapYearConfiguration;
 import module.siadap.domain.scoring.SiadapGlobalEvaluation;
+import module.siadap.domain.util.SiadapMiscUtilClass;
 import myorg.applicationTier.Authenticate.UserView;
 import myorg.domain.User;
 import myorg.domain.exceptions.DomainException;
 
 import org.apache.commons.collections.Predicate;
+import org.joda.time.Interval;
 import org.joda.time.LocalDate;
 
 import pt.ist.fenixWebFramework.services.Service;
@@ -200,6 +202,9 @@ public class PersonSiadapWrapper extends PartyWrapper implements Serializable {
 	    return SiadapGlobalEvaluation.NONEXISTING.getLocalizedName();
 	else
 	    excellencyGiven = siadapEvaluationUniverseForSiadapUniverse.hasExcellencyAwarded();
+	if (!siadap.isEvaluationDone(siadapUniverse)) {
+	    return SiadapGlobalEvaluation.NONEXISTING.getLocalizedName();
+	}
 
 	return SiadapGlobalEvaluation.getGlobalEvaluation(siadapEvaluationUniverseForSiadapUniverse.getTotalEvaluationScoring(),
 		excellencyGiven).getLocalizedName();
@@ -255,7 +260,7 @@ public class PersonSiadapWrapper extends PartyWrapper implements Serializable {
 	    return false;
 	if (getSiadap().getEvaluator().getPerson().equals(currentUser.getPerson()))
 	    return true;
-	if (getSiadap().isEvaluationDone() && getSiadap().getSubmittedForValidationEvaluationAcknowledgementDate() != null)
+	if (getSiadap().isDefaultEvaluationDone() && getSiadap().getSubmittedForValidationEvaluationAcknowledgementDate() != null)
 	    return true;
 	return false;
     }
@@ -268,7 +273,7 @@ public class PersonSiadapWrapper extends PartyWrapper implements Serializable {
     public BigDecimal getTotalEvaluationScoring(SiadapUniverse siadapUniverse) {
 	Siadap siadap = getSiadap();
 	SiadapEvaluationUniverse siadapEvaluationUniverse = siadap.getSiadapEvaluationUniverseForSiadapUniverse(siadapUniverse);
-	if (siadap == null || siadapEvaluationUniverse == null || !siadap.isEvaluationDone())
+	if (siadap == null || siadapEvaluationUniverse == null || !siadap.isEvaluationDone(siadapUniverse))
 	    return null;
 
 	return siadapEvaluationUniverse.getTotalEvaluationScoring();
@@ -466,6 +471,16 @@ public class PersonSiadapWrapper extends PartyWrapper implements Serializable {
 
     public boolean isHomologationMember() {
 	return getConfiguration().getHomologationMembers().contains(getPerson());
+    }
+
+    public boolean isHarmonizationPeriodOpen() {
+	if (getSiadap() == null || getConfiguration() == null || getConfiguration().getFirstLevelHarmonizationBegin() == null)
+	    return false;
+
+	Interval interval = new Interval(SiadapMiscUtilClass.convertDateToBeginOfDay(getConfiguration()
+		.getFirstLevelHarmonizationBegin()), SiadapMiscUtilClass.convertDateToEndOfDay(getConfiguration()
+		.getFirstLevelHarmonizationEnd()));
+	return interval.containsNow();
     }
 
     public Set<Accountability> getAccountabilitiesHistory() {
