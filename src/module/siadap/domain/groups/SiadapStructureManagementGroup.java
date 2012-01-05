@@ -26,7 +26,9 @@ public class SiadapStructureManagementGroup extends SiadapStructureManagementGro
 
     public static boolean isMember(User user, int year) {
 	SiadapYearConfiguration configuration = SiadapYearConfiguration.getSiadapYearConfiguration(year);
-	return configuration != null && configuration.getStructureManagementGroupMembers().contains(user.getPerson());
+	if (configuration == null || configuration.getStructureManagementGroupMembers() == null)
+	    return false;
+	return configuration.getStructureManagementGroupMembers().contains(user.getPerson());
     }
 
     @Override
