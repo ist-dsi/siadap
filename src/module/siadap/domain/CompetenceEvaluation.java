@@ -6,7 +6,8 @@ public class CompetenceEvaluation extends CompetenceEvaluation_Base {
 
     public CompetenceEvaluation(Siadap siadap, Competence competence) {
 	super();
-	getSiadapEvaluationUniverse().setSiadap(siadap);
+	SiadapEvaluationUniverse defaultSiadapEvaluationUniverse = siadap.getDefaultSiadapEvaluationUniverse();
+	setSiadapEvaluationUniverse(defaultSiadapEvaluationUniverse);
 	setCompetence(competence);
     }
 

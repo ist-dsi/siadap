@@ -81,7 +81,7 @@ class SiadapYearConfiguration {
 
 class Siadap {
 	Integer year;
-	Integer currentObjectiveVersion; //R3
+	//Integer currentObjectiveVersion; //R3
 	Boolean evaluatedOnlyByCompetences;
 	
 	/* sealedDate should be replaced by submittedDate... 
@@ -118,7 +118,7 @@ class Siadap {
 	
 	
 	
-	 SiadapUniverse siadapUniverse;//R1
+	 //SiadapUniverse siadapUniverse;//R1
 }
 
 class SiadapEvaluationUniverse
@@ -292,12 +292,13 @@ relation SiadapProcessSiadap {
 	SiadapProcess playsRole process;
 	Siadap playsRole siadap;
 }
- relation SiadapSiadapEvaluationItems {//R1
+ /*relation SiadapSiadapEvaluationItems {//R1
  	Siadap playsRole siadap;//R1
  	SiadapEvaluationItem playsRole siadapEvaluationItems {//R1
  		multiplicity *;//R1
 	}//R1
 }//R1
+*/
 
 relation SiadapEvaluationUniverseSiadapEvaluationItem {
 	SiadapEvaluationUniverse playsRole siadapEvaluationUniverse {
@@ -317,11 +318,11 @@ relation SiadapSiadapEvaluationUniverse{
 	}
 }
 
-relation SiadapAutoEvaluationSiadap {//R1
+/*relation SiadapAutoEvaluationSiadap {//R1
 	Siadap playsRole siadap;//R1
 	SiadapAutoEvaluation playsRole autoEvaluationData;//R1
 }//R1
-
+*/
 relation SiadapAutoEvaluationSiadapEvaluationUniverse {
 	SiadapEvaluationUniverse playsRole siadapEvaluationUniverse {
 		multiplicity 1;
@@ -332,11 +333,12 @@ relation SiadapAutoEvaluationSiadapEvaluationUniverse {
 }
 
 
+/*
 relation SiadapSiadapEvaluation {//R1
 	Siadap playsRole siadap;//R1
 	SiadapEvaluation playsRole evaluationData;//R1
 }//R1
-
+*/
 relation SiadapEvaluationSiadapEvaluationUniverse {
 	SiadapEvaluationUniverse playsRole siadapEvaluationUniverse {
 		multiplicity 1;

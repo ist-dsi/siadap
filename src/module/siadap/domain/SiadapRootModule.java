@@ -94,25 +94,25 @@ public class SiadapRootModule extends SiadapRootModule_Base implements ModuleIni
 	if (getSiadapTestUserGroup() == null) {
 	    initializeSiadapGroups(root);
 	}
-	migrateDataToNewSiadapEvaluationUniverseClass();
+	//	migrateDataToNewSiadapEvaluationUniverseClass();
 	migrateDataSoThatTheYearsHaveNewPonderationPercentages();
-	migrateCurrentObjectiveVersion();
+	//	migrateCurrentObjectiveVersion();
     }
 
-    private void migrateCurrentObjectiveVersion() {
-	int counter = 0;
-	for (Siadap siadap : getSiadaps()) {
-	    SiadapEvaluationUniverse defaultSiadapEvaluationUniverse = siadap.getDefaultSiadapEvaluationUniverse();
-	    Integer currentObjectiveVersion = siadap.getCurrentObjectiveVersion();
-	    if (defaultSiadapEvaluationUniverse != null && defaultSiadapEvaluationUniverse.getCurrentObjectiveVersion() == null
-		    && currentObjectiveVersion != null) {
-		defaultSiadapEvaluationUniverse.setCurrentObjectiveVersion(currentObjectiveVersion);
-		counter++;
-	    }
-	}
-	LOGGER.warn("Migrated " + counter + " SIADAP's current objective versions");
-
-    }
+    //    private void migrateCurrentObjectiveVersion() {
+    //	int counter = 0;
+    //	for (Siadap siadap : getSiadaps()) {
+    //	    SiadapEvaluationUniverse defaultSiadapEvaluationUniverse = siadap.getDefaultSiadapEvaluationUniverse();
+    //	    Integer currentObjectiveVersion = siadap.getCurrentObjectiveVersion();
+    //	    if (defaultSiadapEvaluationUniverse != null && defaultSiadapEvaluationUniverse.getCurrentObjectiveVersion() == null
+    //		    && currentObjectiveVersion != null) {
+    //		defaultSiadapEvaluationUniverse.setCurrentObjectiveVersion(currentObjectiveVersion);
+    //		counter++;
+    //	    }
+    //	}
+    //	LOGGER.warn("Migrated " + counter + " SIADAP's current objective versions");
+    //
+    //    }
 
     private void migrateDataSoThatTheYearsHaveNewPonderationPercentages() {
 	for (SiadapYearConfiguration siadapYearConfiguration : getYearConfigurations()) {
@@ -189,42 +189,41 @@ public class SiadapRootModule extends SiadapRootModule_Base implements ModuleIni
 
     }
 
-    private static void migrateDataToNewSiadapEvaluationUniverseClass() {
-	//let's do the migration to all of the Siadaps that we find
-	SiadapRootModule siadapRootModule = getInstance();
-
-	int siadapsMigrated = 0;
-	for (Siadap siadap : siadapRootModule.getSiadaps()) {
-	    //let's create a new SiadapEvaluationUniverse, if we have none
-	    List<SiadapEvaluationUniverse> siadapEvaluationUniverses = siadap.getSiadapEvaluationUniverses();
-	    //we only migrate the ones that we need to
-	    if (siadapEvaluationUniverses == null || siadapEvaluationUniverses.size() == 0) {
-		LOGGER.info("Migrating some data");
-		siadapsMigrated++;
-		SiadapEvaluationUniverse siadapEvaluationUniverse = new SiadapEvaluationUniverse(siadap,
-			siadap.getSiadapUniverse(), true);
-
-		//now let's migrate the rest of the items
-
-		//SIADAPEvaluationItems
-		for (SiadapEvaluationItem siadapEvaluationItem : siadap.getSiadapEvaluationItems()) {
-		    siadapEvaluationUniverse.addSiadapEvaluationItems(siadapEvaluationItem);
-		}
-
-		//SIADAPAutoEvaluation
-		SiadapAutoEvaluation autoEvaluationData = siadap.getAutoEvaluationData();
-
-		siadapEvaluationUniverse.setSiadapAutoEvaluation(autoEvaluationData);
-
-		//SIADAPEvaluation
-		SiadapEvaluation siadapEvaluation = siadap.getEvaluationData();
-		siadapEvaluationUniverse.setSiadapEvaluation(siadapEvaluation);
-	    }
-	}
-
-	LOGGER.warn("Migrated " + siadapsMigrated + " SIADAPs");
-
-    }
+    /*
+     * private static void migrateDataToNewSiadapEvaluationUniverseClass() {
+     * //let's do the migration to all of the Siadaps that we find
+     * SiadapRootModule siadapRootModule = getInstance();
+     * 
+     * int siadapsMigrated = 0; for (Siadap siadap :
+     * siadapRootModule.getSiadaps()) { //let's create a new
+     * SiadapEvaluationUniverse, if we have none List<SiadapEvaluationUniverse>
+     * siadapEvaluationUniverses = siadap.getSiadapEvaluationUniverses(); //we
+     * only migrate the ones that we need to if (siadapEvaluationUniverses ==
+     * null || siadapEvaluationUniverses.size() == 0) {
+     * LOGGER.info("Migrating some data"); siadapsMigrated++;
+     * SiadapEvaluationUniverse siadapEvaluationUniverse = new
+     * SiadapEvaluationUniverse(siadap, siadap.getSiadapUniverse(), true);
+     * 
+     * //now let's migrate the rest of the items
+     * 
+     * //SIADAPEvaluationItems for (SiadapEvaluationItem siadapEvaluationItem :
+     * siadap.getSiadapEvaluationItems()) {
+     * siadapEvaluationUniverse.addSiadapEvaluationItems(siadapEvaluationItem);
+     * }
+     * 
+     * //SIADAPAutoEvaluation SiadapAutoEvaluation autoEvaluationData =
+     * siadap.getAutoEvaluationData();
+     * 
+     * siadapEvaluationUniverse.setSiadapAutoEvaluation(autoEvaluationData);
+     * 
+     * //SIADAPEvaluation SiadapEvaluation siadapEvaluation =
+     * siadap.getEvaluationData();
+     * siadapEvaluationUniverse.setSiadapEvaluation(siadapEvaluation); } }
+     * 
+     * LOGGER.warn("Migrated " + siadapsMigrated + " SIADAPs");
+     * 
+     * }
+     */
 
     private void initializeSiadapGroups(MyOrg root) {
 	SiadapRootModule.getInstance();

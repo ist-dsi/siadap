@@ -213,7 +213,7 @@ public class Siadap extends Siadap_Base {
     }
 
     public boolean hasAnyCompetencesSet() {
-	if (!hasAnySiadapEvaluationItems())
+	if (!getDefaultSiadapEvaluationUniverse().hasAnySiadapEvaluationItems())
 	    return false;
 	ArrayList<SiadapEvaluationItem> evaluationItems = new ArrayList<SiadapEvaluationItem>(getSiadapEvaluationItems2());
 	for (SiadapEvaluationItem siadapEvaluationItem : evaluationItems) {
@@ -312,7 +312,7 @@ public class Siadap extends Siadap_Base {
      */
     public ArrayList<Competence> getCompetences() {
 	ArrayList<Competence> arrayCompetences = new ArrayList<Competence>();
-	if (!hasAnySiadapEvaluationItems())
+	if (!hasAnySiadapEvaluationItems2())
 	    return arrayCompetences;
 	ArrayList<SiadapEvaluationItem> evaluationItems = new ArrayList<SiadapEvaluationItem>(getSiadapEvaluationItems2());
 	for (SiadapEvaluationItem siadapEvaluationItem : evaluationItems) {

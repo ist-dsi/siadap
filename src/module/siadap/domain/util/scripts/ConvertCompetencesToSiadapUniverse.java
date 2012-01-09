@@ -101,7 +101,7 @@ public class ConvertCompetencesToSiadapUniverse extends ReadCustomTask {
 
     public SiadapUniverse getMainSiadapUniverse(Siadap siadap) {
 	//seen that we only have evaluationItems on one of the SiadapEvaluationUniverses
-	for (SiadapEvaluationItem evaluationItem : siadap.getSiadapEvaluationItems()) {
+	for (SiadapEvaluationItem evaluationItem : siadap.getDefaultSiadapEvaluationUniverse().getSiadapEvaluationItems()) {
 	    return evaluationItem.getSiadapEvaluationUniverse().getSiadapUniverse();
 	}
 	return null;
@@ -109,7 +109,7 @@ public class ConvertCompetencesToSiadapUniverse extends ReadCustomTask {
 
     public static void setMainSiadapUniverse(Siadap siadap, SiadapUniverse siadapUniverse) {
 	//seen that we only have evaluationItems on one of the SiadapEvaluationUniverses
-	for (SiadapEvaluationItem evaluationItem : siadap.getSiadapEvaluationItems()) {
+	for (SiadapEvaluationItem evaluationItem : siadap.getDefaultSiadapEvaluationUniverse().getSiadapEvaluationItems()) {
 	    evaluationItem.getSiadapEvaluationUniverse().setSiadapUniverse(siadapUniverse);
 	}
     }

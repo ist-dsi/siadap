@@ -161,8 +161,8 @@ pre {
 		 <logic:empty name="process" property="siadap.defaultSiadapUniverse">
 		 	(<bean:message key="label.undefinedUniverse" bundle="SIADAP_RESOURCES"/>)
 		 </logic:empty>
-		 <logic:notEmpty name="process" property="siadap.siadapUniverse">
-		 	(<bean:write name="process" property="siadap.siadapUniverse"/>)
+		 <logic:notEmpty name="process" property="siadap.defaultSiadapUniverse">
+		 	(<bean:write name="process" property="siadap.defaultSiadapUniverse"/>)
 		 </logic:notEmpty>
 </p>
 

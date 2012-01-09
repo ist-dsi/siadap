@@ -44,7 +44,7 @@
 			<fr:property name="subLayout" value="values"/>
 			<fr:property name="subSchema" value="view.UnitSiadapWrapper.name"/>
 		</fr:slot>
-		<fr:slot name="siadap.siadapUniverse"/>
+		<fr:slot name="siadap.defaultSiadapUniverse"/>
 		<fr:slot name="quotaAware" key="label.evaluationForQuotas"/> 
 		<fr:slot name="evaluator" layout="null-as-label" key="label.evaluator">
 			<fr:property name="subLayout" value="values"/>

@@ -65,7 +65,6 @@ public class ObjectiveEvaluation extends ObjectiveEvaluation_Base {
 	return newObjectiveEvaluation;
     }
 
-    @Override
     public Siadap getSiadap() {
 	return getSiadapEvaluationUniverse().getSiadap();
     }

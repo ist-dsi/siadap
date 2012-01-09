@@ -13,7 +13,8 @@ public class AutoEvaluation extends WorkflowActivity<SiadapProcess, AutoEvaluati
     public boolean isActive(SiadapProcess process, User user) {
 	Siadap siadap = process.getSiadap();
 	return siadap.getEvaluated().getUser() == user && !siadap.isAutoEvaliationDone()
-		&& siadap.isEvaluatedWithKnowledgeOfObjectives() && !siadap.getSiadapEvaluationItems().isEmpty()
+		&& siadap.isEvaluatedWithKnowledgeOfObjectives()
+		&& !siadap.getDefaultSiadapEvaluationUniverse().getSiadapEvaluationItems().isEmpty()
 		&& siadap.getAutoEvaluationInterval().containsNow();
     }
 
