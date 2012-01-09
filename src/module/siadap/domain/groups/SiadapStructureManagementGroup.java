@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Set;
 
 import module.organization.domain.Person;
+import module.siadap.domain.SiadapRootModule;
 import module.siadap.domain.SiadapYearConfiguration;
 import myorg.domain.User;
 import myorg.util.BundleUtil;
@@ -21,7 +22,28 @@ public class SiadapStructureManagementGroup extends SiadapStructureManagementGro
     @Override
     @Deprecated
     public boolean isMember(User user) {
-	return isMember(user, new LocalDate().getYear());
+	return isMember(user, returnLastUsableYear());
+    }
+
+    /**
+     * 
+     * @return if there is no SiadapConfiguration for the current year, it
+     *         returns the year for which there's a configuration
+     */
+    private int returnLastUsableYear() {
+	int yearToUse = new LocalDate().getYear();
+	if (SiadapYearConfiguration.getSiadapYearConfiguration(yearToUse) == null)
+	{
+	    yearToUse = 0;
+	    for (SiadapYearConfiguration yearConfiguration : SiadapRootModule.getInstance().getYearConfigurations())
+	    {
+		int year = yearConfiguration.getYear();
+		if (year > yearToUse && yearConfiguration.getStructureManagementGroupMembers() != null)
+		    yearToUse = year;
+	    }
+	}
+	return yearToUse;
+
     }
 
     public static boolean isMember(User user, int year) {
