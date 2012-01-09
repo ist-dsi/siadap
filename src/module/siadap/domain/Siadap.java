@@ -413,6 +413,16 @@ public class Siadap extends Siadap_Base {
 	}
 	if (siadapEvaluationUniverseForSiadapUniverse == null) return false;
 
+	//if we are on the default evaluation universe, we should check if this one is finished or not
+	if (siadapEvaluationUniverseForSiadapUniverse.getDefaultEvaluationUniverse() && !isDefaultEvaluationDone())
+
+	{
+	    if (siadapGlobalEvaluation.equals(SiadapGlobalEvaluation.NONEXISTING))
+		return true;
+	    else
+		return false;
+	}
+
 	return siadapGlobalEvaluation.accepts(siadapEvaluationUniverseForSiadapUniverse.getTotalEvaluationScoring(),
 		siadapEvaluationUniverseForSiadapUniverse.hasExcellencyAwarded());
     }
@@ -597,6 +607,18 @@ public class Siadap extends Siadap_Base {
     @Service
     public void markAsHarmonized(LocalDate harmonizationDate, SiadapUniverse siadapUniverse) {
 	SiadapEvaluationUniverse evaluationUniverse = getSiadapEvaluationUniverseForSiadapUniverse(siadapUniverse);
+	if (evaluationUniverse.getHarmonizationAssessment() == null)
+	    throw new SiadapException("harmonization.error.there.are.people.not.harmonized");
+	//let's also make sure that this person either has been marked as not having an evaluation or has the evaluation done
+	if (!isEvaluationDone(siadapUniverse) )
+	{
+	    if (evaluationUniverse.getDefaultEvaluationUniverse() && isWithSkippedEvaluation())
+	    {
+		//do nothing :)
+	    } else {
+		throw new SiadapException("error.harmonization.can't.harmonize.with.users.without.grade");
+	    }
+	}
 	evaluationUniverse.setHarmonizationDate(harmonizationDate);
 	getProcess().markAsHarmonized(evaluationUniverse);
     }
@@ -616,12 +638,9 @@ public class Siadap extends Siadap_Base {
     }
 
     public SiadapEvaluation getEvaluationData2() {
-	//let's iterate and get the first non null eval data that we can find
-	for (SiadapEvaluationUniverse evaluationUniverse : getSiadapEvaluationUniverses()) {
-	    if (evaluationUniverse.getSiadapEvaluation() != null)
-		return evaluationUniverse.getSiadapEvaluation();
-	}
-	return null;
+	if (getDefaultSiadapEvaluationUniverse() == null)
+	    return null;
+	return getDefaultSiadapEvaluationUniverse().getSiadapEvaluation();
     }
 
     public boolean hasAllEvaluationItemsValid() {

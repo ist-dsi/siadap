@@ -93,7 +93,7 @@ public enum SiadapProcessStateEnum implements IPresentableEnum {
 	    return NOT_YET_SUBMITTED_FOR_ACK;
 	else if (!siadap.isEvaluatedWithKnowledgeOfObjectives())
 	    return WAITING_EVAL_OBJ_ACK;
-	else if (!siadap.isAutoEvaliationDone())
+	else if (!siadap.isAutoEvaliationDone() && !siadap.isDefaultEvaluationDone())
 	    return WAITING_SELF_EVALUATION;
 	else if (!siadap.isDefaultEvaluationDone())
 	    return NOT_YET_EVALUATED;

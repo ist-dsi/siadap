@@ -40,12 +40,16 @@ public abstract class PartyWrapper implements Serializable {
     protected abstract Party getParty();
 
     protected List<Unit> getParentUnits(AccountabilityType... types) {
-	return getParentUnits(new FilterAccountabilities(getYear(), true), types);
+	return getParentUnits(getParty(), new FilterAccountabilities(getYear(), true), types);
     }
 
-    private List<Unit> getParentUnits(Predicate predicate, AccountabilityType... types) {
+    protected List<Unit> getParentUnits(Party party, AccountabilityType... types) {
+	return getParentUnits(party, new FilterAccountabilities(getYear(), true), types);
+    }
+
+    private List<Unit> getParentUnits(Party partyToConsider, Predicate predicate, AccountabilityType... types) {
 	List<Unit> units = new ArrayList<Unit>();
-	for (Accountability accountability : getParty().getParentAccountabilities(types)) {
+	for (Accountability accountability : partyToConsider.getParentAccountabilities(types)) {
 	    if (predicate == null || predicate.evaluate(accountability)) {
 		Party parent = accountability.getParent();
 		if (parent.isUnit()) {
@@ -74,12 +78,16 @@ public abstract class PartyWrapper implements Serializable {
     }
     
     protected List<Person> getChildPersons(AccountabilityType... types) {
-	return getChildPersons(new FilterAccountabilities(getYear(), true), types);
+	return getChildPersons(getParty(), new FilterAccountabilities(getYear(), true), types);
     }
 
-    protected List<Person> getChildPersons(Predicate predicate, AccountabilityType... types) {
+    protected List<Person> getChildPersons(Party partyToConsider, AccountabilityType... types) {
+	return getChildPersons(partyToConsider, new FilterAccountabilities(getYear(), true), types);
+    }
+
+    protected List<Person> getChildPersons(Party partyToConsider, Predicate predicate, AccountabilityType... types) {
 	List<Person> people = new ArrayList<Person>();
-	for (Accountability accountability : getParty().getChildrenAccountabilities(types)) {
+	for (Accountability accountability : partyToConsider.getChildrenAccountabilities(types)) {
 	    if (predicate == null || predicate.evaluate(accountability)) {
 		Party parent = accountability.getChild();
 		if (parent.isPerson()) {

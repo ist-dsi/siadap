@@ -94,11 +94,11 @@
 			| <html:link  page="<%="/siadapManagement.do?method=prepareAddExcedingQuotaSuggestion&year=" + year.toString()%>" paramName="currentUnit" paramProperty="unit.externalId" paramId="unitId">
 					<bean:message key="label.addExcedingQuotaSuggestion" bundle="SIADAP_RESOURCES"/>
 			  </html:link>
-			 <logic:equal name="currentUnit" property="harmonizationFinished" value="true">
-		    | <html:link styleId="reOpenHarmonization"  page="<%="/siadapManagement.do?method=terminateHarmonization&year="+year.toString()%>" paramName="currentUnit" paramProperty="unit.externalId" paramId="unitId">
+		</logic:equal>
+		 <logic:equal name="currentUnit" property="harmonizationFinished" value="true">
+		    | <html:link styleId="reOpenHarmonization"  page="<%="/siadapManagement.do?method=reOpenHarmonization&year="+year.toString()%>" paramName="currentUnit" paramProperty="unit.externalId" paramId="unitId">
 					<bean:message key="label.reOpenHarmonization" bundle="SIADAP_RESOURCES"/>
 				</html:link>
-			</logic:equal>
 		</logic:equal>
 	</logic:equal>
 	</p>	
@@ -126,7 +126,7 @@ boolean hasPeopleToHarmonize = ((peopleWithoutQuotasSIADAP2.getSiadapUniverse() 
 %>
 
 <logic:equal value="true" name="hasPeopleToHarmonize" >
-	<fr:form action="<%="/siadapManagement.do?method=viewUnitHarmonizationData&year=" + year.toString() + "&unitId=" + unitId.toString() %>">
+	<fr:form action="<%="/siadapManagement.do?method=setUnitHarmonizationAssessmentData&year=" + year.toString() + "&unitId=" + unitId.toString() %>">
 <style>
 	.inline-list ul, .inline-list li {
 		display: inline;
@@ -282,7 +282,11 @@ boolean hasPeopleToHarmonize = ((peopleWithoutQuotasSIADAP2.getSiadapUniverse() 
 				
 			}
 		});
-		$("input[type=radio]").click(function () {
+		$("input[type=radio]").change(function () {
+			if ($(this).next().text().trim() == "Sim")
+				{
+					this.wasSetToTrue=true;
+				}
 			if ($(this).parents("li").attr("class") == "withoutQuotasSIADAP3")
 				{
 					handleWithoutQuotasSIADAP3RadioClick(this);
@@ -350,7 +354,8 @@ boolean hasPeopleToHarmonize = ((peopleWithoutQuotasSIADAP2.getSiadapUniverse() 
 					<bean:message key="warning.harmonizationUnitAboveQuotas" bundle="SIADAP_RESOURCES" arg0="<%= currentHarmonizedRelevants.toString() %>" arg1="<%= relevantQuota.toString() %>" arg2="<%= currentHarmonizedExcellents.toString() %>" arg3="<%= excellencyQuota.toString() %>"/>
 				</div>
 			</logic:equal>
-				<fr:edit id="people-withQuotas-SIADAP2" name="people-withQuotas-SIADAP2" property="siadapUniverse" nested="true">
+				<fr:edit id="people-withQuotas-SIADAP2" name="people-withQuotas-SIADAP2" visible="false" nested="true" />
+				<fr:edit id="people-withQuotas-SIADAP2id" name="people-withQuotas-SIADAP2" property="siadapUniverse" nested="true">
 					<fr:schema type="module.siadap.domain.wrappers.PersonSiadapWrapper" bundle="SIADAP_RESOURCES">
 						<fr:slot name="person.partyName" key="label.evaluated" readOnly="true"/>
 						<fr:slot name="person.user.username" key="label.login.username" bundle="MYORG_RESOURCES" readOnly="true"/>
@@ -444,7 +449,8 @@ boolean hasPeopleToHarmonize = ((peopleWithoutQuotasSIADAP2.getSiadapUniverse() 
 					<bean:message key="warning.harmonizationUnitAboveQuotas" bundle="SIADAP_RESOURCES" arg0="<%= currentHarmonizedRelevants.toString() %>" arg1="<%= relevantQuota.toString() %>" arg2="<%= currentHarmonizedExcellents.toString() %>" arg3="<%= excellencyQuota.toString() %>"/>
 				</div>
 			</logic:equal>
-				<fr:edit id="people-withQuotas-SIADAP3" name="people-withQuotas-SIADAP3" property="siadapUniverse" nested="true">
+				<fr:edit visible="false" nested="true" id="people-withQuotas-SIADAP3" name="people-withQuotas-SIADAP3"/>
+				<fr:edit id="people-withQuotas-SIADAP3id" name="people-withQuotas-SIADAP3" property="siadapUniverse" nested="true">
 					<fr:schema type="module.siadap.domain.wrappers.PersonSiadapWrapper" bundle="SIADAP_RESOURCES">
 						<fr:slot name="person.partyName" key="label.evaluated" readOnly="true" />
 						<fr:slot name="person.user.username" key="label.login.username" bundle="MYORG_RESOURCES" readOnly="true" />
@@ -541,7 +547,8 @@ boolean hasPeopleToHarmonize = ((peopleWithoutQuotasSIADAP2.getSiadapUniverse() 
 				</div>
 			</logic:equal>
 			
-				<fr:edit id="people-withoutQuotas-SIADAP2" name="people-withoutQuotas-SIADAP2" property="siadapUniverse" nested="true">
+				<fr:edit visible="false" nested="true" id="people-withoutQuotas-SIADAP2" name="people-withoutQuotas-SIADAP2" />
+				<fr:edit id="people-withoutQuotas-SIADAP2id" name="people-withoutQuotas-SIADAP2" property="siadapUniverse" nested="true">
 					<fr:schema type="module.siadap.domain.wrappers.PersonSiadapWrapper" bundle="SIADAP_RESOURCES">
 						<fr:slot name="person.partyName" key="label.evaluated" readOnly="true" />
 						<fr:slot name="person.user.username" key="label.login.username" bundle="MYORG_RESOURCES" readOnly="true"/>
@@ -624,7 +631,7 @@ boolean hasPeopleToHarmonize = ((peopleWithoutQuotasSIADAP2.getSiadapUniverse() 
 				</tr>
 			</table>
 		</div>	
-			<p>
+			<div>
 			<logic:equal name="people-withoutQuotas-SIADAP3" property="siadapUniverseWithQuotasAboveQuota" value="true">
 				
 				<bean:define id="relevantQuota" name="people-withoutQuotas-SIADAP3" property="relevantQuota"/>
@@ -636,7 +643,8 @@ boolean hasPeopleToHarmonize = ((peopleWithoutQuotasSIADAP2.getSiadapUniverse() 
 					<bean:message key="warning.harmonizationUnitAboveQuotas" bundle="SIADAP_RESOURCES" arg0="<%= currentHarmonizedRelevants.toString() %>" arg1="<%= relevantQuota.toString() %>" arg2="<%= currentHarmonizedExcellents.toString() %>" arg3="<%= excellencyQuota.toString() %>"/>
 				</div>
 			</logic:equal>
-				<fr:edit id="people-withoutQuotas-SIADAP3" name="people-withoutQuotas-SIADAP3" property="siadapUniverse" nested="true">
+				<fr:edit visible="false" nested="true" id="people-withoutQuotas-SIADAP3" name="people-withoutQuotas-SIADAP3"/>
+				<fr:edit id="people-withoutQuotas-SIADAP3id" name="people-withoutQuotas-SIADAP3" property="siadapUniverse" nested="true">
 					<fr:schema type="module.siadap.domain.wrappers.PersonSiadapWrapper" bundle="SIADAP_RESOURCES">
 						<fr:slot name="person.partyName" key="label.evaluated" readOnly="true" />
 						<fr:slot name="person.user.username" key="label.login.username" bundle="MYORG_RESOURCES" readOnly="true"/>
@@ -684,7 +692,7 @@ boolean hasPeopleToHarmonize = ((peopleWithoutQuotasSIADAP2.getSiadapUniverse() 
 						
 					</fr:layout>
 				</fr:edit>
-			</p>
+			</div>
 		</logic:notEmpty>
 		
 		

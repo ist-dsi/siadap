@@ -138,7 +138,7 @@ SiadapYearWrapper siadapYearWrapper = (SiadapYearWrapper) request.getAttribute("
 		<%-- Defining the year here so that it can be more easily passed on the links below that use it --%>
 		<bean:define id="year" name="siadapYearWrapper" property="chosenYear"/>
 				<h3> <bean:message key="label.responsifleForHarmonizationOf" bundle="SIADAP_RESOURCES"/>: </h3>
-			<p>
+			<div>
 				<fr:view name="person" property="harmozationUnits">
 					<fr:schema type="module.siadap.domain.wrappers.UnitSiadapWrapper" bundle="SIADAP_RESOURCES">
 						<fr:slot name="unit.partyName"  key="label.unit" bundle="ORGANIZATION_RESOURCES" />
@@ -160,7 +160,7 @@ SiadapYearWrapper siadapYearWrapper = (SiadapYearWrapper) request.getAttribute("
 						</logic:equal>
 					</fr:layout>	
 				</fr:view>
-			</p>
+			</div>
 </logic:notEmpty>
 </logic:present>
 <logic:notPresent name="person">

@@ -71,6 +71,7 @@ class SiadapYearConfiguration {
 	Integer quotaRelevantSiadap2WithoutQuota;
 	Integer quotaRelevantSiadap3WithoutQuota;
 	
+	/* Really not used unless as a 'checksum' to make sure that the sum is 100 */
 	Integer quotaRegularSiadap2WithoutQuota;
 	Integer quotaRegularSiadap3WithoutQuota;
 	

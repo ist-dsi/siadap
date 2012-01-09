@@ -37,12 +37,14 @@ public class SiadapUniverseWrapper implements Serializable {
     private final int currentEvaluationRelevants;
     private final int currentHarmonizedRelevants;
 
+    private final SiadapUniverse siadapUniverseEnum;
 
     public SiadapUniverseWrapper(Set<PersonSiadapWrapper> siadapUniverseOfPeople, String universeDescription,
 	    SiadapUniverse universeToConsider, int excellencyQuotaPercentagePoints, int relevantQuotaPercentagePoints) {
 	this.siadapUniverse = siadapUniverseOfPeople;
 	this.universeDescription = universeDescription;
 
+	this.siadapUniverseEnum = universeToConsider;
 
 	this.numberPeopleInUniverse = siadapUniverseOfPeople.size();
 	this.excellencyQuota = calculateQuota(this.numberPeopleInUniverse, excellencyQuotaPercentagePoints);
@@ -50,10 +52,14 @@ public class SiadapUniverseWrapper implements Serializable {
 
 	this.currentEvaluationExcellents = getCurrentExcellents(universeToConsider, false);
 	this.currentEvaluationRelevants = getCurrentRelevants(universeToConsider, false);
-	
+
 	this.currentHarmonizedExcellents = getCurrentExcellents(universeToConsider, true);
 	this.currentHarmonizedRelevants = getCurrentRelevants(universeToConsider, true);
 
+    }
+
+    public boolean isAboveQuotas() {
+	return (currentHarmonizedExcellents > excellencyQuota);
     }
 
     public String getCurrentHarmonizedRelevantsHTMLClass() {
@@ -67,6 +73,7 @@ public class SiadapUniverseWrapper implements Serializable {
     public boolean isSiadapUniverseWithQuotasAboveQuota() {
 	return (currentHarmonizedRelevants > relevantQuota || currentHarmonizedExcellents > excellencyQuota);
     }
+
     private int getCurrentExcellents(SiadapUniverse siadapUniverse, boolean considerHarmonizedOnly) {
 	Predicate predicateToUse = new SiadapGradePredicate(considerHarmonizedOnly, siadapUniverse,
 		SiadapGlobalEvaluation.EXCELLENCY);
@@ -88,7 +95,7 @@ public class SiadapUniverseWrapper implements Serializable {
 	}
 	return counter;
     }
-    
+
     /**
      * @param totalPeople
      *            the number of people to calculate the quota on
@@ -103,7 +110,6 @@ public class SiadapUniverseWrapper implements Serializable {
 	return value > 0 ? value : 1; //if the quota is 0 the the quota shifts to 1
 
     }
-
 
     /**
      * 
@@ -131,8 +137,8 @@ public class SiadapUniverseWrapper implements Serializable {
 	    Siadap siadap = personSiadapWrapper.getSiadap();
 	    if (siadap != null
 		    && siadap.hasGivenSiadapGlobalEvaluation(siadapGlobalEvaluation, siadapUniverseToConsider)
-		    && (!considerHarmonizedOnly || (siadap.getSiadapEvaluationUniverseForSiadapUniverse(siadapUniverseToConsider) != null && siadap
-.getSiadapEvaluationUniverseForSiadapUniverse(siadapUniverseToConsider)
+		    && (!considerHarmonizedOnly || (siadap.getSiadapEvaluationUniverseForSiadapUniverse(siadapUniverseToConsider) != null
+			    && siadap.getSiadapEvaluationUniverseForSiadapUniverse(siadapUniverseToConsider)
 				    .getHarmonizationAssessment() != null && siadap.getSiadapEvaluationUniverseForSiadapUniverse(
 			    siadapUniverseToConsider).getHarmonizationAssessment()))) {
 		return true;
@@ -141,7 +147,6 @@ public class SiadapUniverseWrapper implements Serializable {
 	}
 
     }
-
 
     public Set<PersonSiadapWrapper> getSiadapUniverse() {
 	return siadapUniverse;
@@ -177,5 +182,9 @@ public class SiadapUniverseWrapper implements Serializable {
 
     public int getCurrentHarmonizedRelevants() {
 	return currentHarmonizedRelevants;
+    }
+
+    public SiadapUniverse getSiadapUniverseEnum() {
+	return siadapUniverseEnum;
     }
 }

@@ -23,13 +23,11 @@ import module.siadap.domain.SiadapRootModule;
 import module.siadap.domain.SiadapUniverse;
 import module.siadap.domain.SiadapYearConfiguration;
 import module.siadap.domain.scoring.SiadapGlobalEvaluation;
-import module.siadap.domain.util.SiadapMiscUtilClass;
 import myorg.applicationTier.Authenticate.UserView;
 import myorg.domain.User;
 import myorg.domain.exceptions.DomainException;
 
 import org.apache.commons.collections.Predicate;
-import org.joda.time.Interval;
 import org.joda.time.LocalDate;
 
 import pt.ist.fenixWebFramework.services.Service;
@@ -39,9 +37,38 @@ public class PersonSiadapWrapper extends PartyWrapper implements Serializable {
 
     private Person person;
 
+    /*
+     * We need these two Booleans because of the render problems while writing
+     * to a Bean
+     */
+    private Boolean harmonizationCurrentAssessmentForSIADAP3;
+    private Boolean harmonizationCurrentAssessmentForSIADAP2;
+
     public PersonSiadapWrapper(Person person, int year) {
 	super(year);
 	this.person = person;
+	//initing the harmonization booleans
+	if (getSiadap() == null) {
+	    this.harmonizationCurrentAssessmentForSIADAP2 = null;
+	    this.harmonizationCurrentAssessmentForSIADAP3 = null;
+	} else {
+	    SiadapEvaluationUniverse siadapEvaluationUniverseForSIADAP3 = getSiadap()
+		    .getSiadapEvaluationUniverseForSiadapUniverse(SiadapUniverse.SIADAP3);
+	    SiadapEvaluationUniverse siadapEvaluationUniverseForSIADAP2 = getSiadap()
+		    .getSiadapEvaluationUniverseForSiadapUniverse(SiadapUniverse.SIADAP2);
+	    if (siadapEvaluationUniverseForSIADAP2 == null) {
+		this.harmonizationCurrentAssessmentForSIADAP2 = null;
+	    } else {
+		this.harmonizationCurrentAssessmentForSIADAP2 = siadapEvaluationUniverseForSIADAP2.getHarmonizationAssessment();
+	    }
+
+	    if (siadapEvaluationUniverseForSIADAP3 == null) {
+		this.harmonizationCurrentAssessmentForSIADAP3 = null;
+	    } else {
+		this.harmonizationCurrentAssessmentForSIADAP3 = siadapEvaluationUniverseForSIADAP3.getHarmonizationAssessment();
+	    }
+
+	}
     }
 
     public Person getPerson() {
@@ -474,13 +501,7 @@ public class PersonSiadapWrapper extends PartyWrapper implements Serializable {
     }
 
     public boolean isHarmonizationPeriodOpen() {
-	if (getSiadap() == null || getConfiguration() == null || getConfiguration().getFirstLevelHarmonizationBegin() == null)
-	    return false;
-
-	Interval interval = new Interval(SiadapMiscUtilClass.convertDateToBeginOfDay(getConfiguration()
-		.getFirstLevelHarmonizationBegin()), SiadapMiscUtilClass.convertDateToEndOfDay(getConfiguration()
-		.getFirstLevelHarmonizationEnd()));
-	return interval.containsNow();
+	return UnitSiadapWrapper.isHarmonizationPeriodOpen(getConfiguration());
     }
 
     public Set<Accountability> getAccountabilitiesHistory() {
@@ -527,28 +548,31 @@ public class PersonSiadapWrapper extends PartyWrapper implements Serializable {
     }
 
     public Boolean getHarmonizationCurrentAssessmentForSIADAP2() {
-	return getHarmonizationCurrentAssessmentFor(getSiadap().getSiadapEvaluationUniverseForSiadapUniverse(
-		SiadapUniverse.SIADAP2));
+	return this.harmonizationCurrentAssessmentForSIADAP2;
     }
 
     public Boolean getHarmonizationCurrentAssessmentForSIADAP3() {
-	return getHarmonizationCurrentAssessmentFor(getSiadap().getSiadapEvaluationUniverseForSiadapUniverse(
-		SiadapUniverse.SIADAP3));
+	return this.harmonizationCurrentAssessmentForSIADAP3;
     }
 
-    private void setHarmonizationCurrentAssessment(SiadapUniverse siadapUniverse,
-	    Boolean harmonizationCurrentAssessment) {
+    @Service
+    public void setHarmonizationCurrentAssessment(SiadapUniverse siadapUniverse) {
 	SiadapEvaluationUniverse siadapEvaluationUniverseForSiadapUniverse = getSiadap()
 		.getSiadapEvaluationUniverseForSiadapUniverse(siadapUniverse);
+	Boolean harmonizationCurrentAssessment = null;
+	if (siadapUniverse.equals(SiadapUniverse.SIADAP2)) {
+	    harmonizationCurrentAssessment = getHarmonizationCurrentAssessmentForSIADAP2();
+	} else if (siadapUniverse.equals(SiadapUniverse.SIADAP3)) {
+	    harmonizationCurrentAssessment = getHarmonizationCurrentAssessmentForSIADAP3();
+	}
 	siadapEvaluationUniverseForSiadapUniverse.setHarmonizationAssessment(harmonizationCurrentAssessment);
     }
 
     public void setHarmonizationCurrentAssessmentForSIADAP3(Boolean assessment) {
-	setHarmonizationCurrentAssessment(SiadapUniverse.SIADAP3,
-		assessment);
+	this.harmonizationCurrentAssessmentForSIADAP3 = assessment;
     }
 
     public void setHarmonizationCurrentAssessmentForSIADAP2(Boolean assessment) {
-	setHarmonizationCurrentAssessment(SiadapUniverse.SIADAP2, assessment);
+	this.harmonizationCurrentAssessmentForSIADAP2 = assessment;
     }
 }

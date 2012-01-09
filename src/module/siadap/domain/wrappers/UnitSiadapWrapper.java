@@ -514,11 +514,11 @@ public class UnitSiadapWrapper extends PartyWrapper implements Serializable {
     }
 
     private boolean isPersonResponsibleForHarmonization(Unit unit, Person person) {
-	Collection<Person> childPersons = getChildPersons(getConfiguration().getHarmonizationResponsibleRelation());
+	Collection<Person> childPersons = getChildPersons(unit, getConfiguration().getHarmonizationResponsibleRelation());
 	if (childPersons.contains(person)) {
 	    return true;
 	} else {
-	    Collection<Unit> parentUnits = getParentUnits(getConfiguration().getHarmonizationResponsibleRelation());
+	    Collection<Unit> parentUnits = getParentUnits(unit, getConfiguration().getUnitRelations());
 	    if (parentUnits.isEmpty()) {
 		return false;
 	    } else {
@@ -549,32 +549,28 @@ public class UnitSiadapWrapper extends PartyWrapper implements Serializable {
     }
 
     public boolean isSiadap2WithQuotasAboveQuota() {
-	if (getNumberCurrentRelevantsSiadap2WithQuota() > getRelevantSiadap2WithQuotaQuota()
-		|| getNumberCurrentExcellentsSiadap2WithQuota() > getExcellencySiadap2WithQuotaQuota())
-	    return true;
-	return false;
-
+	return new SiadapUniverseWrapper(getSiadap2AndWorkingRelationWithQuotaUniverse(), "siadap2WithQuotas",
+		SiadapUniverse.SIADAP2, getConfiguration().getQuotaExcellencySiadap2WithQuota(), getConfiguration()
+			.getQuotaRelevantSiadap2WithQuota()).isAboveQuotas();
     }
 
     public boolean isSiadap2WithoutQuotasAboveQuota() {
-	if (getNumberCurrentRelevantsSiadap2WithoutQuota() > getRelevantSiadap2WithoutQuotaQuota()
-		|| getNumberCurrentExcellentsSiadap2WithoutQuota() > getExcellencySiadap2WithQuotaQuota())
-	    return true;
-	return false;
+	return new SiadapUniverseWrapper(getSiadap2AndWorkingRelationWithoutQuotaUniverse(), "siadap2WithoutQuotas",
+		SiadapUniverse.SIADAP2, getConfiguration().getQuotaExcellencySiadap2WithoutQuota(), getConfiguration()
+			.getQuotaRelevantSiadap2WithoutQuota()).isAboveQuotas();
     }
 
     public boolean isSiadap3WithQuotasAboveQuota() {
-	if (getNumberCurrentRelevantsSiadap3WithQuota() > getRelevantSiadap3WithQuotaQuota()
-		|| getNumberCurrentExcellentsSiadap3WithQuota() > getExcellencySiadap3WithQuotaQuota())
-	    return true;
-	return false;
+
+	return new SiadapUniverseWrapper(getSiadap3AndWorkingRelationWithQuotaUniverse(), "siadap3WithQuotas",
+		SiadapUniverse.SIADAP3, getConfiguration().getQuotaExcellencySiadap3WithQuota(), getConfiguration()
+			.getQuotaRelevantSiadap3WithQuota()).isAboveQuotas();
     }
 
     public boolean isSiadap3WithoutQuotasAboveQuota() {
-	if (getNumberCurrentRelevantsSiadap3WithoutQuota() > getRelevantSiadap3WithoutQuotaQuota()
-		|| getNumberCurrentExcellentsSiadap3WithoutQuota() > getExcellencySiadap3WithoutQuotaQuota())
-	    return true;
-	return false;
+	return new SiadapUniverseWrapper(getSiadap3AndWorkingRelationWithoutQuotaUniverse(), "siadap3WithoutQuotas",
+		SiadapUniverse.SIADAP3, getConfiguration().getQuotaExcellencySiadap3WithoutQuota(), getConfiguration()
+			.getQuotaRelevantSiadap3WithoutQuota()).isAboveQuotas();
     }
 
     public Unit getSuperiorUnit() {
@@ -892,6 +888,20 @@ public class UnitSiadapWrapper extends PartyWrapper implements Serializable {
 		SiadapMiscUtilClass.convertDateToEndOfDay(harmonizationEnd));
     }
 
+    public boolean isHarmonizationPeriodOpen() {
+	return isHarmonizationPeriodOpen(getConfiguration());
+    }
+
+    public static boolean isHarmonizationPeriodOpen(SiadapYearConfiguration configuration) {
+	if (configuration == null || configuration.getFirstLevelHarmonizationBegin() == null)
+	    return false;
+
+	Interval interval = new Interval(SiadapMiscUtilClass.convertDateToBeginOfDay(configuration
+		.getFirstLevelHarmonizationBegin()), SiadapMiscUtilClass.convertDateToEndOfDay(configuration
+		.getFirstLevelHarmonizationEnd()));
+	return interval.containsNow();
+    }
+
     public boolean isHarmonizationActive() {
 	SiadapYearConfiguration configuration = getConfiguration();
 	LocalDate harmonizationBegin = configuration.getFirstLevelHarmonizationBegin();
@@ -902,14 +912,7 @@ public class UnitSiadapWrapper extends PartyWrapper implements Serializable {
 	if (!isSpecialHarmonizationUnit()) {
 	    //the special harmonization unit has no date constraints,
 	    //the others have!
-
-	    //we should have all dates defined
-	    if (harmonizationBegin == null || harmonizationEnd == null) {
-		return false;
-	    }
-
-	    if (!getHarmonizationInterval().containsNow())
-		return false;
+	    return isHarmonizationPeriodOpen();
 	}
 	return true;
     }
@@ -923,7 +926,6 @@ public class UnitSiadapWrapper extends PartyWrapper implements Serializable {
 	SiadapYearConfiguration configuration = getConfiguration();
 	if (!isHarmonizationActive())
 	    throw new SiadapException("error.harmonization.period.is.closed");
-	//TODO make possible to check the subunits if they are harmonized
 	if (configuration.getLockHarmonizationOnQuota() && (isSiadap2WithQuotasAboveQuota() || isSiadap3WithQuotasAboveQuota())) {
 	    throw new SiadapException("error.harmonization.unit.is.not.harmonized.for.quota");
 	}

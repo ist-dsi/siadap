@@ -210,7 +210,7 @@ public class SiadapProcess extends SiadapProcess_Base {
 	    siadapUniverseLocalizedName += " ("
 		    + BundleUtil.getStringFromResourceBundle(Siadap.SIADAP_BUNDLE_STRING, "label.curricularPonderation") + " )";
 	}
-	new LabelLog(this, UserView.getCurrentUser(), "label.terminateHarmonization", "resources/SiadapResources",
+	new LabelLog(this, UserView.getCurrentUser(), "label.terminateHarmonization.for", "resources/SiadapResources",
 		siadapUniverseLocalizedName);
     }
 
@@ -220,7 +220,7 @@ public class SiadapProcess extends SiadapProcess_Base {
 	    siadapUniverseLocalizedName += " ("
 		    + BundleUtil.getStringFromResourceBundle(Siadap.SIADAP_BUNDLE_STRING, "label.curricularPonderation") + " )";
 	}
-	new LabelLog(this, UserView.getCurrentUser(), "label.reOpenHarmonization", "resources/SiadapResources",
+	new LabelLog(this, UserView.getCurrentUser(), "label.reOpenHarmonization.for", "resources/SiadapResources",
 		siadapUniverseLocalizedName);
     }
 

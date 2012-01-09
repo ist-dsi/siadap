@@ -14,6 +14,8 @@ import myorg.domain.exceptions.DomainException;
 import org.apache.commons.collections.Predicate;
 import org.joda.time.LocalDate;
 
+import pt.ist.fenixWebFramework.services.Service;
+
 public class SiadapEvaluationUniverse extends SiadapEvaluationUniverse_Base {
 
     private static final int PRECISION = 3;
@@ -212,6 +214,7 @@ public class SiadapEvaluationUniverse extends SiadapEvaluationUniverse_Base {
     }
 
     @Override
+    @Service
     public void setHarmonizationAssessment(Boolean harmonizationAssessment) {
 	if (getHarmonizationDate() != null)
 	    throw new SiadapException("error.harmonization.closed.cannot.change.assessment.reopen.first");
