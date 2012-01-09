@@ -15,6 +15,10 @@
 <bean:define id="siadap" name="information" property="process.siadap" />
 <bean:define id="personName" name="information" property="process.siadap.evaluated.partyName"/>
 
+<div class=highlightBox>
+	<h3>Note: A sessão expira em ~30min, lembre-se de gravar regularmente os dados no sistema ou noutro sitio para evitar perder o que escreveu</h3>
+</div>
+
 <div class="dinline forminline">
 <fr:form
 	action='<%="/workflowProcessManagement.do?method=process&processId="

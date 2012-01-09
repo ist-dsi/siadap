@@ -12,6 +12,10 @@
 	type="java.lang.String" />
 <bean:define id="name" name="information" property="activityName" />
 
+<div class=highlightBox>
+<h3>Note: A sessão expira em ~30min, lembre-se de gravar regularmente os dados no sistema ou noutro sitio para evitar perder o que escreveu</h3>
+</div>
+
 <div class="dinline forminline"><fr:form id="auto-evaluation-input"
 	action='<%="/workflowProcessManagement.do?method=process&processId=" + processId + "&activity=" + name%>'>
 
