@@ -8,7 +8,8 @@
 
 
 <%@page import="module.siadap.domain.SiadapYearConfiguration"%>
-<%@page import="myorg.util.BundleUtil"%><bean:define id="processId" name="process" property="externalId"
+<%@page import="myorg.util.BundleUtil"%>
+<bean:define id="processId" name="process" property="externalId"
 	type="java.lang.String" />
 <bean:define id="name" name="information" property="activityName" />
 

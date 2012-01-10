@@ -651,6 +651,14 @@ public class Siadap extends Siadap_Base {
 	return true;
     }
 
+    public boolean isHarmonizationOfDefaultUniverseDone() {
+	if (getDefaultSiadapEvaluationUniverse() != null) {
+	    return getDefaultSiadapEvaluationUniverse().getHarmonizationDate() != null
+		    && getDefaultSiadapEvaluationUniverse().getHarmonizationAssessment() != null;
+	}
+	return false;
+    }
+
     /**
      * convenience method to allow this to be called by the JSPs
      * 

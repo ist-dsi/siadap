@@ -48,6 +48,12 @@ public class RevertState extends WorkflowActivity<SiadapProcess, RevertStateActi
 	case WAITING_EVAL_OBJ_ACK:
 	    AcknowledgeEvaluationObjectives.revertProcess(activityInformation, auxNotifyIntervenients);
 	    break;
+	case WAITING_SELF_EVALUATION:
+	    SubmitAutoEvaluation.revertProcess(activityInformation);
+	    break;
+	case NOT_YET_EVALUATED:
+	    SubmitEvaluation.revertProcess(activityInformation);
+	    break;
 	case INCOMPLETE_OBJ_OR_COMP:
 	case EVALUATION_NOT_GOING_TO_BE_DONE:
 	case NOT_CREATED:
@@ -62,6 +68,11 @@ public class RevertState extends WorkflowActivity<SiadapProcess, RevertStateActi
 	if (isSideEffect())
 	    setSideEffect(false);
 
+    }
+
+    @Override
+    public boolean isDefaultInputInterfaceUsed() {
+	return false;
     }
 
     @Override

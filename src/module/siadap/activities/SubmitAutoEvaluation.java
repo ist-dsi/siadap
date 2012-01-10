@@ -5,6 +5,7 @@ package module.siadap.activities;
 
 import module.siadap.domain.Siadap;
 import module.siadap.domain.SiadapProcess;
+import module.siadap.domain.exceptions.SiadapException;
 import module.workflow.activities.ActivityInformation;
 import module.workflow.activities.WorkflowActivity;
 import myorg.domain.User;
@@ -48,7 +49,11 @@ public class SubmitAutoEvaluation extends WorkflowActivity<SiadapProcess, Activi
     }
 
     protected static void revertProcess(ActivityInformation<SiadapProcess> activityInformation) {
-	//TODO also test it! SIADAP-134
+	Siadap siadap = activityInformation.getProcess().getSiadap();
+	if (siadap.isHarmonizationOfDefaultUniverseDone())
+	    throw new SiadapException("error.cannot.revert.harmonized.to.no.self.evaluation");
+	siadap.setAutoEvaluationSealedDate(null);
+
     }
 
 

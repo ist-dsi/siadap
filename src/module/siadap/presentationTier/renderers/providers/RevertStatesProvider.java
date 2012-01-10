@@ -5,6 +5,7 @@ package module.siadap.presentationTier.renderers.providers;
 
 import java.util.ArrayList;
 
+import module.siadap.domain.Siadap;
 import module.siadap.domain.SiadapProcess;
 import module.siadap.domain.SiadapProcessStateEnum;
 import module.workflow.activities.ActivityInformation;
@@ -27,6 +28,16 @@ public class RevertStatesProvider implements DataProvider {
 	ActivityInformation<SiadapProcess> activityInformation = (ActivityInformation<SiadapProcess>) source;
 	ArrayList<SiadapProcessStateEnum> enums = new ArrayList<SiadapProcessStateEnum>();
 	SiadapProcess siadapProcess = activityInformation.getProcess();
+	Siadap siadap = siadapProcess.getSiadap();
+	//	SiadapProcessStateEnum state = SiadapProcessStateEnum.getState(siadapProcess.getSiadap());
+	//	switch (state) {
+	//	case value:
+	//	    
+	//	    break;
+	//
+	//	default:
+	//	    break;
+	//	}
 	if (siadapProcess.isProcessSealed()) {
 	    enums.add(SiadapProcessStateEnum.NOT_SEALED);
 	}
@@ -35,6 +46,12 @@ public class RevertStatesProvider implements DataProvider {
 	}
 	if (siadapProcess.isEvalObjectivesAcknowledged()) {
 	    enums.add(SiadapProcessStateEnum.WAITING_EVAL_OBJ_ACK);
+	}
+	if (siadap.isAutoEvaliationDone()) {
+	    enums.add(SiadapProcessStateEnum.WAITING_SELF_EVALUATION);
+	}
+	if (siadap.isDefaultEvaluationDone()) {
+	    enums.add(SiadapProcessStateEnum.NOT_YET_EVALUATED);
 	}
 	return enums;
     }

@@ -46,8 +46,10 @@
 			<property name="providerClass"
 				value="module.siadap.presentationTier.renderers.providers.RevertStatesProvider" />
 		</slot>
-		<slot name="justification" validator="pt.ist.fenixWebFramework.renderers.validators.RequiredValidator" key="activity.RevertState.justification.label">
+		<slot name="justification" validator="pt.ist.fenixWebFramework.renderers.validators.RequiredValidator" key="activity.RevertState.justification.label" layout="longText">
 			<property name="bundle" value="SIADAP_RESOURCES"/>
+			<property name="rows" value="8" />
+			<property name="columns" value="50" />
 		</slot>
 </schema>
 
