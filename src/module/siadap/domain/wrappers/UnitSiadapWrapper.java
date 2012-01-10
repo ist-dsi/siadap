@@ -509,6 +509,15 @@ public class UnitSiadapWrapper extends PartyWrapper implements Serializable {
 	return !getChildPersons(getConfiguration().getHarmonizationResponsibleRelation()).isEmpty();
     }
 
+    /**
+     * Convenience method call for {@link #isResponsibleForHarmonization()} to
+     * make struts happy
+     * 
+     * @return the same as {@link #isResponsibleForHarmonization()} public
+     *         boolean hasResponsibleForHarmonization() { return
+     *         isResponsibleForHarmonization(); }
+     */
+
     public boolean isPersonResponsibleForHarmonization(Person person) {
 	return isPersonResponsibleForHarmonization(getUnit(), person);
     }
@@ -571,6 +580,10 @@ public class UnitSiadapWrapper extends PartyWrapper implements Serializable {
 	return new SiadapUniverseWrapper(getSiadap3AndWorkingRelationWithoutQuotaUniverse(), "siadap3WithoutQuotas",
 		SiadapUniverse.SIADAP3, getConfiguration().getQuotaExcellencySiadap3WithoutQuota(), getConfiguration()
 			.getQuotaRelevantSiadap3WithoutQuota()).isAboveQuotas();
+    }
+
+    public UnitSiadapWrapper getSuperiorUnitWrapper() {
+	return new UnitSiadapWrapper(getSuperiorUnit(), getYear());
     }
 
     public Unit getSuperiorUnit() {

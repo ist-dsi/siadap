@@ -137,10 +137,8 @@ public class Siadap extends Siadap_Base {
     public List<SiadapEvaluationItem> getCurrentEvaluationItems() {
 	
 	ArrayList<SiadapEvaluationItem> currentEvaluationItems = new ArrayList<SiadapEvaluationItem>();
-	for (SiadapEvaluationUniverse evaluationUniverse : getSiadapEvaluationUniverses())
-	{
-	    final SiadapEvaluationUniverse evalUniverse = evaluationUniverse;
-	    currentEvaluationItems.addAll(evaluationUniverse.getEvaluations(SiadapEvaluationItem.class, new Predicate() {
+	final SiadapEvaluationUniverse evalUniverse = getDefaultSiadapEvaluationUniverse();
+	currentEvaluationItems.addAll(evalUniverse.getEvaluations(SiadapEvaluationItem.class, new Predicate() {
 
 		    @Override
 		    public boolean evaluate(Object arg0) {
@@ -149,7 +147,6 @@ public class Siadap extends Siadap_Base {
 			    .getCurrentObjectiveVersion()) : true;
 		    }
 		}, null));
-	}
 	return currentEvaluationItems;
     }
 
@@ -708,14 +705,9 @@ public class Siadap extends Siadap_Base {
     }
 
     public List<SiadapEvaluationItem> getSiadapEvaluationItems2() {
-	//let's search the first, and only (guaranteed by the use of the consistency predicate)
-	//SiadapEvaluationUniverse that has evaluationItems
-	for (SiadapEvaluationUniverse evaluationUniverse : getSiadapEvaluationUniverses())
-	{
-	    List<SiadapEvaluationItem> siadapEvaluationItems = evaluationUniverse.getSiadapEvaluationItems();
+	List<SiadapEvaluationItem> siadapEvaluationItems = getDefaultSiadapEvaluationUniverse().getSiadapEvaluationItems();
 	    if (siadapEvaluationItems != null && siadapEvaluationItems.size() > 0)
 		return siadapEvaluationItems;
-	}
 	return Collections.EMPTY_LIST;
     }
 

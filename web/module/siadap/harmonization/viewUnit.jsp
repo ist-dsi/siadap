@@ -10,6 +10,12 @@
 <bean:define id="unitName" name="currentUnit" property="unit.partyName"/>
 <bean:define id="unitId" name="currentUnit" property="unit.externalId"/>
 
+<bean:define id="unitId" name="currentUnit" property="unit.externalId"/>
+
+<bean:define id="year" name="currentUnit" property="year"/>
+
+<h1>SIADAP <%=year.toString()%></h1>
+
 <h2>
 	<fr:view name="currentUnit" property="unit.partyName"/>
 </h2>
@@ -23,19 +29,25 @@
 	</div>
 </logic:messagesPresent>
 
-<bean:define id="unitId" name="currentUnit" property="unit.externalId"/>
 
-<bean:define id="year" name="currentUnit" property="year"/>
 
 <logic:present name="currentUnit" property="superiorUnit">
-<bean:define id="superiorUnit" name="currentUnit" property="superiorUnit" type="module.organization.domain.Unit"/>
-
-<strong>
-	<bean:message key="label.superiorUnit" bundle="SIADAP_RESOURCES"/>:
-</strong>
-	<html:link page="<%="/siadapManagement.do?method=viewUnitHarmonizationData&year=" + year.toString()%>" paramId="unitId" paramName="superiorUnit" paramProperty="externalId">		
+	<bean:define id="superiorUnit" name="currentUnit" property="superiorUnit" type="module.organization.domain.Unit"/>
+	
+	<p><strong>
+		<bean:message key="label.superiorUnit" bundle="SIADAP_RESOURCES"/>:
+	</strong>
+	<%-- We only want to view the superior unit as a link if we have harm. responsabilities in it --%>
+	<logic:equal value="true" name="currentUnit" property="superiorUnitWrapper.responsibleForHarmonization">
+		<html:link page="<%="/siadapManagement.do?method=viewUnitHarmonizationData&year=" + year.toString()%>" paramId="unitId" paramName="superiorUnit" paramProperty="externalId">		
+			<fr:view name="superiorUnit" property="partyName"/>
+		</html:link>
+	</logic:equal>
+	<%-- otherwise we will just presen the name of it--%>
+	<logic:equal value="false" name="currentUnit" property="superiorUnitWrapper.responsibleForHarmonization" >
 		<fr:view name="superiorUnit" property="partyName"/>
-	</html:link>
+	</logic:equal>
+	</p>
 </logic:present>
 
 <%-- The global Info box is not needed ATM
@@ -847,8 +859,8 @@ boolean hasPeopleToHarmonize = ((peopleWithoutQuotasSIADAP2.getSiadapUniverse() 
 						<%-- <fr:slot name="relevantEvaluationPercentage"/>
 						<fr:slot name="excellencyEvaluationPercentage"/>
 						--%>
-						<fr:slot name="totalPeopleWorkingInUnitIncludingNoQuotaPeople" key="label.totalEvaluated"/>
-						<fr:slot name="totalPeopleWithSiadapWorkingInUnit"/>
+						<fr:slot name="totalPeopleHarmonizedInUnit" key="label.totalEvaluated"/>
+						<fr:slot name="totalPeopleHarmonizedInUnitWithSiadapStarted" key="label.totalPeopleWithSiadapHarmonizedInUnit"/>
 					</fr:schema>
 					<fr:layout name="tabular">
 						<fr:property name="classes" value="tstyle2"/>

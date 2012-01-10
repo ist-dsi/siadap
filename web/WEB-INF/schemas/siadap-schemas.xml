@@ -53,13 +53,18 @@
 
 <schema bundle="SIADAP_RESOURCES" name="activityInformation.CurricularPonderationAttribution"
 		type="module.siadap.activities.CurricularPonderationActivityInformation">
-		<slot name="siadap.defaultSiadapUniverse" key="activity.CurricularPonderationAttribution.label.currentSiadapUniverse"/>
+		<slot name="siadap.defaultSiadapUniverse" key="activity.CurricularPonderationAttribution.label.currentSiadapUniverse" read-only="true"/>
 		<slot name="siadapUniverseToApply" validator="pt.ist.fenixWebFramework.renderers.validators.RequiredValidator" key="activity.CurricularPonderationAttribution.label.siadapUniverseToApply"/>
-		<slot name="curricularPonderationRemarks" validator="pt.ist.fenixWebFramework.renderers.validators.RequiredValidator" key="activity.CurricularPonderationAttribution.label.curricularPonderationRemarks">
+		<slot name="curricularPonderationRemarks" validator="pt.ist.fenixWebFramework.renderers.validators.RequiredValidator" key="activity.CurricularPonderationAttribution.label.curricularPonderationRemarks" layout="longText">
 			<property name="bundle" value="SIADAP_RESOURCES"/>
+			<property name="rows" value="8" />
+			<property name="columns" value="50" />
 		</slot>
 		<slot name="assignExcellentGrade" validator="pt.ist.fenixWebFramework.renderers.validators.RequiredValidator" layout="radio" key="activity.CurricularPonderationAttribution.label.assignExcellentGrade"/>
-		<slot name="excellentGradeJustification" key="activity.CurricularPonderationAttribution.label.excellentGradeJustification"/>
+		<slot name="excellentGradeJustification" key="activity.CurricularPonderationAttribution.label.excellentGradeJustification" layout="longText">
+			<property name="rows" value="8" />
+			<property name="columns" value="50" />
+		</slot>
 		<slot name="assignedGrade" validator="pt.ist.fenixWebFramework.renderers.validators.RequiredValidator" key="activity.CurricularPonderationAttribution.label.assignedGrade" />
 </schema>
 		
