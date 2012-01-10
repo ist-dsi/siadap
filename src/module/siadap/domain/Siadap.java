@@ -379,7 +379,8 @@ public class Siadap extends Siadap_Base {
     }
     public SiadapEvaluationUniverse getSiadapEvaluationUniverseForSiadapUniverse(SiadapUniverse siadapUniverse) {
 	for (SiadapEvaluationUniverse siadapEvaluationUniverse : getSiadapEvaluationUniverses()) {
-	    if (siadapEvaluationUniverse.getSiadapUniverse().equals(siadapUniverse))
+	    if (siadapEvaluationUniverse.getSiadapUniverse() != null
+		    && siadapEvaluationUniverse.getSiadapUniverse().equals(siadapUniverse))
 		return siadapEvaluationUniverse;
 	}
 	return null;
