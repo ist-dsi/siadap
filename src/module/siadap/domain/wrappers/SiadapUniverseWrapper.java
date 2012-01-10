@@ -59,7 +59,7 @@ public class SiadapUniverseWrapper implements Serializable {
     }
 
     public boolean isAboveQuotas() {
-	return (currentHarmonizedExcellents > excellencyQuota);
+	return (currentHarmonizedExcellents > excellencyQuota || currentHarmonizedRelevants > relevantQuota);
     }
 
     public String getCurrentHarmonizedRelevantsHTMLClass() {
