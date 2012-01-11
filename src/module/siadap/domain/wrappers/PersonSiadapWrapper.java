@@ -89,7 +89,7 @@ public class PersonSiadapWrapper extends PartyWrapper implements Serializable {
     }
 
     public Siadap getSiadap() {
-	return getConfiguration().getSiadapFor(getPerson(), getYear());
+	return getConfiguration() == null ? null : getConfiguration().getSiadapFor(getPerson(), getYear());
     }
 
     /**
