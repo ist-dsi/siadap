@@ -5,6 +5,7 @@ package module.siadap.activities;
 
 import module.siadap.domain.Siadap;
 import module.siadap.domain.SiadapEvaluationItem;
+import module.siadap.domain.SiadapEvaluationUniverse;
 import module.siadap.domain.SiadapProcess;
 import module.siadap.domain.exceptions.SiadapException;
 import module.workflow.activities.ActivityException;
@@ -49,6 +50,12 @@ public class SubmitEvaluation extends WorkflowActivity<SiadapProcess, ActivityIn
 
 	activityInformation.getProcess().getSiadap().setEvaluationSealedDate(new LocalDate());
 
+	//let's save that data
+	SiadapEvaluationUniverse defaultSiadapEvalUniverse = siadap.getDefaultSiadapEvaluationUniverse();
+	defaultSiadapEvalUniverse.setEvaluatorClassification(defaultSiadapEvalUniverse.getTotalEvaluationScoring());
+	defaultSiadapEvalUniverse.setEvaluatorClassificationExcellencyAward(defaultSiadapEvalUniverse.getSiadapEvaluation()
+		.getExcellencyAward());
+
     }
 
     @Override
@@ -65,8 +72,9 @@ public class SubmitEvaluation extends WorkflowActivity<SiadapProcess, ActivityIn
     protected static void revertProcess(ActivityInformation<SiadapProcess> activityInformation) {
 	Siadap siadap = activityInformation.getProcess().getSiadap();
 	if (siadap.isHarmonizationOfDefaultUniverseDone())
-	    throw new SiadapException("error.cannot.revert.harmonized.to.no.self.evaluation");
+	    throw new SiadapException("error.cannot.revert.harmonized.to.no.evaluation");
 	siadap.setEvaluationSealedDate(null);
+	siadap.getDefaultSiadapEvaluationUniverse().removeHarmonizationAssessment();
     }
 
 

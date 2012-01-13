@@ -213,12 +213,46 @@ public class SiadapEvaluationUniverse extends SiadapEvaluationUniverse_Base {
 	return false;
     }
 
+    public boolean isEvaluationDone() {
+	if (getDefaultEvaluationUniverse())
+	    return getSiadap().isDefaultEvaluationDone();
+	return isCurriculumPonderation() && getSiadapEvaluationItems() != null && getSiadapEvaluationItems().size() > 0;
+    }
+
     @Override
     @Service
     public void setHarmonizationAssessment(Boolean harmonizationAssessment) {
 	if (getHarmonizationDate() != null)
 	    throw new SiadapException("error.harmonization.closed.cannot.change.assessment.reopen.first");
+	if (!isEvaluationDone() && !(isWithSkippedEvaluation()) && harmonizationAssessment != null)
+	    throw new SiadapException("error.harmonization.assessment.cant.be.done.with.non.existing.evaluation");
 	super.setHarmonizationAssessment(harmonizationAssessment);
+	//let's copy the grade to the respective place
+	if (harmonizationAssessment != null) {
+	    if (!isWithSkippedEvaluation()) {
+		setHarmonizationClassification(getTotalEvaluationScoring());
+		if (isCurriculumPonderation()) {
+		    for (SiadapEvaluationItem evaluationItem : getSiadapEvaluationItems()) {
+			CurricularPonderationEvaluationItem ponderationEvaluationItem = (CurricularPonderationEvaluationItem) evaluationItem;
+			setHarmonizationClassificationExcellencyAward(ponderationEvaluationItem.getExcellencyAward());
+
+		    }
+		} else {
+		    setHarmonizationClassificationExcellencyAward(getSiadapEvaluation().getExcellencyAward());
+		}
+	    } else {
+		setHarmonizationClassification(new BigDecimal(0));
+		setHarmonizationClassificationExcellencyAward(null);
+	    }
+	    getSiadap().getProcess().markAsHarmonizationAssessmentGiven(this);
+
+	}
+    }
+
+    public boolean isWithSkippedEvaluation() {
+	if (getDefaultEvaluationUniverse())
+	    return getSiadap().isWithSkippedEvaluation();
+	return false;
     }
 
     @Override
@@ -228,6 +262,15 @@ public class SiadapEvaluationUniverse extends SiadapEvaluationUniverse_Base {
 		    + getSiadap().getEvaluated().getUser().getUsername());
 	}
 	super.setHarmonizationDate(harmonizationDate);
+    }
+
+    @Service
+    public void removeHarmonizationAssessment() {
+	setHarmonizationAssessment(null);
+	setHarmonizationClassification(null);
+	setHarmonizationClassificationExcellencyAward(null);
+	getSiadap().getProcess().removeHarmonizationAssessment(this);
+
     }
 
 }

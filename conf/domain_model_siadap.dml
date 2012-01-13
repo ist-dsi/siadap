@@ -137,8 +137,13 @@ class SiadapEvaluationUniverse
 	
 	/* TODO: joantune: Yet to be fully defined the meaning*/
 	BigDecimal evaluatorClassification;
+	Boolean evaluatorClassificationExcellencyAward;
+	
 	BigDecimal harmonizationClassification;
+	Boolean harmonizationClassificationExcellencyAward;
+	
 	BigDecimal ccaClassification;
+	Boolean ccaClassificationExcellencyAward;
 	
 
 }

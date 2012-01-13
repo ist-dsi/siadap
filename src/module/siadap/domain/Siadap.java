@@ -98,15 +98,7 @@ public class Siadap extends Siadap_Base {
     public boolean isEvaluationDone(SiadapUniverse siadapUniverse)
     {
 	SiadapEvaluationUniverse siadapEvaluationUniverseForSiadapUniverse = getSiadapEvaluationUniverseForSiadapUniverse(siadapUniverse);
-	if (siadapEvaluationUniverseForSiadapUniverse.getDefaultEvaluationUniverse().booleanValue())
-	{
-	    return isDefaultEvaluationDone();
-	}
-	
-	else
-	    return (siadapEvaluationUniverseForSiadapUniverse.isCurriculumPonderation()
-		    && siadapEvaluationUniverseForSiadapUniverse.getSiadapEvaluationItems() != null && siadapEvaluationUniverseForSiadapUniverse
-		    .getSiadapEvaluationItems().size() > 0);
+	return siadapEvaluationUniverseForSiadapUniverse.isEvaluationDone();
     }
 
 

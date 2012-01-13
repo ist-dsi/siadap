@@ -53,6 +53,7 @@ public class SubmitAutoEvaluation extends WorkflowActivity<SiadapProcess, Activi
 	if (siadap.isHarmonizationOfDefaultUniverseDone())
 	    throw new SiadapException("error.cannot.revert.harmonized.to.no.self.evaluation");
 	siadap.setAutoEvaluationSealedDate(null);
+	siadap.getDefaultSiadapEvaluationUniverse().removeHarmonizationAssessment();
 
     }
 

@@ -238,45 +238,49 @@ public class SiadapManagement extends ContextBaseAction {
 
     public final ActionForward setUnitHarmonizationAssessmentData(final ActionMapping mapping, final ActionForm form,
 	    final HttpServletRequest request, final HttpServletResponse response) {
+	try {
 
-	ArrayList<SiadapUniverseWrapper> siadapUniverseWrappers = new ArrayList<SiadapUniverseWrapper>();
-	//	SiadapUniverseWrapper peopleWithQuotasSiadap2 = (SiadapUniverseWrapper) getRenderedObject("people-withQuotas-SIADAP2");
-	//	SiadapUniverseWrapper peopleWithQuotasSiadap3 = (SiadapUniverseWrapper) getRenderedObject("people-withQuotas-SIADAP3");
-	//	SiadapUniverseWrapper peopleWithoutQuotasSiadap2 = (SiadapUniverseWrapper) getRenderedObject("people-withoutQuotas-SIADAP2");
-	//	SiadapUniverseWrapper peopleWithoutQuotasSiadap3 = (SiadapUniverseWrapper) getRenderedObject("people-withoutQuotas-SIADAP3");
-	siadapUniverseWrappers.add((SiadapUniverseWrapper) getRenderedObject("people-withQuotas-SIADAP2"));
-	siadapUniverseWrappers.add((SiadapUniverseWrapper) getRenderedObject("people-withQuotas-SIADAP3"));
-	siadapUniverseWrappers.add((SiadapUniverseWrapper) getRenderedObject("people-withoutQuotas-SIADAP2"));
-	siadapUniverseWrappers.add((SiadapUniverseWrapper) getRenderedObject("people-withoutQuotas-SIADAP3"));
+	    ArrayList<SiadapUniverseWrapper> siadapUniverseWrappers = new ArrayList<SiadapUniverseWrapper>();
+	    //	SiadapUniverseWrapper peopleWithQuotasSiadap2 = (SiadapUniverseWrapper) getRenderedObject("people-withQuotas-SIADAP2");
+	    //	SiadapUniverseWrapper peopleWithQuotasSiadap3 = (SiadapUniverseWrapper) getRenderedObject("people-withQuotas-SIADAP3");
+	    //	SiadapUniverseWrapper peopleWithoutQuotasSiadap2 = (SiadapUniverseWrapper) getRenderedObject("people-withoutQuotas-SIADAP2");
+	    //	SiadapUniverseWrapper peopleWithoutQuotasSiadap3 = (SiadapUniverseWrapper) getRenderedObject("people-withoutQuotas-SIADAP3");
+	    siadapUniverseWrappers.add((SiadapUniverseWrapper) getRenderedObject("people-withQuotas-SIADAP2"));
+	    siadapUniverseWrappers.add((SiadapUniverseWrapper) getRenderedObject("people-withQuotas-SIADAP3"));
+	    siadapUniverseWrappers.add((SiadapUniverseWrapper) getRenderedObject("people-withoutQuotas-SIADAP2"));
+	    siadapUniverseWrappers.add((SiadapUniverseWrapper) getRenderedObject("people-withoutQuotas-SIADAP3"));
 
-	for (SiadapUniverseWrapper siadapUniverseWrapper : siadapUniverseWrappers) {
-	    if (siadapUniverseWrapper != null) {
+	    for (SiadapUniverseWrapper siadapUniverseWrapper : siadapUniverseWrappers) {
+		if (siadapUniverseWrapper != null) {
 
-		SiadapUniverse siadapUniverseEnum = siadapUniverseWrapper.getSiadapUniverseEnum();
-		for (PersonSiadapWrapper personSiadapWrapper : siadapUniverseWrapper.getSiadapUniverse()) {
-		    personSiadapWrapper.setHarmonizationCurrentAssessment(siadapUniverseEnum);
+		    SiadapUniverse siadapUniverseEnum = siadapUniverseWrapper.getSiadapUniverseEnum();
+		    for (PersonSiadapWrapper personSiadapWrapper : siadapUniverseWrapper.getSiadapUniverse()) {
+			personSiadapWrapper.setHarmonizationCurrentAssessment(siadapUniverseEnum);
+		    }
 		}
+
 	    }
 
+	    //	if (peopleWithoutQuotasSiadap2 != null) {
+	    //	    setHarmonizationCurrentAssessmentFor(SiadapUniverse.SIADAP2,
+	    //		    (List<PersonSiadapWrapper>) getRenderedObject("people-withoutQuotas-SIADAP2id"));
+	    //	}
+	    //	if (peopleWithQuotasSiadap3 != null) {
+	    //	    setHarmonizationCurrentAssessmentFor(SiadapUniverse.SIADAP3,
+	    // peopleWithQuotasSiadap3.getSiadapUniverse());
+	    //	}
+	    //	if (peopleWithoutQuotasSiadap3 != null) {
+	    //	    setHarmonizationCurrentAssessmentFor(SiadapUniverse.SIADAP3,
+	    //		    (List<PersonSiadapWrapper>) getRenderedObject("people-withoutQuotas-SIADAP3id"));
+	    //	}
+	    //	if (peopleWithQuotasSiadap2 != null) {
+	    //	    setHarmonizationCurrentAssessmentFor(SiadapUniverse.SIADAP2,
+	    //		    (List<PersonSiadapWrapper>) getRenderedObject("people-withQuotas-SIADAP2id"));
+	    //	}
+
+	} catch (DomainException e) {
+	    addLocalizedMessage(request, e.getLocalizedMessage());
 	}
-
-	//	if (peopleWithoutQuotasSiadap2 != null) {
-	//	    setHarmonizationCurrentAssessmentFor(SiadapUniverse.SIADAP2,
-	//		    (List<PersonSiadapWrapper>) getRenderedObject("people-withoutQuotas-SIADAP2id"));
-	//	}
-	//	if (peopleWithQuotasSiadap3 != null) {
-	//	    setHarmonizationCurrentAssessmentFor(SiadapUniverse.SIADAP3,
-	// peopleWithQuotasSiadap3.getSiadapUniverse());
-	//	}
-	//	if (peopleWithoutQuotasSiadap3 != null) {
-	//	    setHarmonizationCurrentAssessmentFor(SiadapUniverse.SIADAP3,
-	//		    (List<PersonSiadapWrapper>) getRenderedObject("people-withoutQuotas-SIADAP3id"));
-	//	}
-	//	if (peopleWithQuotasSiadap2 != null) {
-	//	    setHarmonizationCurrentAssessmentFor(SiadapUniverse.SIADAP2,
-	//		    (List<PersonSiadapWrapper>) getRenderedObject("people-withQuotas-SIADAP2id"));
-	//	}
-
 	RenderUtils.invalidateViewState();
 	return viewUnitHarmonizationData(mapping, form, request, response);
     }

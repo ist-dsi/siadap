@@ -214,6 +214,16 @@ public class SiadapProcess extends SiadapProcess_Base {
 		siadapUniverseLocalizedName);
     }
 
+    protected void markAsHarmonizationAssessmentGiven(SiadapEvaluationUniverse evaluationUniverse) {
+	String siadapUniverseLocalizedName = evaluationUniverse.getSiadapUniverse().getLocalizedName();
+	if (evaluationUniverse.isCurriculumPonderation()) {
+	    siadapUniverseLocalizedName += " ("
+		    + BundleUtil.getStringFromResourceBundle(Siadap.SIADAP_BUNDLE_STRING, "label.curricularPonderation") + " )";
+	}
+	new LabelLog(this, UserView.getCurrentUser(), "label.givenHarmonizationAssessment.for", "resources/SiadapResources",
+		siadapUniverseLocalizedName);
+    }
+
     public void removeHarmonizationMark(SiadapEvaluationUniverse evaluationUniverse) {
 	String siadapUniverseLocalizedName = evaluationUniverse.getSiadapUniverse().getLocalizedName();
 	if (evaluationUniverse.isCurriculumPonderation()) {
@@ -354,6 +364,17 @@ public class SiadapProcess extends SiadapProcess_Base {
 
     public boolean isEvalObjectivesAcknowledged() {
 	return getSiadap().isEvaluatedWithKnowledgeOfObjectives();
+    }
+
+    public void removeHarmonizationAssessment(SiadapEvaluationUniverse siadapEvaluationUniverse) {
+	String siadapUniverseLocalizedName = siadapEvaluationUniverse.getSiadapUniverse().getLocalizedName();
+	if (siadapEvaluationUniverse.isCurriculumPonderation()) {
+	    siadapUniverseLocalizedName += " ("
+		    + BundleUtil.getStringFromResourceBundle(Siadap.SIADAP_BUNDLE_STRING, "label.curricularPonderation") + " )";
+	}
+	new LabelLog(this, UserView.getCurrentUser(), "label.removedHarmonizationAssessment.for", "resources/SiadapResources",
+		siadapUniverseLocalizedName);
+
     }
 
 }
