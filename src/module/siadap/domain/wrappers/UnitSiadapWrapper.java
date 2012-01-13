@@ -991,8 +991,8 @@ public class UnitSiadapWrapper extends PartyWrapper implements Serializable {
 	SiadapYearConfiguration configuration = getConfiguration();
 	LocalDate harmonizationBegin = configuration.getFirstLevelHarmonizationBegin();
 	LocalDate harmonizationEnd = configuration.getFirstLevelHarmonizationEnd();
-	if (!isHarmonizationUnit())
-	    return false;
+	//	if (!isHarmonizationUnit())
+	//	    return false;
 
 	if (!isSpecialHarmonizationUnit()) {
 	    //the special harmonization unit has no date constraints,
@@ -1113,7 +1113,6 @@ public class UnitSiadapWrapper extends PartyWrapper implements Serializable {
     //	return list;
     //    }
 
-    //    @Service
 //    public void addExcedingQuotaProposalSuggestion(Person person, ExceddingQuotaSuggestionType type) {
 //	new ExcedingQuotaProposal(getConfiguration(), person, getUnit(), type);
 //    }

@@ -15,7 +15,7 @@ public class Evaluation extends WorkflowActivity<SiadapProcess, EvaluationActivi
 	return !siadap.isWithSkippedEvaluation() && siadap.getEvaluator().getPerson().getUser() == user
 		&& siadap.getValidated() == null && siadap.isEvaluatedWithKnowledgeOfObjectives()
 		&& siadap.getEvaluationInterval().containsNow()
-		&& siadap.getDefaultSiadapEvaluationUniverse().getHarmonizationAssessment() != null;
+		&& siadap.getDefaultSiadapEvaluationUniverse().getHarmonizationAssessment() == null;
     }
 
     @Override

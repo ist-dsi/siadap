@@ -97,23 +97,25 @@
 	</logic:equal>
 	--%>
 	<p>
-	<html:link page="<%="/siadapManagement.do?method=listHighGlobalEvaluations&year=" + year.toString()%>" paramName="currentUnit" paramProperty="unit.externalId" paramId="unitId"> <bean:message key="label.viewGlobalEvaluations.relevant" bundle="SIADAP_RESOURCES"/> </html:link> | <html:link page="<%= "/siadapManagement.do?method=listExcellencyGlobalEvaluations&year=" + year.toString()%>" paramName="currentUnit" paramProperty="unit.externalId" paramId="unitId"> <bean:message key="label.viewGlobalEvaluations.excellency" bundle="SIADAP_RESOURCES"/> </html:link>
+	<%-- <html:link page="<%="/siadapManagement.do?method=listHighGlobalEvaluations&year=" + year.toString()%>" paramName="currentUnit" paramProperty="unit.externalId" paramId="unitId"> <bean:message key="label.viewGlobalEvaluations.relevant" bundle="SIADAP_RESOURCES"/> </html:link> | <html:link page="<%= "/siadapManagement.do?method=listExcellencyGlobalEvaluations&year=" + year.toString()%>" paramName="currentUnit" paramProperty="unit.externalId" paramId="unitId"> <bean:message key="label.viewGlobalEvaluations.excellency" bundle="SIADAP_RESOURCES"/> </html:link>--%>
 	<logic:equal name="currentUnit" property="harmonizationActive" value="true">
-	    <logic:equal name="currentUnit" property="harmonizationFinished" value="false">
-		    | <html:link styleId="terminateHarmonization"  page="<%="/siadapManagement.do?method=terminateHarmonization&year="+year.toString()%>" paramName="currentUnit" paramProperty="unit.externalId" paramId="unitId">
-					<bean:message key="label.terminateHarmonization" bundle="SIADAP_RESOURCES"/>
-				</html:link>
-			| <html:link  page="<%="/siadapManagement.do?method=prepareAddExcedingQuotaSuggestion&year=" + year.toString()%>" paramName="currentUnit" paramProperty="unit.externalId" paramId="unitId">
-					<bean:message key="label.addExcedingQuotaSuggestion" bundle="SIADAP_RESOURCES"/>
-			  </html:link>
+	    <logic:equal name="currentUnit" property="harmonizationUnit" value="true">
+	    	<logic:equal name="currentUnit" property="harmonizationFinished" value="false">
+			    <html:link styleId="terminateHarmonization"  page="<%="/siadapManagement.do?method=terminateHarmonization&year="+year.toString()%>" paramName="currentUnit" paramProperty="unit.externalId" paramId="unitId">
+						<bean:message key="label.terminateHarmonization" bundle="SIADAP_RESOURCES"/>
+					</html:link>
+				| <html:link  page="<%="/siadapManagement.do?method=prepareAddExcedingQuotaSuggestion&year=" + year.toString()%>" paramName="currentUnit" paramProperty="unit.externalId" paramId="unitId">
+						<bean:message key="label.addExcedingQuotaSuggestion" bundle="SIADAP_RESOURCES"/>
+				  </html:link>
 		</logic:equal>
 		 <logic:equal name="currentUnit" property="harmonizationFinished" value="true">
-		    | <html:link styleId="reOpenHarmonization"  page="<%="/siadapManagement.do?method=reOpenHarmonization&year="+year.toString()%>" paramName="currentUnit" paramProperty="unit.externalId" paramId="unitId">
+		    <html:link styleId="reOpenHarmonization"  page="<%="/siadapManagement.do?method=reOpenHarmonization&year="+year.toString()%>" paramName="currentUnit" paramProperty="unit.externalId" paramId="unitId">
 					<bean:message key="label.reOpenHarmonization" bundle="SIADAP_RESOURCES"/>
 			   </html:link>
 			| <html:link  page="<%="/siadapManagement.do?method=prepareAddExcedingQuotaSuggestion&year=" + year.toString()%>" paramName="currentUnit" paramProperty="unit.externalId" paramId="unitId">
 					<bean:message key="label.addExcedingQuotaSuggestion" bundle="SIADAP_RESOURCES"/>
 			  </html:link>
+			</logic:equal>
 		</logic:equal>
 	</logic:equal>
 	</p>	
