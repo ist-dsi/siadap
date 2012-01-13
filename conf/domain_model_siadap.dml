@@ -4,7 +4,7 @@ enum module.siadap.domain.scoring.SiadapObjectivesEvaluation as SiadapObjectives
 enum module.siadap.domain.scoring.SiadapCompetencesEvaluation as SiadapCompetencesEvaluation;
 enum module.siadap.domain.scoring.SiadapGlobalEvaluation as SiadapGlobalEvaluation;
 enum module.siadap.domain.SiadapEvaluationObjectivesType as SiadapEvaluationObjectivesType;
-enum module.siadap.domain.ExceddingQuotaSuggestionType as ExceddingQuotaSuggestionType;
+enum module.siadap.domain.ExceedingQuotaSuggestionType as ExceedingQuotaSuggestionType;
 enum module.siadap.domain.SiadapProcessStateEnum as SiadapProcessStateEnum;
 enum module.siadap.domain.SiadapUniverse as SiadapUniverse;
 
@@ -212,8 +212,8 @@ class CompetenceType {
 	String name;
 }
 
-class ExcedingQuotaProposal {
-	ExceddingQuotaSuggestionType suggestionType;
+class ExceedingQuotaProposal {
+	ExceedingQuotaSuggestionType suggestionType;
 	Integer proposalOrder;
 }
 
@@ -524,29 +524,29 @@ relation ObjectiveEvaluationIndicatorSiadapRootModule {
 	}
 }	
 
-relation ExcedingQuotaProposalSiadapYearConfiguration {
-	ExcedingQuotaProposal playsRole excedingQuotasProposals {
+relation ExceedingQuotaProposalSiadapYearConfiguration {
+	ExceedingQuotaProposal playsRole exceedingQuotasProposals {
 		multiplicity *;
 	}
 	SiadapYearConfiguration playsRole yearConfiguration;
 }
 
-relation ExcedingQuotaProposalPerson {
-	ExcedingQuotaProposal playsRole excedingQuotasProposals {
+relation ExceedingQuotaProposalPerson {
+	ExceedingQuotaProposal playsRole exceedingQuotasProposals {
 		multiplicity *;
 	}
 	.module.organization.domain.Person playsRole suggestion;
 }
 
-relation ExcedingQuotaProposalUnit {
-	ExcedingQuotaProposal playsRole excedingQuotasProposals {
+relation ExceedingQuotaProposalUnit {
+	ExceedingQuotaProposal playsRole exceedingQuotasProposals {
 		multiplicity *;
 	}
 	.module.organization.domain.Unit playsRole unit;
 }
 
-relation ExcedingQuotaProposalRootModule {
-	ExcedingQuotaProposal playsRole excedingQuotasProposals {
+relation ExceedingQuotaProposalRootModule {
+	ExceedingQuotaProposal playsRole exceedingQuotasProposals {
 		multiplicity *;
 	}
 	SiadapRootModule playsRole siadapRootModule;

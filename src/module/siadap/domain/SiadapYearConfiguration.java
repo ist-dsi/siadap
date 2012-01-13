@@ -4,7 +4,6 @@ import java.util.List;
 
 import jvstm.cps.ConsistencyPredicate;
 import module.organization.domain.Person;
-import module.organization.domain.Unit;
 import module.siadap.domain.groups.SiadapStructureManagementGroup;
 import module.siadap.domain.wrappers.UnitSiadapWrapper;
 import myorg.applicationTier.Authenticate.UserView;
@@ -360,9 +359,9 @@ public class SiadapYearConfiguration extends SiadapYearConfiguration_Base {
 	return isPersonResponsibleForHomologation(UserView.getCurrentUser().getPerson());
     }
 
-    public List<ExcedingQuotaProposal> getSuggestionsForUnit(Unit unit, ExceddingQuotaSuggestionType type) {
-	return new UnitSiadapWrapper(unit, getYear()).getExcedingQuotaProposalSuggestions(type);
-    }
+    //    public List<ExceedingQuotaProposal> getSuggestionsForUnit(Unit unit, ExceedingQuotaSuggestionType type) {
+    //	return new UnitSiadapWrapper(unit, getYear()).getExcedingQuotaProposalSuggestions(type);
+    //    }
 
     public boolean isPersonMemberOfRevertStateGroup(Person person) {
 	return getRevertStateGroupMember().contains(person);

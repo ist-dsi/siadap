@@ -2,43 +2,29 @@ package module.siadap.presentationTier.actions;
 
 import java.io.Serializable;
 
-import module.organization.domain.Person;
-import module.organization.domain.Unit;
-import module.siadap.domain.ExceddingQuotaSuggestionType;
+import module.siadap.domain.ExceedingQuotaSuggestionType;
+import module.siadap.domain.wrappers.PersonSiadapWrapper;
 
 public class SiadapSuggestionBean implements Serializable {
 
-    private Person person;
-    private Unit unit;
-    private ExceddingQuotaSuggestionType type;
+    private ExceedingQuotaSuggestionType type;
+
+    private Integer exceedingQuotaPriorityNumber;
+
+    private final PersonSiadapWrapper personWrapper;
 
     private Integer year;
 
-    public SiadapSuggestionBean() {
-
+    public SiadapSuggestionBean(PersonSiadapWrapper person) {
+	this.personWrapper = person;
+	//TODO init the exceedingQuotaPriorityNumber
     }
 
-    public Person getPerson() {
-	return person;
-    }
-
-    public void setPerson(Person person) {
-	this.person = person;
-    }
-
-    public Unit getUnit() {
-	return unit;
-    }
-
-    public void setUnit(Unit unit) {
-	this.unit = unit;
-    }
-
-    public ExceddingQuotaSuggestionType getType() {
+    public ExceedingQuotaSuggestionType getType() {
 	return type;
     }
 
-    public void setType(ExceddingQuotaSuggestionType type) {
+    public void setType(ExceedingQuotaSuggestionType type) {
 	this.type = type;
     }
 
@@ -48,6 +34,14 @@ public class SiadapSuggestionBean implements Serializable {
 
     public Integer getYear() {
 	return year;
+    }
+
+    public Integer getExceedingQuotaPriorityNumber() {
+	return exceedingQuotaPriorityNumber;
+    }
+
+    public void setExceedingQuotaPriorityNumber(Integer exceedingQuotaPriorityNumber) {
+	this.exceedingQuotaPriorityNumber = exceedingQuotaPriorityNumber;
     }
 
 

@@ -110,7 +110,10 @@
 		 <logic:equal name="currentUnit" property="harmonizationFinished" value="true">
 		    | <html:link styleId="reOpenHarmonization"  page="<%="/siadapManagement.do?method=reOpenHarmonization&year="+year.toString()%>" paramName="currentUnit" paramProperty="unit.externalId" paramId="unitId">
 					<bean:message key="label.reOpenHarmonization" bundle="SIADAP_RESOURCES"/>
-				</html:link>
+			   </html:link>
+			| <html:link  page="<%="/siadapManagement.do?method=prepareAddExcedingQuotaSuggestion&year=" + year.toString()%>" paramName="currentUnit" paramProperty="unit.externalId" paramId="unitId">
+					<bean:message key="label.addExcedingQuotaSuggestion" bundle="SIADAP_RESOURCES"/>
+			  </html:link>
 		</logic:equal>
 	</logic:equal>
 	</p>	
@@ -799,7 +802,6 @@ boolean hasPeopleToHarmonize = ((peopleWithoutQuotasSIADAP2.getSiadapUniverse() 
 			</p>
 		</logic:notEmpty>
 		
-		--%>
 		<bean:define id="highQuotaSuggestions" name="currentUnit" property="orderedExcedingQuotaProposalSuggestionsForHighEvaluation"/>
 		
 		<logic:notEmpty name="highQuotaSuggestions">
@@ -844,6 +846,7 @@ boolean hasPeopleToHarmonize = ((peopleWithoutQuotasSIADAP2.getSiadapUniverse() 
 		
 		</logic:notEmpty>
 		
+		--%>
 		<logic:notEmpty name="subUnits">
 			<bean:define id="currentUnitId" name="currentUnit" property="unit.externalId"/>
 			

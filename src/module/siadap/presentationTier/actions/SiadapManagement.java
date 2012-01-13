@@ -9,7 +9,6 @@ import javax.servlet.http.HttpServletResponse;
 
 import module.organization.domain.Person;
 import module.organization.domain.Unit;
-import module.siadap.domain.ExcedingQuotaProposal;
 import module.siadap.domain.Siadap;
 import module.siadap.domain.SiadapProcess;
 import module.siadap.domain.SiadapUniverse;
@@ -24,6 +23,7 @@ import module.workflow.presentationTier.actions.ProcessManagement;
 import myorg.applicationTier.Authenticate.UserView;
 import myorg.domain.exceptions.DomainException;
 import myorg.presentationTier.actions.ContextBaseAction;
+import myorg.util.BundleUtil;
 import myorg.util.VariantBean;
 
 import org.apache.struts.action.ActionForm;
@@ -450,38 +450,64 @@ public class SiadapManagement extends ContextBaseAction {
     public final ActionForward prepareAddExcedingQuotaSuggestion(final ActionMapping mapping, final ActionForm form,
 	    final HttpServletRequest request, final HttpServletResponse response) {
 
-	Unit unit = getDomainObject(request, "unitId");
-	SiadapSuggestionBean bean = new SiadapSuggestionBean();
-	bean.setUnit(unit);
-	bean.setYear(Integer.parseInt(request.getParameter("year")));
-
-	request.setAttribute("bean", bean);
-	return forward(request, "/module/siadap/bulkManagement/addSuggestionToUnit.jsp");
-    }
-
-    public final ActionForward addExcedingQuotaSuggestion(final ActionMapping mapping, final ActionForm form,
-	    final HttpServletRequest request, final HttpServletResponse response) {
-
 	int year = Integer.parseInt(request.getParameter("year"));
-	SiadapSuggestionBean bean = getRenderedObject("bean");
-	Unit unit = bean.getUnit();
+	Unit unit = getDomainObject(request, "unitId");
+	UnitSiadapWrapper wrapper = new UnitSiadapWrapper(unit, year);
 
-	UnitSiadapWrapper unitSiadapWrapper = new UnitSiadapWrapper(unit, year);
-	unitSiadapWrapper.addExcedingQuotaProposalSuggestion(bean.getPerson(), bean.getType());
+	if (!wrapper.isHarmonizationUnit()) {
+	    addLocalizedMessage(request, BundleUtil.getFormattedStringFromResourceBundle(Siadap.SIADAP_BUNDLE_STRING,
+		    "error.must.provide.a.harmonization.unit"));
+	    RenderUtils.invalidateViewState();
+	    return viewUnitHarmonizationData(mapping, form, request, response);
+	}
 
-	request.setAttribute("unit", unitSiadapWrapper);
-	request.setAttribute("employees", unitSiadapWrapper.getUnitEmployees(true));
+	SiadapYearConfiguration configuration = SiadapYearConfiguration.getSiadapYearConfiguration(year);
 
-	return viewUnitHarmonizationData(mapping, form, request, response);
+	List<SiadapUniverseWrapper> siadapUniverseWrappers = new ArrayList<SiadapUniverseWrapper>();
+	siadapUniverseWrappers.add(new SiadapUniverseWrapper(
+		wrapper.getSiadap2AndWorkingRelationWithQuotaUniverse(Boolean.FALSE), "siadap2WithQuotas",
+		SiadapUniverse.SIADAP2, configuration.getQuotaExcellencySiadap2WithQuota(), configuration
+			.getQuotaRelevantSiadap2WithQuota()));
+	siadapUniverseWrappers.add(new SiadapUniverseWrapper(
+		wrapper.getSiadap3AndWorkingRelationWithQuotaUniverse(Boolean.FALSE), "siadap3WithQuotas",
+		SiadapUniverse.SIADAP3, configuration.getQuotaExcellencySiadap3WithQuota(), configuration
+			.getQuotaRelevantSiadap3WithQuota()));
+	siadapUniverseWrappers.add(new SiadapUniverseWrapper(wrapper
+		.getSiadap2AndWorkingRelationWithoutQuotaUniverse(Boolean.FALSE), "siadap2WithoutQuotas", SiadapUniverse.SIADAP2,
+		configuration.getQuotaExcellencySiadap2WithoutQuota(), configuration.getQuotaRelevantSiadap2WithoutQuota()));
+	siadapUniverseWrappers.add(new SiadapUniverseWrapper(wrapper
+		.getSiadap3AndWorkingRelationWithoutQuotaUniverse(Boolean.FALSE), "siadap3WithoutQuotas", SiadapUniverse.SIADAP3,
+		configuration.getQuotaExcellencySiadap3WithoutQuota(), configuration.getQuotaRelevantSiadap3WithoutQuota()));
+
+	request.setAttribute("unit", wrapper);
+	request.setAttribute("siadapUniverseWrappers", siadapUniverseWrappers);
+
+	return forward(request, "/module/siadap/bulkManagement/addSugestionToUnit.jsp");
     }
 
-    public final ActionForward removeExcedingQuotaSuggestion(final ActionMapping mapping, final ActionForm form,
-	    final HttpServletRequest request, final HttpServletResponse response) {
-
-	ExcedingQuotaProposal proposal = getDomainObject(request, "proposalId");
-	proposal.delete();
-
-	return viewUnitHarmonizationData(mapping, form, request, response);
-    }
+    //    public final ActionForward addExcedingQuotaSuggestion(final ActionMapping mapping, final ActionForm form,
+    //	    final HttpServletRequest request, final HttpServletResponse response) {
+    //
+    //	int year = Integer.parseInt(request.getParameter("year"));
+    //	SiadapSuggestionBean bean = getRenderedObject("bean");
+    //	Unit unit = bean.getUnit();
+    //
+    //	UnitSiadapWrapper unitSiadapWrapper = new UnitSiadapWrapper(unit, year);
+    //	unitSiadapWrapper.addExcedingQuotaProposalSuggestion(bean.getPerson(), bean.getType());
+    //
+    //	request.setAttribute("unit", unitSiadapWrapper);
+    //	request.setAttribute("employees", unitSiadapWrapper.getUnitEmployees(true));
+    //
+    //	return viewUnitHarmonizationData(mapping, form, request, response);
+    //    }
+    //
+    //    public final ActionForward removeExcedingQuotaSuggestion(final ActionMapping mapping, final ActionForm form,
+    //	    final HttpServletRequest request, final HttpServletResponse response) {
+    //
+    //	ExcedingQuotaProposal proposal = getDomainObject(request, "proposalId");
+    //	proposal.delete();
+    //
+    //	return viewUnitHarmonizationData(mapping, form, request, response);
+    //    }
 
 }

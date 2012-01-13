@@ -3,7 +3,7 @@ package module.siadap.domain;
 import myorg.util.BundleUtil;
 import pt.ist.fenixWebFramework.rendererExtensions.util.IPresentableEnum;
 
-public enum ExceddingQuotaSuggestionType implements IPresentableEnum {
+public enum ExceedingQuotaSuggestionType implements IPresentableEnum {
 
     HIGH_SUGGESTION, EXCELLENCY_SUGGESTION;
 
