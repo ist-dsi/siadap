@@ -724,7 +724,7 @@ public class UnitSiadapWrapper extends PartyWrapper implements Serializable {
 
 	    return (personWrapper.getYear() == year
 		    && (!excludeResponsibles || !harmonizationResponsibles.contains(personWrapper.getPerson()))
-		    && (includeQuota && quotaAware || !includeQuota && !quotaAware) && (includePositivelyHarmonizedOnly == null || (checkOnHarmonizationAssessment(personWrapper))));
+		    && (includeQuota && quotaAware || !includeQuota && !quotaAware) && (checkOnHarmonizationAssessment(personWrapper)));
 	}
 
 	/**
@@ -738,20 +738,20 @@ public class UnitSiadapWrapper extends PartyWrapper implements Serializable {
 		case SIADAP2:
 		    return ((includePositivelyHarmonizedOnly
 			    && personWrapper.getHarmonizationCurrentAssessmentForSIADAP2() != null && personWrapper
-			    .getHarmonizationCurrentAssessmentForSIADAP2()
-			    .booleanValue()) || (!includePositivelyHarmonizedOnly && !personWrapper
+			    .getHarmonizationCurrentAssessmentForSIADAP2().booleanValue()) || (!includePositivelyHarmonizedOnly
+			    && personWrapper.getHarmonizationCurrentAssessmentForSIADAP2() != null && !personWrapper
 			    .getHarmonizationCurrentAssessmentForSIADAP2().booleanValue()));
 		case SIADAP3:
 		    return ((includePositivelyHarmonizedOnly
 			    && personWrapper.getHarmonizationCurrentAssessmentForSIADAP3() != null && personWrapper
-			    .getHarmonizationCurrentAssessmentForSIADAP3()
-			    .booleanValue()) || (!includePositivelyHarmonizedOnly && !personWrapper
+			    .getHarmonizationCurrentAssessmentForSIADAP3().booleanValue()) || (!includePositivelyHarmonizedOnly
+			    && personWrapper.getHarmonizationCurrentAssessmentForSIADAP3() != null && !personWrapper
 			    .getHarmonizationCurrentAssessmentForSIADAP3().booleanValue()));
 		default:
 		    return false;
 		}
-	    }
-	    return false;
+	    } else
+		return true;
 	}
     }
 
@@ -788,6 +788,7 @@ public class UnitSiadapWrapper extends PartyWrapper implements Serializable {
     public Set<PersonSiadapWrapper> getSiadap2AndWorkingRelationWithQuotaUniverse() {
 	return getSiadap2AndWorkingRelationWithQuotaUniverse(null);
     }
+
     public Set<PersonSiadapWrapper> getSiadap2AndWorkingRelationWithQuotaUniverse(Boolean includePositivelyHarmonizedOnly) {
 
 	SiadapYearConfiguration siadapYearConfiguration = SiadapYearConfiguration.getSiadapYearConfiguration(getYear());
@@ -833,6 +834,7 @@ public class UnitSiadapWrapper extends PartyWrapper implements Serializable {
     public Set<PersonSiadapWrapper> getSiadap2AndWorkingRelationWithoutQuotaUniverse() {
 	return getSiadap2AndWorkingRelationWithoutQuotaUniverse(null);
     }
+
     public Set<PersonSiadapWrapper> getSiadap2AndWorkingRelationWithoutQuotaUniverse(Boolean includePositivelyHarmonizedOnly) {
 	SiadapYearConfiguration siadapYearConfiguration = SiadapYearConfiguration.getSiadapYearConfiguration(getYear());
 	AccountabilityType siadap2HarmonizationRelation = siadapYearConfiguration.getSiadap2HarmonizationRelation();
@@ -855,6 +857,7 @@ public class UnitSiadapWrapper extends PartyWrapper implements Serializable {
     public Set<PersonSiadapWrapper> getSiadap3AndWorkingRelationWithoutQuotaUniverse() {
 	return getSiadap3AndWorkingRelationWithoutQuotaUniverse(null);
     }
+
     public Set<PersonSiadapWrapper> getSiadap3AndWorkingRelationWithoutQuotaUniverse(Boolean includePositivelyHarmonizedOnly) {
 	SiadapYearConfiguration siadapYearConfiguration = SiadapYearConfiguration.getSiadapYearConfiguration(getYear());
 	AccountabilityType siadap3HarmonizationRelation = siadapYearConfiguration.getSiadap3HarmonizationRelation();
@@ -988,9 +991,9 @@ public class UnitSiadapWrapper extends PartyWrapper implements Serializable {
     }
 
     public boolean isHarmonizationActive() {
-	SiadapYearConfiguration configuration = getConfiguration();
-	LocalDate harmonizationBegin = configuration.getFirstLevelHarmonizationBegin();
-	LocalDate harmonizationEnd = configuration.getFirstLevelHarmonizationEnd();
+	//	SiadapYearConfiguration configuration = getConfiguration();
+	//	LocalDate harmonizationBegin = configuration.getFirstLevelHarmonizationBegin();
+	//	LocalDate harmonizationEnd = configuration.getFirstLevelHarmonizationEnd();
 	//	if (!isHarmonizationUnit())
 	//	    return false;
 
@@ -1113,30 +1116,30 @@ public class UnitSiadapWrapper extends PartyWrapper implements Serializable {
     //	return list;
     //    }
 
-//    public void addExcedingQuotaProposalSuggestion(Person person, ExceddingQuotaSuggestionType type) {
-//	new ExcedingQuotaProposal(getConfiguration(), person, getUnit(), type);
-//    }
-//
-//    public List<ExcedingQuotaProposal> getOrderedExcedingQuotaProposalSuggestionsForHighEvaluation() {
-//	return getOrderedExcedingQuotaProposalSuggestions(ExceddingQuotaSuggestionType.HIGH_SUGGESTION);
-//    }
-//
-//    public List<ExcedingQuotaProposal> getOrderedExcedingQuotaProposalSuggestionsForExcellencyAward() {
-//	return getOrderedExcedingQuotaProposalSuggestions(ExceddingQuotaSuggestionType.EXCELLENCY_SUGGESTION);
-//    }
-//
-//    public List<ExcedingQuotaProposal> getOrderedExcedingQuotaProposalSuggestions(ExceddingQuotaSuggestionType type) {
-//
-//	List<ExcedingQuotaProposal> list = getExcedingQuotaProposalSuggestions(type);
-//	Collections.sort(list, new Comparator<ExcedingQuotaProposal>() {
-//
-//	    @Override
-//	    public int compare(ExcedingQuotaProposal o1, ExcedingQuotaProposal o2) {
-//		return o1.getProposalOrder().compareTo(o2.getProposalOrder());
-//	    }
-//
-//	});
-//	return list;
-//    }
+    //    public void addExcedingQuotaProposalSuggestion(Person person, ExceddingQuotaSuggestionType type) {
+    //	new ExcedingQuotaProposal(getConfiguration(), person, getUnit(), type);
+    //    }
+    //
+    //    public List<ExcedingQuotaProposal> getOrderedExcedingQuotaProposalSuggestionsForHighEvaluation() {
+    //	return getOrderedExcedingQuotaProposalSuggestions(ExceddingQuotaSuggestionType.HIGH_SUGGESTION);
+    //    }
+    //
+    //    public List<ExcedingQuotaProposal> getOrderedExcedingQuotaProposalSuggestionsForExcellencyAward() {
+    //	return getOrderedExcedingQuotaProposalSuggestions(ExceddingQuotaSuggestionType.EXCELLENCY_SUGGESTION);
+    //    }
+    //
+    //    public List<ExcedingQuotaProposal> getOrderedExcedingQuotaProposalSuggestions(ExceddingQuotaSuggestionType type) {
+    //
+    //	List<ExcedingQuotaProposal> list = getExcedingQuotaProposalSuggestions(type);
+    //	Collections.sort(list, new Comparator<ExcedingQuotaProposal>() {
+    //
+    //	    @Override
+    //	    public int compare(ExcedingQuotaProposal o1, ExcedingQuotaProposal o2) {
+    //		return o1.getProposalOrder().compareTo(o2.getProposalOrder());
+    //	    }
+    //
+    //	});
+    //	return list;
+    //    }
 
 }

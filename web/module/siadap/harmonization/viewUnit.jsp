@@ -21,6 +21,7 @@
 </h2>
 
 
+<%-- Error messages: --%>
 <logic:messagesPresent property="message" message="true">
 	<div class="error1">
 		<html:messages id="errorMessage" property="message" message="true"> 
@@ -28,6 +29,7 @@
 		</html:messages>
 	</div>
 </logic:messagesPresent>
+<%-- *END* Error messages *END* --%>
 
 
 
@@ -104,7 +106,7 @@
 			    <html:link styleId="terminateHarmonization"  page="<%="/siadapManagement.do?method=terminateHarmonization&year="+year.toString()%>" paramName="currentUnit" paramProperty="unit.externalId" paramId="unitId">
 						<bean:message key="label.terminateHarmonization" bundle="SIADAP_RESOURCES"/>
 					</html:link>
-				| <html:link  page="<%="/siadapManagement.do?method=prepareAddExcedingQuotaSuggestion&year=" + year.toString()%>" paramName="currentUnit" paramProperty="unit.externalId" paramId="unitId">
+				| <html:link  page="<%="/siadapManagement.do?method=prepareAddExceedingQuotaSuggestion&year=" + year.toString()%>" paramName="currentUnit" paramProperty="unit.externalId" paramId="unitId">
 						<bean:message key="label.addExcedingQuotaSuggestion" bundle="SIADAP_RESOURCES"/>
 				  </html:link>
 		</logic:equal>
@@ -112,7 +114,7 @@
 		    <html:link styleId="reOpenHarmonization"  page="<%="/siadapManagement.do?method=reOpenHarmonization&year="+year.toString()%>" paramName="currentUnit" paramProperty="unit.externalId" paramId="unitId">
 					<bean:message key="label.reOpenHarmonization" bundle="SIADAP_RESOURCES"/>
 			   </html:link>
-			| <html:link  page="<%="/siadapManagement.do?method=prepareAddExcedingQuotaSuggestion&year=" + year.toString()%>" paramName="currentUnit" paramProperty="unit.externalId" paramId="unitId">
+			| <html:link  page="<%="/siadapManagement.do?method=prepareAddExceedingQuotaSuggestion&year=" + year.toString()%>" paramName="currentUnit" paramProperty="unit.externalId" paramId="unitId">
 					<bean:message key="label.addExcedingQuotaSuggestion" bundle="SIADAP_RESOURCES"/>
 			  </html:link>
 			</logic:equal>

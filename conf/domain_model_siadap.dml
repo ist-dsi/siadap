@@ -220,6 +220,8 @@ class CompetenceType {
 class ExceedingQuotaProposal {
 	ExceedingQuotaSuggestionType suggestionType;
 	Integer proposalOrder;
+	SiadapUniverse siadapUniverse;
+	boolean withinOrganizationQuotaUniverse;
 }
 
 relation SiadapModuleRootMyOrg {
@@ -533,28 +535,36 @@ relation ExceedingQuotaProposalSiadapYearConfiguration {
 	ExceedingQuotaProposal playsRole exceedingQuotasProposals {
 		multiplicity *;
 	}
-	SiadapYearConfiguration playsRole yearConfiguration;
+	SiadapYearConfiguration playsRole yearConfiguration {
+		multiplicity 1;
+	}
 }
 
 relation ExceedingQuotaProposalPerson {
 	ExceedingQuotaProposal playsRole exceedingQuotasProposals {
 		multiplicity *;
 	}
-	.module.organization.domain.Person playsRole suggestion;
+	.module.organization.domain.Person playsRole suggestion {
+		multiplicity 1;
+	}
 }
 
 relation ExceedingQuotaProposalUnit {
 	ExceedingQuotaProposal playsRole exceedingQuotasProposals {
 		multiplicity *;
 	}
-	.module.organization.domain.Unit playsRole unit;
+	.module.organization.domain.Unit playsRole unit {
+		multiplicity 1;
+	}
 }
 
 relation ExceedingQuotaProposalRootModule {
 	ExceedingQuotaProposal playsRole exceedingQuotasProposals {
 		multiplicity *;
 	}
-	SiadapRootModule playsRole siadapRootModule;
+	SiadapRootModule playsRole siadapRootModule {
+		multiplicity 1;
+	}
 }
 
 

@@ -69,6 +69,10 @@ public class SiadapRootModule extends SiadapRootModule_Base implements ModuleIni
 	} catch (IOException e) {
 	    throw new SiadapException("error.loading.logo", e);
 	}
+	
+	//TODO SIADAP-155
+	//	Accountability.PartyChildAccountabilities.addListener(SiadapUniverse.siadapHarmonizationRelationListener);
+	//	Accountability.PartyParentAccountabilities.addListener(SiadapUniverse.siadapHarmonizationRelationListener);
     }
 
     private SiadapRootModule() {

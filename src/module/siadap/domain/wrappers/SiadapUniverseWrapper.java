@@ -5,7 +5,11 @@ package module.siadap.domain.wrappers;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import module.siadap.domain.Siadap;
@@ -17,7 +21,16 @@ import org.apache.commons.collections.Predicate;
 /**
  * @author João Antunes (joao.antunes@tagus.ist.utl.pt) - 28 de Dez de 2011
  * 
+ *         Class used to represent (interface wise) the SIADAP universe, which
+ *         is a combination of two variables: the SIADAP2 or SIADAP3 and if the
+ *         person counts for the main organization quota or not - thus making up
+ *         for four possible universes. This class is used both for the
+ *         harmonization purposes and for the exceeding quota suggestion
+ *         purposes.
  * 
+ *         TODO probably also for validation purposes in the near future (and
+ *         everywhere else where it makes sense to separate everything with
+ *         universes)
  * 
  */
 public class SiadapUniverseWrapper implements Serializable {
@@ -27,7 +40,10 @@ public class SiadapUniverseWrapper implements Serializable {
      */
     private static final long serialVersionUID = 1L;
     private final Set<PersonSiadapWrapper> siadapUniverse;
+
+    private final List<SiadapSuggestionBean> siadapUniverseForSuggestions;
     private final String universeDescription;
+
 
     private final int numberPeopleInUniverse;
     private final int excellencyQuota;
@@ -37,8 +53,22 @@ public class SiadapUniverseWrapper implements Serializable {
     private final int currentEvaluationRelevants;
     private final int currentHarmonizedRelevants;
 
+    public static final String SIADAP2_WITH_QUOTAS = "siadap2WithQuotas";
+    public static final String SIADAP3_WITH_QUOTAS = "siadap3WithQuotas";
+    public static final String SIADAP2_WITHOUT_QUOTAS = "siadap2WithoutQuotas";
+    public static final String SIADAP3_WITHOUT_QUOTAS = "siadap3WithoutQuotas";
+
     private final SiadapUniverse siadapUniverseEnum;
 
+    /**
+     * Constructor used to make a wrapper suitable for harmonization purposes;
+     * 
+     * @param siadapUniverseOfPeople
+     * @param universeDescription
+     * @param universeToConsider
+     * @param excellencyQuotaPercentagePoints
+     * @param relevantQuotaPercentagePoints
+     */
     public SiadapUniverseWrapper(Set<PersonSiadapWrapper> siadapUniverseOfPeople, String universeDescription,
 	    SiadapUniverse universeToConsider, int excellencyQuotaPercentagePoints, int relevantQuotaPercentagePoints) {
 	this.siadapUniverse = siadapUniverseOfPeople;
@@ -55,6 +85,37 @@ public class SiadapUniverseWrapper implements Serializable {
 
 	this.currentHarmonizedExcellents = getCurrentExcellents(universeToConsider, true);
 	this.currentHarmonizedRelevants = getCurrentRelevants(universeToConsider, true);
+	
+	this.siadapUniverseForSuggestions = null;
+
+    }
+    
+    public SiadapUniverseWrapper(Set<PersonSiadapWrapper> siadapUniverseOfPeople, String universeDescription,
+	    SiadapUniverse universeToConsider, UnitSiadapWrapper unitBeingSuggestionsMadeFor, boolean quotasUniverse) {
+	
+	//a null simple universe and everything else intended for the harmonization purposes
+	this.siadapUniverse = null;
+	this.excellencyQuota = 0;
+	this.relevantQuota = 0;
+	this.currentEvaluationExcellents = 0;
+	this.currentEvaluationRelevants = 0;
+	this.currentHarmonizedExcellents = 0;
+	this.currentHarmonizedRelevants = 0;
+
+	HashSet<SiadapSuggestionBean> siadapUniverseForSuggestionsSet = new HashSet<SiadapSuggestionBean>();
+	for (PersonSiadapWrapper personSiadapWrapper : siadapUniverseOfPeople) {
+	    siadapUniverseForSuggestionsSet.add(new SiadapSuggestionBean(personSiadapWrapper, unitBeingSuggestionsMadeFor,
+		    quotasUniverse, universeToConsider));
+	}
+	this.siadapUniverseForSuggestions = new ArrayList<SiadapSuggestionBean>(siadapUniverseForSuggestionsSet);
+
+	Collections.sort(this.getSiadapUniverseForSuggestions(), SiadapSuggestionBean.COMPARATOR_BY_PRIORITY_NUMBER);
+
+	this.siadapUniverseEnum = universeToConsider;
+
+	this.numberPeopleInUniverse = getSiadapUniverseForSuggestions().size();
+	
+	this.universeDescription = universeDescription;
 
     }
 
@@ -186,5 +247,13 @@ public class SiadapUniverseWrapper implements Serializable {
 
     public SiadapUniverse getSiadapUniverseEnum() {
 	return siadapUniverseEnum;
+    }
+
+    public String getUniverseTitleQuotaSuggestionKey() {
+	return "label.harmonization.QuotaSuggestionInterface." + universeDescription;
+    }
+
+    public List<SiadapSuggestionBean> getSiadapUniverseForSuggestions() {
+	return siadapUniverseForSuggestions;
     }
 }

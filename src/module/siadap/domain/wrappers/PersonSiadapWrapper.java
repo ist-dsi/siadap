@@ -23,7 +23,6 @@ import module.siadap.domain.SiadapRootModule;
 import module.siadap.domain.SiadapUniverse;
 import module.siadap.domain.SiadapYearConfiguration;
 import module.siadap.domain.scoring.SiadapGlobalEvaluation;
-import module.siadap.presentationTier.actions.SiadapSuggestionBean;
 import myorg.applicationTier.Authenticate.UserView;
 import myorg.domain.User;
 import myorg.domain.exceptions.DomainException;
@@ -45,7 +44,6 @@ public class PersonSiadapWrapper extends PartyWrapper implements Serializable {
     private Boolean harmonizationCurrentAssessmentForSIADAP3;
     private Boolean harmonizationCurrentAssessmentForSIADAP2;
 
-    private SiadapSuggestionBean exceedingQuotaSuggestionBean;
 
     public PersonSiadapWrapper(Person person, int year) {
 	super(year);
@@ -82,8 +80,6 @@ public class PersonSiadapWrapper extends PartyWrapper implements Serializable {
 		this.harmonizationCurrentAssessmentForSIADAP3 = siadapEvaluationUniverseForSIADAP3.getHarmonizationAssessment();
 	    }
 	}
-	//TODO: init the exceedingQuotePriorityNumber
-	this.exceedingQuotaSuggestionBean = new SiadapSuggestionBean(this);
     }
 
     public Person getPerson() {
@@ -589,13 +585,5 @@ public class PersonSiadapWrapper extends PartyWrapper implements Serializable {
 
     public void setHarmonizationCurrentAssessmentForSIADAP2(Boolean assessment) {
 	this.harmonizationCurrentAssessmentForSIADAP2 = assessment;
-    }
-
-    public SiadapSuggestionBean getExceedingQuotaSuggestionBean() {
-	return exceedingQuotaSuggestionBean;
-    }
-
-    public void setExceedingQuotaSuggestionBean(SiadapSuggestionBean exceedingQuotaSuggestionBean) {
-	this.exceedingQuotaSuggestionBean = exceedingQuotaSuggestionBean;
     }
 }
