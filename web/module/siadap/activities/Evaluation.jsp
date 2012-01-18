@@ -231,9 +231,20 @@ if (defaultSiadapUniverse.equals(SiadapUniverse.SIADAP3))
 
 		objectives = objectives * objectivesPonderation;
 		objectives = Math.round(objectives * 1000) / 1000;
-		competences = competences * competencesPonderation;
+		if (!isNaN(objectives))
+			{
+			competences = competences * competencesPonderation;
+			
+			}
 		competences = Math.round(competences * 1000) / 1000;
-		var total = objectives + competences;
+		var total;
+		if (isNaN(objectives))
+			{
+			total = competences;
+			}
+		else{
+			total = objectives + competences;
+		}
 		total = Math.round(total * 1000) / 1000;
 		
 		var text = formatString(message, [total, "<%= personName.toString() %>", getScoreLabel(total)]);
