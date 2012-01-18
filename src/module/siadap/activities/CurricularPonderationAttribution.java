@@ -5,7 +5,6 @@ package module.siadap.activities;
 
 import module.siadap.domain.Siadap;
 import module.siadap.domain.SiadapProcess;
-import module.siadap.domain.SiadapYearConfiguration;
 import module.siadap.domain.scoring.SiadapGlobalEvaluation;
 import module.workflow.activities.ActivityInformation;
 import module.workflow.activities.WorkflowActivity;
@@ -22,10 +21,10 @@ public class CurricularPonderationAttribution extends WorkflowActivity<SiadapPro
 
     @Override
     public boolean isActive(SiadapProcess process, User user) {
-	Siadap siadap = process.getSiadap();
-	SiadapYearConfiguration siadapYearConfiguration = siadap.getSiadapYearConfiguration();
-	if (!siadap.hasAnAssociatedCurricularPonderationEval() && siadapYearConfiguration.isCurrentUserMemberOfCCA())
-	    return true;
+	//	Siadap siadap = process.getSiadap();
+	//	SiadapYearConfiguration siadapYearConfiguration = siadap.getSiadapYearConfiguration();
+	//	if (!siadap.hasAnAssociatedCurricularPonderationEval() && siadapYearConfiguration.isCurrentUserMemberOfCCA())
+	//	    return true;
 	return false;
     }
 
