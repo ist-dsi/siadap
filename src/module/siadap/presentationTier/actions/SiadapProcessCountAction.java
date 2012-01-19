@@ -1,5 +1,6 @@
 package module.siadap.presentationTier.actions;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.SortedSet;
 import java.util.TreeSet;
@@ -14,11 +15,18 @@ import module.organization.domain.Party;
 import module.organization.domain.Person;
 import module.organization.domain.Unit;
 import module.organization.presentationTier.actions.OrganizationModelAction;
+import module.siadap.domain.SiadapProcessStateEnum;
 import module.siadap.domain.SiadapYearConfiguration;
+import module.siadap.domain.util.SiadapMiscUtilClass;
+import module.siadap.domain.wrappers.SiadapProcessStateEnumWrapper;
+import module.siadap.domain.wrappers.SiadapYearWrapper;
+import module.siadap.presentationTier.renderers.providers.SiadapStateToShowInCount;
+import module.siadap.presentationTier.renderers.providers.SiadapYearsFromExistingSiadapConfigurations;
 import myorg.domain.MyOrg;
 import myorg.presentationTier.actions.ContextBaseAction;
 import myorg.presentationTier.component.OrganizationChart;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
@@ -40,26 +48,57 @@ public class SiadapProcessCountAction extends ContextBaseAction {
     public ActionForward showUnit(ActionMapping mapping, ActionForm form, HttpServletRequest request,
 	    HttpServletResponse response) throws Exception {
 
-	final LocalDate today = new LocalDate();
-	final SiadapYearConfiguration configuration = SiadapYearConfiguration.getSiadapYearConfiguration(today.getYear());
+	SiadapYearWrapper siadapYearWrapper = (SiadapYearWrapper) getRenderedObject("siadapYearWrapper");
+	if (siadapYearWrapper == null) {
+	    ArrayList<Integer> yearsWithConfigs = SiadapYearsFromExistingSiadapConfigurations.getYearsWithExistingConfigs();
+	    if (yearsWithConfigs.contains(new Integer(new LocalDate().getYear()))) {
+		int year = new LocalDate().getYear();
+		siadapYearWrapper = new SiadapYearWrapper(year);
+	    } else {
+		siadapYearWrapper = new SiadapYearWrapper(yearsWithConfigs.get(yearsWithConfigs.size() - 1));
+	    }
+	}
+	request.setAttribute("siadapYearWrapper", siadapYearWrapper);
+	SiadapYearConfiguration configuration = siadapYearWrapper.getSiadapYearConfiguration();
+
+	if (configuration == null) {
+	    return forward(request, "/module/siadap/unit.jsp");
+	}
 	request.setAttribute("configuration", configuration);
+
+	SiadapProcessStateEnumWrapper siadapProcessStateToFilter = (SiadapProcessStateEnumWrapper) getRenderedObject("siadapProcessStateToFilter");
+	if (siadapProcessStateToFilter == null) {
+	    String enumAsParam = request.getParameter("siadapProcessStateEnumToFilterOrdinal");
+	    SiadapProcessStateEnum enumToUse = SiadapStateToShowInCount.getDefaultStateToFilter();
+	    if (!StringUtils.isBlank(enumAsParam)) {
+		enumToUse = SiadapProcessStateEnum.valueOf(enumAsParam);
+	    }
+	    siadapProcessStateToFilter = new SiadapProcessStateEnumWrapper(enumToUse);
+	}
+
+	request.setAttribute("siadapProcessStateToFilter", siadapProcessStateToFilter);
+
+	//let's always use the last day of the year
+	LocalDate dayToUse = SiadapMiscUtilClass.lastDayOfYearWhereAccsAreActive(configuration.getYear());
 
 	final OrganizationalModel organizationalModel = findOrgModel();
 	final Unit unit = getUnit(organizationalModel, request);
 
-	final Collection<Party> parents = getParents(unit, configuration, today);
-	final Collection<Party> children = getChildren(unit, configuration, today);
+	final Collection<Party> parents = getParents(unit, configuration, dayToUse);
+	final Collection<Party> children = getChildren(unit, configuration, dayToUse);
 
 	OrganizationChart<Party> chart = new OrganizationChart<Party>(unit, parents, children, 3);
 	request.setAttribute("chart", chart);
 
-	final Collection<Accountability> workerAccountabilities = getChildrenWorkers(unit, configuration, today);
+	final Collection<Accountability> workerAccountabilities = getChildrenWorkers(unit, configuration, dayToUse);
 	request.setAttribute("workerAccountabilities", workerAccountabilities);
 
-	final Person unitResponsible = findUnitChild(unit, today, configuration.getEvaluationRelation(), configuration.getUnitRelations());
+	final Person unitResponsible = findUnitChild(unit, dayToUse, configuration.getEvaluationRelation(),
+		configuration.getUnitRelations());
 	request.setAttribute("unitResponsible", unitResponsible);
 
-	final Person unitHarmanizer = findUnitChild(unit, today, configuration.getHarmonizationResponsibleRelation(), configuration.getUnitRelations());
+	final Person unitHarmanizer = findUnitChild(unit, dayToUse, configuration.getHarmonizationResponsibleRelation(),
+		configuration.getUnitRelations());
 	request.setAttribute("unitHarmanizer", unitHarmanizer);
 
 	return forward(request, "/module/siadap/unit.jsp");
@@ -78,78 +117,82 @@ public class SiadapProcessCountAction extends ContextBaseAction {
 
     }
 
-    private Person findUnitChild(final Unit unit, final LocalDate today,
+    private Person findUnitChild(final Unit unit, final LocalDate dayToUse,
 	    final AccountabilityType accountabilityType, final AccountabilityType unitAccountabilityType) {
 	for (final Accountability accountability : unit.getChildAccountabilitiesSet()) {
-	    if (isActive(accountability, today, accountabilityType)) {
+	    if (isActive(accountability, dayToUse, accountabilityType)) {
 		return (Person) accountability.getChild();
 	    }
 	}
-	final Unit parent = findUnitParent(unit, today, unitAccountabilityType);
-	return parent == null ? null : findUnitChild(parent, today, accountabilityType, unitAccountabilityType);
+	final Unit parent = findUnitParent(unit, dayToUse, unitAccountabilityType);
+	return parent == null ? null : findUnitChild(parent, dayToUse, accountabilityType, unitAccountabilityType);
     }
 
-    private Unit findUnitParent(final Unit unit, final LocalDate today, final AccountabilityType accountabilityType) {
+    private Unit findUnitParent(final Unit unit, final LocalDate dayToUse, final AccountabilityType accountabilityType) {
 	for (final Accountability accountability : unit.getParentAccountabilitiesSet()) {
-	    if (isActive(accountability, today, accountabilityType)) {
+	    if (isActive(accountability, dayToUse, accountabilityType)) {
 		return (Unit) accountability.getParent();
 	    }
 	}
 	return null;
     }
 
-    public Collection<Party> getParents(final Unit unit, final SiadapYearConfiguration configuration, final LocalDate today) {
+    public Collection<Party> getParents(final Unit unit, final SiadapYearConfiguration configuration, final LocalDate dayToUse) {
 	final SortedSet<Party> result = new TreeSet<Party>(Party.COMPARATOR_BY_NAME);
 	for (final Accountability accountability : unit.getParentAccountabilitiesSet()) {
-	    if (isActiveUnit(accountability, configuration, today)) {
+	    if (isActiveUnit(accountability, configuration, dayToUse)) {
 		result.add(accountability.getParent());
 	    }
 	}
 	return result;
     }
 
-    public Collection<Party> getChildren(final Unit unit, final SiadapYearConfiguration configuration, final LocalDate today) {
+    public Collection<Party> getChildren(final Unit unit, final SiadapYearConfiguration configuration, final LocalDate dayToUse) {
 	final SortedSet<Party> result = new TreeSet<Party>(Party.COMPARATOR_BY_NAME);
 	for (final Accountability accountability : unit.getChildAccountabilitiesSet()) {
-	    if (isActiveUnit(accountability, configuration, today) && hasSomeWorker((Unit) accountability.getChild(), configuration, today)) {
+	    if (isActiveUnit(accountability, configuration, dayToUse)
+		    && hasSomeWorker((Unit) accountability.getChild(), configuration, dayToUse)) {
 		result.add(accountability.getChild());
 	    }
 	}
 	return result;
     }
 
-    private boolean hasSomeWorker(final Unit unit, final SiadapYearConfiguration configuration, final LocalDate today) {
+    private boolean hasSomeWorker(final Unit unit, final SiadapYearConfiguration configuration, final LocalDate dayToUse) {
 	for (final Accountability accountability : unit.getChildAccountabilitiesSet()) {
-	    if (isActiveWorker(accountability, configuration, today)
-		    || (isActiveUnit(accountability, configuration, today)
-			    && hasSomeWorker((Unit) accountability.getChild(), configuration, today))) {
+	    if (isActiveWorker(accountability, configuration, dayToUse)
+		    || (isActiveUnit(accountability, configuration, dayToUse) && hasSomeWorker((Unit) accountability.getChild(),
+			    configuration, dayToUse))) {
 		return true;
 	    }
 	}
 	return false;
     }
 
-    public Collection<Accountability> getChildrenWorkers(final Unit unit, final SiadapYearConfiguration configuration, final LocalDate today) {
+    public Collection<Accountability> getChildrenWorkers(final Unit unit, final SiadapYearConfiguration configuration,
+	    final LocalDate dayToUse) {
 	final SortedSet<Accountability> result = new TreeSet<Accountability>(Accountability.COMPARATOR_BY_CHILD_PARTY_NAMES);
 	for (final Accountability accountability : unit.getChildAccountabilitiesSet()) {
-	    if (isActiveWorker(accountability, configuration, today)) {
+	    if (isActiveWorker(accountability, configuration, dayToUse)) {
 		result.add(accountability);
 	    }
 	}
 	return result;
     }
 
-    private boolean isActiveUnit(Accountability accountability, SiadapYearConfiguration configuration, LocalDate today) {
-	return isActive(accountability, today, configuration.getUnitRelations());
+    private boolean isActiveUnit(Accountability accountability, SiadapYearConfiguration configuration, LocalDate dayToUse) {
+	return isActive(accountability, dayToUse, configuration.getUnitRelations());
     }
 
-    private boolean isActiveWorker(Accountability accountability, SiadapYearConfiguration configuration, LocalDate today) {
-	return isActive(accountability, today, configuration.getWorkingRelation(), configuration.getWorkingRelationWithNoQuota());
+    private boolean isActiveWorker(Accountability accountability, SiadapYearConfiguration configuration, LocalDate dayToUse) {
+	return isActive(accountability, dayToUse, configuration.getWorkingRelation(),
+		configuration.getWorkingRelationWithNoQuota());
     }
 
-    private boolean isActive(final Accountability accountability, final LocalDate today, final AccountabilityType... accountabilityTypes) {
+    private boolean isActive(final Accountability accountability, final LocalDate dayToUse,
+	    final AccountabilityType... accountabilityTypes) {
 	final AccountabilityType accountabilityType = accountability.getAccountabilityType();
-	if (accountability.isActive(today)) {
+	if (accountability.isActive(dayToUse)) {
 	    for (final AccountabilityType type : accountabilityTypes) {
 		if (type == accountabilityType) {
 		    return true;

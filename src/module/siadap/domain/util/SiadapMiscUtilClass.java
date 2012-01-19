@@ -55,4 +55,15 @@ public class SiadapMiscUtilClass {
 	return new LocalDate(year, 12, 31);
     }
 
+    /**
+     * It is useful to get the previous to the last day due to the fact that an
+     * accountability is considered not active in the last day
+     * 
+     * @param year
+     * @return
+     */
+    public static LocalDate lastDayOfYearWhereAccsAreActive(int year) {
+	return new LocalDate(year, 12, 30);
+    }
+
 }

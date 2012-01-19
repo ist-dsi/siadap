@@ -21,16 +21,16 @@ public class SiadapProcessCounter implements Serializable {
 
     private final HashMap<Boolean, HashMap<String, int[]>> countsByQuotaAndCategories = new HashMap<Boolean, HashMap<String, int[]>>();
 
-    private final LocalDate today;
+    private final LocalDate dayToUse;
     private final transient SiadapYearConfiguration configuration;
     private final transient AccountabilityType unitRelations;
     private final transient AccountabilityType evaluationRelation;
     private final transient AccountabilityType workingUnitWithQuotaRelation;
     private final transient AccountabilityType workingUnitWithoutQuotaRelation;
 
-    public SiadapProcessCounter(final Unit unit, boolean distinguishBetweenUniverses) {
-	today = new LocalDate();
-	configuration = SiadapYearConfiguration.getSiadapYearConfiguration(today.getYear());
+    public SiadapProcessCounter(final Unit unit, boolean distinguishBetweenUniverses, SiadapYearConfiguration configuration) {
+	this.configuration = configuration;
+	this.dayToUse = SiadapMiscUtilClass.lastDayOfYearWhereAccsAreActive(configuration.getYear());
 	unitRelations = configuration.getUnitRelations();
 	evaluationRelation = configuration.getEvaluationRelation();
 	workingUnitWithQuotaRelation = configuration.getWorkingRelation();
@@ -43,7 +43,7 @@ public class SiadapProcessCounter implements Serializable {
 
     private void count(Unit unit, boolean distinguishBetweenUniverses) {
 	for (final Accountability accountability : unit.getChildAccountabilitiesSet()) {
-	    if (accountability.isActive(today)) {
+	    if (accountability.isActive(dayToUse)) {
 		final AccountabilityType accountabilityType = accountability.getAccountabilityType();
 		if (accountabilityType == unitRelations) {
 		    final Unit child = (Unit) accountability.getChild();
@@ -65,7 +65,7 @@ public class SiadapProcessCounter implements Serializable {
 
     private void count(final Unit unit) {
 	for (final Accountability accountability : unit.getChildAccountabilitiesSet()) {
-	    if (accountability.isActive(today)) {
+	    if (accountability.isActive(dayToUse)) {
 		final AccountabilityType accountabilityType = accountability.getAccountabilityType();
 		if (accountabilityType == unitRelations) {
 		    final Unit child = (Unit) accountability.getChild();

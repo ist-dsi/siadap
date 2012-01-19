@@ -2,6 +2,9 @@ package module.siadap.domain;
 
 import myorg.domain.User;
 import myorg.util.BundleUtil;
+
+import org.apache.commons.lang.StringUtils;
+
 import pt.ist.fenixWebFramework.rendererExtensions.util.IPresentableEnum;
 
 public enum SiadapProcessStateEnum implements IPresentableEnum {
@@ -129,8 +132,12 @@ public enum SiadapProcessStateEnum implements IPresentableEnum {
 
     @Override
     public String getLocalizedName() {
+	if (getLabelPrefix() != null)
 	return BundleUtil.getStringFromResourceBundle("resources/SiadapResources", getLabelPrefix());
+	else
+	    return StringUtils.EMPTY;
 
     }
+
 
 }

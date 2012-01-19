@@ -1,3 +1,4 @@
+<%@page import="module.siadap.presentationTier.renderers.providers.SiadapStateToShowInCount"%>
 <%@page import="org.joda.time.LocalDate"%>
 <%@page import="module.organization.domain.Accountability"%>
 <%@page import="module.siadap.domain.wrappers.PersonSiadapWrapper"%>
@@ -14,6 +15,47 @@
 <%@ taglib uri="/WEB-INF/fenix-renderers.tld" prefix="fr"%>
 <%@ taglib uri="/WEB-INF/chart.tld" prefix="chart" %>
 
+<%-- The year chooser: --%>
+<fr:form action="/siadapProcessCount.do?method=showUnit">
+	<fr:edit id="siadapYearWrapper" name="siadapYearWrapper" nested="true">
+		<fr:schema bundle="SIADAP" type="module.siadap.domain.wrappers.SiadapYearWrapper">
+			<fr:slot name="chosenYear" bundle="SIADAP_RESOURCES" layout="menu-select-postback" key="siadap.start.siadapYearChoice">
+					<fr:property name="providerClass" value="module.siadap.presentationTier.renderers.providers.SiadapYearsFromExistingSiadapConfigurations"/>
+					<%-- 
+					<fr:property name="format" value="${year}" />
+					--%>
+					<fr:property name="nullOptionHidden" value="true"/>
+					<%-- 
+					<fr:property name="eachSchema" value="module.siadap.presentationTier.renderers.providers.SiadapYearConfigurationsFromExisting.year"/>
+					--%>
+			</fr:slot>
+		</fr:schema>
+	</fr:edit>
+</fr:form>  
+<bean:define id="year" name="siadapYearWrapper" property="chosenYear"/>
+
+<bean:define id="siadapProcessStateEnumToFilter" name="siadapProcessStateToFilter" property="processStateEnum"/>
+<fr:form action="<%="/siadapProcessCount.do?method=showUnit" + "&year=" + year%>">
+	<fr:edit id="siadapProcessStateToFilter" name="siadapProcessStateToFilter" nested="true"  >
+		<fr:schema bundle="SIADAP" type="module.siadap.domain.wrappers.SiadapProcessStateEnumWrapper">
+			<fr:slot name="processStateEnum" bundle="SIADAP_RESOURCES" layout="menu-select-postback" key="siadap.count.state.to.filter">
+					<fr:property name="providerClass" value="module.siadap.presentationTier.renderers.providers.SiadapStateToShowInCount"/>
+					<%-- 
+					<fr:property name="format" value="${year}" />
+					--%>
+					<fr:property name="nullOptionHidden" value="true"/>
+					<%-- 
+					<fr:property name="eachSchema" value="module.siadap.presentationTier.renderers.providers.SiadapYearConfigurationsFromExisting.year"/>
+					--%>
+			</fr:slot>
+		</fr:schema>
+	</fr:edit>
+</fr:form>  
+
+<%
+	final SiadapYearConfiguration configuration = (SiadapYearConfiguration) request.getAttribute("configuration");
+%>
+<logic:present name="configuration">
 <bean:define id="unit" type="module.organization.domain.Unit" name="chart" property="element"/>
 
 <h2>
@@ -21,11 +63,8 @@
 </h2>
 
 <%-- TODO: make this JSP year sensible --%>
-<html:link action="<%="/siadapProcessCount.do?method=showSummaryTables&year="+new org.joda.time.LocalDate().getYear()%>" >Quadro síntese</html:link>
+<html:link action="<%="/siadapProcessCount.do?method=showSummaryTables&year="+configuration.getYear()%>" >Quadro síntese</html:link>
 
-<%
-	final SiadapYearConfiguration configuration = (SiadapYearConfiguration) request.getAttribute("configuration");
-%>
 
 <div class="infobox">
 	<table align="center" style="width: 100%; text-align: center;">
@@ -43,14 +82,27 @@
 							</div>
 						<%			    
 							} else if (party.isUnit()) {
-							    final SiadapProcessCounter counter = new SiadapProcessCounter((Unit) party, false);
-							    final String styleSuffix = counter.hasAnyPendingProcesses() ? "border-color: red;" : "";
+							    final SiadapProcessCounter counter = new SiadapProcessCounter((Unit) party, false, configuration);
+							    String styleSuffix = null;
+							    for (int i=((SiadapProcessStateEnum)siadapProcessStateEnumToFilter).ordinal(); i < counter.getCounts().length; i++)
+							    {
+									if (counter.getCounts()[i] > 0)
+									{
+									    styleSuffix = "border-color: red;";
+									    break;
+									}
+									    
+							    }
+							    if (styleSuffix == null)
+							    {
+								  styleSuffix = "";
+							    }
 						%>
 							<bean:define id="toolTipTitle" type="java.lang.String"><bean:message key="label.process.state.counts" bundle="SIADAP_RESOURCES"/></bean:define>
 							<bean:define id="toolTip" type="java.lang.String">
 								<ul>
 								<%
-									for (int i = 0 ; i < counter.getCounts().length; i++) {
+									for (int i = 0 ; i < counter.getCounts().length && i < SiadapStateToShowInCount.getMaximumStateToShowInCount().ordinal(); i++) {
 										final int count = counter.getCounts()[i];
 										final SiadapProcessStateEnum state = SiadapProcessStateEnum.values()[i];
 								%>
@@ -63,7 +115,7 @@
 								</ul>
 							</bean:define>
 							<div class="orgTBox orgTBoxLight" style="<%= styleSuffix %> " title="header=[ <%= toolTipTitle %> ] body=[<%= toolTip %>]">
-								<html:link page="/siadapProcessCount.do?method=showUnit" paramId="unitId" paramName="party" paramProperty="externalId" styleClass="secondaryLink">
+								<html:link page="<%="/siadapProcessCount.do?method=showUnit&year=" + year + "&siadapProcessStateEnumToFilterOrdinal="+siadapProcessStateEnumToFilter%>" paramId="unitId" paramName="party" paramProperty="externalId" styleClass="secondaryLink">
 									<bean:write name="party" property="partyName"/>
 								</html:link>
 							</div>
@@ -79,8 +131,8 @@
 <table class="tstyle3" align="center" style="width: 100%; text-align: center;">
 	<tr>
 <%
-	final SiadapProcessCounter counter = new SiadapProcessCounter(unit, false);
-	for (int i = 0 ; i < counter.getCounts().length; i++) {
+	final SiadapProcessCounter counter = new SiadapProcessCounter(unit, false, configuration);
+	for (int i = 0 ; i < counter.getCounts().length && i < SiadapStateToShowInCount.getMaximumStateToShowInCount().ordinal(); i++) {
 	    final SiadapProcessStateEnum state = SiadapProcessStateEnum.values()[i];
 %>
 		<th>
@@ -94,13 +146,13 @@
 	</tr>
 	<tr>
 <%
-	for (int i = 0 ; i < counter.getCounts().length; i++) {
+	for (int i = 0 ;  i < counter.getCounts().length && i < SiadapStateToShowInCount.getMaximumStateToShowInCount().ordinal(); i++) {
 	    final int count = counter.getCounts()[i];
 	    final SiadapProcessStateEnum state = SiadapProcessStateEnum.values()[i];
 %>
 		<td>
 			<%
-				if (count == 0 || state == SiadapProcessStateEnum.WAITING_SELF_EVALUATION) {
+				if (count == 0 || state.ordinal() < ((SiadapProcessStateEnum) siadapProcessStateEnumToFilter).ordinal()  ) {
 			%>
 				<%= count %>
 			<%
@@ -233,7 +285,7 @@
 						final SiadapProcessStateEnum state = personSiadapWrapper.getCurrentProcessState();
 					%>
 					<%
-						if (state == SiadapProcessStateEnum.WAITING_SELF_EVALUATION) {
+						if (state.ordinal() < ((SiadapProcessStateEnum) siadapProcessStateEnumToFilter).ordinal()  ) {
 					%>
 						<%= state.getLocalizedName() %>
 					<%
@@ -646,3 +698,4 @@ if (typeof document.attachEvent!='undefined') {
 	   }
 	}
 </script>
+</logic:present>

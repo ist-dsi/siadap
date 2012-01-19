@@ -149,7 +149,9 @@ pre {
 	</tbody>
 </table>
 <%-- END: The table with the deadlines and custom deadlines if they are defined --%>
-<p><strong><bean:write name="evaluatedPersonWrapper" property="nextStep"/></strong></p>
+<div class="highlightBox"> 
+	<p><strong><bean:write name="evaluatedPersonWrapper" property="nextStep"/></strong></p>
+</div>
 
 <p><b>Carreira, no âmbito do SIADAP (Universo SIADAP):</b>
 		 <logic:notEmpty name="process" property="siadap.competenceType">
