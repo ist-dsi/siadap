@@ -5,6 +5,7 @@ import java.util.Set;
 
 import module.organization.domain.Person;
 import module.siadap.domain.SiadapYearConfiguration;
+import module.siadap.domain.util.SiadapMiscUtilClass;
 import myorg.domain.User;
 import myorg.util.BundleUtil;
 
@@ -18,8 +19,7 @@ public class SiadapRevertStateGroup extends SiadapRevertStateGroup_Base {
 
     @Override
     public boolean isMember(User user) {
-	// TODO Auto-generated method stub
-	return false;
+	return isMember(user, SiadapMiscUtilClass.returnLastUsableYear());
     }
 
     public boolean isMember(User user, Integer year) {

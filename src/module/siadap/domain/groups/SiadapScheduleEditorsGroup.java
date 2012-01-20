@@ -6,6 +6,7 @@ import java.util.Set;
 import module.organization.domain.Person;
 import module.siadap.domain.SiadapRootModule;
 import module.siadap.domain.SiadapYearConfiguration;
+import module.siadap.domain.util.SiadapMiscUtilClass;
 import myorg.domain.User;
 import myorg.util.BundleUtil;
 
@@ -24,7 +25,7 @@ public class SiadapScheduleEditorsGroup extends SiadapScheduleEditorsGroup_Base 
     @Override
     public boolean isMember(User user) {
 	//get the current year and use it to assert
-	return isMember(user, new LocalDate().getYear());
+	return isMember(user, SiadapMiscUtilClass.returnLastUsableYear());
     }
 
     public boolean isMember(User user, Integer year) {

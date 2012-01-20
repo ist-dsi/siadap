@@ -3,6 +3,9 @@
  */
 package module.siadap.domain.util;
 
+import module.siadap.domain.SiadapRootModule;
+import module.siadap.domain.SiadapYearConfiguration;
+
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 import org.joda.time.ReadableInstant;
@@ -30,6 +33,25 @@ public class SiadapMiscUtilClass {
 
 	}
 	return newLocalDate;
+
+    }
+
+    /**
+     * 
+     * @return if there is no SiadapConfiguration for the current year, it
+     *         returns the year for which there's a configuration
+     */
+    public static int returnLastUsableYear() {
+	int yearToUse = new LocalDate().getYear();
+	if (SiadapYearConfiguration.getSiadapYearConfiguration(yearToUse) == null) {
+	    yearToUse = 0;
+	    for (SiadapYearConfiguration yearConfiguration : SiadapRootModule.getInstance().getYearConfigurations()) {
+		int year = yearConfiguration.getYear();
+		if (year > yearToUse && yearConfiguration.getStructureManagementGroupMembers() != null)
+		    yearToUse = year;
+	    }
+	}
+	return yearToUse;
 
     }
 
