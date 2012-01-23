@@ -65,6 +65,8 @@ public class SiadapEvaluationUniverse extends SiadapEvaluationUniverse_Base {
     }
 
     public BigDecimal getTotalEvaluationScoring() {
+	if (isWithSkippedEvaluation())
+	    return null;
 	if (isCurriculumPonderation()) {
 	    return CurricularPonderationEvaluationItem.getCurricularPonderationValue(this);
 	}
@@ -263,7 +265,7 @@ public class SiadapEvaluationUniverse extends SiadapEvaluationUniverse_Base {
 
     @Override
     public void setHarmonizationDate(LocalDate harmonizationDate) {
-	if (getHarmonizationAssessment() == null) {
+	if (getHarmonizationAssessment() == null && !isWithSkippedEvaluation()) {
 	    throw new SiadapException("error.harmonization.not.finished.for.person.X"
 		    + getSiadap().getEvaluated().getUser().getUsername());
 	}

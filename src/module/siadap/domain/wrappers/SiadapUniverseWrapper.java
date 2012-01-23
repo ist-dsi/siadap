@@ -45,7 +45,7 @@ public class SiadapUniverseWrapper implements Serializable {
     private final String universeDescription;
 
 
-    private final int numberPeopleInUniverse;
+    private final int numberRelevantPeopleInUniverse;
     private final int excellencyQuota;
     private final int currentEvaluationExcellents;
     private final int currentHarmonizedExcellents;
@@ -76,9 +76,16 @@ public class SiadapUniverseWrapper implements Serializable {
 
 	this.siadapUniverseEnum = universeToConsider;
 
-	this.numberPeopleInUniverse = siadapUniverseOfPeople.size();
-	this.excellencyQuota = calculateQuota(this.numberPeopleInUniverse, excellencyQuotaPercentagePoints);
-	this.relevantQuota = calculateQuota(this.numberPeopleInUniverse, relevantQuotaPercentagePoints);
+	int relevantPeople = 0;
+	for (PersonSiadapWrapper personSiadapWrapper : siadapUniverseOfPeople) {
+	    if (!personSiadapWrapper.isWithSkippedEval(siadapUniverseEnum)) {
+		relevantPeople++;
+	    }
+	}
+
+	this.numberRelevantPeopleInUniverse = relevantPeople;
+	this.excellencyQuota = calculateQuota(this.getNumberRelevantPeopleInUniverse(), excellencyQuotaPercentagePoints);
+	this.relevantQuota = calculateQuota(this.getNumberRelevantPeopleInUniverse(), relevantQuotaPercentagePoints);
 
 	this.currentEvaluationExcellents = getCurrentExcellents(universeToConsider, false);
 	this.currentEvaluationRelevants = getCurrentRelevants(universeToConsider, false);
@@ -113,7 +120,7 @@ public class SiadapUniverseWrapper implements Serializable {
 
 	this.siadapUniverseEnum = universeToConsider;
 
-	this.numberPeopleInUniverse = getSiadapUniverseForSuggestions().size();
+	this.numberRelevantPeopleInUniverse = getSiadapUniverseForSuggestions().size();
 	
 	this.universeDescription = universeDescription;
 
@@ -217,9 +224,6 @@ public class SiadapUniverseWrapper implements Serializable {
 	return universeDescription;
     }
 
-    public int getNumberPeopleInUniverse() {
-	return numberPeopleInUniverse;
-    }
 
     public int getExcellencyQuota() {
 	return excellencyQuota;
@@ -255,5 +259,9 @@ public class SiadapUniverseWrapper implements Serializable {
 
     public List<SiadapSuggestionBean> getSiadapUniverseForSuggestions() {
 	return siadapUniverseForSuggestions;
+    }
+
+    public int getNumberRelevantPeopleInUniverse() {
+	return numberRelevantPeopleInUniverse;
     }
 }

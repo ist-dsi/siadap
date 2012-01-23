@@ -1,3 +1,4 @@
+<%@page import="module.siadap.domain.SiadapUniverse"%>
 <%@page import="module.siadap.domain.wrappers.SiadapUniverseWrapper"%>
 <%@page import="java.util.Set"%>
 <%@page import="module.siadap.domain.wrappers.PersonSiadapWrapper"%>
@@ -106,17 +107,24 @@
 			    <html:link styleId="terminateHarmonization"  page="<%="/siadapManagement.do?method=terminateHarmonization&year="+year.toString()%>" paramName="currentUnit" paramProperty="unit.externalId" paramId="unitId">
 						<bean:message key="label.terminateHarmonization" bundle="SIADAP_RESOURCES"/>
 					</html:link>
-				| <html:link  page="<%="/siadapManagement.do?method=prepareAddExceedingQuotaSuggestion&year=" + year.toString()%>" paramName="currentUnit" paramProperty="unit.externalId" paramId="unitId">
+				| <html:link  page="#">
+						<bean:message key="label.addExcedingQuotaSuggestion" bundle="SIADAP_RESOURCES"/> (<bean:message key="functionality.disabled.temporarily.short" bundle="SIADAP_RESOURCES"/>)
+				  </html:link>
+				 <%--<html:link  page="<%="/siadapManagement.do?method=prepareAddExceedingQuotaSuggestion&year=" + year.toString()%>" paramName="currentUnit" paramProperty="unit.externalId" paramId="unitId">
 						<bean:message key="label.addExcedingQuotaSuggestion" bundle="SIADAP_RESOURCES"/>
 				  </html:link>
+				   --%>
 		</logic:equal>
 		 <logic:equal name="currentUnit" property="harmonizationFinished" value="true">
 		    <html:link styleId="reOpenHarmonization"  page="<%="/siadapManagement.do?method=reOpenHarmonization&year="+year.toString()%>" paramName="currentUnit" paramProperty="unit.externalId" paramId="unitId">
 					<bean:message key="label.reOpenHarmonization" bundle="SIADAP_RESOURCES"/>
 			   </html:link>
-			| <html:link  page="<%="/siadapManagement.do?method=prepareAddExceedingQuotaSuggestion&year=" + year.toString()%>" paramName="currentUnit" paramProperty="unit.externalId" paramId="unitId">
-					<bean:message key="label.addExcedingQuotaSuggestion" bundle="SIADAP_RESOURCES"/>
+			| <html:link  page="#">
+						<bean:message key="label.addExcedingQuotaSuggestion" bundle="SIADAP_RESOURCES"/> (<bean:message key="functionality.disabled.temporarily.short" bundle="SIADAP_RESOURCES"/>)
 			  </html:link>
+			<%-- <html:link  page="<%="/siadapManagement.do?method=prepareAddExceedingQuotaSuggestion&year=" + year.toString()%>" paramName="currentUnit" paramProperty="unit.externalId" paramId="unitId">
+					<bean:message key="label.addExcedingQuotaSuggestion" bundle="SIADAP_RESOURCES"/>
+			  </html:link> --%>
 			</logic:equal>
 		</logic:equal>
 	</logic:equal>
@@ -170,7 +178,7 @@ boolean hasPeopleToHarmonize = ((peopleWithoutQuotasSIADAP2.getSiadapUniverse() 
 	}
 	function handleWithoutQuotasSIADAP3RadioClick(radioElement)
 	{
-		if ($(radioElement).next().text().trim() == "Não")
+		if ($(radioElement).next().text().trim() == "NÃ£o")
 		{
 		//let's check if they had the Yes selected
 		if ($(radioElement).parents("li").prevAll().children().children("input")[0].wasSetToTrue)
@@ -201,7 +209,7 @@ boolean hasPeopleToHarmonize = ((peopleWithoutQuotasSIADAP2.getSiadapUniverse() 
 	}
 	function handleWithQuotasSIADAP3RadioClick(radioElement)
 	{
-		if ($(radioElement).next().text().trim() == "Não")
+		if ($(radioElement).next().text().trim() == "NÃ£o")
 		{
 		//let's check if they had the Yes selected
 		if ($(radioElement).parents("li").prevAll().children().children("input")[0].wasSetToTrue)
@@ -232,7 +240,7 @@ boolean hasPeopleToHarmonize = ((peopleWithoutQuotasSIADAP2.getSiadapUniverse() 
 	}
 	function handleWithoutQuotasSIADAP2RadioClick(radioElement)
 	{
-		if ($(radioElement).next().text().trim() == "Não")
+		if ($(radioElement).next().text().trim() == "NÃ£o")
 		{
 		//let's check if they had the Yes selected
 		if ($(radioElement).parents("li").prevAll().children().children("input")[0].wasSetToTrue)
@@ -263,7 +271,7 @@ boolean hasPeopleToHarmonize = ((peopleWithoutQuotasSIADAP2.getSiadapUniverse() 
 	}
 	function handleWithQuotasSIADAP2RadioClick(radioElement)
 	{
-		if ($(radioElement).next().text().trim() == "Não")
+		if ($(radioElement).next().text().trim() == "NÃ£o")
 		{
 		//let's check if they had the Yes selected
 		if ($(radioElement).parents("li").prevAll().children().children("input")[0].wasSetToTrue)
@@ -301,6 +309,9 @@ boolean hasPeopleToHarmonize = ((peopleWithoutQuotasSIADAP2.getSiadapUniverse() 
 				
 			}
 		});
+		//give a visual clue to the ones with skipped eval
+		$("td").each(function(indexInArray, td) { if ($(td).text().trim() == "não avaliado") $(td).parent("tr").addClass("disabled"); }); 
+		
 		$("input[type=radio]").change(function () {
 			if ($(this).next().text().trim() == "Sim")
 				{
@@ -329,6 +340,11 @@ boolean hasPeopleToHarmonize = ((peopleWithoutQuotasSIADAP2.getSiadapUniverse() 
 	
 </script>
 	
+<style> 
+tr.disabled {
+color: #999;
+}
+</style> 
 		<logic:notEmpty name="people-withQuotas-SIADAP2" property="siadapUniverse">
  			<strong>
 				<bean:message key="label.unitEmployees.withQuotasSIADAP2" bundle="SIADAP_RESOURCES"/>:
@@ -337,7 +353,7 @@ boolean hasPeopleToHarmonize = ((peopleWithoutQuotasSIADAP2.getSiadapUniverse() 
 			<table class="tstyle2">
 				<tr>
 					<th><bean:message key="label.harmonization.totalHarmonizedInUniverse" bundle="SIADAP_RESOURCES" />
-					<td><fr:view name="people-withQuotas-SIADAP2" property="numberPeopleInUniverse"/></td>
+					<td><fr:view name="people-withQuotas-SIADAP2" property="numberRelevantPeopleInUniverse"/></td>
 				</tr>
 				<tr>
 					<th><bean:message key="label.harmonization.quota.excellents" bundle="SIADAP_RESOURCES" />
@@ -386,20 +402,21 @@ boolean hasPeopleToHarmonize = ((peopleWithoutQuotasSIADAP2.getSiadapUniverse() 
 						</fr:slot>
 						<logic:equal name="currentUnit" property="harmonizationFinished" value="false">
 							<fr:slot name="harmonizationCurrentAssessmentForSIADAP2" layout="radio" key="label.harmonization.assessment"> 
+ 								<fr:property name="readOnlyIf" value="withSkippedEvalForSiadap2" />
 								<fr:property name="classes" value="inline-list"/>
 								<fr:property name="eachClasses" value="withQuotasSIADAP2"/>
 							</fr:slot>
 						</logic:equal>
 						<logic:equal name="currentUnit" property="harmonizationFinished" value="true">
-							<fr:slot name="harmonizationCurrentAssessmentForSIADAP2" layout="radio" readOnly="true" key="label.harmonization.assessment">
-								<fr:property name="classes" value="inline-list"/>
-								<fr:property name="eachClasses" value="withQuotasSIADAP2"/>
-							</fr:slot>
+								<fr:slot name="harmonizationCurrentAssessmentForSIADAP2" layout="radio" readOnly="true" key="label.harmonization.assessment">
+									<fr:property name="classes" value="inline-list"/>
+									<fr:property name="eachClasses" value="withQuotasSIADAP2"/>
+								</fr:slot>
 						</logic:equal>
 					</fr:schema>
 					<fr:layout name="tabular-row">
 						<fr:property name="classes" value="tstyle2"/>
-						<fr:property name="columnClasses" value="aleft,aleft,,"/>
+						<fr:property name="columnClasses" value="aleft,acenter,aleft"/>
 						<fr:property name="link(create)" value="/siadapManagement.do?method=createNewSiadapProcess"/>
 						<fr:property name="bundle(create)" value="MYORG_RESOURCES"/>
 						<fr:property name="key(create)" value="link.create"/>
@@ -413,6 +430,13 @@ boolean hasPeopleToHarmonize = ((peopleWithoutQuotasSIADAP2.getSiadapUniverse() 
 						<fr:property name="param(viewProcess)" value="siadap.process.externalId/processId"/>
 						<fr:property name="order(viewProcess)" value="1"/>
 						<fr:property name="visibleIf(viewProcess)" value="accessibleToCurrentUser"/>
+						
+						<fr:property name="link(removeAssessment)" value="<%="/siadapManagement.do?method=removeHarmonizationAssessment&unitId="+unitId + "&siadapUniverse="+module.siadap.domain.SiadapUniverse.SIADAP2%>"/>
+						<fr:property name="bundle(removeAssessment)" value="SIADAP_RESOURCES"/>
+						<fr:property name="key(removeAssessment)" value="link.removeHarmonizationAssessment"/>
+						<fr:property name="param(removeAssessment)" value="person.externalId/personId,year/year"/>
+						<fr:property name="order(removeAssessment)" value="1"/>
+						<fr:property name="visibleIf(removeAssessment)" value="ableToRemoveAssessmentForSIADAP2"/>
 						
 						<fr:property name="sortParameter" value="sortByQuotas"/>
 		       			<fr:property name="sortUrl" value="<%= "/siadapManagement.do?method=viewUnitHarmonizationData&unitId=" + unitId + "&year=" + year.toString()%>"/>
@@ -431,7 +455,7 @@ boolean hasPeopleToHarmonize = ((peopleWithoutQuotasSIADAP2.getSiadapUniverse() 
 			<table class="tstyle2">
 				<tr>
 					<th><bean:message key="label.harmonization.totalHarmonizedInUniverse" bundle="SIADAP_RESOURCES" />
-					<td><fr:view name="people-withQuotas-SIADAP3" property="numberPeopleInUniverse"/></td>
+					<td><fr:view name="people-withQuotas-SIADAP3" property="numberRelevantPeopleInUniverse"/></td>
 				</tr>
 				<tr>
 					<th><bean:message key="label.harmonization.quota.excellents" bundle="SIADAP_RESOURCES" />
@@ -482,21 +506,22 @@ boolean hasPeopleToHarmonize = ((peopleWithoutQuotasSIADAP2.getSiadapUniverse() 
 							<fr:property name="subLayout" value=""/>
 						</fr:slot>
 						<logic:equal name="currentUnit" property="harmonizationFinished" value="false">
-							<fr:slot name="harmonizationCurrentAssessmentForSIADAP3" layout="radio" key="label.harmonization.assessment">
-								<fr:property name="classes" value="inline-list"/>
-								<fr:property name="eachClasses" value="withQuotasSIADAP3"/>
-							</fr:slot>
-						</logic:equal>
+ 								<fr:slot name="harmonizationCurrentAssessmentForSIADAP3" layout="radio" key="label.harmonization.assessment">
+ 									<fr:property name="readOnlyIf" value="withSkippedEvalForSiadap3" />
+									<fr:property name="classes" value="inline-list"/>
+									<fr:property name="eachClasses" value="withQuotasSIADAP3"/>
+								</fr:slot>
+ 						</logic:equal>
 						<logic:equal name="currentUnit" property="harmonizationFinished" value="true">
-							<fr:slot name="harmonizationCurrentAssessmentForSIADAP3" layout="radio" key="label.harmonization.assessment" readOnly="true">
-								<fr:property name="classes" value="inline-list"/>
-								<fr:property name="eachClasses" value="withQuotasSIADAP3"/>
-							</fr:slot>
-						</logic:equal>
+								<fr:slot name="harmonizationCurrentAssessmentForSIADAP3" layout="radio" key="label.harmonization.assessment" readOnly="true">
+									<fr:property name="classes" value="inline-list"/>
+									<fr:property name="eachClasses" value="withQuotasSIADAP3"/>
+								</fr:slot>
+						</logic:equal> 
 					</fr:schema>
 					<fr:layout name="tabular-row">
 						<fr:property name="classes" value="tstyle2"/>
-						<fr:property name="columnClasses" value="aleft,aleft,,"/>
+						<fr:property name="columnClasses" value="aleft,acenter,aleft"/>
 						<fr:property name="link(create)" value="/siadapManagement.do?method=createNewSiadapProcess"/>
 						<fr:property name="bundle(create)" value="MYORG_RESOURCES"/>
 						<fr:property name="key(create)" value="link.create"/>
@@ -510,6 +535,13 @@ boolean hasPeopleToHarmonize = ((peopleWithoutQuotasSIADAP2.getSiadapUniverse() 
 						<fr:property name="param(viewProcess)" value="siadap.process.externalId/processId"/>
 						<fr:property name="order(viewProcess)" value="1"/>
 						<fr:property name="visibleIf(viewProcess)" value="accessibleToCurrentUser"/>
+						
+						<fr:property name="link(removeAssessment)" value="<%="/siadapManagement.do?method=removeHarmonizationAssessment&unitId="+unitId + "&siadapUniverse="+module.siadap.domain.SiadapUniverse.SIADAP3%>"/>
+						<fr:property name="bundle(removeAssessment)" value="SIADAP_RESOURCES"/>
+						<fr:property name="key(removeAssessment)" value="link.removeHarmonizationAssessment"/>
+						<fr:property name="param(removeAssessment)" value="person.externalId/personId,year/year"/>
+						<fr:property name="order(removeAssessment)" value="1"/>
+						<fr:property name="visibleIf(removeAssessment)" value="ableToRemoveAssessmentForSIADAP3"/>
 						
 						<fr:property name="sortParameter" value="sortByQuotas"/>
 		       			<fr:property name="sortUrl" value="<%= "/siadapManagement.do?method=viewUnitHarmonizationData&unitId=" + unitId + "&year=" + year.toString()%>"/>
@@ -528,7 +560,7 @@ boolean hasPeopleToHarmonize = ((peopleWithoutQuotasSIADAP2.getSiadapUniverse() 
 			<table class="tstyle2">
 				<tr>
 					<th><bean:message key="label.harmonization.totalHarmonizedInUniverse" bundle="SIADAP_RESOURCES" />
-					<td><fr:view name="people-withoutQuotas-SIADAP2" property="numberPeopleInUniverse"/></td>
+					<td><fr:view name="people-withoutQuotas-SIADAP2" property="numberRelevantPeopleInUniverse"/></td>
 				</tr>
 				<tr>
 					<th><bean:message key="label.harmonization.quota.excellents" bundle="SIADAP_RESOURCES" />
@@ -581,6 +613,7 @@ boolean hasPeopleToHarmonize = ((peopleWithoutQuotasSIADAP2.getSiadapUniverse() 
 						</fr:slot>
 						<logic:equal name="currentUnit" property="harmonizationFinished" value="false">
 							<fr:slot name="harmonizationCurrentAssessmentForSIADAP2" layout="radio" key="label.harmonization.assessment">
+ 								<fr:property name="readOnlyIf" value="withSkippedEvalForSiadap2" />
 								<fr:property name="classes" value="inline-list"/>
 								<fr:property name="eachClasses" value="withoutQuotasSIADAP2"/>
 							</fr:slot>
@@ -594,7 +627,7 @@ boolean hasPeopleToHarmonize = ((peopleWithoutQuotasSIADAP2.getSiadapUniverse() 
 					</fr:schema>
 					<fr:layout name="tabular-row">
 						<fr:property name="classes" value="tstyle2"/>
-						<fr:property name="columnClasses" value="aleft,aleft,,"/>
+						<fr:property name="columnClasses" value="aleft,acenter,aleft"/>
 						<fr:property name="link(create)" value="/siadapManagement.do?method=createNewSiadapProcess"/>
 						<fr:property name="bundle(create)" value="MYORG_RESOURCES"/>
 						<fr:property name="key(create)" value="link.create"/>
@@ -608,6 +641,13 @@ boolean hasPeopleToHarmonize = ((peopleWithoutQuotasSIADAP2.getSiadapUniverse() 
 						<fr:property name="param(viewProcess)" value="siadap.process.externalId/processId"/>
 						<fr:property name="order(viewProcess)" value="1"/>
 						<fr:property name="visibleIf(viewProcess)" value="accessibleToCurrentUser"/>
+						
+						<fr:property name="link(removeAssessment)" value="<%="/siadapManagement.do?method=removeHarmonizationAssessment&unitId="+unitId + "&siadapUniverse="+module.siadap.domain.SiadapUniverse.SIADAP2%>"/>
+						<fr:property name="bundle(removeAssessment)" value="SIADAP_RESOURCES"/>
+						<fr:property name="key(removeAssessment)" value="link.removeHarmonizationAssessment"/>
+						<fr:property name="param(removeAssessment)" value="person.externalId/personId,year/year"/>
+						<fr:property name="order(removeAssessment)" value="1"/>
+						<fr:property name="visibleIf(removeAssessment)" value="ableToRemoveAssessmentForSIADAP2"/>
 						
 						<fr:property name="sortParameter" value="sortByQuotas"/>
 		       			<fr:property name="sortUrl" value="<%= "/siadapManagement.do?method=viewUnitHarmonizationData&unitId=" + unitId + "&year=" + year.toString()%>"/>
@@ -626,7 +666,7 @@ boolean hasPeopleToHarmonize = ((peopleWithoutQuotasSIADAP2.getSiadapUniverse() 
 			<table class="tstyle2">
 				<tr>
 					<th><bean:message key="label.harmonization.totalHarmonizedInUniverse" bundle="SIADAP_RESOURCES" />
-					<td><fr:view name="people-withoutQuotas-SIADAP3" property="numberPeopleInUniverse"/></td>
+					<td><fr:view name="people-withoutQuotas-SIADAP3" property="numberRelevantPeopleInUniverse"/></td>
 				</tr>
 				<tr>
 					<th><bean:message key="label.harmonization.quota.excellents" bundle="SIADAP_RESOURCES" />
@@ -677,20 +717,21 @@ boolean hasPeopleToHarmonize = ((peopleWithoutQuotasSIADAP2.getSiadapUniverse() 
 						</fr:slot>
 						<logic:equal name="currentUnit" property="harmonizationFinished" value="false">
 							<fr:slot name="harmonizationCurrentAssessmentForSIADAP3" layout="radio" key="label.harmonization.assessment">
+ 								<fr:property name="readOnlyIf" value="withSkippedEvalForSiadap3" />
 								<fr:property name="classes" value="inline-list"/>
 								<fr:property name="eachClasses" value="withoutQuotasSIADAP3"/>
 							</fr:slot>
 						</logic:equal>
 						<logic:equal name="currentUnit" property="harmonizationFinished" value="true">
-							<fr:slot name="harmonizationCurrentAssessmentForSIADAP3" layout="radio" key="label.harmonization.assessment" readOnly="true">
-								<fr:property name="classes" value="inline-list"/>
-								<fr:property name="eachClasses" value="withoutQuotasSIADAP3"/>
-							</fr:slot>
+								<fr:slot name="harmonizationCurrentAssessmentForSIADAP3" layout="radio" key="label.harmonization.assessment" readOnly="true">
+									<fr:property name="classes" value="inline-list"/>
+									<fr:property name="eachClasses" value="withoutQuotasSIADAP3"/>
+								</fr:slot>
 						</logic:equal>
 					</fr:schema>
 					<fr:layout name="tabular-row">
 						<fr:property name="classes" value="tstyle2"/>
-						<fr:property name="columnClasses" value="aleft,aleft,,"/>
+						<fr:property name="columnClasses" value="aleft,acenter,aleft"/>
 						<fr:property name="link(create)" value="/siadapManagement.do?method=createNewSiadapProcess"/>
 						<fr:property name="bundle(create)" value="MYORG_RESOURCES"/>
 						<fr:property name="key(create)" value="link.create"/>
@@ -704,6 +745,13 @@ boolean hasPeopleToHarmonize = ((peopleWithoutQuotasSIADAP2.getSiadapUniverse() 
 						<fr:property name="param(viewProcess)" value="siadap.process.externalId/processId"/>
 						<fr:property name="order(viewProcess)" value="1"/>
 						<fr:property name="visibleIf(viewProcess)" value="accessibleToCurrentUser"/>
+						
+						<fr:property name="link(removeAssessment)" value="<%="/siadapManagement.do?method=removeHarmonizationAssessment&unitId="+unitId + "&siadapUniverse="+module.siadap.domain.SiadapUniverse.SIADAP3%>"/>
+						<fr:property name="bundle(removeAssessment)" value="SIADAP_RESOURCES"/>
+						<fr:property name="key(removeAssessment)" value="link.removeHarmonizationAssessment"/>
+						<fr:property name="param(removeAssessment)" value="person.externalId/personId,year/year"/>
+						<fr:property name="order(removeAssessment)" value="1"/>
+						<fr:property name="visibleIf(removeAssessment)" value="ableToRemoveAssessmentForSIADAP3"/>
 						
 						<fr:property name="sortParameter" value="sortByQuotas"/>
 		       			<fr:property name="sortUrl" value="<%= "/siadapManagement.do?method=viewUnitHarmonizationData&unitId=" + unitId + "&year=" + year.toString()%>"/>

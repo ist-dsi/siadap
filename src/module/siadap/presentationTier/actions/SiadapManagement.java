@@ -300,7 +300,15 @@ public class SiadapManagement extends ContextBaseAction {
 	int year = Integer.parseInt(request.getParameter("year"));
 
 	Unit unit = getDomainObject(request, "unitId");
+	return viewUnitHarmonizationData(mapping, form, request, response, year, unit);
+
+    }
+
+    private final ActionForward viewUnitHarmonizationData(final ActionMapping mapping, final ActionForm form,
+	    final HttpServletRequest request, final HttpServletResponse response, int year, Unit unit) {
 	UnitSiadapWrapper wrapper = new UnitSiadapWrapper(unit, year);
+
+	RenderUtils.invalidateViewState();
 
 	request.setAttribute("currentUnit", wrapper);
 
@@ -334,6 +342,7 @@ public class SiadapManagement extends ContextBaseAction {
 	request.setAttribute("subUnits", unitSiadapEvaluations);
 
 	return forward(request, "/module/siadap/harmonization/viewUnit.jsp");
+
     }
 
     //    private final ActionForward listGlobalEvaluations(final HttpServletRequest request, Predicate predicate) {
@@ -378,6 +387,19 @@ public class SiadapManagement extends ContextBaseAction {
     //	});
     //    }
 
+    public final ActionForward removeHarmonizationAssessment(final ActionMapping mapping, final ActionForm form,
+	    final HttpServletRequest request, final HttpServletResponse response) {
+	Person person = getDomainObject(request, "personId");
+	Unit unit = getDomainObject(request, "unitId");
+	int year = Integer.parseInt(request.getParameter("year"));
+	SiadapUniverse enumToUse = SiadapUniverse.valueOf(request.getParameter("siadapUniverse"));
+	
+	PersonSiadapWrapper personWrapper = new PersonSiadapWrapper(person, year);
+	
+	personWrapper.getSiadap().removeHarmonizationAssessment(enumToUse);
+	return viewUnitHarmonizationData(mapping, form, request, response, year, unit);
+
+    }
     public final ActionForward terminateHarmonization(final ActionMapping mapping, final ActionForm form,
 	    final HttpServletRequest request, final HttpServletResponse response) {
 

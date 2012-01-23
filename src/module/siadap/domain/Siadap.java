@@ -584,6 +584,13 @@ public class Siadap extends Siadap_Base {
 	getProcess().removeHarmonizationMark(evaluationUniverse);
     }
 
+    @Service
+    public void removeHarmonizationAssessment(SiadapUniverse siadapUniverse) {
+	SiadapEvaluationUniverse evaluationUniverse = getSiadapEvaluationUniverseForSiadapUniverse(siadapUniverse);
+	evaluationUniverse.setHarmonizationAssessment(null);
+	getProcess().removeHarmonizationAssessment(evaluationUniverse);
+    }
+
     public boolean hasAnAssociatedCurricularPonderationEval() {
 	for (SiadapEvaluationUniverse evaluationUniverse : getSiadapEvaluationUniverses()) {
 	    if (evaluationUniverse.isCurriculumPonderation())
@@ -597,7 +604,7 @@ public class Siadap extends Siadap_Base {
     @Service
     public void markAsHarmonized(LocalDate harmonizationDate, SiadapUniverse siadapUniverse) {
 	SiadapEvaluationUniverse evaluationUniverse = getSiadapEvaluationUniverseForSiadapUniverse(siadapUniverse);
-	if (evaluationUniverse.getHarmonizationAssessment() == null)
+	if (evaluationUniverse.getHarmonizationAssessment() == null && !evaluationUniverse.isWithSkippedEvaluation())
 	    throw new SiadapException("harmonization.error.there.are.people.not.harmonized");
 	//let's also make sure that this person either has been marked as not having an evaluation or has the evaluation done
 	if (!isEvaluationDone(siadapUniverse) )

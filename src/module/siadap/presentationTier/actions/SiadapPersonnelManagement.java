@@ -343,15 +343,17 @@ public class SiadapPersonnelManagement extends ContextBaseAction {
     public final ActionForward changeSiadapUniverse(final ActionMapping mapping, final ActionForm form,
 	    final HttpServletRequest request, final HttpServletResponse response) throws Exception {
 
-	int year = Integer.parseInt(request.getParameter("year"));
-	ChangeSiadapUniverseBean changeUniverseBean = getRenderedObject("changeSiadapUniverse");
-	PersonSiadapWrapper personWrapper = new PersonSiadapWrapper((Person) getDomainObject(request, "personId"), year);
-	try {
-	    SiadapUniverse siadapUniverseToChangeTo = changeUniverseBean.getSiadapUniverse();
-	    personWrapper.changeUniverseTo(siadapUniverseToChangeTo);
-	} catch (DomainException e) {
-	    addMessage(request, e.getKey(), e.getArgs());
-	}
+	addMessage(request, "functionality.disabled.temporarily");
+	//TODO make sure that this doesn't mess up the harmonization/quota suggestions
+	//	int year = Integer.parseInt(request.getParameter("year"));
+	//	ChangeSiadapUniverseBean changeUniverseBean = getRenderedObject("changeSiadapUniverse");
+	//	PersonSiadapWrapper personWrapper = new PersonSiadapWrapper((Person) getDomainObject(request, "personId"), year);
+	//	try {
+	//	    SiadapUniverse siadapUniverseToChangeTo = changeUniverseBean.getSiadapUniverse();
+	//	    personWrapper.changeUniverseTo(siadapUniverseToChangeTo);
+	//	} catch (DomainException e) {
+	//	    addMessage(request, e.getKey(), e.getArgs());
+	//	}
 	return viewPerson(mapping, form, request, response);
     }
 

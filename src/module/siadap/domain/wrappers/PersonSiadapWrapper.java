@@ -120,6 +120,20 @@ public class PersonSiadapWrapper extends PartyWrapper implements Serializable {
 
     }
 
+    public boolean isWithSkippedEval(SiadapUniverse siadapUniverse) {
+	if (getSiadap() == null || getSiadap().getSiadapEvaluationUniverseForSiadapUniverse(siadapUniverse) == null)
+	    return false;
+	return getSiadap().getSiadapEvaluationUniverseForSiadapUniverse(siadapUniverse).isWithSkippedEvaluation();
+    }
+
+    public boolean getWithSkippedEvalForSiadap2() {
+	return isWithSkippedEval(SiadapUniverse.SIADAP2);
+    }
+
+    public boolean getWithSkippedEvalForSiadap3() {
+	return isWithSkippedEval(SiadapUniverse.SIADAP3);
+    }
+
     /**
      * 
      * @return true if the current user is able to see the details of the
@@ -240,9 +254,11 @@ public class PersonSiadapWrapper extends PartyWrapper implements Serializable {
 	    return SiadapGlobalEvaluation.NONEXISTING.getLocalizedName();
 	else
 	    excellencyGiven = siadapEvaluationUniverseForSiadapUniverse.hasExcellencyAwarded();
-	if (!siadap.isEvaluationDone(siadapUniverse)) {
+	if (!siadap.isEvaluationDone(siadapUniverse) && !siadapEvaluationUniverseForSiadapUniverse.isWithSkippedEvaluation()) {
 	    return SiadapGlobalEvaluation.NONEXISTING.getLocalizedName();
 	}
+	if (siadapEvaluationUniverseForSiadapUniverse.isWithSkippedEvaluation())
+	    return SiadapGlobalEvaluation.WITHSKIPPEDEVAL.getLocalizedName();
 
 	return SiadapGlobalEvaluation.getGlobalEvaluation(siadapEvaluationUniverseForSiadapUniverse.getTotalEvaluationScoring(),
 		excellencyGiven).getLocalizedName();
@@ -554,6 +570,20 @@ public class PersonSiadapWrapper extends PartyWrapper implements Serializable {
 
     }
 
+    //    private boolean hasHarmonizationAssessment(SiadapUniverse siadapUniverse) {
+    //	return getHarmonizationCurrentAssessmentFor(getSiadap().getSiadapEvaluationUniverseForSiadapUniverse(siadapUniverse)) != null;
+    //    }
+    //
+    //    public boolean getHarmonizationAssessmentForSIADAP2Defined() {
+    //	return hasHarmonizationAssessment(SiadapUniverse.SIADAP2);
+    //
+    //    }
+    //
+    //    public boolean getHarmonizationAssessmentForSIADAP3Defined() {
+    //	return hasHarmonizationAssessment(SiadapUniverse.SIADAP3);
+    //
+    //    }
+
     private Boolean getHarmonizationCurrentAssessmentFor(SiadapEvaluationUniverse siadapEvaluationUniverse) {
 	return siadapEvaluationUniverse.getHarmonizationAssessment();
     }
@@ -564,6 +594,24 @@ public class PersonSiadapWrapper extends PartyWrapper implements Serializable {
 
     public Boolean getHarmonizationCurrentAssessmentForSIADAP3() {
 	return this.harmonizationCurrentAssessmentForSIADAP3;
+    }
+
+    private boolean isAbleToRemoveAssessmentFor(SiadapUniverse siadapUniverse) {
+	SiadapEvaluationUniverse siadapEvaluationUniverseForSiadapUniverse = getSiadap()
+		.getSiadapEvaluationUniverseForSiadapUniverse(siadapUniverse);
+
+	if (siadapEvaluationUniverseForSiadapUniverse == null)
+	    return false;
+	return isHarmonizationPeriodOpen() && siadapEvaluationUniverseForSiadapUniverse.getHarmonizationDate() == null
+		&& siadapEvaluationUniverseForSiadapUniverse.getHarmonizationAssessment() != null;
+    }
+
+    public boolean getAbleToRemoveAssessmentForSIADAP3() {
+	return isAbleToRemoveAssessmentFor(SiadapUniverse.SIADAP3);
+    }
+
+    public boolean getAbleToRemoveAssessmentForSIADAP2() {
+	return isAbleToRemoveAssessmentFor(SiadapUniverse.SIADAP2);
     }
 
     @Service
