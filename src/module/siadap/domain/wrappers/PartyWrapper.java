@@ -47,7 +47,7 @@ public abstract class PartyWrapper implements Serializable {
 	return getParentUnits(party, new FilterAccountabilities(getYear(), true), types);
     }
 
-    private List<Unit> getParentUnits(Party partyToConsider, Predicate predicate, AccountabilityType... types) {
+    protected List<Unit> getParentUnits(Party partyToConsider, Predicate predicate, AccountabilityType... types) {
 	List<Unit> units = new ArrayList<Unit>();
 	for (Accountability accountability : partyToConsider.getParentAccountabilities(types)) {
 	    if (predicate == null || predicate.evaluate(accountability)) {

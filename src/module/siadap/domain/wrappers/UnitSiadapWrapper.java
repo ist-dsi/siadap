@@ -495,7 +495,8 @@ public class UnitSiadapWrapper extends PartyWrapper implements Serializable {
 
     private Unit getHarmonizationUnit(Unit unit) {
 	UnitSiadapWrapper wrapper = new UnitSiadapWrapper(unit, getYear());
-	if (!wrapper.getChildPersons(getConfiguration().getHarmonizationResponsibleRelation()).isEmpty()) {
+	if (!wrapper.getChildPersons(getConfiguration().getHarmonizationResponsibleRelation()).isEmpty()
+		&& isHarmonizationUnit(unit)) {
 	    return unit;
 	}
 	Collection<Unit> units = wrapper.getParentUnits(getConfiguration().getUnitRelations());
@@ -660,7 +661,11 @@ public class UnitSiadapWrapper extends PartyWrapper implements Serializable {
     }
 
     public boolean isHarmonizationUnit() {
-	for (PartyType partyType : getUnit().getPartyTypes()) {
+	return isHarmonizationUnit(getUnit());
+    }
+
+    public boolean isHarmonizationUnit(Unit unit) {
+	for (PartyType partyType : unit.getPartyTypes()) {
 	    if (partyType.getType().equalsIgnoreCase(SIADAP_HARMONIZATION_UNIT_TYPE)) {
 		//seen that we are in the top harmonization unit, we will show info about all of the persons on the sub units
 		return true;

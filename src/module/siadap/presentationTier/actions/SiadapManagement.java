@@ -395,8 +395,9 @@ public class SiadapManagement extends ContextBaseAction {
 	SiadapUniverse enumToUse = SiadapUniverse.valueOf(request.getParameter("siadapUniverse"));
 	
 	PersonSiadapWrapper personWrapper = new PersonSiadapWrapper(person, year);
+	UnitSiadapWrapper unitWrapper = new UnitSiadapWrapper(unit, year);
 	
-	personWrapper.getSiadap().removeHarmonizationAssessment(enumToUse);
+	personWrapper.removeHarmonizationAssessment(enumToUse, unitWrapper.getHarmonizationUnit());
 	return viewUnitHarmonizationData(mapping, form, request, response, year, unit);
 
     }
@@ -513,9 +514,10 @@ public class SiadapManagement extends ContextBaseAction {
 
 	} catch (DomainException ex) {
 	    addLocalizedMessage(request, ex.getLocalizedMessage());
+	    return prepareAddExceedingQuotaSuggestion(mapping, form, request, response, year, wrapper);
 	}
 
-	return prepareAddExceedingQuotaSuggestion(mapping, form, request, response, year, wrapper);
+	return viewUnitHarmonizationData(mapping, form, request, response, year, unit);
     }
 
     public final ActionForward prepareAddExceedingQuotaSuggestion(final ActionMapping mapping, final ActionForm form,

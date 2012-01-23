@@ -73,7 +73,9 @@ public class ExceedingQuotaProposal extends ExceedingQuotaProposal_Base {
 	if (configuration == null) {
 	    return null;
 	}
+
 	List<ExceedingQuotaProposal> personQuotaProposal = new ArrayList<ExceedingQuotaProposal>(
+
 		person.getExceedingQuotasProposals());
 
 	List<ExceedingQuotaProposal> exceedingQuotasProposalsForGivenYear = new ArrayList<ExceedingQuotaProposal>(
@@ -180,6 +182,10 @@ public class ExceedingQuotaProposal extends ExceedingQuotaProposal_Base {
 	throw new UnsupportedOperationException("must.not.invoke.this.from.outside.use.apply");
     }
 
+    private void setProposalOrderProtected(Integer proposalOrder) {
+	super.setProposalOrder(proposalOrder);
+    }
+
     @Override
     @Deprecated
     public void setSiadapRootModule(SiadapRootModule siadapRootModule) {
@@ -244,6 +250,24 @@ public class ExceedingQuotaProposal extends ExceedingQuotaProposal_Base {
     @Deprecated
     public void removeYearConfiguration() {
 	throw new UnsupportedOperationException("must.not.invoke.this.from.outside.use.apply");
+    }
+
+    @Service
+    public void remove() {
+	//let's get the 'sister' proposals to adjust them if needed
+	List<ExceedingQuotaProposal> quotaProposalsFor = ExceedingQuotaProposal.getQuotaProposalsFor(getUnit(), getYear());
+	
+	
+	for (ExceedingQuotaProposal exceedingQuotaProposal : quotaProposalsFor)
+	{
+	    if (exceedingQuotaProposal.getProposalOrder().intValue() > getProposalOrder().intValue())
+	    {
+		exceedingQuotaProposal.setProposalOrderProtected(Integer.valueOf(exceedingQuotaProposal.getProposalOrder()) - 1);
+	    }
+	}
+	
+	delete();
+
     }
 
 }

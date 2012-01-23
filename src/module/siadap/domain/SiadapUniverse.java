@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.ResourceBundle;
 
 import module.organization.domain.Accountability;
+import module.organization.domain.AccountabilityType;
 import module.organization.domain.Party;
 import pt.ist.fenixWebFramework.rendererExtensions.util.IPresentableEnum;
 import pt.utl.ist.fenix.tools.util.i18n.Language;
@@ -19,7 +20,20 @@ import dml.runtime.RelationListener;
  * 
  */
 public enum SiadapUniverse implements IPresentableEnum {
-    SIADAP2, SIADAP3;
+    SIADAP2 {
+
+	@Override
+	public AccountabilityType getHarmonizationRelation(SiadapYearConfiguration siadapYearConfiguration) {
+	    return siadapYearConfiguration.getSiadap2HarmonizationRelation();
+	}
+    },
+    SIADAP3 {
+
+	@Override
+	public AccountabilityType getHarmonizationRelation(SiadapYearConfiguration siadapYearConfiguration) {
+	    return siadapYearConfiguration.getSiadap3HarmonizationRelation();
+	}
+    };
 
     static public List<SiadapUniverse> getQuotasUniverse(Siadap siadap) {
 	//TODO joantune: take into account the fact that some SIADAP2 users might also count as SIADAP3!!
@@ -32,6 +46,12 @@ public enum SiadapUniverse implements IPresentableEnum {
 	return resourceBundle.getString(SiadapUniverse.class.getSimpleName() + "." + name());
     }
     
+    public AccountabilityType getHarmonizationRelation(int year) {
+	return getHarmonizationRelation(SiadapYearConfiguration.getSiadapYearConfiguration(year));
+    }
+
+    public abstract AccountabilityType getHarmonizationRelation(SiadapYearConfiguration siadapYearConfiguration);
+
     //TODO joantune SIADAP-155
     public static final RelationListener<Accountability, Party> siadapHarmonizationRelationListener = new RelationListener<Accountability, Party>() {
 

@@ -15,6 +15,7 @@ import module.organization.domain.AccountabilityType;
 import module.organization.domain.Party;
 import module.organization.domain.Person;
 import module.organization.domain.Unit;
+import module.siadap.domain.ExceedingQuotaProposal;
 import module.siadap.domain.Siadap;
 import module.siadap.domain.SiadapEvaluationUniverse;
 import module.siadap.domain.SiadapProcess;
@@ -22,6 +23,7 @@ import module.siadap.domain.SiadapProcessStateEnum;
 import module.siadap.domain.SiadapRootModule;
 import module.siadap.domain.SiadapUniverse;
 import module.siadap.domain.SiadapYearConfiguration;
+import module.siadap.domain.exceptions.SiadapException;
 import module.siadap.domain.scoring.SiadapGlobalEvaluation;
 import myorg.applicationTier.Authenticate.UserView;
 import myorg.domain.User;
@@ -281,6 +283,23 @@ public class PersonSiadapWrapper extends PartyWrapper implements Serializable {
 	return units;
     }
 
+    public Unit getUnitWhereIsHarmonized(SiadapUniverse siadapUniverse) {
+	List<Unit> parentUnits = getParentUnits(getParty(), siadapUniverse.getHarmonizationRelation(getConfiguration()));
+	if (parentUnits.isEmpty())
+	    return null;
+	if (parentUnits.size() > 1) {
+	    throw new SiadapException("inconsistent.harmonization.units");
+
+	} else {
+	    UnitSiadapWrapper unitWrapper = new UnitSiadapWrapper(parentUnits.get(0), getYear());
+	    if (unitWrapper.isHarmonizationUnit())
+		return unitWrapper.getUnit();
+	    else {
+		return unitWrapper.getHarmonizationUnit();
+	    }
+	}
+    }
+
     public boolean isAccessibleToCurrentUser() {
 	Siadap siadap = getSiadap();
 	if (siadap == null) {
@@ -509,6 +528,26 @@ public class PersonSiadapWrapper extends PartyWrapper implements Serializable {
 	}
     }
 
+    @Service
+    public void removeHarmonizationAssessment(SiadapUniverse siadapUniverse, Unit harmonizationUnit) {
+	if (getSiadap() == null || harmonizationUnit == null)
+	    throw new SiadapException("error.invalid.data");
+	
+	SiadapEvaluationUniverse evaluationUniverse = getSiadap().getSiadapEvaluationUniverseForSiadapUniverse(siadapUniverse);
+	if (evaluationUniverse.getHarmonizationAssessment() != null && !evaluationUniverse.getHarmonizationAssessment())
+	{
+	//if we had a No on the harmonizationAssessment we might have an ExceedingQuotaProposal
+	//so let's check if it is so, and if it is, remove it and adjust the priority numbers of the rest of them
+	    ExceedingQuotaProposal quotaProposalFor = ExceedingQuotaProposal.getQuotaProposalFor(harmonizationUnit, getYear(),
+		    getPerson(), siadapUniverse, isQuotaAware());
+	    if (quotaProposalFor != null)
+		quotaProposalFor.remove();
+	    
+	}
+	evaluationUniverse.setHarmonizationAssessment(null);
+	getSiadap().getProcess().removeHarmonizationAssessment(evaluationUniverse);
+    }
+
     public Boolean getProcessValidation() {
 	Siadap siadap = getSiadap();
 	return siadap != null ? siadap.getValidated() : null;
@@ -623,6 +662,20 @@ public class PersonSiadapWrapper extends PartyWrapper implements Serializable {
 	    harmonizationCurrentAssessment = getHarmonizationCurrentAssessmentForSIADAP2();
 	} else if (siadapUniverse.equals(SiadapUniverse.SIADAP3)) {
 	    harmonizationCurrentAssessment = getHarmonizationCurrentAssessmentForSIADAP3();
+	}
+	//if we have a No current assessment, we should clean out any ExceedingQuotaProposals
+	if (siadapEvaluationUniverseForSiadapUniverse.getHarmonizationAssessment() != null
+		&& !siadapEvaluationUniverseForSiadapUniverse.getHarmonizationAssessment()
+		&& harmonizationCurrentAssessment != null
+		&& harmonizationCurrentAssessment
+		&& harmonizationCurrentAssessment.booleanValue() != siadapEvaluationUniverseForSiadapUniverse
+			.getHarmonizationAssessment().booleanValue())
+	{
+	    ExceedingQuotaProposal quotaProposalFor = ExceedingQuotaProposal.getQuotaProposalFor(
+		    getUnitWhereIsHarmonized(siadapUniverse), getYear(), person, siadapUniverse, isQuotaAware());
+	    if (quotaProposalFor != null) {
+		quotaProposalFor.remove();
+	    }
 	}
 	siadapEvaluationUniverseForSiadapUniverse.setHarmonizationAssessment(harmonizationCurrentAssessment);
     }

@@ -584,12 +584,7 @@ public class Siadap extends Siadap_Base {
 	getProcess().removeHarmonizationMark(evaluationUniverse);
     }
 
-    @Service
-    public void removeHarmonizationAssessment(SiadapUniverse siadapUniverse) {
-	SiadapEvaluationUniverse evaluationUniverse = getSiadapEvaluationUniverseForSiadapUniverse(siadapUniverse);
-	evaluationUniverse.setHarmonizationAssessment(null);
-	getProcess().removeHarmonizationAssessment(evaluationUniverse);
-    }
+
 
     public boolean hasAnAssociatedCurricularPonderationEval() {
 	for (SiadapEvaluationUniverse evaluationUniverse : getSiadapEvaluationUniverses()) {
