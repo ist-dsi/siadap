@@ -120,7 +120,9 @@ public class UnitSiadapWrapper extends PartyWrapper implements Serializable {
 	AccountabilityType siadap2HarmonizationRelation = siadapYearConfiguration.getSiadap2HarmonizationRelation();
 	AccountabilityType siadap3HarmonizationRelation = siadapYearConfiguration.getSiadap3HarmonizationRelation();
 	getUnitAttachedPersons(getUnit(), personSiadapWrappers, isHarmonizationUnit(),
-		new SiadapStateFilter(excludeResponsibles), siadap2HarmonizationRelation, siadap3HarmonizationRelation);
+		new SiadapStateFilter(excludeResponsibles),
+		Collections.singleton(getConfiguration().getHarmonizationUnitRelations()), siadap2HarmonizationRelation,
+		siadap3HarmonizationRelation);
 	return new HashSet(personSiadapWrappers).size();
 
     }
@@ -499,7 +501,7 @@ public class UnitSiadapWrapper extends PartyWrapper implements Serializable {
 		&& isHarmonizationUnit(unit)) {
 	    return unit;
 	}
-	Collection<Unit> units = wrapper.getParentUnits(getConfiguration().getUnitRelations());
+	Collection<Unit> units = wrapper.getParentUnits(getConfiguration().getHarmonizationUnitRelations());
 	return units.isEmpty() ? null : getHarmonizationUnit(units.iterator().next());
     }
 
@@ -525,7 +527,7 @@ public class UnitSiadapWrapper extends PartyWrapper implements Serializable {
 	if (childPersons.contains(person)) {
 	    return true;
 	} else {
-	    Collection<Unit> parentUnits = getParentUnits(unit, getConfiguration().getUnitRelations());
+	    Collection<Unit> parentUnits = getParentUnits(unit, getConfiguration().getHarmonizationUnitRelations());
 	    if (parentUnits.isEmpty()) {
 		return false;
 	    } else {
@@ -580,12 +582,12 @@ public class UnitSiadapWrapper extends PartyWrapper implements Serializable {
 			.getQuotaRelevantSiadap3WithoutQuota()).isAboveQuotas();
     }
 
-    public UnitSiadapWrapper getSuperiorUnitWrapper() {
-	return new UnitSiadapWrapper(getSuperiorUnit(), getYear());
+    public UnitSiadapWrapper getSuperiorHarmonizationUnitWrapper() {
+	return new UnitSiadapWrapper(getSuperiorHarmonizationUnit(), getYear());
     }
 
-    public Unit getSuperiorUnit() {
-	Collection<Unit> parentUnits = getParentUnits(getConfiguration().getUnitRelations());
+    public Unit getSuperiorHarmonizationUnit() {
+	Collection<Unit> parentUnits = getParentUnits(getConfiguration().getHarmonizationUnitRelations());
 	return parentUnits.isEmpty() ? null : parentUnits.iterator().next();
     }
 
@@ -604,7 +606,9 @@ public class UnitSiadapWrapper extends PartyWrapper implements Serializable {
     public List<PersonSiadapWrapper> getUnitEmployees(boolean continueToSubUnits, Predicate predicate) {
 	List<PersonSiadapWrapper> employees = new ArrayList<PersonSiadapWrapper>();
 
-	getUnitAttachedPersons(getUnit(), employees, continueToSubUnits, predicate, getConfiguration().getWorkingRelation(),
+	getUnitAttachedPersons(getUnit(), employees, continueToSubUnits, predicate,
+		Collections.singleton(getConfiguration().getUnitRelations()),
+		getConfiguration().getWorkingRelation(),
 		getConfiguration().getWorkingRelationWithNoQuota());
 	return employees;
     }
@@ -620,7 +624,9 @@ public class UnitSiadapWrapper extends PartyWrapper implements Serializable {
     public List<PersonSiadapWrapper> getUnitEmployeesWithQuotas(boolean continueToSubUnits, Predicate predicate) {
 	List<PersonSiadapWrapper> employees = new ArrayList<PersonSiadapWrapper>();
 
-	getUnitAttachedPersons(getUnit(), employees, continueToSubUnits, predicate, getConfiguration().getWorkingRelation());
+	getUnitAttachedPersons(getUnit(), employees, continueToSubUnits, predicate,
+		Collections.singleton(getConfiguration().getUnitRelations()),
+		getConfiguration().getWorkingRelation());
 	return employees;
     }
 
@@ -635,13 +641,15 @@ public class UnitSiadapWrapper extends PartyWrapper implements Serializable {
     public List<PersonSiadapWrapper> getUnitEmployeesWithoutQuotas(boolean continueToSubUnits, Predicate predicate) {
 	List<PersonSiadapWrapper> employees = new ArrayList<PersonSiadapWrapper>();
 
-	getUnitAttachedPersons(getUnit(), employees, continueToSubUnits, predicate, getConfiguration()
+	getUnitAttachedPersons(getUnit(), employees, continueToSubUnits, predicate,
+		Collections.singleton(getConfiguration().getUnitRelations()),
+		getConfiguration()
 		.getWorkingRelationWithNoQuota());
 	return employees;
     }
 
     private void getUnitAttachedPersons(Unit unit, List<PersonSiadapWrapper> employees, boolean continueToSubunits,
-	    Predicate predicate, AccountabilityType... accountabilities) {
+	    Predicate predicate, Collection<AccountabilityType> unitAccTypesToUse, AccountabilityType... accountabilities) {
 
 	UnitSiadapWrapper wrapper = new UnitSiadapWrapper(unit, getYear());
 	Collection<Person> children = wrapper.getChildPersons(accountabilities);
@@ -654,8 +662,8 @@ public class UnitSiadapWrapper extends PartyWrapper implements Serializable {
 	}
 
 	if (continueToSubunits) {
-	    for (Unit subUnit : wrapper.getChildUnits(getConfiguration().getUnitRelations())) {
-		getUnitAttachedPersons(subUnit, employees, continueToSubunits, predicate, accountabilities);
+	    for (Unit subUnit : wrapper.getChildUnits(unitAccTypesToUse.toArray(new AccountabilityType[0]))) {
+		getUnitAttachedPersons(subUnit, employees, continueToSubunits, predicate, unitAccTypesToUse, accountabilities);
 	    }
 	}
     }
@@ -807,7 +815,8 @@ public class UnitSiadapWrapper extends PartyWrapper implements Serializable {
 	SiadapUniverseFilter siadapUniverseFilter = new SiadapUniverseFilter(excludeResponsibles, getYear(), this, true,
 		includePositivelyHarmonizedOnly, SiadapUniverse.SIADAP2);
 	List<PersonSiadapWrapper> universePersons = new ArrayList<PersonSiadapWrapper>();
-	getUnitAttachedPersons(unit, universePersons, isHarmonizationUnit(), siadapUniverseFilter, siadap2HarmonizationRelation);
+	getUnitAttachedPersons(unit, universePersons, isHarmonizationUnit(), siadapUniverseFilter,
+		Collections.singleton(getConfiguration().getHarmonizationUnitRelations()), siadap2HarmonizationRelation);
 
 	return new HashSet<PersonSiadapWrapper>(universePersons);
 
@@ -831,7 +840,8 @@ public class UnitSiadapWrapper extends PartyWrapper implements Serializable {
 		includePositivelyHarmonizedOnly, SiadapUniverse.SIADAP3);
 
 	List<PersonSiadapWrapper> universePersons = new ArrayList<PersonSiadapWrapper>();
-	getUnitAttachedPersons(unit, universePersons, isHarmonizationUnit(), siadapUniverseFilter, siadap3HarmonizationRelation);
+	getUnitAttachedPersons(unit, universePersons, isHarmonizationUnit(), siadapUniverseFilter,
+		Collections.singleton(getConfiguration().getHarmonizationUnitRelations()), siadap3HarmonizationRelation);
 	return new HashSet<PersonSiadapWrapper>(universePersons);
 
     }
@@ -854,7 +864,8 @@ public class UnitSiadapWrapper extends PartyWrapper implements Serializable {
 		includePositivelyHarmonizedOnly, SiadapUniverse.SIADAP2);
 
 	List<PersonSiadapWrapper> universePersons = new ArrayList<PersonSiadapWrapper>();
-	getUnitAttachedPersons(unit, universePersons, isHarmonizationUnit(), siadapUniverseFilter, siadap2HarmonizationRelation);
+	getUnitAttachedPersons(unit, universePersons, isHarmonizationUnit(), siadapUniverseFilter,
+		Collections.singleton(getConfiguration().getHarmonizationUnitRelations()), siadap2HarmonizationRelation);
 	return new HashSet<PersonSiadapWrapper>(universePersons);
 
     }
@@ -877,7 +888,8 @@ public class UnitSiadapWrapper extends PartyWrapper implements Serializable {
 		includePositivelyHarmonizedOnly, SiadapUniverse.SIADAP3);
 
 	List<PersonSiadapWrapper> universePersons = new ArrayList<PersonSiadapWrapper>();
-	getUnitAttachedPersons(unit, universePersons, isHarmonizationUnit(), siadapUniverseFilter, siadap3HarmonizationRelation);
+	getUnitAttachedPersons(unit, universePersons, isHarmonizationUnit(), siadapUniverseFilter,
+		Collections.singleton(getConfiguration().getHarmonizationUnitRelations()), siadap3HarmonizationRelation);
 	return new HashSet<PersonSiadapWrapper>(universePersons);
 
     }
@@ -890,11 +902,11 @@ public class UnitSiadapWrapper extends PartyWrapper implements Serializable {
 
     private void fillSubHarmonizationUnits(UnitSiadapWrapper wrapper, SiadapYearConfiguration configuration,
 	    List<UnitSiadapWrapper> wrappers) {
-	AccountabilityType unitRelation = configuration.getUnitRelations();
+	AccountabilityType unitHarmonizationRelation = configuration.getHarmonizationUnitRelations();
 	AccountabilityType harmonizationResponsibleRelation = configuration.getHarmonizationResponsibleRelation();
 	int year = configuration.getYear();
 
-	for (Unit unit : wrapper.getChildUnits(unitRelation)) {
+	for (Unit unit : wrapper.getChildUnits(unitHarmonizationRelation)) {
 	    UnitSiadapWrapper unitSiadapWrapper = new UnitSiadapWrapper(unit, year);
 	    if (!unitSiadapWrapper.getChildPersons(harmonizationResponsibleRelation).isEmpty()) {
 		wrappers.add(unitSiadapWrapper);
@@ -904,29 +916,28 @@ public class UnitSiadapWrapper extends PartyWrapper implements Serializable {
 
     }
 
-    public List<UnitSiadapWrapper> getAllChildUnits() {
+    public List<UnitSiadapWrapper> getAllChildUnits(AccountabilityType accTypeToUse) {
 	List<UnitSiadapWrapper> unitWrappers = new ArrayList<UnitSiadapWrapper>();
-	fillAllChildUnits(this, getConfiguration(), unitWrappers);
+	fillAllChildUnits(this, getConfiguration(), unitWrappers, accTypeToUse);
 	return unitWrappers;
     }
 
     private void fillAllChildUnits(UnitSiadapWrapper wrapper, SiadapYearConfiguration configuration,
-	    List<UnitSiadapWrapper> wrappers) {
-	AccountabilityType unitRelation = configuration.getUnitRelations();
+	    List<UnitSiadapWrapper> wrappers, AccountabilityType accToUse) {
 	int year = configuration.getYear();
 
-	for (Unit unit : wrapper.getChildUnits(unitRelation)) {
+	for (Unit unit : wrapper.getChildUnits(accToUse)) {
 	    UnitSiadapWrapper unitSiadapWrapper = new UnitSiadapWrapper(unit, year);
 	    wrappers.add(unitSiadapWrapper);
-	    fillAllChildUnits(unitSiadapWrapper, configuration, wrappers);
+	    fillAllChildUnits(unitSiadapWrapper, configuration, wrappers, accToUse);
 	}
 
     }
 
     public UnitSiadapWrapper getTopHarmonizationUnit() {
 	SiadapYearConfiguration configuration = getConfiguration();
-	AccountabilityType unitRelation = configuration.getUnitRelations();
-	List<Unit> parentUnits = getParentUnits(unitRelation);
+	AccountabilityType harmonizationUnitRelation = configuration.getHarmonizationUnitRelations();
+	List<Unit> parentUnits = getParentUnits(harmonizationUnitRelation);
 	if (parentUnits.isEmpty()) {
 	    return null;
 	} else {

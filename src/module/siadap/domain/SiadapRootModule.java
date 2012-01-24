@@ -273,7 +273,7 @@ public class SiadapRootModule extends SiadapRootModule_Base implements ModuleIni
 
     private void addHarmonizationUnits(Set<Unit> set, SiadapYearConfiguration siadapYearConfiguration, Unit unit) {
 	set.add(unit);
-	for (Unit iteratingUnit : unit.getChildUnits(siadapYearConfiguration.getUnitRelations())) {
+	for (Unit iteratingUnit : unit.getChildUnits(siadapYearConfiguration.getHarmonizationUnitRelations())) {
 	    if (!iteratingUnit.getChildPersons(siadapYearConfiguration.getHarmonizationResponsibleRelation()).isEmpty()) {
 		addHarmonizationUnits(set, siadapYearConfiguration, iteratingUnit);
 	    }
@@ -518,7 +518,7 @@ public class SiadapRootModule extends SiadapRootModule_Base implements ModuleIni
 	footer.setCenter(HSSFFooter.page());
 	footer.setRight("SIADAP - Lista de avaliadores " + unitToSearchIn.getYear());
 
-	for (UnitSiadapWrapper eachUnit : unitToSearchIn.getAllChildUnits()) {
+	for (UnitSiadapWrapper eachUnit : unitToSearchIn.getAllChildUnits(unitToSearchIn.getConfiguration().getUnitRelations())) {
 
 	    Collection<Person> harmonizationResponsibles = eachUnit.getHarmonizationResponsibles();
 	    if (includeHarmonizationResponsibles && !harmonizationResponsibles.isEmpty()) {

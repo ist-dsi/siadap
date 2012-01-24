@@ -336,7 +336,7 @@ public class SiadapManagement extends ContextBaseAction {
 
 	List<UnitSiadapWrapper> unitSiadapEvaluations = new ArrayList<UnitSiadapWrapper>();
 
-	for (Unit subUnit : unit.getChildUnits(configuration.getUnitRelations())) {
+	for (Unit subUnit : unit.getChildUnits(configuration.getHarmonizationUnitRelations())) {
 	    unitSiadapEvaluations.add(new UnitSiadapWrapper(subUnit, year));
 	}
 	request.setAttribute("subUnits", unitSiadapEvaluations);

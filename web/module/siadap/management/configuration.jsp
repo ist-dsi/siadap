@@ -97,6 +97,14 @@
 			<fr:property name="saveOptions" value="true" />
 		</fr:slot>
 		
+		<fr:slot name="harmonizationUnitRelations" layout="menu-select" key="label.config.harmonizationUnitRelations">
+			<fr:property name="providerClass"
+				value="module.organization.presentationTier.renderers.providers.AccountabilityTypesProvider" />
+			<fr:property name="format" value="${name}" />
+			<fr:property name="sortBy" value="name" />
+			<fr:property name="saveOptions" value="true" />
+		</fr:slot>
+		
 		
 		<fr:slot name="siadapStructureTopUnit" layout="autoComplete" key="label.config.siadapStructureTopUnit">
 			<fr:property name="labelField" value="partyName.content" />

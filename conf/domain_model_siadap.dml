@@ -408,6 +408,13 @@ relation UnitRelationsAccountabilityType {
 	.module.organization.domain.AccountabilityType playsRole unitRelations;
 }
 
+relation HarmonizationUnitRelationsAccountabilityType {
+	SiadapYearConfiguration playsRole yearConfigurationsForHarmonizationUnitRelations {
+		multiplicity *;
+	}
+	.module.organization.domain.AccountabilityType playsRole harmonizationUnitRelations;
+}
+
 relation HarmonizationAccountabilityType {
 	SiadapYearConfiguration playsRole yearConfigurationsForHarmonizationRelations {
 		multiplicity *;

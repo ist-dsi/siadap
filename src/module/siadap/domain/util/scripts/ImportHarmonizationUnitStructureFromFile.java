@@ -3,6 +3,7 @@ package module.siadap.domain.util.scripts;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.StringReader;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -17,6 +18,7 @@ import module.organization.domain.Unit;
 import module.siadap.domain.SiadapYearConfiguration;
 import module.siadap.domain.wrappers.UnitSiadapWrapper;
 import myorg.domain.User;
+import myorg.domain.exceptions.DomainException;
 import myorg.domain.scheduler.ReadCustomTask;
 import myorg.domain.scheduler.TransactionalThread;
 
@@ -273,6 +275,7 @@ public class ImportHarmonizationUnitStructureFromFile extends ReadCustomTask {
 
 	final Collection<HarmonizationUnit> harmonizationUnits;
 	private final AccountabilityType unitRelations;
+	private final AccountabilityType unitHarmonizationRelation;
 	private final Unit siadapStructureTopUnit;
 	private final PartyType siadapHarmonizationUnitType;
 	private OrganizationalModel organizationModelToUse;
@@ -283,6 +286,7 @@ public class ImportHarmonizationUnitStructureFromFile extends ReadCustomTask {
 	    this.harmonizationUnits = harmonizationUnits;
 	    SiadapYearConfiguration siadapYearConfiguration = SiadapYearConfiguration.getSiadapYearConfiguration(yearToUse);
 	    unitRelations = siadapYearConfiguration.getUnitRelations();
+	    unitHarmonizationRelation = siadapYearConfiguration.getHarmonizationUnitRelations();
 	    siadapStructureTopUnit = siadapYearConfiguration.getSiadapStructureTopUnit();
 	    //	    for (HarmonizationUnit harmonizationUnit : harmonizationUnits)
 	    //	    {
@@ -304,22 +308,18 @@ public class ImportHarmonizationUnitStructureFromFile extends ReadCustomTask {
 
 	@Override
 	public void transactionalRun() {
+	    ArrayList<AccountabilityType> accTypesToSearchFor = new ArrayList<AccountabilityType>();
+	    accTypesToSearchFor.add(unitHarmonizationRelation);
+	    accTypesToSearchFor.add(unitRelations);
 	    for (HarmonizationUnit harmonizationUnit : harmonizationUnits) {
 		debugLn("Processing unit " + harmonizationUnit.getUnitName());
 		//let's find out if we have a unit with this name already
 		Unit unitToUse = null;
-		for (Unit unit : siadapStructureTopUnit.getChildUnits(unitRelations)) {
+		for (Unit unit : siadapStructureTopUnit.getChildUnits(accTypesToSearchFor)) {
 		    if (unit.getPartyName().equalInAnyLanguage(harmonizationUnit.getUnitName())
 			    && unit.getPartyTypes().contains(siadapHarmonizationUnitType)) {
 			unitToUse = unit;
 			break;
-			//let's find out if it's of the right type
-			//			for (PartyType partyType : unit.getPartyTypes()) {
-			//			    if (partyType.getType().equalsIgnoreCase(UnitSiadapWrapper.SIADAP_HARMONIZATION_UNIT_TYPE)) {
-			//				unitToUse = unit;//that means we found an already existing unit
-			//				break;
-			//			    }
-			//			}
 		    }
 		}
 
@@ -327,18 +327,33 @@ public class ImportHarmonizationUnitStructureFromFile extends ReadCustomTask {
 		if (unitToUse == null) {
 		    debugLn(" -- creating it");
 		    unitToUse = Unit.create(siadapStructureTopUnit, new MultiLanguageString(harmonizationUnit.getUnitName()),
-			    harmonizationUnit.unitAcronym, siadapHarmonizationUnitType, unitRelations,
+			    harmonizationUnit.unitAcronym, siadapHarmonizationUnitType, unitHarmonizationRelation,
 			    DATE_TO_USE, lastDayOfYear(yearToUse), organizationModelToUse);
 		} else
 		    debugLn(" -- It already existed");
 		//so now let's just add all of the subunits
-		Collection<Unit> previousChildUnits = unitToUse.getChildUnits(unitRelations);
+		Collection<Unit> previousChildUnits = unitToUse.getChildUnits(accTypesToSearchFor);
 		for (Unit subUnit : harmonizationUnit.getSubUnits()) {
 		    if (!previousChildUnits.contains(subUnit)) {
 			debugLn(" ---- creating the relation with " + subUnit.getPartyName().getContent());
-			subUnit.addParent(unitToUse, unitRelations, DATE_TO_USE, lastDayOfYear(yearToUse));
+			subUnit.addParent(unitToUse, unitHarmonizationRelation, DATE_TO_USE, lastDayOfYear(yearToUse));
 		    } else {
 			debugLn(" ---- relation with " + subUnit.getPartyName().getContent() + " already existed");
+			//let's check on the relation itself and make it right
+			for (Accountability acc : subUnit.getParentAccountabilities(accTypesToSearchFor)) {
+			    if (acc.getParent().equals(unitToUse)) {
+				if (!acc.getEndDate().equals(lastDayOfYear(yearToUse))) {
+				    //if the end date is wrong, fix it
+				    acc.editDates(acc.getBeginDate(), lastDayOfYear(yearToUse));
+				    debugLn(" ----- relation existed but with incorrect end date. Fixed");
+				}
+				if (!acc.getAccountabilityType().equals(unitHarmonizationRelation)) {
+				    //if the acc. type is not right, let's set it straight
+				    acc.setAccountabilityType(unitHarmonizationRelation);
+				    debugLn(" ----- relation existed but with incorrect Acc type. Fixed");
+				}
+			    }
+			}
 		    }
 		}
 		//let's remove the ones that don't belong
@@ -346,7 +361,7 @@ public class ImportHarmonizationUnitStructureFromFile extends ReadCustomTask {
 		    if (!harmonizationUnit.getSubUnits().contains(previousChildUnit))
 		    //let's remove it
 		    {
-			for (Accountability previousAccs : previousChildUnit.getParentAccountabilities(unitRelations)) {
+			for (Accountability previousAccs : previousChildUnit.getParentAccountabilities(accTypesToSearchFor)) {
 			    if (previousAccs.getParent().equals(unitToUse)) {
 				//this is one that should be removed
 				debugLn(" ---- removing relation with " + previousChildUnit.getPartyName().getContent());
@@ -371,7 +386,7 @@ public class ImportHarmonizationUnitStructureFromFile extends ReadCustomTask {
 			    //			    if (acc.isActiveNow()) {
 				//make sure that it will be active until the end of the year
 			    debugLn(" ------ Acc. for responsible added/augmented");
-				acc.editDates(acc.getBeginDate(), lastDayOfYear(yearToUse));
+				acc = acc.editDates(acc.getBeginDate(), lastDayOfYear(yearToUse));
 			    //			    }
 				if (acc.getChild().equals(responsible)) {
 				    responsiblesToAddNewAccsFor.remove(responsible);
@@ -432,6 +447,9 @@ public class ImportHarmonizationUnitStructureFromFile extends ReadCustomTask {
 	}
 
 	User istIdHarmUser = User.findByUsername(istIdHarmResponsible);
+
+	if (istIdHarmUser == null)
+	    throw new DomainException("could.not.find.user:" + istIdHarmResponsible);
 
 	debugLn("processing CC: " + ccNumber);
 	//we must do a little hack to ensure that we have ccNumber.toString() with 4 digits

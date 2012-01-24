@@ -41,13 +41,13 @@
 		<bean:message key="label.superiorUnit" bundle="SIADAP_RESOURCES"/>:
 	</strong>
 	<%-- We only want to view the superior unit as a link if we have harm. responsabilities in it --%>
-	<logic:equal value="true" name="currentUnit" property="superiorUnitWrapper.responsibleForHarmonization">
+	<logic:equal value="true" name="currentUnit" property="superiorHarmonizationUnitWrapper.responsibleForHarmonization">
 		<html:link page="<%="/siadapManagement.do?method=viewUnitHarmonizationData&year=" + year.toString()%>" paramId="unitId" paramName="superiorUnit" paramProperty="externalId">		
 			<fr:view name="superiorUnit" property="partyName"/>
 		</html:link>
 	</logic:equal>
 	<%-- otherwise we will just presen the name of it--%>
-	<logic:equal value="false" name="currentUnit" property="superiorUnitWrapper.responsibleForHarmonization" >
+	<logic:equal value="false" name="currentUnit" property="superiorHarmonizationUnitWrapper.responsibleForHarmonization" >
 		<fr:view name="superiorUnit" property="partyName"/>
 	</logic:equal>
 	</p>
