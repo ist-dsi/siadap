@@ -2,6 +2,7 @@ package module.siadap.domain;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.ConcurrentModificationException;
 import java.util.List;
 
 import module.organization.domain.Person;
@@ -34,7 +35,9 @@ public class ExceedingQuotaProposal extends ExceedingQuotaProposal_Base {
 	return getYearConfiguration().getYear();
     }
 
-    public static List<ExceedingQuotaProposal> getQuotaProposalsFor(final Unit unit, int year) {
+    //really kinda useless this method...
+    @Deprecated
+    private static List<ExceedingQuotaProposal> getQuotaProposalsFor(final Unit unit, int year) {
 	//let's go through the SiadapYearConfiguration 
 	List<ExceedingQuotaProposal> exceedingQuotaProposalsToReturn = new ArrayList<ExceedingQuotaProposal>();
 	SiadapYearConfiguration configuration = SiadapYearConfiguration.getSiadapYearConfiguration(year);
@@ -67,6 +70,29 @@ public class ExceedingQuotaProposal extends ExceedingQuotaProposal_Base {
 
     }
 
+    public static List<ExceedingQuotaProposal> getQuotaProposalFor(final Unit unit, final int year, final SiadapUniverse siadapUniverse, final boolean quotasUniverse)
+    {
+	List<ExceedingQuotaProposal> unitProposals = Collections.EMPTY_LIST;
+	SiadapYearConfiguration configuration = SiadapYearConfiguration.getSiadapYearConfiguration(year);
+	if (configuration == null) {
+	    return unitProposals;
+	}
+	unitProposals = new ArrayList<ExceedingQuotaProposal>(getQuotaProposalsByPredicate(unit.getExceedingQuotasProposals(),
+		new Predicate() {
+
+		    @Override
+		    public boolean evaluate(Object arg0) {
+			ExceedingQuotaProposal exceedingQuotaProposal = (ExceedingQuotaProposal) arg0;
+			return (exceedingQuotaProposal.getSiadapUniverse().equals(siadapUniverse)
+				&& exceedingQuotaProposal.getWithinOrganizationQuotaUniverse() == quotasUniverse
+				&& exceedingQuotaProposal.getUnit().equals(unit) && exceedingQuotaProposal.getYear() == year);
+		    }
+
+		}));
+	
+	return unitProposals;
+
+    }
     public static ExceedingQuotaProposal getQuotaProposalFor(final Unit unit, final int year, final Person person,
 	    final SiadapUniverse siadapUniverse, final boolean quotasUniverse) {
 	SiadapYearConfiguration configuration = SiadapYearConfiguration.getSiadapYearConfiguration(year);
@@ -141,6 +167,9 @@ public class ExceedingQuotaProposal extends ExceedingQuotaProposal_Base {
 		    throw new SiadapException("error.exceedingQuotaProposal.must.have.valid.type.of.sugggestion.associated");
 		if (++auxI != exceedingQuotaPriorityNumber.intValue())
 		    throw new SiadapException("error.exceedingQuotaProposal.invalid.number.sequence.numbers.missing.or.repeated");
+		if (suggestionBean.getCurrentHarmonizationAssessment() == null
+			|| suggestionBean.getCurrentHarmonizationAssessment().booleanValue() != false)
+		    throw new ConcurrentModificationException("somebody.altered.harmonization.assessment");
 		suggestionBeansToApply.add(suggestionBean);
 		//		if (minimumNumber == null)
 		//		    minimumNumber = exceedingQuotaPriorityNumber;
@@ -152,10 +181,10 @@ public class ExceedingQuotaProposal extends ExceedingQuotaProposal_Base {
 	}
 
 	//let's apply the proposals as they are validated
-	List<ExceedingQuotaProposal> currentProposalsForUnit = ExceedingQuotaProposal.getQuotaProposalsFor(
-		unitSiadapWrapper.getUnit(), year);
+	List<ExceedingQuotaProposal> currentProposalsForUniverse = ExceedingQuotaProposal.getQuotaProposalFor(
+		unitSiadapWrapper.getUnit(), year, siadapUniverse, quotasUniverse);
 	//let's remove them all
-	for (ExceedingQuotaProposal currentProposal : currentProposalsForUnit) {
+	for (ExceedingQuotaProposal currentProposal : currentProposalsForUniverse) {
 	    currentProposal.delete();
 	}
 
@@ -255,7 +284,8 @@ public class ExceedingQuotaProposal extends ExceedingQuotaProposal_Base {
     @Service
     public void remove() {
 	//let's get the 'sister' proposals to adjust them if needed
-	List<ExceedingQuotaProposal> quotaProposalsFor = ExceedingQuotaProposal.getQuotaProposalsFor(getUnit(), getYear());
+	List<ExceedingQuotaProposal> quotaProposalsFor = ExceedingQuotaProposal.getQuotaProposalFor(getUnit(), getYear(),
+		getSiadapUniverse(), getWithinOrganizationQuotaUniverse());
 	
 	
 	for (ExceedingQuotaProposal exceedingQuotaProposal : quotaProposalsFor)

@@ -623,8 +623,8 @@ public class PersonSiadapWrapper extends PartyWrapper implements Serializable {
     //
     //    }
 
-    private Boolean getHarmonizationCurrentAssessmentFor(SiadapEvaluationUniverse siadapEvaluationUniverse) {
-	return siadapEvaluationUniverse.getHarmonizationAssessment();
+    protected Boolean getHarmonizationCurrentAssessmentFor(SiadapUniverse siadapUniverse) {
+	return getSiadap().getSiadapEvaluationUniverseForSiadapUniverse(siadapUniverse).getHarmonizationAssessment();
     }
 
     public Boolean getHarmonizationCurrentAssessmentForSIADAP2() {

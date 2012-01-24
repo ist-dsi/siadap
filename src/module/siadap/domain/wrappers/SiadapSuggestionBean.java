@@ -44,6 +44,8 @@ public class SiadapSuggestionBean implements Serializable {
 
     private Integer exceedingQuotaPriorityNumber;
 
+    private final SiadapUniverse siadapUniverse;
+
     private final PersonSiadapWrapper personWrapper;
 
     private final UnitSiadapWrapper unitWrapper;
@@ -75,8 +77,13 @@ public class SiadapSuggestionBean implements Serializable {
 	}
 
 	this.withinQuotasUniverse = quotasUniverse;
+	this.siadapUniverse = siadapUniverse;
 
 
+    }
+
+    public Boolean getCurrentHarmonizationAssessment() {
+	return personWrapper.getHarmonizationCurrentAssessmentFor(siadapUniverse);
     }
 
     public ExceedingQuotaSuggestionType getType() {

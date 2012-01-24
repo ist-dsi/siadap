@@ -1,7 +1,7 @@
 package module.siadap.presentationTier.actions;
 
 import java.util.ArrayList;
-import java.util.HashSet;
+import java.util.ConcurrentModificationException;
 import java.util.List;
 import java.util.Set;
 
@@ -393,14 +393,15 @@ public class SiadapManagement extends ContextBaseAction {
 	Unit unit = getDomainObject(request, "unitId");
 	int year = Integer.parseInt(request.getParameter("year"));
 	SiadapUniverse enumToUse = SiadapUniverse.valueOf(request.getParameter("siadapUniverse"));
-	
+
 	PersonSiadapWrapper personWrapper = new PersonSiadapWrapper(person, year);
 	UnitSiadapWrapper unitWrapper = new UnitSiadapWrapper(unit, year);
-	
+
 	personWrapper.removeHarmonizationAssessment(enumToUse, unitWrapper.getHarmonizationUnit());
 	return viewUnitHarmonizationData(mapping, form, request, response, year, unit);
 
     }
+
     public final ActionForward terminateHarmonization(final ActionMapping mapping, final ActionForm form,
 	    final HttpServletRequest request, final HttpServletResponse response) {
 
@@ -484,27 +485,29 @@ public class SiadapManagement extends ContextBaseAction {
 	UnitSiadapWrapper wrapper = new UnitSiadapWrapper(unit, year);
 
 	//let's get the several siadapUniverseWrapper(s)
-	SiadapUniverseWrapper siadap2WithQuotas = getRenderedObject("siadapUniverseWrapper."
-		+ SiadapUniverseWrapper.SIADAP2_WITH_QUOTAS);
-	SiadapUniverseWrapper siadap3WithQuotas = getRenderedObject("siadapUniverseWrapper."
-		+ SiadapUniverseWrapper.SIADAP3_WITH_QUOTAS);
-	SiadapUniverseWrapper siadap2WithoutQuotas = getRenderedObject("siadapUniverseWrapper."
-		+ SiadapUniverseWrapper.SIADAP2_WITHOUT_QUOTAS);
-	SiadapUniverseWrapper siadap3WithoutQuotas = getRenderedObject("siadapUniverseWrapper."
-		+ SiadapUniverseWrapper.SIADAP3_WITHOUT_QUOTAS);
+	List<SiadapUniverseWrapper> siadapUniverseWrappers = getRenderedObject("siadapUniverseWrappersList");
+
+	//	SiadapUniverseWrapper siadap2WithQuotas = getRenderedObject("siadapUniverseWrapper."
+	//		+ SiadapUniverseWrapper.SIADAP2_WITH_QUOTAS);
+	//	SiadapUniverseWrapper siadap3WithQuotas = getRenderedObject("siadapUniverseWrapper."
+	//		+ SiadapUniverseWrapper.SIADAP3_WITH_QUOTAS);
+	//	SiadapUniverseWrapper siadap2WithoutQuotas = getRenderedObject("siadapUniverseWrapper."
+	//		+ SiadapUniverseWrapper.SIADAP2_WITHOUT_QUOTAS);
+	//	SiadapUniverseWrapper siadap3WithoutQuotas = getRenderedObject("siadapUniverseWrapper."
+	//		+ SiadapUniverseWrapper.SIADAP3_WITHOUT_QUOTAS);
 
 	RenderUtils.invalidateViewState();
-	Set<SiadapUniverseWrapper> siadapUniverseWrappers = new HashSet<SiadapUniverseWrapper>();
-	siadapUniverseWrappers.add(siadap2WithQuotas);
-	siadapUniverseWrappers.add(siadap3WithQuotas);
-	siadapUniverseWrappers.add(siadap2WithoutQuotas);
-	siadapUniverseWrappers.add(siadap3WithoutQuotas);
+
+	//	Set<SiadapUniverseWrapper> siadapUniverseWrappers = new HashSet<SiadapUniverseWrapper>();
+	//	siadapUniverseWrappers.add(siadap2WithQuotas);
+	//	siadapUniverseWrappers.add(siadap3WithQuotas);
+	//	siadapUniverseWrappers.add(siadap2WithoutQuotas);
+	//	siadapUniverseWrappers.add(siadap3WithoutQuotas);
 
 	try {
 	    for (SiadapUniverseWrapper siadapWrapper : siadapUniverseWrappers) {
 		if (siadapWrapper != null && siadapWrapper.getSiadapUniverseForSuggestions() != null
-			&& !siadapWrapper.getSiadapUniverseForSuggestions().isEmpty())
-		{
+			&& !siadapWrapper.getSiadapUniverseForSuggestions().isEmpty()) {
 		    ExceedingQuotaProposal.applyGivenProposals(siadapWrapper.getSiadapUniverseForSuggestions(),
 			    siadapWrapper.getSiadapUniverseEnum(), siadapWrapper.getSiadapUniverseForSuggestions().get(0)
 				    .isWithinQuotasUniverse(), wrapper, year);
@@ -514,7 +517,10 @@ public class SiadapManagement extends ContextBaseAction {
 
 	} catch (DomainException ex) {
 	    addLocalizedMessage(request, ex.getLocalizedMessage());
-	    return prepareAddExceedingQuotaSuggestion(mapping, form, request, response, year, wrapper);
+	    return prepareAddExceedingQuotaSuggestion(mapping, form, request, response, year, wrapper, siadapUniverseWrappers);
+	} catch (ConcurrentModificationException ex) {
+	    addLocalizedMessage(request,
+		    BundleUtil.getFormattedStringFromResourceBundle(Siadap.SIADAP_BUNDLE_STRING, ex.getMessage()));
 	}
 
 	return viewUnitHarmonizationData(mapping, form, request, response, year, unit);
@@ -525,12 +531,13 @@ public class SiadapManagement extends ContextBaseAction {
 	int year = Integer.parseInt(request.getParameter("year"));
 	Unit unit = getDomainObject(request, "unitId");
 	UnitSiadapWrapper wrapper = new UnitSiadapWrapper(unit, year);
-	return prepareAddExceedingQuotaSuggestion(mapping, form, request, response, year, wrapper);
+	return prepareAddExceedingQuotaSuggestion(mapping, form, request, response, year, wrapper, null);
 
     }
 
     private final ActionForward prepareAddExceedingQuotaSuggestion(final ActionMapping mapping, final ActionForm form,
-	    final HttpServletRequest request, final HttpServletResponse response, int year, UnitSiadapWrapper wrapper) {
+	    final HttpServletRequest request, final HttpServletResponse response, int year, UnitSiadapWrapper wrapper,
+	    List<SiadapUniverseWrapper> listToPreserve) {
 
 	if (!wrapper.isHarmonizationUnit()) {
 	    addLocalizedMessage(request, BundleUtil.getFormattedStringFromResourceBundle(Siadap.SIADAP_BUNDLE_STRING,
@@ -541,19 +548,24 @@ public class SiadapManagement extends ContextBaseAction {
 
 	SiadapYearConfiguration configuration = SiadapYearConfiguration.getSiadapYearConfiguration(year);
 
-	List<SiadapUniverseWrapper> siadapUniverseWrappers = new ArrayList<SiadapUniverseWrapper>();
-	siadapUniverseWrappers.add(new SiadapUniverseWrapper(
-		wrapper.getSiadap2AndWorkingRelationWithQuotaUniverse(Boolean.FALSE), SiadapUniverseWrapper.SIADAP2_WITH_QUOTAS,
-		SiadapUniverse.SIADAP2, wrapper, true));
-	siadapUniverseWrappers.add(new SiadapUniverseWrapper(
-		wrapper.getSiadap3AndWorkingRelationWithQuotaUniverse(Boolean.FALSE), SiadapUniverseWrapper.SIADAP3_WITH_QUOTAS,
-		SiadapUniverse.SIADAP3, wrapper, true));
-	siadapUniverseWrappers.add(new SiadapUniverseWrapper(wrapper
-		.getSiadap2AndWorkingRelationWithoutQuotaUniverse(Boolean.FALSE), SiadapUniverseWrapper.SIADAP2_WITHOUT_QUOTAS,
-		SiadapUniverse.SIADAP2, wrapper, false));
-	siadapUniverseWrappers.add(new SiadapUniverseWrapper(wrapper
-		.getSiadap3AndWorkingRelationWithoutQuotaUniverse(Boolean.FALSE), SiadapUniverseWrapper.SIADAP3_WITHOUT_QUOTAS,
-		SiadapUniverse.SIADAP3, wrapper, false));
+	List<SiadapUniverseWrapper> siadapUniverseWrappers = null;
+	if (listToPreserve == null) {
+	    siadapUniverseWrappers = new ArrayList<SiadapUniverseWrapper>();
+	    siadapUniverseWrappers.add(new SiadapUniverseWrapper(wrapper
+		    .getSiadap2AndWorkingRelationWithQuotaUniverse(Boolean.FALSE), SiadapUniverseWrapper.SIADAP2_WITH_QUOTAS,
+		    SiadapUniverse.SIADAP2, wrapper, true));
+	    siadapUniverseWrappers.add(new SiadapUniverseWrapper(wrapper
+		    .getSiadap3AndWorkingRelationWithQuotaUniverse(Boolean.FALSE), SiadapUniverseWrapper.SIADAP3_WITH_QUOTAS,
+		    SiadapUniverse.SIADAP3, wrapper, true));
+	    siadapUniverseWrappers.add(new SiadapUniverseWrapper(wrapper
+		    .getSiadap2AndWorkingRelationWithoutQuotaUniverse(Boolean.FALSE),
+		    SiadapUniverseWrapper.SIADAP2_WITHOUT_QUOTAS, SiadapUniverse.SIADAP2, wrapper, false));
+	    siadapUniverseWrappers.add(new SiadapUniverseWrapper(wrapper
+		    .getSiadap3AndWorkingRelationWithoutQuotaUniverse(Boolean.FALSE),
+		    SiadapUniverseWrapper.SIADAP3_WITHOUT_QUOTAS, SiadapUniverse.SIADAP3, wrapper, false));
+
+	} else
+	    siadapUniverseWrappers = listToPreserve;
 
 	request.setAttribute("unit", wrapper);
 	request.setAttribute("siadapUniverseWrappers", siadapUniverseWrappers);

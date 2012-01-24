@@ -33,17 +33,17 @@
 
  <logic:equal value="true" name="unit" property="harmonizationActive">
 	<fr:form action="<%="/siadapManagement.do?method=addExceedingQuotaSuggestion&year=" + year.toString() + "&unitId=" + unitId.toString() %>">
-	<logic:iterate id="siadapUniverseWrapper" name="siadapUniverseWrappers">
+		<fr:edit id="siadapUniverseWrappersList" name="siadapUniverseWrappers" visible="false"/>
+    	<logic:iterate id="siadapUniverseWrapper" name="siadapUniverseWrappers">
 
 <%-- Title --%>
 	<logic:notEmpty name="siadapUniverseWrapper" property="siadapUniverseForSuggestions">
 		<strong><bean:message key="<%=((module.siadap.domain.wrappers.SiadapUniverseWrapper)siadapUniverseWrapper).getUniverseTitleQuotaSuggestionKey() %>" bundle="SIADAP_RESOURCES"/></strong>
 	</logic:notEmpty>
 
-	<fr:edit id="<%="siadapUniverseWrapper." + ((SiadapUniverseWrapper)siadapUniverseWrapper).getUniverseDescription()%>" name="siadapUniverseWrapper" nested="true" visible="false"/>
-	<fr:edit id="siadapUniverWrapperId" name="siadapUniverseWrapper" property="siadapUniverseForSuggestions" nested="true">
+ 	<fr:edit name="siadapUniverseWrapper" property="siadapUniverseForSuggestions" nested="true">
 		<fr:schema type="module.siadap.domain.wrappers.SiadapSuggestionBean" bundle="SIADAP_RESOURCES">
-			<fr:slot name="personWrapper.person.partyName" key="label.evaluated" readOnly="true" />
+			<fr:slot name="personWrapper.person.name" key="label.evaluated" bundle="SIADAP_RESOURCES" readOnly="true" />
 			<fr:slot name="personWrapper.person.user.username" key="label.login.username" bundle="MYORG_RESOURCES" readOnly="true" />
 			<% 
 			SiadapUniverseWrapper siadapUWrapper = (SiadapUniverseWrapper) siadapUniverseWrapper;
@@ -77,12 +77,12 @@
 		<fr:layout name="tabular-row">
 			<fr:property name="classes" value="tstyle2" />
 			<fr:property name="columnClasses" value="aleft,aleft,," />
-			<fr:property name="link(create)" value="/siadapManagement.do?method=createNewSiadapProcess" />
+		<%-- 	<fr:property name="link(create)" value="/siadapManagement.do?method=createNewSiadapProcess" />
 			<fr:property name="bundle(create)" value="MYORG_RESOURCES" />
 			<fr:property name="key(create)" value="link.create" />
 			<fr:property name="param(create)" value="personWrapper.person.externalId/personId" />
 			<fr:property name="order(create)" value="1" />
-			<fr:property name="visibleIf(create)" value="personWrapper.currentUserAbleToCreateProcess" />
+			<fr:property name="visibleIf(create)" value="personWrapper.currentUserAbleToCreateProcess" /> --%>
 
 			<fr:property name="link(viewProcess)" value="/workflowProcessManagement.do?method=viewProcess" />
 			<fr:property name="bundle(viewProcess)" value="MYORG_RESOURCES" />
