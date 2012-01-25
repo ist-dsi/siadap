@@ -333,7 +333,7 @@ pre {
 				<logic:equal name="evaluatedPersonWrapper" property="currentUserAbleToSeeEvaluationDetails" value="true">
 					<p>
 						<strong>
-							<bean:message key="label.show.evaluationJustification" bundle="SIADAP_RESOURCES"/>:
+							(<bean:message key="label.evaluation" bundle="SIADAP_RESOURCES" />) <bean:message key="label.show.evaluationJustification" bundle="SIADAP_RESOURCES"/>:
 						</strong>
 					</p>
 						
@@ -345,12 +345,21 @@ pre {
 						<p><em><bean:message key="label.noJustification" bundle="SIADAP_RESOURCES"/></em></p>
 					</logic:empty>
 						
+		<%-- R1 refactoring evaluationData --%>
+					<logic:notEmpty name="process" property="siadap.evaluationData2.excellencyAwardJustification">
+						<p>
+							<strong>
+								(<bean:message key="label.evaluation" bundle="SIADAP_RESOURCES" />) <bean:message key="label.show.excellencyAwardJustification" bundle="SIADAP_RESOURCES"/>:
+							</strong>
+						</p>
+						<pre><fr:view name="process" property="siadap.evaluationData2.excellencyAwardJustification"/></pre>
+					</logic:notEmpty>
 				
 		<%-- R1 refactoring evaluationData --%>
 					<logic:notEmpty name="process" property="siadap.evaluationData2.personalDevelopment">
 						<p>
 							<strong>
-								<bean:message key="label.show.personalDevelopment" bundle="SIADAP_RESOURCES"/>:
+								(<bean:message key="label.evaluation" bundle="SIADAP_RESOURCES" />) <bean:message key="label.show.personalDevelopment" bundle="SIADAP_RESOURCES"/>:
 							</strong>
 						</p>
 		<%-- R1 refactoring evaluationData --%>
@@ -361,7 +370,7 @@ pre {
 		<%-- R1 refactoring evaluationData --%>
 					<logic:notEmpty name="process" property="siadap.evaluationData2.trainningNeeds">
 						<p><strong>
-							<bean:message key="label.show.trainingNeeds" bundle="SIADAP_RESOURCES"/>:
+							(<bean:message key="label.evaluation" bundle="SIADAP_RESOURCES" />) <bean:message key="label.show.trainingNeeds" bundle="SIADAP_RESOURCES"/>:
 						</strong></p>
 		<%-- R1 refactoring evaluationData --%>
 							<pre><fr:view name="process" property="siadap.evaluationData2.trainningNeeds"/></pre>
@@ -371,7 +380,7 @@ pre {
 		</logic:notEmpty>
 		
 		<logic:equal name="process" property="siadap.withSkippedEvaluation" value="true">
-			<p><strong><bean:message key="label.noEvaluationJustification" bundle="SIADAP_RESOURCES"/>:</strong></p>
+			<p><strong>(<bean:message key="label.evaluation" bundle="SIADAP_RESOURCES" />) <bean:message key="label.noEvaluationJustification" bundle="SIADAP_RESOURCES"/>:</strong></p>
 		<%-- R1 refactoring evaluationData --%>
 			<pre><fr:view name="process" property="siadap.evaluationData2.noEvaluationJustification"/></pre>
 		</logic:equal>
