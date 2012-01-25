@@ -104,8 +104,11 @@
 	<logic:equal name="currentUnit" property="harmonizationActive" value="true">
 	    <logic:equal name="currentUnit" property="harmonizationUnit" value="true">
 	    	<logic:equal name="currentUnit" property="harmonizationFinished" value="false">
-			    <html:link styleId="terminateHarmonization"  page="<%="/siadapManagement.do?method=terminateHarmonization&year="+year.toString()%>" paramName="currentUnit" paramProperty="unit.externalId" paramId="unitId">
+			    <%-- <html:link styleId="terminateHarmonization"  page="<%="/siadapManagement.do?method=terminateHarmonization&year="+year.toString()%>" paramName="currentUnit" paramProperty="unit.externalId" paramId="unitId">
 						<bean:message key="label.terminateHarmonization" bundle="SIADAP_RESOURCES"/>
+					</html:link> --%>
+					<html:link styleId="terminateHarmonization" page="<%="/siadapManagement.do?method=viewUnitHarmonizationData&year=" + year + "&unitId=" + unitId%>">
+						<bean:message key="label.terminateHarmonization" bundle="SIADAP_RESOURCES"/> (<bean:message key="functionality.disabled.temporarily.short" bundle="SIADAP_RESOURCES"/>)
 					</html:link>
 				| <html:link  page="<%="/siadapManagement.do?method=prepareAddExceedingQuotaSuggestion&year=" + year.toString()%>" paramName="currentUnit" paramProperty="unit.externalId" paramId="unitId">
 						<bean:message key="label.addExcedingQuotaSuggestion" bundle="SIADAP_RESOURCES"/>
@@ -119,10 +122,10 @@
 		    <html:link styleId="reOpenHarmonization"  page="<%="/siadapManagement.do?method=reOpenHarmonization&year="+year.toString()%>" paramName="currentUnit" paramProperty="unit.externalId" paramId="unitId">
 					<bean:message key="label.reOpenHarmonization" bundle="SIADAP_RESOURCES"/>
 			   </html:link>
-			| <html:link  page="<%="/siadapManagement.do?method=prepareAddExceedingQuotaSuggestion&year=" + year.toString()%>" paramName="currentUnit" paramProperty="unit.externalId" paramId="unitId">
+			<%--| <html:link  page="<%="/siadapManagement.do?method=prepareAddExceedingQuotaSuggestion&year=" + year.toString()%>" paramName="currentUnit" paramProperty="unit.externalId" paramId="unitId">
 					<bean:message key="label.addExcedingQuotaSuggestion" bundle="SIADAP_RESOURCES"/>
 			  </html:link> 
-			  <%--  <html:link  page="#">
+			    <html:link  page="#">
 						<bean:message key="label.addExcedingQuotaSuggestion" bundle="SIADAP_RESOURCES"/> (<bean:message key="functionality.disabled.temporarily.short" bundle="SIADAP_RESOURCES"/>)
 			  </html:link> --%>
 			
@@ -134,7 +137,7 @@
  <script src="<%= request.getContextPath() + "/javaScript/jquery.alerts.js"%>" type="text/javascript"></script> 
  <script src="<%= request.getContextPath() + "/javaScript/alertHandlers.js"%>" type="text/javascript"></script> 
  <script type="text/javascript"> 
-   linkConfirmationHook('terminateHarmonization', '<bean:message key="label.terminateHarmonization.confirmationMessage" bundle="SIADAP_RESOURCES" arg0="<%= unitName.toString() %>"/>','<bean:message key="label.terminateHarmonization" bundle="SIADAP_RESOURCES"/>'); 
+   //linkConfirmationHook('terminateHarmonization', '<bean:message key="label.terminateHarmonization.confirmationMessage" bundle="SIADAP_RESOURCES" arg0="<%= unitName.toString() %>"/>','<bean:message key="label.terminateHarmonization" bundle="SIADAP_RESOURCES"/>'); 
  </script> 
 	
 	
