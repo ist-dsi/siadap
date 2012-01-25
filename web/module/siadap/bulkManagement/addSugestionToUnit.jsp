@@ -1,3 +1,4 @@
+<%@page import="java.util.List"%>
 <%@page import="module.siadap.domain.SiadapUniverse"%>
 <%@page import="module.siadap.domain.wrappers.SiadapUniverseWrapper"%>
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
@@ -9,6 +10,7 @@
 <bean:define id="unitName" name="unit" property="unit.presentationName" />
 <bean:define id="unitId" name="unit" property="unit.externalId" />
 <bean:define id="year" name="unit" property="year" />
+<bean:define id="siadapUniverseWrappers" name="siadapUniverseWrappers" />
 
 
 <h2>
@@ -32,6 +34,20 @@
 <br/>
 
  <logic:equal value="true" name="unit" property="harmonizationActive">
+ 	<%
+ 		boolean allEmpty = true;
+ 		for (SiadapUniverseWrapper siadapUniverseWrapper : ((List<SiadapUniverseWrapper>)siadapUniverseWrappers))
+ 		{
+ 		    if (!siadapUniverseWrapper.getSiadapUniverseForSuggestions().isEmpty())
+ 				{allEmpty = false; break;}
+ 		}
+ 		request.setAttribute("allUniversesEmpty", allEmpty);
+ 	%>
+ 	<logic:equal name="allUniversesEmpty" value="true">
+	<p><i><bean:message key="label.exceedingQuota.no.one.to.add.exceedingQuotaTo" bundle="SIADAP_RESOURCES"/></i></p>
+ 	</logic:equal>
+ 	<logic:equal name="allUniversesEmpty" value="false">
+ 	<strong><bean:message bundle="SIADAP_RESOURCES" key="label.harmonization.QuotaSuggestionInterface.fillingInstructions"/></strong>
 	<fr:form action="<%="/siadapManagement.do?method=addExceedingQuotaSuggestion&year=" + year.toString() + "&unitId=" + unitId.toString() %>">
 		<fr:edit id="siadapUniverseWrappersList" name="siadapUniverseWrappers" visible="false"/>
     	<logic:iterate id="siadapUniverseWrapper" name="siadapUniverseWrappers">
@@ -108,9 +124,7 @@
 <logic:equal value="false" name="unit" property="harmonizationActive">
 	<p><i><bean:message key="label.exceedingQuota.harmonization.not.active" bundle="SIADAP_RESOURCES"/></i></p>
 </logic:equal>
-<logic:empty name="siadapUniverseWrappers">
-	<p><i><bean:message key="label.exceedingQuota.no.one.to.add.exceedingQuotaTo" bundle="SIADAP_RESOURCES"/></i></p>
-</logic:empty>
+</logic:equal>
 	
 
 
