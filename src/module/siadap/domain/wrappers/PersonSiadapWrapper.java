@@ -583,6 +583,12 @@ public class PersonSiadapWrapper extends PartyWrapper implements Serializable {
 	return siadap != null ? siadap.getValidated() : null;
     }
 
+    public String getCareerName() {
+	if (getSiadap() == null || getSiadap().getCompetenceType() == null)
+	    return "";
+	return getSiadap().getCompetenceType().getName();
+    }
+
     public Boolean getHomologationDone() {
 	Siadap siadap = getSiadap();
 	return siadap != null ? siadap.isHomologated() : null;

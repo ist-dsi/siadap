@@ -263,13 +263,13 @@ request.setAttribute("isAbleToChangeAnything", isAbleToChangeAnything);
 			</fr:schema>
 			<fr:layout name="tabular">
 				<fr:property name="classes" value="tstyle2"/>
-				<logic:equal name="isAbleToChangeAnything" value="true">
+			<%-- 	<logic:equal name="isAbleToChangeAnything" value="true">
 					<fr:property name="link(terminate)" value="<%=  "/siadapPersonnelManagement.do?method=terminateUnitHarmonization&personId=" + personId + "&year=" + year.toString()%>"/>
 					<fr:property name="bundle(terminate)" value="MYORG_RESOURCES"/>
 					<fr:property name="key(terminate)" value="link.remove"/>
 					<fr:property name="param(terminate)" value="unit.externalId/unitId"/>
 					<fr:property name="order(terminate)" value="1"/>
-				</logic:equal>
+				</logic:equal> --%>
 			</fr:layout>	
 		</fr:view>
 </logic:notEmpty>
@@ -292,7 +292,7 @@ request.setAttribute("isAbleToChangeAnything", isAbleToChangeAnything);
 
 
 <%-- For now, let's also comment the ability to add people to do the harmonization of certain units, I should check the type of accountability
-that is desirable (start and end dates) --%>
+that is desirable (start and end dates)
 <logic:equal name="isAbleToChangeAnything" value="true">
 	<p>
 	<strong><bean:message key="label.addHarmonizationResponsability" bundle="SIADAP_RESOURCES"/></strong>

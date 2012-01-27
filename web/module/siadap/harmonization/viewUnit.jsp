@@ -252,12 +252,12 @@ boolean hasPeopleToHarmonize = ((peopleWithoutQuotasSIADAP2.getSiadapUniverse() 
 					else {
 						 //this is a regular eval, decrease them
 						 decreaseOne($('.current-harmonized-relevants-'+universeString));
-						 //and set the excellency radios to No and disabled, if they exist
-						 disableAndSetToFalseNextExcellencyRadios(radioElement)
 					}
 				}
 		
 			}
+			//set the excellency radios to No and disabled, if they exist
+		  disableAndSetToFalseNextExcellencyRadios(radioElement)
 		}
 		if ($(radioElement).next().text().trim() == "Sim")
 		{
@@ -523,6 +523,7 @@ color: #999;
 								<fr:property name="eachClasses" value="withQuotasSIADAP2"/>
 							</fr:slot>
 						</logic:equal>
+						<fr:slot name="careerName" readOnly="true"/>
 						<%-- END Harmonization assessments --%>
 					</fr:schema>
 					<fr:layout name="tabular-row">
@@ -639,6 +640,7 @@ color: #999;
 									<fr:property name="eachClasses" value="withQuotasSIADAP3"/>
 								</fr:slot>
 						</logic:equal> 
+						<fr:slot name="careerName" readOnly="true"/>
 						<%-- END Harmonization assessments --%>
 					</fr:schema>
 					<fr:layout name="tabular-row">
@@ -756,6 +758,7 @@ color: #999;
 								<fr:property name="eachClasses" value="withQuotasSIADAP2"/>
 							</fr:slot>
 						</logic:equal>
+						<fr:slot name="careerName" readOnly="true"/>
 						<%-- END Harmonization assessments --%>
 					</fr:schema>
 					<fr:layout name="tabular-row">
@@ -871,6 +874,7 @@ color: #999;
 									<fr:property name="eachClasses" value="withQuotasSIADAP3"/>
 							</fr:slot>
 						</logic:equal>
+						<fr:slot name="careerName" readOnly="true"/>
 						<%-- END Harmonization assessments --%>
 					</fr:schema>
 					<fr:layout name="tabular-row">
