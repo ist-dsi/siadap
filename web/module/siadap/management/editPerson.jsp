@@ -85,13 +85,19 @@ Person person = currentUser.getPerson();
 SiadapYearConfiguration configuration = SiadapYearConfiguration.getSiadapYearConfiguration((Integer)year);
 
 boolean isAbleToChangeAnything = false;
+boolean isManager = false;
 //if (configuration.getCcaMembers().contains(person) || Role.getRole(RoleType.MANAGER).isMember(currentUser) )
 if (Role.getRole(RoleType.MANAGER).isMember(currentUser) || configuration.isUserMemberOfStructureManagementGroup(currentUser) )
 {
     isAbleToChangeAnything = true;
 }
+if (Role.getRole(RoleType.MANAGER).isMember(currentUser))
+	{
+    isManager = true;
+	}
 
 request.setAttribute("isAbleToChangeAnything", isAbleToChangeAnything);
+request.setAttribute("isManager", isManager);
 %>
 
 
@@ -263,13 +269,13 @@ request.setAttribute("isAbleToChangeAnything", isAbleToChangeAnything);
 			</fr:schema>
 			<fr:layout name="tabular">
 				<fr:property name="classes" value="tstyle2"/>
-			<%-- 	<logic:equal name="isAbleToChangeAnything" value="true">
+			 	<logic:equal name="isManager" value="true">
 					<fr:property name="link(terminate)" value="<%=  "/siadapPersonnelManagement.do?method=terminateUnitHarmonization&personId=" + personId + "&year=" + year.toString()%>"/>
 					<fr:property name="bundle(terminate)" value="MYORG_RESOURCES"/>
 					<fr:property name="key(terminate)" value="link.remove"/>
 					<fr:property name="param(terminate)" value="unit.externalId/unitId"/>
 					<fr:property name="order(terminate)" value="1"/>
-				</logic:equal> --%>
+				</logic:equal>
 			</fr:layout>	
 		</fr:view>
 </logic:notEmpty>
@@ -292,8 +298,8 @@ request.setAttribute("isAbleToChangeAnything", isAbleToChangeAnything);
 
 
 <%-- For now, let's also comment the ability to add people to do the harmonization of certain units, I should check the type of accountability
-that is desirable (start and end dates)
-<logic:equal name="isAbleToChangeAnything" value="true">
+that is desirable (start and end dates) --%>
+<logic:equal name="isManager" value="true">
 	<p>
 	<strong><bean:message key="label.addHarmonizationResponsability" bundle="SIADAP_RESOURCES"/></strong>
 	<fr:edit id="addHarmonizationUnit" name="bean" action="<%= "/siadapPersonnelManagement.do?method=addHarmonizationUnit&personId=" + personId + "&year=" + year.toString() %>">

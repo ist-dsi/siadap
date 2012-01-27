@@ -104,18 +104,20 @@
 	<logic:equal name="currentUnit" property="harmonizationActive" value="true">
 	    <logic:equal name="currentUnit" property="harmonizationUnit" value="true">
 	    	<logic:equal name="currentUnit" property="harmonizationFinished" value="false">
-				  <%-- <html:link styleId="terminateHarmonization"  page="<%="/siadapManagement.do?method=terminateHarmonization&year="+year.toString()%>" paramName="currentUnit" paramProperty="unit.externalId" paramId="unitId">
-					<bean:message key="label.terminateHarmonization" bundle="SIADAP_RESOURCES"/>
-				</html:link> --%>
-				<html:link styleId="terminateHarmonization" page="<%="/siadapManagement.do?method=viewUnitHarmonizationData&year=" + year + "&unitId=" + unitId%>">
+				 
+				<%-- <html:link styleId="terminateHarmonization" page="<%="/siadapManagement.do?method=viewUnitHarmonizationData&year=" + year + "&unitId=" + unitId%>">
 					<bean:message key="label.terminateHarmonization" bundle="SIADAP_RESOURCES"/> (<bean:message key="functionality.disabled.temporarily.short" bundle="SIADAP_RESOURCES"/>)
-				</html:link>
-				| <html:link  page="<%="/siadapManagement.do?method=prepareAddExceedingQuotaSuggestion&year=" + year.toString()%>" paramName="currentUnit" paramProperty="unit.externalId" paramId="unitId">
-						<bean:message key="label.addExcedingQuotaSuggestion" bundle="SIADAP_RESOURCES"/>
-				  </html:link>
-				 <%--   <html:link  page="#">
+				</html:link> --%>
+				  <html:link styleId="terminateHarmonization"  page="<%="/siadapManagement.do?method=terminateHarmonization&year="+year.toString()%>" paramName="currentUnit" paramProperty="unit.externalId" paramId="unitId">
+					<bean:message key="label.terminateHarmonization" bundle="SIADAP_RESOURCES"/>
+				</html:link> 
+				|  <html:link  page="#">
 						<bean:message key="label.addExcedingQuotaSuggestion" bundle="SIADAP_RESOURCES"/> (<bean:message key="functionality.disabled.temporarily.short" bundle="SIADAP_RESOURCES"/>)
-				  </html:link>  --%>
+				  </html:link>  
+				<%-- <html:link  page="<%="/siadapManagement.do?method=prepareAddExceedingQuotaSuggestion&year=" + year.toString()%>" paramName="currentUnit" paramProperty="unit.externalId" paramId="unitId">
+						<bean:message key="label.addExcedingQuotaSuggestion" bundle="SIADAP_RESOURCES"/>
+				  </html:link> --%>
+				 
 				 
 		</logic:equal>
 		 <logic:equal name="currentUnit" property="harmonizationFinished" value="true">
