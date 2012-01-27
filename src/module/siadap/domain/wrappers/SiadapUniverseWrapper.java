@@ -13,6 +13,7 @@ import java.util.List;
 import java.util.Set;
 
 import module.siadap.domain.Siadap;
+import module.siadap.domain.SiadapEvaluationUniverse;
 import module.siadap.domain.SiadapUniverse;
 import module.siadap.domain.scoring.SiadapGlobalEvaluation;
 
@@ -43,7 +44,6 @@ public class SiadapUniverseWrapper implements Serializable {
 
     private final List<SiadapSuggestionBean> siadapUniverseForSuggestions;
     private final String universeDescription;
-
 
     private final int numberRelevantPeopleInUniverse;
     private final int excellencyQuota;
@@ -92,14 +92,14 @@ public class SiadapUniverseWrapper implements Serializable {
 
 	this.currentHarmonizedExcellents = getCurrentExcellents(universeToConsider, true);
 	this.currentHarmonizedRelevants = getCurrentRelevants(universeToConsider, true);
-	
+
 	this.siadapUniverseForSuggestions = null;
 
     }
-    
+
     public SiadapUniverseWrapper(Set<PersonSiadapWrapper> siadapUniverseOfPeople, String universeDescription,
 	    SiadapUniverse universeToConsider, UnitSiadapWrapper unitBeingSuggestionsMadeFor, boolean quotasUniverse) {
-	
+
 	//a null simple universe and everything else intended for the harmonization purposes
 	this.siadapUniverse = null;
 	this.excellencyQuota = 0;
@@ -121,7 +121,7 @@ public class SiadapUniverseWrapper implements Serializable {
 	this.siadapUniverseEnum = universeToConsider;
 
 	this.numberRelevantPeopleInUniverse = getSiadapUniverseForSuggestions().size();
-	
+
 	this.universeDescription = universeDescription;
 
     }
@@ -204,14 +204,44 @@ public class SiadapUniverseWrapper implements Serializable {
 	    PersonSiadapWrapper personSiadapWrapper = (PersonSiadapWrapper) arg0;
 	    Siadap siadap = personSiadapWrapper.getSiadap();
 	    if (siadap != null
-		    && siadap.hasGivenSiadapGlobalEvaluation(siadapGlobalEvaluation, siadapUniverseToConsider)
+		    && hasGradeWithinRange(personSiadapWrapper)
 		    && (!considerHarmonizedOnly || (siadap.getSiadapEvaluationUniverseForSiadapUniverse(siadapUniverseToConsider) != null
 			    && siadap.getSiadapEvaluationUniverseForSiadapUniverse(siadapUniverseToConsider)
-				    .getHarmonizationAssessment() != null && siadap.getSiadapEvaluationUniverseForSiadapUniverse(
-			    siadapUniverseToConsider).getHarmonizationAssessment()))) {
+				    .getHarmonizationAssessment() != null
+			    && siadap.getSiadapEvaluationUniverseForSiadapUniverse(siadapUniverseToConsider)
+				    .getHarmonizationAssessment() && checkForPositivelyHarmonizedExcellent(personSiadapWrapper)))) {
 		return true;
 	    }
 	    return false;
+	}
+
+	private boolean hasGradeWithinRange(PersonSiadapWrapper personSiadapWrapper) {
+	    Siadap siadap = personSiadapWrapper.getSiadap();
+	    SiadapGlobalEvaluation globalEvaluationEnum = siadap.getSiadapGlobalEvaluationEnum(siadapUniverseToConsider);
+	    if (globalEvaluationEnum.equals(SiadapGlobalEvaluation.EXCELLENCY)) {
+		return (siadapGlobalEvaluation.equals(SiadapGlobalEvaluation.HIGH) || siadapGlobalEvaluation
+			.equals(SiadapGlobalEvaluation.EXCELLENCY));
+	    }
+	    return siadap.hasGivenSiadapGlobalEvaluation(siadapGlobalEvaluation, siadapUniverseToConsider);
+
+	}
+
+	/**
+	 * 
+	 * @param personSiadapWrapper
+	 *            the person to consider
+	 * @return true if we are not checking for an excellent i.e.
+	 *         siadapGlobalEvaluation is not an excellent. If it is, check
+	 *         if we have a positive assessment for the excellent
+	 */
+	private boolean checkForPositivelyHarmonizedExcellent(PersonSiadapWrapper personSiadapWrapper) {
+	    if (!siadapGlobalEvaluation.equals(SiadapGlobalEvaluation.EXCELLENCY))
+		return true;
+	    Siadap siadap = personSiadapWrapper.getSiadap();
+	    SiadapEvaluationUniverse siadapEvaluationUniverse = siadap
+		    .getSiadapEvaluationUniverseForSiadapUniverse(siadapUniverseToConsider);
+	    return (siadapEvaluationUniverse.getHarmonizationAssessmentForExcellencyAward() != null && siadapEvaluationUniverse
+		    .getHarmonizationAssessmentForExcellencyAward());
 	}
 
     }
@@ -223,7 +253,6 @@ public class SiadapUniverseWrapper implements Serializable {
     public String getUniverseDescription() {
 	return universeDescription;
     }
-
 
     public int getExcellencyQuota() {
 	return excellencyQuota;

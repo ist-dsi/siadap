@@ -167,8 +167,20 @@ public class ExceedingQuotaProposal extends ExceedingQuotaProposal_Base {
 		    throw new SiadapException("error.exceedingQuotaProposal.must.have.valid.type.of.sugggestion.associated");
 		if (++auxI != exceedingQuotaPriorityNumber.intValue())
 		    throw new SiadapException("error.exceedingQuotaProposal.invalid.number.sequence.numbers.missing.or.repeated");
-		if (suggestionBean.getCurrentHarmonizationAssessment() == null
-			|| suggestionBean.getCurrentHarmonizationAssessment().booleanValue() != false)
+		if (suggestionBean.getCurrentHarmonizationAssessment() == null && suggestionBean.getCurrentHarmonizationExcellencyAssessment() == null)
+		    throw new ConcurrentModificationException("somebody.altered.harmonization.assessment");
+		//if the regular assessment is not null and the is true and the other is null or true, then somebody changed it
+		if (suggestionBean.getCurrentHarmonizationAssessment() != null
+			&& suggestionBean.getCurrentHarmonizationAssessment().booleanValue() != false
+			&& (suggestionBean.getCurrentHarmonizationExcellencyAssessment() == null || (suggestionBean
+				.getCurrentHarmonizationExcellencyAssessment() != null && suggestionBean
+				.getCurrentHarmonizationExcellencyAssessment())))
+		    throw new ConcurrentModificationException("somebody.altered.harmonization.assessment");
+		if (suggestionBean.getCurrentHarmonizationExcellencyAssessment() != null
+			&& suggestionBean.getCurrentHarmonizationExcellencyAssessment().booleanValue() != false
+			&& (suggestionBean.getCurrentHarmonizationAssessment() == null || (suggestionBean
+				.getCurrentHarmonizationAssessment() != null && suggestionBean
+				.getCurrentHarmonizationAssessment())))
 		    throw new ConcurrentModificationException("somebody.altered.harmonization.assessment");
 		suggestionBeansToApply.add(suggestionBean);
 		//		if (minimumNumber == null)

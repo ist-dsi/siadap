@@ -86,6 +86,10 @@ public class SiadapSuggestionBean implements Serializable {
 	return personWrapper.getHarmonizationCurrentAssessmentFor(siadapUniverse);
     }
 
+    public Boolean getCurrentHarmonizationExcellencyAssessment() {
+	return personWrapper.getHarmonizationCurrentExcellencyAssessmentFor(siadapUniverse);
+    }
+
     public ExceedingQuotaSuggestionType getType() {
 	return type;
     }

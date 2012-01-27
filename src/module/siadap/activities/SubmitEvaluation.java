@@ -74,7 +74,7 @@ public class SubmitEvaluation extends WorkflowActivity<SiadapProcess, ActivityIn
 	if (siadap.isHarmonizationOfDefaultUniverseDone())
 	    throw new SiadapException("error.cannot.revert.harmonized.to.no.evaluation");
 	siadap.setEvaluationSealedDate(null);
-	siadap.getDefaultSiadapEvaluationUniverse().removeHarmonizationAssessment();
+	siadap.getDefaultSiadapEvaluationUniverse().removeHarmonizationAssessments();
     }
 
 

@@ -104,12 +104,12 @@
 	<logic:equal name="currentUnit" property="harmonizationActive" value="true">
 	    <logic:equal name="currentUnit" property="harmonizationUnit" value="true">
 	    	<logic:equal name="currentUnit" property="harmonizationFinished" value="false">
-			    <%-- <html:link styleId="terminateHarmonization"  page="<%="/siadapManagement.do?method=terminateHarmonization&year="+year.toString()%>" paramName="currentUnit" paramProperty="unit.externalId" paramId="unitId">
-						<bean:message key="label.terminateHarmonization" bundle="SIADAP_RESOURCES"/>
-					</html:link> --%>
-					<html:link styleId="terminateHarmonization" page="<%="/siadapManagement.do?method=viewUnitHarmonizationData&year=" + year + "&unitId=" + unitId%>">
-						<bean:message key="label.terminateHarmonization" bundle="SIADAP_RESOURCES"/> (<bean:message key="functionality.disabled.temporarily.short" bundle="SIADAP_RESOURCES"/>)
-					</html:link>
+				  <%-- <html:link styleId="terminateHarmonization"  page="<%="/siadapManagement.do?method=terminateHarmonization&year="+year.toString()%>" paramName="currentUnit" paramProperty="unit.externalId" paramId="unitId">
+					<bean:message key="label.terminateHarmonization" bundle="SIADAP_RESOURCES"/>
+				</html:link> --%>
+				<html:link styleId="terminateHarmonization" page="<%="/siadapManagement.do?method=viewUnitHarmonizationData&year=" + year + "&unitId=" + unitId%>">
+					<bean:message key="label.terminateHarmonization" bundle="SIADAP_RESOURCES"/> (<bean:message key="functionality.disabled.temporarily.short" bundle="SIADAP_RESOURCES"/>)
+				</html:link>
 				| <html:link  page="<%="/siadapManagement.do?method=prepareAddExceedingQuotaSuggestion&year=" + year.toString()%>" paramName="currentUnit" paramProperty="unit.externalId" paramId="unitId">
 						<bean:message key="label.addExcedingQuotaSuggestion" bundle="SIADAP_RESOURCES"/>
 				  </html:link>
@@ -182,7 +182,7 @@ boolean hasPeopleToHarmonize = ((peopleWithoutQuotasSIADAP2.getSiadapUniverse() 
 	}
 	function handleWithoutQuotasSIADAP3RadioClick(radioElement)
 	{
-		if ($(radioElement).next().text().trim() == "NÃ£o")
+		if ($(radioElement).next().text().trim() == "Não")
 		{
 		//let's check if they had the Yes selected
 		if ($(radioElement).parents("li").prevAll().children().children("input")[0].wasSetToTrue)
@@ -211,40 +211,114 @@ boolean hasPeopleToHarmonize = ((peopleWithoutQuotasSIADAP2.getSiadapUniverse() 
 
 		}
 	}
-	function handleWithQuotasSIADAP3RadioClick(radioElement)
+	
+	function extractTrimmedQualitativeEvaluationText(radioElement) {
+		if (radioElement.name.indexOf("ExcellencyAward") != -1)
+			return $(radioElement).parents("td").prev().prev().text().trim();
+		else
+			return $(radioElement).parents("td").prev().text().trim();
+	}
+	
+	function disableAndSetToFalseNextExcellencyRadios(radioOfOrigin)
 	{
-		if ($(radioElement).next().text().trim() == "NÃ£o")
+		$(radioOfOrigin).parents("td").next().children().children().children().children("input").removeAttr("checked");
+		$(radioOfOrigin).parents("td").next().children().children().children().children("input[value='false']").attr("checked", "true");
+		$(radioOfOrigin).parents("td").next().children().children().children().children("input").attr("disabled","true");
+		$(radioOfOrigin).parents("td").next().children().children().children().children("input[value='false']").change();
+		
+	}
+	
+	function enableNextExcellencyRadios(radioOfOrigin)
+	{
+		$(radioOfOrigin).parents("td").next().children().children().children().children("input").removeAttr("disabled");
+		
+	}
+	function handleRadioClick(radioElement, universeString)
+	{
+		if ($(radioElement).next().text().trim() == "Não")
 		{
 		//let's check if they had the Yes selected
 		if ($(radioElement).parents("li").prevAll().children().children("input")[0].wasSetToTrue)
 			{
 			//in case they had, we will decrease the corresponding number
-			if ($(radioElement).parents("td").prev().text().trim() == "Desempenho excelente")
+			if (extractTrimmedQualitativeEvaluationText(radioElement) == "Desempenho excelente" || extractTrimmedQualitativeEvaluationText(radioElement) == "Desempenho relevante")
 				{
-				 decreaseOne($('.current-harmonized-excellents-siadap3WithQuotas'));
+				//so we ought to do something
+					if (radioElement.name.indexOf("ExcellencyAward") != -1)
+						{
+						 //this is an Excellency eval, decrease them
+						 decreaseOne($('.current-harmonized-excellents-'+universeString));
+						}
+					else {
+						 //this is a regular eval, decrease them
+						 decreaseOne($('.current-harmonized-relevants-'+universeString));
+						 //and set the excellency radios to No and disabled, if they exist
+						 disableAndSetToFalseNextExcellencyRadios(radioElement)
+					}
 				}
-			if ($(radioElement).parents("td").prev().text().trim() == "Desempenho relevante")
-				{
-				 decreaseOne($('.current-harmonized-relevants-siadap3WithQuotas'));
-				}
+		
 			}
 		}
 		if ($(radioElement).next().text().trim() == "Sim")
 		{
-			if ($(radioElement).parents("td").prev().text().trim() == "Desempenho excelente")
+			if (extractTrimmedQualitativeEvaluationText(radioElement) == "Desempenho excelente" || extractTrimmedQualitativeEvaluationText(radioElement) == "Desempenho relevante")
 			{
-			 increaseOne($('.current-harmonized-excellents-siadap3WithQuotas'));
+				if (radioElement.name.indexOf("ExcellencyAward") != -1)
+					{
+					// it is an excellency award
+					 increaseOne($('.current-harmonized-excellents-'+universeString));
+					}
+				else {
+					 increaseOne($('.current-harmonized-relevants-'+universeString));
+					 //let's enable the disabled excellents, which are next to here, if they exist
+					 enableNextExcellencyRadios(radioElement);
+				}
 			}
-			if ($(radioElement).parents("td").prev().text().trim() == "Desempenho relevante")
+		}
+	}
+	
+	function handleWithQuotasSIADAP3RadioClick(radioElement)
+	{
+		if ($(radioElement).next().text().trim() == "Não")
+		{
+		//let's check if they had the Yes selected
+		if ($(radioElement).parents("li").prevAll().children().children("input")[0].wasSetToTrue)
 			{
-			 increaseOne($('.current-harmonized-relevants-siadap3WithQuotas'));
+			//in case they had, we will decrease the corresponding number
+			if (extractTrimmedQualitativeEvaluationText(radioElement) == "Desempenho excelente" || extractTrimmedQualitativeEvaluationText(radioElement) == "Desempenho relevante")
+				{
+				//so we ought to do something
+					if (radioElement.name.indexOf("ExcellencyAward") != -1)
+						{
+						 //this is an Excellency eval, decrease them
+						 decreaseOne($('.current-harmonized-excellents-siadap3WithQuotas'));
+						}
+					else {
+						 //this is a regular eval, decrease them
+						 decreaseOne($('.current-harmonized-relevants-siadap3WithQuotas'));
+					}
+				}
+		
 			}
-
+		}
+		if ($(radioElement).next().text().trim() == "Sim")
+		{
+			if (extractTrimmedQualitativeEvaluationText(radioElement) == "Desempenho excelente" || extractTrimmedQualitativeEvaluationText(radioElement) == "Desempenho relevante")
+			{
+				if (radioElement.name.indexOf("ExcellencyAward") != -1)
+					{
+					// it is an excellency award
+					 increaseOne($('.current-harmonized-excellents-siadap3WithQuotas'));
+					}
+				else {
+					 increaseOne($('.current-harmonized-relevants-siadap3WithQuotas'));
+				}
+			}
 		}
 	}
 	function handleWithoutQuotasSIADAP2RadioClick(radioElement)
 	{
-		if ($(radioElement).next().text().trim() == "NÃ£o")
+		if ($(radioElement).next().text().trim() == "Não")
 		{
 		//let's check if they had the Yes selected
 		if ($(radioElement).parents("li").prevAll().children().children("input")[0].wasSetToTrue)
@@ -275,7 +349,7 @@ boolean hasPeopleToHarmonize = ((peopleWithoutQuotasSIADAP2.getSiadapUniverse() 
 	}
 	function handleWithQuotasSIADAP2RadioClick(radioElement)
 	{
-		if ($(radioElement).next().text().trim() == "NÃ£o")
+		if ($(radioElement).next().text().trim() == "Não")
 		{
 		//let's check if they had the Yes selected
 		if ($(radioElement).parents("li").prevAll().children().children("input")[0].wasSetToTrue)
@@ -317,7 +391,7 @@ boolean hasPeopleToHarmonize = ((peopleWithoutQuotasSIADAP2.getSiadapUniverse() 
 		$("td").each(function(indexInArray, td) { if ($(td).text().trim() == "não avaliado") $(td).parent("tr").addClass("disabled"); }); 
 		
 		$("input[type=radio]").change(function () {
-			if ($(this).next().text().trim() == "Sim")
+			/* if ($(this).next().text().trim() == "Sim")
 				{
 					this.wasSetToTrue=true;
 				}
@@ -336,7 +410,29 @@ boolean hasPeopleToHarmonize = ((peopleWithoutQuotasSIADAP2.getSiadapUniverse() 
 			if ($(this).parents("li").attr("class") == "withQuotasSIADAP2")
 				{
 					handleWithQuotasSIADAP2RadioClick(this);
+				} */
+				var stringToUse = null;
+				if ($(this).next().text().trim() == "Sim")
+				{
+					this.wasSetToTrue=true;
 				}
+			if ($(this).parents("li").attr("class") == "withoutQuotasSIADAP3")
+				{
+					stringToUse="siadap3WithoutQuotas";
+				}
+			if ($(this).parents("li").attr("class") == "withQuotasSIADAP3")
+				{
+					stringToUse="siadap3WithQuotas";
+				}
+			if ($(this).parents("li").attr("class") == "withoutQuotasSIADAP2")
+				{
+					stringToUse="siadap2WithoutQuotas";
+				}
+			if ($(this).parents("li").attr("class") == "withQuotasSIADAP2")
+				{
+					stringToUse="siadap2WithQuotas";
+				}
+			handleRadioClick(this,stringToUse);
 		});
 
 		 });
@@ -404,19 +500,30 @@ color: #999;
 						<fr:slot name="totalQualitativeEvaluationScoringSiadap2" layout="null-as-label" key="label.totalQualitativeEvaluationScoring" readOnly="true">
 							<fr:property name="subLayout" value=""/>
 						</fr:slot>
+						<%-- Harmonization assessments --%>
 						<logic:equal name="currentUnit" property="harmonizationFinished" value="false">
 							<fr:slot name="harmonizationCurrentAssessmentForSIADAP2" layout="radio" key="label.harmonization.assessment"> 
  								<fr:property name="readOnlyIf" value="withSkippedEvalForSiadap2" />
 								<fr:property name="classes" value="inline-list"/>
 								<fr:property name="eachClasses" value="withQuotasSIADAP2"/>
 							</fr:slot>
+							<fr:slot name="harmonizationCurrentAssessmentForExcellencyAwardForSIADAP2" layout="radio" key="label.harmonization.assessment.forExcellencyAward"> 
+ 								<fr:property name="readOnlyIf" value="withoutExcellencyAwardForSiadap2" />
+								<fr:property name="classes" value="inline-list"/>
+								<fr:property name="eachClasses" value="withQuotasSIADAP2"/>
+							</fr:slot>
 						</logic:equal>
 						<logic:equal name="currentUnit" property="harmonizationFinished" value="true">
-								<fr:slot name="harmonizationCurrentAssessmentForSIADAP2" layout="radio" readOnly="true" key="label.harmonization.assessment">
-									<fr:property name="classes" value="inline-list"/>
-									<fr:property name="eachClasses" value="withQuotasSIADAP2"/>
-								</fr:slot>
+							<fr:slot name="harmonizationCurrentAssessmentForSIADAP2" layout="radio" readOnly="true" key="label.harmonization.assessment">
+								<fr:property name="classes" value="inline-list"/>
+								<fr:property name="eachClasses" value="withQuotasSIADAP2"/>
+							</fr:slot>
+							<fr:slot name="harmonizationCurrentAssessmentForExcellencyAwardForSIADAP2" layout="radio" readOnly="true" key="label.harmonization.assessment.forExcellencyAward"> 
+								<fr:property name="classes" value="inline-list"/>
+								<fr:property name="eachClasses" value="withQuotasSIADAP2"/>
+							</fr:slot>
 						</logic:equal>
+						<%-- END Harmonization assessments --%>
 					</fr:schema>
 					<fr:layout name="tabular-row">
 						<fr:property name="classes" value="tstyle2"/>
@@ -435,12 +542,12 @@ color: #999;
 						<fr:property name="order(viewProcess)" value="1"/>
 						<fr:property name="visibleIf(viewProcess)" value="accessibleToCurrentUser"/>
 						
-						<fr:property name="link(removeAssessment)" value="<%="/siadapManagement.do?method=removeHarmonizationAssessment&unitId="+unitId + "&siadapUniverse="+module.siadap.domain.SiadapUniverse.SIADAP2%>"/>
-						<fr:property name="bundle(removeAssessment)" value="SIADAP_RESOURCES"/>
-						<fr:property name="key(removeAssessment)" value="link.removeHarmonizationAssessment"/>
-						<fr:property name="param(removeAssessment)" value="person.externalId/personId,year/year"/>
-						<fr:property name="order(removeAssessment)" value="1"/>
-						<fr:property name="visibleIf(removeAssessment)" value="ableToRemoveAssessmentForSIADAP2"/>
+						<fr:property name="link(removeAssessments)" value="<%="/siadapManagement.do?method=removeHarmonizationAssessments&unitId="+unitId + "&siadapUniverse="+module.siadap.domain.SiadapUniverse.SIADAP2%>"/>
+						<fr:property name="bundle(removeAssessments)" value="SIADAP_RESOURCES"/>
+						<fr:property name="key(removeAssessments)" value="link.removeHarmonizationAssessments"/>
+						<fr:property name="param(removeAssessments)" value="person.externalId/personId,year/year"/>
+						<fr:property name="order(removeAssessments)" value="1"/>
+						<fr:property name="visibleIf(removeAssessments)" value="ableToRemoveAssessmentsForSIADAP2"/>
 						
 						<fr:property name="sortParameter" value="sortByQuotas"/>
 		       			<fr:property name="sortUrl" value="<%= "/siadapManagement.do?method=viewUnitHarmonizationData&unitId=" + unitId + "&year=" + year.toString()%>"/>
@@ -509,9 +616,15 @@ color: #999;
 						<fr:slot name="totalQualitativeEvaluationScoringSiadap3" layout="null-as-label" key="label.totalQualitativeEvaluationScoring" readOnly="true">
 							<fr:property name="subLayout" value=""/>
 						</fr:slot>
+						<%-- Harmonization assessments --%>
 						<logic:equal name="currentUnit" property="harmonizationFinished" value="false">
  								<fr:slot name="harmonizationCurrentAssessmentForSIADAP3" layout="radio" key="label.harmonization.assessment">
  									<fr:property name="readOnlyIf" value="withSkippedEvalForSiadap3" />
+									<fr:property name="classes" value="inline-list"/>
+									<fr:property name="eachClasses" value="withQuotasSIADAP3"/>
+								</fr:slot>
+								<fr:slot name="harmonizationCurrentAssessmentForExcellencyAwardForSIADAP3" layout="radio" key="label.harmonization.assessment.forExcellencyAward"> 
+	 								<fr:property name="readOnlyIf" value="withoutExcellencyAwardForSiadap3" />
 									<fr:property name="classes" value="inline-list"/>
 									<fr:property name="eachClasses" value="withQuotasSIADAP3"/>
 								</fr:slot>
@@ -521,7 +634,12 @@ color: #999;
 									<fr:property name="classes" value="inline-list"/>
 									<fr:property name="eachClasses" value="withQuotasSIADAP3"/>
 								</fr:slot>
+								<fr:slot name="harmonizationCurrentAssessmentForExcellencyAwardForSIADAP3" layout="radio" key="label.harmonization.assessment.forExcellencyAward" readOnly="true"> 
+									<fr:property name="classes" value="inline-list"/>
+									<fr:property name="eachClasses" value="withQuotasSIADAP3"/>
+								</fr:slot>
 						</logic:equal> 
+						<%-- END Harmonization assessments --%>
 					</fr:schema>
 					<fr:layout name="tabular-row">
 						<fr:property name="classes" value="tstyle2"/>
@@ -540,12 +658,12 @@ color: #999;
 						<fr:property name="order(viewProcess)" value="1"/>
 						<fr:property name="visibleIf(viewProcess)" value="accessibleToCurrentUser"/>
 						
-						<fr:property name="link(removeAssessment)" value="<%="/siadapManagement.do?method=removeHarmonizationAssessment&unitId="+unitId + "&siadapUniverse="+module.siadap.domain.SiadapUniverse.SIADAP3%>"/>
+						<fr:property name="link(removeAssessment)" value="<%="/siadapManagement.do?method=removeHarmonizationAssessments&unitId="+unitId + "&siadapUniverse="+module.siadap.domain.SiadapUniverse.SIADAP3%>"/>
 						<fr:property name="bundle(removeAssessment)" value="SIADAP_RESOURCES"/>
-						<fr:property name="key(removeAssessment)" value="link.removeHarmonizationAssessment"/>
+						<fr:property name="key(removeAssessment)" value="link.removeHarmonizationAssessments"/>
 						<fr:property name="param(removeAssessment)" value="person.externalId/personId,year/year"/>
 						<fr:property name="order(removeAssessment)" value="1"/>
-						<fr:property name="visibleIf(removeAssessment)" value="ableToRemoveAssessmentForSIADAP3"/>
+						<fr:property name="visibleIf(removeAssessment)" value="ableToRemoveAssessmentsForSIADAP3"/>
 						
 						<fr:property name="sortParameter" value="sortByQuotas"/>
 		       			<fr:property name="sortUrl" value="<%= "/siadapManagement.do?method=viewUnitHarmonizationData&unitId=" + unitId + "&year=" + year.toString()%>"/>
@@ -615,11 +733,17 @@ color: #999;
 						<fr:slot name="totalQualitativeEvaluationScoringSiadap2" layout="null-as-label" key="label.totalQualitativeEvaluationScoring" readOnly="true">
 							<fr:property name="subLayout" value=""/>
 						</fr:slot>
+						<%-- Harmonization assessments --%>
 						<logic:equal name="currentUnit" property="harmonizationFinished" value="false">
 							<fr:slot name="harmonizationCurrentAssessmentForSIADAP2" layout="radio" key="label.harmonization.assessment">
  								<fr:property name="readOnlyIf" value="withSkippedEvalForSiadap2" />
 								<fr:property name="classes" value="inline-list"/>
 								<fr:property name="eachClasses" value="withoutQuotasSIADAP2"/>
+							</fr:slot>
+							<fr:slot name="harmonizationCurrentAssessmentForExcellencyAwardForSIADAP2" layout="radio" key="label.harmonization.assessment.forExcellencyAward"> 
+ 								<fr:property name="readOnlyIf" value="withoutExcellencyAwardForSiadap2" />
+								<fr:property name="classes" value="inline-list"/>
+								<fr:property name="eachClasses" value="withQuotasSIADAP2"/>
 							</fr:slot>
 						</logic:equal>
 						<logic:equal name="currentUnit" property="harmonizationFinished" value="true">
@@ -627,7 +751,12 @@ color: #999;
 								<fr:property name="classes" value="inline-list"/>
 								<fr:property name="eachClasses" value="withoutQuotasSIADAP2"/>
 							</fr:slot>
+							<fr:slot name="harmonizationCurrentAssessmentForExcellencyAwardForSIADAP2" layout="radio" readOnly="true" key="label.harmonization.assessment.forExcellencyAward"> 
+								<fr:property name="classes" value="inline-list"/>
+								<fr:property name="eachClasses" value="withQuotasSIADAP2"/>
+							</fr:slot>
 						</logic:equal>
+						<%-- END Harmonization assessments --%>
 					</fr:schema>
 					<fr:layout name="tabular-row">
 						<fr:property name="classes" value="tstyle2"/>
@@ -646,12 +775,12 @@ color: #999;
 						<fr:property name="order(viewProcess)" value="1"/>
 						<fr:property name="visibleIf(viewProcess)" value="accessibleToCurrentUser"/>
 						
-						<fr:property name="link(removeAssessment)" value="<%="/siadapManagement.do?method=removeHarmonizationAssessment&unitId="+unitId + "&siadapUniverse="+module.siadap.domain.SiadapUniverse.SIADAP2%>"/>
+						<fr:property name="link(removeAssessment)" value="<%="/siadapManagement.do?method=removeHarmonizationAssessments&unitId="+unitId + "&siadapUniverse="+module.siadap.domain.SiadapUniverse.SIADAP2%>"/>
 						<fr:property name="bundle(removeAssessment)" value="SIADAP_RESOURCES"/>
-						<fr:property name="key(removeAssessment)" value="link.removeHarmonizationAssessment"/>
+						<fr:property name="key(removeAssessment)" value="link.removeHarmonizationAssessments"/>
 						<fr:property name="param(removeAssessment)" value="person.externalId/personId,year/year"/>
 						<fr:property name="order(removeAssessment)" value="1"/>
-						<fr:property name="visibleIf(removeAssessment)" value="ableToRemoveAssessmentForSIADAP2"/>
+						<fr:property name="visibleIf(removeAssessment)" value="ableToRemoveAssessmentsForSIADAP2"/>
 						
 						<fr:property name="sortParameter" value="sortByQuotas"/>
 		       			<fr:property name="sortUrl" value="<%= "/siadapManagement.do?method=viewUnitHarmonizationData&unitId=" + unitId + "&year=" + year.toString()%>"/>
@@ -719,11 +848,17 @@ color: #999;
 						<fr:slot name="totalQualitativeEvaluationScoringSiadap3" layout="null-as-label" key="label.totalQualitativeEvaluationScoring" readOnly="true" >
 							<fr:property name="subLayout" value=""/>
 						</fr:slot>
+						<%-- Harmonization assessments --%>
 						<logic:equal name="currentUnit" property="harmonizationFinished" value="false">
 							<fr:slot name="harmonizationCurrentAssessmentForSIADAP3" layout="radio" key="label.harmonization.assessment">
  								<fr:property name="readOnlyIf" value="withSkippedEvalForSiadap3" />
 								<fr:property name="classes" value="inline-list"/>
 								<fr:property name="eachClasses" value="withoutQuotasSIADAP3"/>
+							</fr:slot>
+							<fr:slot name="harmonizationCurrentAssessmentForExcellencyAwardForSIADAP3" layout="radio" key="label.harmonization.assessment.forExcellencyAward"> 
+ 								<fr:property name="readOnlyIf" value="withoutExcellencyAwardForSiadap3" />
+								<fr:property name="classes" value="inline-list"/>
+								<fr:property name="eachClasses" value="withQuotasSIADAP3"/>
 							</fr:slot>
 						</logic:equal>
 						<logic:equal name="currentUnit" property="harmonizationFinished" value="true">
@@ -731,7 +866,12 @@ color: #999;
 									<fr:property name="classes" value="inline-list"/>
 									<fr:property name="eachClasses" value="withoutQuotasSIADAP3"/>
 								</fr:slot>
+								<fr:slot name="harmonizationCurrentAssessmentForExcellencyAwardForSIADAP3" layout="radio" readOnly="true" key="label.harmonization.assessment.forExcellencyAward"> 
+									<fr:property name="classes" value="inline-list"/>
+									<fr:property name="eachClasses" value="withQuotasSIADAP3"/>
+							</fr:slot>
 						</logic:equal>
+						<%-- END Harmonization assessments --%>
 					</fr:schema>
 					<fr:layout name="tabular-row">
 						<fr:property name="classes" value="tstyle2"/>
@@ -750,12 +890,12 @@ color: #999;
 						<fr:property name="order(viewProcess)" value="1"/>
 						<fr:property name="visibleIf(viewProcess)" value="accessibleToCurrentUser"/>
 						
-						<fr:property name="link(removeAssessment)" value="<%="/siadapManagement.do?method=removeHarmonizationAssessment&unitId="+unitId + "&siadapUniverse="+module.siadap.domain.SiadapUniverse.SIADAP3%>"/>
+						<fr:property name="link(removeAssessment)" value="<%="/siadapManagement.do?method=removeHarmonizationAssessments&unitId="+unitId + "&siadapUniverse="+module.siadap.domain.SiadapUniverse.SIADAP3%>"/>
 						<fr:property name="bundle(removeAssessment)" value="SIADAP_RESOURCES"/>
-						<fr:property name="key(removeAssessment)" value="link.removeHarmonizationAssessment"/>
+						<fr:property name="key(removeAssessment)" value="link.removeHarmonizationAssessments"/>
 						<fr:property name="param(removeAssessment)" value="person.externalId/personId,year/year"/>
 						<fr:property name="order(removeAssessment)" value="1"/>
-						<fr:property name="visibleIf(removeAssessment)" value="ableToRemoveAssessmentForSIADAP3"/>
+						<fr:property name="visibleIf(removeAssessment)" value="ableToRemoveAssessmentsForSIADAP3"/>
 						
 						<fr:property name="sortParameter" value="sortByQuotas"/>
 		       			<fr:property name="sortUrl" value="<%= "/siadapManagement.do?method=viewUnitHarmonizationData&unitId=" + unitId + "&year=" + year.toString()%>"/>

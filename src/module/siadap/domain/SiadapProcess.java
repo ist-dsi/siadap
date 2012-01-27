@@ -366,7 +366,7 @@ public class SiadapProcess extends SiadapProcess_Base {
 	return getSiadap().isEvaluatedWithKnowledgeOfObjectives();
     }
 
-    public void removeHarmonizationAssessment(SiadapEvaluationUniverse siadapEvaluationUniverse) {
+    public void removeHarmonizationAssessments(SiadapEvaluationUniverse siadapEvaluationUniverse) {
 	String siadapUniverseLocalizedName = siadapEvaluationUniverse.getSiadapUniverse().getLocalizedName();
 	if (siadapEvaluationUniverse.isCurriculumPonderation()) {
 	    siadapUniverseLocalizedName += " ("

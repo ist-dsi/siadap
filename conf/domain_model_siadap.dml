@@ -134,6 +134,7 @@ class SiadapEvaluationUniverse
 	
 	LocalDate harmonizationDate;
 	Boolean harmonizationAssessment;
+	Boolean harmonizationAssessmentForExcellencyAward;
 	
 	/* TODO: joantune: Yet to be fully defined the meaning*/
 	BigDecimal evaluatorClassification;

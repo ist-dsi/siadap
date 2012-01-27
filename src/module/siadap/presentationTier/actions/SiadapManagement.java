@@ -3,7 +3,6 @@ package module.siadap.presentationTier.actions;
 import java.util.ArrayList;
 import java.util.ConcurrentModificationException;
 import java.util.List;
-import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -257,7 +256,7 @@ public class SiadapManagement extends ContextBaseAction {
 
 		    SiadapUniverse siadapUniverseEnum = siadapUniverseWrapper.getSiadapUniverseEnum();
 		    for (PersonSiadapWrapper personSiadapWrapper : siadapUniverseWrapper.getSiadapUniverse()) {
-			personSiadapWrapper.setHarmonizationCurrentAssessment(siadapUniverseEnum);
+			personSiadapWrapper.setHarmonizationCurrentAssessments(siadapUniverseEnum);
 		    }
 		}
 
@@ -285,13 +284,6 @@ public class SiadapManagement extends ContextBaseAction {
 	}
 	RenderUtils.invalidateViewState();
 	return viewUnitHarmonizationData(mapping, form, request, response);
-    }
-
-    private void setHarmonizationCurrentAssessmentFor(SiadapUniverse siadapUniverse, Set<PersonSiadapWrapper> set) {
-	for (PersonSiadapWrapper personSiadapWrapper : set) {
-	    personSiadapWrapper.setHarmonizationCurrentAssessment(siadapUniverse);
-	}
-
     }
 
     public final ActionForward viewUnitHarmonizationData(final ActionMapping mapping, final ActionForm form,
@@ -387,7 +379,7 @@ public class SiadapManagement extends ContextBaseAction {
     //	});
     //    }
 
-    public final ActionForward removeHarmonizationAssessment(final ActionMapping mapping, final ActionForm form,
+    public final ActionForward removeHarmonizationAssessments(final ActionMapping mapping, final ActionForm form,
 	    final HttpServletRequest request, final HttpServletResponse response) {
 	Person person = getDomainObject(request, "personId");
 	Unit unit = getDomainObject(request, "unitId");
@@ -397,7 +389,7 @@ public class SiadapManagement extends ContextBaseAction {
 	PersonSiadapWrapper personWrapper = new PersonSiadapWrapper(person, year);
 	UnitSiadapWrapper unitWrapper = new UnitSiadapWrapper(unit, year);
 
-	personWrapper.removeHarmonizationAssessment(enumToUse, unitWrapper.getHarmonizationUnit());
+	personWrapper.removeHarmonizationAssessments(enumToUse, unitWrapper.getHarmonizationUnit());
 	return viewUnitHarmonizationData(mapping, form, request, response, year, unit);
 
     }

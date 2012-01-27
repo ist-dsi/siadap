@@ -387,15 +387,24 @@ public class Siadap extends Siadap_Base {
     //
     //    }
 
+    public SiadapGlobalEvaluation getSiadapGlobalEvaluationEnum(SiadapUniverse siadapUniverse) {
+	return getSiadapEvaluationUniverseForSiadapUniverse(siadapUniverse).getSiadapGlobalEvaluationEnum();
+
+    }
+
     /**
      * @param siadapGlobalEvaluation
      *            the {@link SiadapGlobalEvaluation} which we are testing
      * @param siadapUniverseToConsider
      *            the siadap universe to test for
+     * @param relaxedAccepts
+     *            if true, a HIGH and an EXCELLENT will be the same, if false,
+     *            they won't
      * @return true if the parsed siadapGlobalEvaluation is the global
      *         evaluation for the given siadapUniverseToConsider
      */
-    public boolean hasGivenSiadapGlobalEvaluation(SiadapGlobalEvaluation siadapGlobalEvaluation, SiadapUniverse siadapUniverseToConsider)
+    public boolean hasGivenSiadapGlobalEvaluation(SiadapGlobalEvaluation siadapGlobalEvaluation,
+	    SiadapUniverse siadapUniverseToConsider)
     {
 	SiadapEvaluationUniverse siadapEvaluationUniverseForSiadapUniverse = getSiadapEvaluationUniverseForSiadapUniverse(siadapUniverseToConsider);
 	if (siadapEvaluationUniverseForSiadapUniverse == null && siadapGlobalEvaluation.equals(SiadapGlobalEvaluation.NONEXISTING)) {
@@ -599,7 +608,9 @@ public class Siadap extends Siadap_Base {
     @Service
     public void markAsHarmonized(LocalDate harmonizationDate, SiadapUniverse siadapUniverse) {
 	SiadapEvaluationUniverse evaluationUniverse = getSiadapEvaluationUniverseForSiadapUniverse(siadapUniverse);
-	if (evaluationUniverse.getHarmonizationAssessment() == null && !evaluationUniverse.isWithSkippedEvaluation())
+	if ((evaluationUniverse.getHarmonizationAssessment() == null && !evaluationUniverse.isWithSkippedEvaluation())
+		|| (evaluationUniverse.hasExcellencyAwardedFromEvaluator() && evaluationUniverse
+			.getHarmonizationAssessmentForExcellencyAward() == null))
 	    throw new SiadapException("harmonization.error.there.are.people.not.harmonized");
 	//let's also make sure that this person either has been marked as not having an evaluation or has the evaluation done
 	if (!isEvaluationDone(siadapUniverse) )
@@ -611,6 +622,14 @@ public class Siadap extends Siadap_Base {
 		throw new SiadapException("error.harmonization.can't.harmonize.with.users.without.grade");
 	    }
 	}
+
+	//let's also make sure there's consistency between the excellency assessment and the regular.
+	//you cannot have the case where excellencyAssessment = true and regularAssessment = false
+	if (evaluationUniverse.getHarmonizationAssessment() != null
+		&& evaluationUniverse.getHarmonizationAssessmentForExcellencyAward() != null
+		&& evaluationUniverse.getHarmonizationAssessmentForExcellencyAward() == true
+		&& evaluationUniverse.getHarmonizationAssessment() == false)
+	    throw new SiadapException("error.harmonization.inconsistency.between.excellency.and.regular.assessment");
 	evaluationUniverse.setHarmonizationDate(harmonizationDate);
 	getProcess().markAsHarmonized(evaluationUniverse);
     }

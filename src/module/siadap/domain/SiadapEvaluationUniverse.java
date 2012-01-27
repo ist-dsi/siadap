@@ -64,6 +64,9 @@ public class SiadapEvaluationUniverse extends SiadapEvaluationUniverse_Base {
 		|| SiadapGlobalEvaluation.ZERO.accepts(getTotalEvaluationScoring(), hasExcellencyAwarded());
     }
 
+    public SiadapGlobalEvaluation getSiadapGlobalEvaluationEnum() {
+	return SiadapGlobalEvaluation.getGlobalEvaluation(getTotalEvaluationScoring(), hasExcellencyAwarded());
+    }
     public BigDecimal getTotalEvaluationScoring() {
 	if (isWithSkippedEvaluation())
 	    return null;
@@ -201,6 +204,12 @@ public class SiadapEvaluationUniverse extends SiadapEvaluationUniverse_Base {
 	return evaluationItems;
     }
 
+    public boolean hasExcellencyAwardedFromEvaluator() {
+	if (getEvaluatorClassificationExcellencyAward() == null)
+	    return false;
+	return getEvaluatorClassificationExcellencyAward();
+    }
+
     public boolean hasExcellencyAwarded() {
 	if (isCurriculumPonderation()) {
 	    for (CurricularPonderationEvaluationItem curricularPonderationEvaluationItem : getEvaluations(
@@ -227,16 +236,16 @@ public class SiadapEvaluationUniverse extends SiadapEvaluationUniverse_Base {
 	return isCurriculumPonderation() && getSiadapEvaluationItems() != null && getSiadapEvaluationItems().size() > 0;
     }
 
-    @Override
     @Service
-    public void setHarmonizationAssessment(Boolean harmonizationAssessment) {
+    public void setHarmonizationAssessments(Boolean harmonizationAssessment, Boolean excellencyHarmonizationAssessment) {
 	if (getHarmonizationDate() != null)
 	    throw new SiadapException("error.harmonization.closed.cannot.change.assessment.reopen.first");
 	if (!isEvaluationDone() && !(isWithSkippedEvaluation()) && harmonizationAssessment != null)
 	    throw new SiadapException("error.harmonization.assessment.cant.be.done.with.non.existing.evaluation");
 	super.setHarmonizationAssessment(harmonizationAssessment);
-	//let's copy the grade to the respective place
-	if (harmonizationAssessment != null) {
+	super.setHarmonizationAssessmentForExcellencyAward(excellencyHarmonizationAssessment);
+	//let's copy the grade to the respective place if we are in position to do that, i.e. if we have a full harm. assessment i.e. excellency and normal one
+	if (isWithFullAssessments(harmonizationAssessment, excellencyHarmonizationAssessment)) {
 	    if (!isWithSkippedEvaluation()) {
 		setHarmonizationClassification(getTotalEvaluationScoring());
 		if (isCurriculumPonderation()) {
@@ -257,6 +266,27 @@ public class SiadapEvaluationUniverse extends SiadapEvaluationUniverse_Base {
 	}
     }
 
+    /**
+     * 
+     * @param newHarmonizationAssessment
+     * @param newExcellencyHarmonizationAssessment
+     * @return true if we have all the assessments we need, false otherwise
+     */
+    private boolean isWithFullAssessments(Boolean newHarmonizationAssessment, Boolean newExcellencyHarmonizationAssessment) {
+	if (newHarmonizationAssessment == null)
+	    return false;
+	if (hasExcellencyAwardedFromEvaluator() && newExcellencyHarmonizationAssessment == null)
+	    return false;
+	return true;
+    }
+
+    @Deprecated
+    @Override
+    public void setHarmonizationAssessment(Boolean harmonizationAssessment) {
+	throw new UnsupportedOperationException(
+		"don't use this method, set both assessments with setHarmonizationAssessments instead");
+    }
+
     public boolean isWithSkippedEvaluation() {
 	if (getDefaultEvaluationUniverse())
 	    return getSiadap().isWithSkippedEvaluation();
@@ -273,11 +303,12 @@ public class SiadapEvaluationUniverse extends SiadapEvaluationUniverse_Base {
     }
 
     @Service
-    public void removeHarmonizationAssessment() {
-	setHarmonizationAssessment(null);
+    public void removeHarmonizationAssessments() {
+	super.setHarmonizationAssessment(null);
 	setHarmonizationClassification(null);
 	setHarmonizationClassificationExcellencyAward(null);
-	getSiadap().getProcess().removeHarmonizationAssessment(this);
+	super.setHarmonizationAssessmentForExcellencyAward(null);
+	getSiadap().getProcess().removeHarmonizationAssessments(this);
 
     }
 

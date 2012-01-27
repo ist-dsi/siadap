@@ -607,8 +607,7 @@ public class UnitSiadapWrapper extends PartyWrapper implements Serializable {
 	List<PersonSiadapWrapper> employees = new ArrayList<PersonSiadapWrapper>();
 
 	getUnitAttachedPersons(getUnit(), employees, continueToSubUnits, predicate,
-		Collections.singleton(getConfiguration().getUnitRelations()),
-		getConfiguration().getWorkingRelation(),
+		Collections.singleton(getConfiguration().getUnitRelations()), getConfiguration().getWorkingRelation(),
 		getConfiguration().getWorkingRelationWithNoQuota());
 	return employees;
     }
@@ -625,8 +624,7 @@ public class UnitSiadapWrapper extends PartyWrapper implements Serializable {
 	List<PersonSiadapWrapper> employees = new ArrayList<PersonSiadapWrapper>();
 
 	getUnitAttachedPersons(getUnit(), employees, continueToSubUnits, predicate,
-		Collections.singleton(getConfiguration().getUnitRelations()),
-		getConfiguration().getWorkingRelation());
+		Collections.singleton(getConfiguration().getUnitRelations()), getConfiguration().getWorkingRelation());
 	return employees;
     }
 
@@ -642,9 +640,7 @@ public class UnitSiadapWrapper extends PartyWrapper implements Serializable {
 	List<PersonSiadapWrapper> employees = new ArrayList<PersonSiadapWrapper>();
 
 	getUnitAttachedPersons(getUnit(), employees, continueToSubUnits, predicate,
-		Collections.singleton(getConfiguration().getUnitRelations()),
-		getConfiguration()
-		.getWorkingRelationWithNoQuota());
+		Collections.singleton(getConfiguration().getUnitRelations()), getConfiguration().getWorkingRelationWithNoQuota());
 	return employees;
     }
 
@@ -747,19 +743,31 @@ public class UnitSiadapWrapper extends PartyWrapper implements Serializable {
 	 */
 	private boolean checkOnHarmonizationAssessment(PersonSiadapWrapper personWrapper) {
 	    if (includePositivelyHarmonizedOnly != null) {
+		//WTF?!?! the greatest boolean riddle... probably should be broken down... but where's the fun in that :P
 		switch (siadapUniverse) {
 		case SIADAP2:
 		    return ((includePositivelyHarmonizedOnly
-			    && personWrapper.getHarmonizationCurrentAssessmentForSIADAP2() != null && personWrapper
-			    .getHarmonizationCurrentAssessmentForSIADAP2().booleanValue()) || (!includePositivelyHarmonizedOnly
-			    && personWrapper.getHarmonizationCurrentAssessmentForSIADAP2() != null && !personWrapper
-			    .getHarmonizationCurrentAssessmentForSIADAP2().booleanValue()));
+			    && ((personWrapper.getHarmonizationCurrentAssessmentForSIADAP2() != null && personWrapper
+			    .getHarmonizationCurrentAssessmentForSIADAP2().booleanValue()) || (!personWrapper
+			    .getWithoutExcellencyAwardForSiadap2()
+			    && personWrapper.getHarmonizationCurrentAssessmentForExcellencyAwardForSIADAP2() != null && personWrapper
+				.getHarmonizationCurrentAssessmentForExcellencyAwardForSIADAP2()))) || (!includePositivelyHarmonizedOnly
+			    && ((personWrapper.getHarmonizationCurrentAssessmentForSIADAP2() != null && !personWrapper
+				    .getHarmonizationCurrentAssessmentForSIADAP2().booleanValue())) || (!personWrapper
+			    .getWithoutExcellencyAwardForSiadap3()
+			    && personWrapper.getHarmonizationCurrentAssessmentForExcellencyAwardForSIADAP3() != null && !personWrapper
+				.getHarmonizationCurrentAssessmentForExcellencyAwardForSIADAP3())));
 		case SIADAP3:
-		    return ((includePositivelyHarmonizedOnly
-			    && personWrapper.getHarmonizationCurrentAssessmentForSIADAP3() != null && personWrapper
-			    .getHarmonizationCurrentAssessmentForSIADAP3().booleanValue()) || (!includePositivelyHarmonizedOnly
-			    && personWrapper.getHarmonizationCurrentAssessmentForSIADAP3() != null && !personWrapper
-			    .getHarmonizationCurrentAssessmentForSIADAP3().booleanValue()));
+		    return ((includePositivelyHarmonizedOnly && ((personWrapper.getHarmonizationCurrentAssessmentForSIADAP3() != null && personWrapper
+			    .getHarmonizationCurrentAssessmentForSIADAP3().booleanValue()) || (!personWrapper
+			    .getWithoutExcellencyAwardForSiadap3()
+			    && personWrapper.getHarmonizationCurrentAssessmentForExcellencyAwardForSIADAP3() != null && personWrapper
+				.getHarmonizationCurrentAssessmentForExcellencyAwardForSIADAP3()))) || (!includePositivelyHarmonizedOnly
+			    && ((personWrapper.getHarmonizationCurrentAssessmentForSIADAP3() != null && !personWrapper
+				    .getHarmonizationCurrentAssessmentForSIADAP3().booleanValue())) || (!personWrapper
+			    .getWithoutExcellencyAwardForSiadap3()
+			    && personWrapper.getHarmonizationCurrentAssessmentForExcellencyAwardForSIADAP3() != null && !personWrapper
+				.getHarmonizationCurrentAssessmentForExcellencyAwardForSIADAP3())));
 		default:
 		    return false;
 		}
