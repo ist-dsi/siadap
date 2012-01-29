@@ -389,6 +389,12 @@ boolean hasPeopleToHarmonize = ((peopleWithoutQuotasSIADAP2.getSiadapUniverse() 
 				
 			}
 		});
+		
+		//let's make sure that when we save things, nothing is disabled
+		$("input[type='radio']").parents("form").submit(function() {
+			$("input[type='radio']").removeAttr("disabled")
+			});
+		
 		//give a visual clue to the ones with skipped eval
 		$("td").each(function(indexInArray, td) { if ($(td).text().trim() == "não avaliado") $(td).parent("tr").addClass("disabled"); }); 
 		
