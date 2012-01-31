@@ -1,3 +1,4 @@
+<%@page import="module.siadap.domain.SiadapYearConfiguration"%>
 <%@page import="module.siadap.domain.wrappers.SiadapYearWrapper"%>
 <%@page import="module.siadap.domain.wrappers.PersonSiadapWrapper"%>
 <%@page import="module.organization.domain.Person"%>
@@ -8,6 +9,9 @@
 <%@ taglib uri="/WEB-INF/fenix-renderers.tld" prefix="fr"%>
 
 <h2> SIADAP <bean:write name="siadapYearWrapper" property="chosenYear"/></h2>
+
+<%
+SiadapYearWrapper siadapYearWrapper = (SiadapYearWrapper) request.getAttribute("siadapYearWrapper");%>
 
 <%-- The year chooser: --%>
 <fr:form action="/siadapManagement.do?method=manageSiadap">
@@ -125,8 +129,7 @@
 		<bean:message bundle="SIADAP_RESOURCES" key="siadap.nr.processes.with.unread.comments.label"/>: <bean:write name="person" property="nrPersonsWithUnreadComments"/>
 		<br/>
 
-<%
-SiadapYearWrapper siadapYearWrapper = (SiadapYearWrapper) request.getAttribute("siadapYearWrapper");%>
+
 	<bean:define id="peopleToEvaluate" name="person" property="peopleToEvaluate" toScope="request"/>
 	<jsp:include page="prepareCreateSiadap.jsp">
 		<jsp:param value="<%=siadapYearWrapper.getChosenYear()%>" name="year"/>
@@ -162,6 +165,16 @@ SiadapYearWrapper siadapYearWrapper = (SiadapYearWrapper) request.getAttribute("
 				</fr:view>
 			</div>
 </logic:notEmpty>
+
+<%-- Get the View of the top unit for harmonization, if we are part of the CCA group--%>
+<logic:equal value="true" name="person" property="CCAMember">
+<%-- TODO: localize --%>
+<h3>Vista das unidades de harmonização:</h3>
+<html:link page="<%="/siadapManagement.do?method=viewUnitHarmonizationData&year=" + String.valueOf(siadapYearWrapper.getChosenYear()) + "&unitId=" + module.siadap.domain.SiadapYearConfiguration.getSiadapYearConfiguration(siadapYearWrapper.getChosenYear()).getSiadapStructureTopUnit().getExternalId()%>" >
+	Ir para unidade topo
+</html:link>
+
+</logic:equal>
 </logic:present>
 <logic:notPresent name="person">
 <strong><bean:message bundle="SIADAP_RESOURCES" key="label.noconfiguration"/> <a href="mailto:suporte@ist.utl.pt" ><bean:message bundle="SIADAP_RESOURCES" key="label.here" /></a></strong>

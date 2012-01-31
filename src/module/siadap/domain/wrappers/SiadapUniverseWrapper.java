@@ -12,6 +12,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import module.siadap.domain.ExceedingQuotaProposal;
 import module.siadap.domain.Siadap;
 import module.siadap.domain.SiadapEvaluationUniverse;
 import module.siadap.domain.SiadapUniverse;
@@ -58,6 +59,17 @@ public class SiadapUniverseWrapper implements Serializable {
     public static final String SIADAP2_WITHOUT_QUOTAS = "siadap2WithoutQuotas";
     public static final String SIADAP3_WITHOUT_QUOTAS = "siadap3WithoutQuotas";
 
+    public static final String SIADAP2_WITH_QUOTAS_EXCELLENT_SUGGESTION = "siadap2WithQuotasExcellentSugg";
+    public static final String SIADAP2_WITH_QUOTAS_HIGH_SUGGESTION = "siadap2WithQuotasHighSugg";
+
+    public static final String SIADAP3_WITH_QUOTAS_EXCELLENT_SUGGESTION = "siadap3WithQuotasExcellentSugg";
+    public static final String SIADAP3_WITH_QUOTAS_HIGH_SUGGESTION = "siadap3WithQuotasHighSugg";
+
+    public static final String SIADAP2_WITHOUT_QUOTAS_EXCELLENT_SUGGESTION = "siadap2WithoutQuotasExcellentSugg";
+    public static final String SIADAP2_WITHOUT_QUOTAS_HIGH_SUGGESTION = "siadap2WithoutQuotasHighSugg";
+
+    public static final String SIADAP3_WITHOUT_QUOTAS_EXCELLENT_SUGGESTION = "siadap3WithoutQuotasExcellentSugg";
+    public static final String SIADAP3_WITHOUT_QUOTAS_HIGH_SUGGESTION = "siadap3WithoutQuotasHighSugg";
     private final SiadapUniverse siadapUniverseEnum;
 
     /**
@@ -97,7 +109,7 @@ public class SiadapUniverseWrapper implements Serializable {
 
     }
 
-    public SiadapUniverseWrapper(Set<PersonSiadapWrapper> siadapUniverseOfPeople, String universeDescription,
+    public SiadapUniverseWrapper(List<ExceedingQuotaProposal> quotaProposals, String universeDescription,
 	    SiadapUniverse universeToConsider, UnitSiadapWrapper unitBeingSuggestionsMadeFor, boolean quotasUniverse) {
 
 	//a null simple universe and everything else intended for the harmonization purposes
@@ -109,12 +121,11 @@ public class SiadapUniverseWrapper implements Serializable {
 	this.currentHarmonizedExcellents = 0;
 	this.currentHarmonizedRelevants = 0;
 
+	this.siadapUniverseForSuggestions = new ArrayList<SiadapSuggestionBean>();
 	HashSet<SiadapSuggestionBean> siadapUniverseForSuggestionsSet = new HashSet<SiadapSuggestionBean>();
-	for (PersonSiadapWrapper personSiadapWrapper : siadapUniverseOfPeople) {
-	    siadapUniverseForSuggestionsSet.add(new SiadapSuggestionBean(personSiadapWrapper, unitBeingSuggestionsMadeFor,
-		    quotasUniverse, universeToConsider));
+	for (ExceedingQuotaProposal proposal : quotaProposals) {
+	    siadapUniverseForSuggestions.add(new SiadapSuggestionBean(proposal));
 	}
-	this.siadapUniverseForSuggestions = new ArrayList<SiadapSuggestionBean>(siadapUniverseForSuggestionsSet);
 
 	Collections.sort(this.getSiadapUniverseForSuggestions(), SiadapSuggestionBean.COMPARATOR_BY_PRIORITY_NUMBER);
 

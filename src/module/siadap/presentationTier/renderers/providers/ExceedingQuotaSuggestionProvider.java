@@ -5,8 +5,6 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
-import org.joda.time.LocalDate;
-
 import module.organization.domain.Person;
 import module.organization.domain.Unit;
 import module.siadap.domain.wrappers.PersonSiadapWrapper;
@@ -15,19 +13,21 @@ import myorg.presentationTier.renderers.autoCompleteProvider.AutoCompleteProvide
 import pt.ist.fenixframework.pstm.AbstractDomainObject;
 import pt.utl.ist.fenix.tools.util.StringNormalizer;
 
-public class ExcedingQuotaSuggestionProvider implements AutoCompleteProvider {
+public class ExceedingQuotaSuggestionProvider implements AutoCompleteProvider {
 
     @Override
     public Collection getSearchResults(Map<String, String> argsMap, String value, int maxCount) {
 	Unit unit = AbstractDomainObject.fromExternalId(argsMap.get("unitId"));
-	int year = new LocalDate().getYear();
+	int year = Integer.parseInt(argsMap.get("year"));
 
-	List<PersonSiadapWrapper> unitEmployeesWithQuotas = new UnitSiadapWrapper(unit, year).getUnitEmployeesWithQuotas(false);
+	//we have to get the people with any kind of no given
+	List<PersonSiadapWrapper> unitCandidatesForSuggestion = new UnitSiadapWrapper(unit, year)
+		.getPeopleHarmonizedWithAnyNoAssessment();
 	List<Person> person = new ArrayList<Person>();
 
 	String[] values = StringNormalizer.normalize(value).toLowerCase().split(" ");
 
-	for (PersonSiadapWrapper wrapper : unitEmployeesWithQuotas) {
+	for (PersonSiadapWrapper wrapper : unitCandidatesForSuggestion) {
 	    final String normalizedName = StringNormalizer.normalize(wrapper.getPerson().getName()).toLowerCase();
 	    if (hasMatch(values, normalizedName)) {
 		person.add(wrapper.getPerson());
@@ -35,6 +35,10 @@ public class ExcedingQuotaSuggestionProvider implements AutoCompleteProvider {
 	}
 
 	return person;
+    }
+
+    public static boolean willProviderReturnResults(Unit unit, int year) {
+	return !new UnitSiadapWrapper(unit, year).getPeopleHarmonizedWithAnyNoAssessment().isEmpty();
     }
 
     private boolean hasMatch(String[] input, String personNameParts) {

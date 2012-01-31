@@ -54,7 +54,8 @@ public class PersonSiadapWrapper extends PartyWrapper implements Serializable {
 	super(year);
 	this.person = person;
 	//initing the harmonization booleans
-	initIntermediateValues();
+	if (person != null)
+	    initIntermediateValues();
 
     }
 
@@ -535,6 +536,52 @@ public class PersonSiadapWrapper extends PartyWrapper implements Serializable {
 	}
 	//let's
 	newEvaluator.addChild(getPerson(), evaluationRelation, startOfYear, endOfYear);
+
+    }
+
+    /**
+     * 
+     * @param unit
+     *            the unit to consider the harmonization for. It must be a
+     *            harmonization unit
+     * @return the {@link SiadapUniverse} for which he is being harmonized in
+     *         the given unit
+     */
+    public SiadapUniverse getSiadapUniverseWhichIsBeingHarmonized(Unit unit) {
+	//let's try to find this person ('ourselves') directly, if not let's descend if we are an harmonization unit 
+	UnitSiadapWrapper unitWrapper = new UnitSiadapWrapper(unit, getYear());
+	if (!unitWrapper.isHarmonizationUnit())
+	{
+	    throw new IllegalArgumentException("you're doing it wrong :D harmonization units only");
+	}
+	return getSiadapUniverseInGivenUnit(unit);
+    }
+    
+    private SiadapUniverse getSiadapUniverseInGivenUnit(Unit unit) {
+	SiadapYearConfiguration siadapYearConfiguration = getConfiguration();
+	AccountabilityType siadap2HarmonizationRelation = siadapYearConfiguration.getSiadap2HarmonizationRelation();
+	AccountabilityType siadap3HarmonizationRelation = siadapYearConfiguration.getSiadap3HarmonizationRelation();
+	UnitSiadapWrapper unitWrapper = new UnitSiadapWrapper(unit, getYear());
+	List<Accountability> childAccountabilities = unitWrapper.getChildAccountabilityTypes(siadap2HarmonizationRelation,
+		siadap3HarmonizationRelation);
+	for (Accountability acc : childAccountabilities) {
+	    if (acc.getChild().equals(getPerson())) {
+
+		if (acc.hasAccountabilityType(siadap2HarmonizationRelation))
+		    return SiadapUniverse.SIADAP2;
+		if (acc.hasAccountabilityType(siadap3HarmonizationRelation))
+		    return SiadapUniverse.SIADAP3;
+
+	    }
+	}
+	//let's descend
+	SiadapUniverse siadapUniverseToReturn = null;
+	for (Unit childUnit : unitWrapper.getChildUnits(siadapYearConfiguration.getHarmonizationUnitRelations())) {
+	    SiadapUniverse siadapUniverseInGivenUnit = getSiadapUniverseInGivenUnit(childUnit);
+	    if (siadapUniverseInGivenUnit != null)
+		siadapUniverseToReturn = siadapUniverseInGivenUnit;
+	}
+	return siadapUniverseToReturn;
 
     }
 

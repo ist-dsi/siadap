@@ -16,6 +16,7 @@ import module.organization.domain.PartyType;
 import module.organization.domain.Person;
 import module.organization.domain.Unit;
 import module.siadap.domain.Siadap;
+import module.siadap.domain.SiadapEvaluationUniverse;
 import module.siadap.domain.SiadapUniverse;
 import module.siadap.domain.SiadapYearConfiguration;
 import module.siadap.domain.exceptions.SiadapException;
@@ -505,8 +506,15 @@ public class UnitSiadapWrapper extends PartyWrapper implements Serializable {
 	return units.isEmpty() ? null : getHarmonizationUnit(units.iterator().next());
     }
 
+    /**
+     * 
+     * @return true if it is responsible for the harm. of this unit, or if it's
+     *         part of the CCA and this is the top unit
+     */
     public boolean isResponsibleForHarmonization() {
-	return !getChildPersons(getConfiguration().getHarmonizationResponsibleRelation()).isEmpty();
+	return !getChildPersons(getConfiguration().getHarmonizationResponsibleRelation()).isEmpty()
+		|| (getUnit().equals(getConfiguration().getSiadapStructureTopUnit()) && getConfiguration()
+			.isCurrentUserMemberOfCCA());
     }
 
     /**
@@ -1124,6 +1132,34 @@ public class UnitSiadapWrapper extends PartyWrapper implements Serializable {
 	//	}
 	getConfiguration().removeHarmonizationClosedUnits(getUnit());
     }
+
+    public List<PersonSiadapWrapper> getPeopleHarmonizedWithAnyNoAssessment(){
+	List<PersonSiadapWrapper> listPeopleToReturn = new ArrayList<PersonSiadapWrapper>();
+	SiadapYearConfiguration siadapYearConf = getConfiguration();
+	getUnitAttachedPersons(
+		unit,
+		listPeopleToReturn,
+		true,
+		new Predicate() {
+	    
+	    @Override
+	    public boolean evaluate(Object arg0) {
+		PersonSiadapWrapper personWrapper = (PersonSiadapWrapper) arg0;
+		for (SiadapEvaluationUniverse evalUniverse : personWrapper.getSiadap().getSiadapEvaluationUniverses())
+		{
+		    if (evalUniverse.getHarmonizationAssessment() != null && evalUniverse.getHarmonizationAssessment() == false)
+			return true;
+		    if (evalUniverse.getHarmonizationAssessmentForExcellencyAward() != null && evalUniverse.getHarmonizationAssessmentForExcellencyAward() == false)
+			return true;
+		}
+		return false;
+	    }
+		}, Collections.singleton(siadapYearConf.getHarmonizationUnitRelations()),
+		siadapYearConf.getSiadap2HarmonizationRelation(), siadapYearConf.getSiadap3HarmonizationRelation());
+	return listPeopleToReturn;
+    }
+
+
 
     //    public List<ExcedingQuotaProposal> getExcedingQuotaProposalSuggestions() {
     //	return getExcedingQuotaProposalSuggestions(null);

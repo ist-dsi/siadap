@@ -2,13 +2,12 @@ package module.siadap.domain;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.ConcurrentModificationException;
+import java.util.Comparator;
 import java.util.List;
 
 import module.organization.domain.Person;
 import module.organization.domain.Unit;
 import module.siadap.domain.exceptions.SiadapException;
-import module.siadap.domain.wrappers.SiadapSuggestionBean;
 import module.siadap.domain.wrappers.UnitSiadapWrapper;
 
 import org.apache.commons.collections.Predicate;
@@ -16,6 +15,30 @@ import org.apache.commons.collections.Predicate;
 import pt.ist.fenixWebFramework.services.Service;
 
 public class ExceedingQuotaProposal extends ExceedingQuotaProposal_Base {
+
+    public static final Comparator<ExceedingQuotaProposal> COMPARATOR_BY_PRIORITY_NUMBER = new Comparator<ExceedingQuotaProposal>() {
+
+	@Override
+	public int compare(ExceedingQuotaProposal o1, ExceedingQuotaProposal o2) {
+	    if (o1 == null && o2 == null)
+		return 0;
+	    if (o1 == null && o2 != null)
+		return -1;
+	    if (o1 != null && o2 == null)
+		return 1;
+	    Integer priorityNumber1 = o1.getProposalOrder();
+	    Integer priorityNumber2 = o2.getProposalOrder();
+	    if (priorityNumber1 == null || priorityNumber2 == null) {
+		if (priorityNumber1 == null && priorityNumber2 == null)
+		    return 0;
+		if (priorityNumber1 == null)
+		    return -1;
+		if (priorityNumber2 == null)
+		    return 1;
+	    }
+	    return priorityNumber1.compareTo(priorityNumber2);
+	}
+    };
 
     private ExceedingQuotaProposal(SiadapYearConfiguration configuration, Person person, Unit unit,
 	    ExceedingQuotaSuggestionType type, int proposalOrder, boolean withinOrganizationQuotaUniverse,
@@ -35,9 +58,7 @@ public class ExceedingQuotaProposal extends ExceedingQuotaProposal_Base {
 	return getYearConfiguration().getYear();
     }
 
-    //really kinda useless this method...
-    @Deprecated
-    private static List<ExceedingQuotaProposal> getQuotaProposalsFor(final Unit unit, int year) {
+    public static List<ExceedingQuotaProposal> getQuotaProposalsFor(final Unit unit, int year) {
 	//let's go through the SiadapYearConfiguration 
 	List<ExceedingQuotaProposal> exceedingQuotaProposalsToReturn = new ArrayList<ExceedingQuotaProposal>();
 	SiadapYearConfiguration configuration = SiadapYearConfiguration.getSiadapYearConfiguration(year);
@@ -70,7 +91,8 @@ public class ExceedingQuotaProposal extends ExceedingQuotaProposal_Base {
 
     }
 
-    public static List<ExceedingQuotaProposal> getQuotaProposalFor(final Unit unit, final int year, final SiadapUniverse siadapUniverse, final boolean quotasUniverse)
+    public static List<ExceedingQuotaProposal> getQuotaProposalFor(final Unit unit, final int year,
+	    final SiadapUniverse siadapUniverse, final boolean quotasUniverse, final ExceedingQuotaSuggestionType type)
     {
 	List<ExceedingQuotaProposal> unitProposals = Collections.EMPTY_LIST;
 	SiadapYearConfiguration configuration = SiadapYearConfiguration.getSiadapYearConfiguration(year);
@@ -83,9 +105,12 @@ public class ExceedingQuotaProposal extends ExceedingQuotaProposal_Base {
 		    @Override
 		    public boolean evaluate(Object arg0) {
 			ExceedingQuotaProposal exceedingQuotaProposal = (ExceedingQuotaProposal) arg0;
+			if (exceedingQuotaProposal.getSiadapUniverse() == null)
+			    return false;
 			return (exceedingQuotaProposal.getSiadapUniverse().equals(siadapUniverse)
 				&& exceedingQuotaProposal.getWithinOrganizationQuotaUniverse() == quotasUniverse
-				&& exceedingQuotaProposal.getUnit().equals(unit) && exceedingQuotaProposal.getYear() == year);
+				&& exceedingQuotaProposal.getUnit().equals(unit) && exceedingQuotaProposal.getYear() == year && exceedingQuotaProposal
+				.getSuggestionType().equals(type));
 		    }
 
 		}));
@@ -133,9 +158,9 @@ public class ExceedingQuotaProposal extends ExceedingQuotaProposal_Base {
     }
 
     @Service
-    public static void applyGivenProposals(List<SiadapSuggestionBean> quotaSuggestions, SiadapUniverse siadapUniverse,
-	    Boolean quotasUniverse, UnitSiadapWrapper unitSiadapWrapper, Integer year) {
-	if (quotasUniverse == null || year == null)
+    public static void createAndAppendProposal(SiadapUniverse siadapUniverse, Boolean quotasApply,
+	    ExceedingQuotaSuggestionType type, Integer year, UnitSiadapWrapper unitSiadapWrapper, Person person) {
+	if (quotasApply == null || year == null || person == null || siadapUniverse == null)
 	    throw new UnsupportedOperationException("must.not.parse.null.as.argument");
 	if (!unitSiadapWrapper.isHarmonizationUnit())
 	    throw new SiadapException("error.exceedingQuotaProposal.cannot.assign.proposals.to.non.harmonization.unit");
@@ -145,68 +170,99 @@ public class ExceedingQuotaProposal extends ExceedingQuotaProposal_Base {
 	    throw new SiadapException("error.exceedingQuotaProposal.empty.Siadap.configuration");
 	}
 
-	Collections.sort(quotaSuggestions, SiadapSuggestionBean.COMPARATOR_BY_PRIORITY_NUMBER);
-	//it's all sorted, it's easy to get the maximum and the minimum and to make sure that it has sequential priority numbers
-	//	int maximumNumber = -1;
-	//	Integer minimumNumber = null;
-	int auxI = 0;
-
-	List<SiadapSuggestionBean> suggestionBeansToApply = new ArrayList<SiadapSuggestionBean>();
-
-	for (SiadapSuggestionBean suggestionBean : quotaSuggestions) {
-	    if (!suggestionBean.getUnitWrapper().equals(unitSiadapWrapper))
-		throw new SiadapException(
-			"error.exceedingQuotaProposal.wrong.use.of.method.cannot.give.suggestions.for.different.units");
-	    if (suggestionBean.getYear() == null || suggestionBean.getYear().intValue() != year.intValue())
-		throw new SiadapException("error.exceedingQuotaProposal.must.use.apply.method.with.suggestions.of.the.same.year");
-	    Integer exceedingQuotaPriorityNumber = suggestionBean.getExceedingQuotaPriorityNumber();
-	    if (suggestionBean.getPersonWrapper() == null || suggestionBean.getPersonWrapper().getPerson() == null)
-		throw new SiadapException("error.exceedingQuotaProposal.must.have.valid.person.associated");
-	    if (exceedingQuotaPriorityNumber != null) {
-		if (suggestionBean.getType() == null)
-		    throw new SiadapException("error.exceedingQuotaProposal.must.have.valid.type.of.sugggestion.associated");
-		if (++auxI != exceedingQuotaPriorityNumber.intValue())
-		    throw new SiadapException("error.exceedingQuotaProposal.invalid.number.sequence.numbers.missing.or.repeated");
-		if (suggestionBean.getCurrentHarmonizationAssessment() == null && suggestionBean.getCurrentHarmonizationExcellencyAssessment() == null)
-		    throw new ConcurrentModificationException("somebody.altered.harmonization.assessment");
-		//if the regular assessment is not null and the is true and the other is null or true, then somebody changed it
-		if (suggestionBean.getCurrentHarmonizationAssessment() != null
-			&& suggestionBean.getCurrentHarmonizationAssessment().booleanValue() != false
-			&& (suggestionBean.getCurrentHarmonizationExcellencyAssessment() == null || (suggestionBean
-				.getCurrentHarmonizationExcellencyAssessment() != null && suggestionBean
-				.getCurrentHarmonizationExcellencyAssessment())))
-		    throw new ConcurrentModificationException("somebody.altered.harmonization.assessment");
-		if (suggestionBean.getCurrentHarmonizationExcellencyAssessment() != null
-			&& suggestionBean.getCurrentHarmonizationExcellencyAssessment().booleanValue() != false
-			&& (suggestionBean.getCurrentHarmonizationAssessment() == null || (suggestionBean
-				.getCurrentHarmonizationAssessment() != null && suggestionBean
-				.getCurrentHarmonizationAssessment())))
-		    throw new ConcurrentModificationException("somebody.altered.harmonization.assessment");
-		suggestionBeansToApply.add(suggestionBean);
-		//		if (minimumNumber == null)
-		//		    minimumNumber = exceedingQuotaPriorityNumber;
-		//		if (exceedingQuotaPriorityNumber < minimumNumber)
-		//		    minimumNumber = exceedingQuotaPriorityNumber;
-		//		if (exceedingQuotaPriorityNumber.intValue() > maximumNumber)
-		//		    maximumNumber = exceedingQuotaPriorityNumber;
+	//let's get all of the existing quotas to figure out the proposal order
+	List<ExceedingQuotaProposal> currentProposalsForUniverse = ExceedingQuotaProposal.getQuotaProposalFor(
+		unitSiadapWrapper.getUnit(), year, siadapUniverse, quotasApply, type);
+	int propOrder = 0;
+	for (ExceedingQuotaProposal proposal : currentProposalsForUniverse) {
+	    if (proposal.getProposalOrder().intValue() > propOrder) {
+		propOrder = proposal.getProposalOrder().intValue();
 	    }
 	}
 
-	//let's apply the proposals as they are validated
-	List<ExceedingQuotaProposal> currentProposalsForUniverse = ExceedingQuotaProposal.getQuotaProposalFor(
-		unitSiadapWrapper.getUnit(), year, siadapUniverse, quotasUniverse);
-	//let's remove them all
-	for (ExceedingQuotaProposal currentProposal : currentProposalsForUniverse) {
-	    currentProposal.delete();
-	}
+	propOrder++;
 
-	//and add them all
-	for (SiadapSuggestionBean suggestionBean : suggestionBeansToApply) {
-	    new ExceedingQuotaProposal(configuration, suggestionBean.getPersonWrapper().getPerson(), unitSiadapWrapper.getUnit(),
-		    suggestionBean.getType(), suggestionBean.getExceedingQuotaPriorityNumber(), quotasUniverse, siadapUniverse);
-	}
+	new ExceedingQuotaProposal(configuration, person, unitSiadapWrapper.getUnit(), type, propOrder,
+		quotasApply.booleanValue(),
+		siadapUniverse);
 
     }
+
+    //    @Service
+    //    public static void applyGivenProposals(List<SiadapSuggestionBean> quotaSuggestions, SiadapUniverse siadapUniverse,
+    //	    Boolean quotasUniverse, UnitSiadapWrapper unitSiadapWrapper, Integer year) {
+    //	if (quotasUniverse == null || year == null)
+    //	    throw new UnsupportedOperationException("must.not.parse.null.as.argument");
+    //	if (!unitSiadapWrapper.isHarmonizationUnit())
+    //	    throw new SiadapException("error.exceedingQuotaProposal.cannot.assign.proposals.to.non.harmonization.unit");
+    //
+    //	SiadapYearConfiguration configuration = SiadapYearConfiguration.getSiadapYearConfiguration(year);
+    //	if (configuration == null) {
+    //	    throw new SiadapException("error.exceedingQuotaProposal.empty.Siadap.configuration");
+    //	}
+    //
+    //	Collections.sort(quotaSuggestions, SiadapSuggestionBean.COMPARATOR_BY_PRIORITY_NUMBER);
+    //	//it's all sorted, it's easy to get the maximum and the minimum and to make sure that it has sequential priority numbers
+    //	//	int maximumNumber = -1;
+    //	//	Integer minimumNumber = null;
+    //	int auxI = 0;
+    //
+    //	List<SiadapSuggestionBean> suggestionBeansToApply = new ArrayList<SiadapSuggestionBean>();
+    //
+    //	for (SiadapSuggestionBean suggestionBean : quotaSuggestions) {
+    //	    if (!suggestionBean.getUnitWrapper().equals(unitSiadapWrapper))
+    //		throw new SiadapException(
+    //			"error.exceedingQuotaProposal.wrong.use.of.method.cannot.give.suggestions.for.different.units");
+    //	    if (suggestionBean.getYear() == null || suggestionBean.getYear().intValue() != year.intValue())
+    //		throw new SiadapException("error.exceedingQuotaProposal.must.use.apply.method.with.suggestions.of.the.same.year");
+    //	    Integer exceedingQuotaPriorityNumber = suggestionBean.getExceedingQuotaPriorityNumber();
+    //	    if (suggestionBean.getPersonWrapper() == null || suggestionBean.getPersonWrapper().getPerson() == null)
+    //		throw new SiadapException("error.exceedingQuotaProposal.must.have.valid.person.associated");
+    //	    if (exceedingQuotaPriorityNumber != null) {
+    //		if (suggestionBean.getType() == null)
+    //		    throw new SiadapException("error.exceedingQuotaProposal.must.have.valid.type.of.sugggestion.associated");
+    //		if (++auxI != exceedingQuotaPriorityNumber.intValue())
+    //		    throw new SiadapException("error.exceedingQuotaProposal.invalid.number.sequence.numbers.missing.or.repeated");
+    //		if (suggestionBean.getCurrentHarmonizationAssessment() == null && suggestionBean.getCurrentHarmonizationExcellencyAssessment() == null)
+    //		    throw new ConcurrentModificationException("somebody.altered.harmonization.assessment");
+    //		//if the regular assessment is not null and the is true and the other is null or true, then somebody changed it
+    //		if (suggestionBean.getCurrentHarmonizationAssessment() != null
+    //			&& suggestionBean.getCurrentHarmonizationAssessment().booleanValue() != false
+    //			&& (suggestionBean.getCurrentHarmonizationExcellencyAssessment() == null || (suggestionBean
+    //				.getCurrentHarmonizationExcellencyAssessment() != null && suggestionBean
+    //				.getCurrentHarmonizationExcellencyAssessment())))
+    //		    throw new ConcurrentModificationException("somebody.altered.harmonization.assessment");
+    //		if (suggestionBean.getCurrentHarmonizationExcellencyAssessment() != null
+    //			&& suggestionBean.getCurrentHarmonizationExcellencyAssessment().booleanValue() != false
+    //			&& (suggestionBean.getCurrentHarmonizationAssessment() == null || (suggestionBean
+    //				.getCurrentHarmonizationAssessment() != null && suggestionBean
+    //				.getCurrentHarmonizationAssessment())))
+    //		    throw new ConcurrentModificationException("somebody.altered.harmonization.assessment");
+    //		suggestionBeansToApply.add(suggestionBean);
+    //		//		if (minimumNumber == null)
+    //		//		    minimumNumber = exceedingQuotaPriorityNumber;
+    //		//		if (exceedingQuotaPriorityNumber < minimumNumber)
+    //		//		    minimumNumber = exceedingQuotaPriorityNumber;
+    //		//		if (exceedingQuotaPriorityNumber.intValue() > maximumNumber)
+    //		//		    maximumNumber = exceedingQuotaPriorityNumber;
+    //	    }
+    //	}
+    //
+    //	//let's apply the proposals as they are validated
+    //	List<ExceedingQuotaProposal> currentProposalsForUniverse = ExceedingQuotaProposal.getQuotaProposalFor(
+    //		unitSiadapWrapper.getUnit(), year, siadapUniverse, quotasUniverse);
+    //	//let's remove them all
+    //	for (ExceedingQuotaProposal currentProposal : currentProposalsForUniverse) {
+    //	    currentProposal.delete();
+    //	}
+    //
+    //	//and add them all
+    //	for (SiadapSuggestionBean suggestionBean : suggestionBeansToApply) {
+    //	    new ExceedingQuotaProposal(configuration, suggestionBean.getPersonWrapper().getPerson(), unitSiadapWrapper.getUnit(),
+    //		    suggestionBean.getType(), suggestionBean.getExceedingQuotaPriorityNumber(), quotasUniverse, siadapUniverse);
+    //	}
+    //
+    //    }
 
     private void delete() {
 	super.setSuggestion(null);
@@ -224,6 +280,15 @@ public class ExceedingQuotaProposal extends ExceedingQuotaProposal_Base {
     }
 
     private void setProposalOrderProtected(Integer proposalOrder) {
+	super.setProposalOrder(proposalOrder);
+    }
+
+    @Deprecated
+    /**
+     * Should only be used by MigrateExceedingQuotaProposals
+     * @param proposalOrder
+     */
+    public void setProposalOrderProtectedForScript(int proposalOrder) {
 	super.setProposalOrder(proposalOrder);
     }
 
@@ -297,7 +362,7 @@ public class ExceedingQuotaProposal extends ExceedingQuotaProposal_Base {
     public void remove() {
 	//let's get the 'sister' proposals to adjust them if needed
 	List<ExceedingQuotaProposal> quotaProposalsFor = ExceedingQuotaProposal.getQuotaProposalFor(getUnit(), getYear(),
-		getSiadapUniverse(), getWithinOrganizationQuotaUniverse());
+		getSiadapUniverse(), getWithinOrganizationQuotaUniverse(), getSuggestionType());
 	
 	
 	for (ExceedingQuotaProposal exceedingQuotaProposal : quotaProposalsFor)

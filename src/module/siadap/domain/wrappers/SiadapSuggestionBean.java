@@ -3,6 +3,7 @@ package module.siadap.domain.wrappers;
 import java.io.Serializable;
 import java.util.Comparator;
 
+import module.organization.domain.Person;
 import module.organization.domain.Unit;
 import module.siadap.domain.ExceedingQuotaProposal;
 import module.siadap.domain.ExceedingQuotaSuggestionType;
@@ -46,7 +47,7 @@ public class SiadapSuggestionBean implements Serializable {
 
     private final SiadapUniverse siadapUniverse;
 
-    private final PersonSiadapWrapper personWrapper;
+    private PersonSiadapWrapper personWrapper;
 
     private final UnitSiadapWrapper unitWrapper;
 
@@ -54,9 +55,13 @@ public class SiadapSuggestionBean implements Serializable {
 
     private final boolean withinQuotasUniverse;
 
+    private Person autoCompletePerson;
+
+    private ExceedingQuotaProposal proposal;
+
     public SiadapSuggestionBean(PersonSiadapWrapper person, UnitSiadapWrapper unitWrapper, boolean quotasUniverse,
 	    SiadapUniverse siadapUniverse) {
-	this.personWrapper = person;
+	this.setPersonWrapper(person);
 	this.unitWrapper = unitWrapper;
 	this.year = person.getYear();
 	//init the exceedingQuotaPriorityNumber
@@ -82,12 +87,36 @@ public class SiadapSuggestionBean implements Serializable {
 
     }
 
+    public SiadapSuggestionBean(ExceedingQuotaProposal proposal)
+    {
+	    this.exceedingQuotaPriorityNumber = proposal.getProposalOrder();
+	    this.type = proposal.getSuggestionType();
+	this.withinQuotasUniverse = proposal.getWithinOrganizationQuotaUniverse();
+	this.personWrapper = new PersonSiadapWrapper(proposal.getSuggestion(), proposal.getYear());
+	this.year = proposal.getYear();
+	this.unitWrapper = new UnitSiadapWrapper(proposal.getUnit(), proposal.getYear());
+	this.siadapUniverse = proposal.getSiadapUniverse();
+	this.setProposal(proposal);
+	
+    }
+
+    /**
+     * Constructor for the empty SiadapSuggestionBean - used by the interface
+     */
+    public SiadapSuggestionBean(UnitSiadapWrapper unitWrapper) {
+	this.year = unitWrapper.getYear();
+	this.unitWrapper = unitWrapper;
+	this.siadapUniverse = null;
+	this.withinQuotasUniverse = false;
+	this.personWrapper = new PersonSiadapWrapper(null, year);
+    }
+
     public Boolean getCurrentHarmonizationAssessment() {
-	return personWrapper.getHarmonizationCurrentAssessmentFor(siadapUniverse);
+	return getPersonWrapper().getHarmonizationCurrentAssessmentFor(siadapUniverse);
     }
 
     public Boolean getCurrentHarmonizationExcellencyAssessment() {
-	return personWrapper.getHarmonizationCurrentExcellencyAssessmentFor(siadapUniverse);
+	return getPersonWrapper().getHarmonizationCurrentExcellencyAssessmentFor(siadapUniverse);
     }
 
     public ExceedingQuotaSuggestionType getType() {
@@ -122,5 +151,24 @@ public class SiadapSuggestionBean implements Serializable {
 	return withinQuotasUniverse;
     }
 
+    public void setPersonWrapper(PersonSiadapWrapper personWrapper) {
+	this.personWrapper = personWrapper;
+    }
+
+    public Person getAutoCompletePerson() {
+	return autoCompletePerson;
+    }
+
+    public void setAutoCompletePerson(Person autoCompletePerson) {
+	this.autoCompletePerson = autoCompletePerson;
+    }
+
+    public ExceedingQuotaProposal getProposal() {
+	return proposal;
+    }
+
+    public void setProposal(ExceedingQuotaProposal proposal) {
+	this.proposal = proposal;
+    }
 
 }
