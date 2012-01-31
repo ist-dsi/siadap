@@ -687,8 +687,42 @@ public class PersonSiadapWrapper extends PartyWrapper implements Serializable {
     }
 
     @Service
-    public void changeUniverseTo(SiadapUniverse siadapUniverseToChangeTo) {
+    public void changeDefaultUniverseTo(SiadapUniverse siadapUniverseToChangeTo) {
+	SiadapUniverse defaultSiadapUniverse = getSiadap().getDefaultSiadapUniverse();
+	//let's check if we have a closed harmonization, if so, we shouldn't allow the change
+	Unit unitWhereIsHarmonized = getUnitWhereIsHarmonized(defaultSiadapUniverse);
+	if (new UnitSiadapWrapper(unitWhereIsHarmonized, getYear()).isHarmonizationFinished())
+	    throw new SiadapException("error.cant.change.siadap.universe.because.it.has.closed.harmonization");
+	//let's also change the Harmonization relation
+	Accountability retrieveDefaultHarmAccForGivenSiadapUniverse = retrieveDefaultHarmAccForGivenSiadapUniverse(getSiadap()
+		.getDefaultSiadapUniverse());
+	if (retrieveDefaultHarmAccForGivenSiadapUniverse != null) {
+	    //if we had one, let's change it's type
+	    retrieveDefaultHarmAccForGivenSiadapUniverse.setAccountabilityType(siadapUniverseToChangeTo
+		    .getHarmonizationRelation(getConfiguration()));
+	}
+
 	getSiadap().setDefaultSiadapUniverse(siadapUniverseToChangeTo);
+    }
+
+    /**
+     * 
+     * @param siadapUniverse
+     *            the siadapUniverse to
+     * @return the {@link Accountability} responsible for giving the hint on the
+     *         HarmUnit
+     */
+    private Accountability retrieveDefaultHarmAccForGivenSiadapUniverse(SiadapUniverse siadapUniverse) {
+	AccountabilityType harmonizationRelation = siadapUniverse.getHarmonizationRelation(getConfiguration());
+
+	List<Accountability> parentAccountabilityTypes = getParentAccountabilityTypes(harmonizationRelation);
+	//if it retrieved more than one, it actually shouldn't, as it shows that we are being evaluated with the same universe
+	if (parentAccountabilityTypes.size() > 1)
+	    throw new SiadapException("inconsistent.harmonization.units");
+	if (parentAccountabilityTypes.size() == 1)
+	    return parentAccountabilityTypes.get(0);
+
+	return null;
 
     }
 
