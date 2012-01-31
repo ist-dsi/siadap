@@ -115,11 +115,13 @@ request.setAttribute("hasPeopleToSuggest", hasPeopleToSuggest);
 			<fr:property name="order(viewProcess)" value="1" />
  			<fr:property name="visibleIf(viewProcess)" value="personWrapper.accessibleToCurrentUser" />
  			
-			<fr:property name="link(removeSuggestion)" value="<%="/siadapManagement.do?method=removeExceedingQuotaProposal&year="+year+"&unitId="+unitId%>" />
-			<fr:property name="bundle(removeSuggestion)" value="SIADAP_RESOURCES" />
-			<fr:property name="key(removeSuggestion)" value="link.remove.ExceedingQuotaProposal" />
-			<fr:property name="param(removeSuggestion)" value="proposal.externalId/proposalId" />
-			<fr:property name="order(removeSuggestion)" value="2" />
+ 			<logic:equal value="false" name="unit" property="harmonizationFinished">
+				<fr:property name="link(removeSuggestion)" value="<%="/siadapManagement.do?method=removeExceedingQuotaProposal&year="+year+"&unitId="+unitId%>" />
+				<fr:property name="bundle(removeSuggestion)" value="SIADAP_RESOURCES" />
+				<fr:property name="key(removeSuggestion)" value="link.remove.ExceedingQuotaProposal" />
+				<fr:property name="param(removeSuggestion)" value="proposal.externalId/proposalId" />
+				<fr:property name="order(removeSuggestion)" value="2" />
+			</logic:equal>
 
 <%--
 			<fr:property name="sortParameter" value="sortByQuotas" />
@@ -148,36 +150,37 @@ request.setAttribute("hasPeopleToSuggest", hasPeopleToSuggest);
 	<p><i><bean:message key="label.exceedingQuota.no.one.to.add.exceedingQuotaTo" bundle="SIADAP_RESOURCES"/></i></p>
 </logic:equal>
 
-<logic:equal name="hasPeopleToSuggest" value="true">
-	<fr:edit name="bean" id="bean"
-		action='<%="/siadapManagement.do?unitId=" + unitId + "&method=addExceedingQuotaSuggestion&year=" + year.toString()%>'>
-		<fr:schema
-			type="module.siadap.domain.wrappers.SiadapSuggestionBean"
-			bundle="SIADAP_RESOURCES">
-			<fr:slot name="autoCompletePerson" layout="autoComplete" key="label.person"
-				bundle="ORGANIZATION_RESOURCES">
-				<fr:property name="labelField" value="partyName.content" />
-				<fr:property name="format" value="${presentationName}" />
-				<fr:property name="minChars" value="3" />
-				<fr:property name="args"
-					value="<%="provider=module.siadap.presentationTier.renderers.providers.ExceedingQuotaSuggestionProvider,unitId="+unitId+",year="+year%>" />
-				<fr:property name="size" value="60" />
-				<fr:validator
-					name="pt.ist.fenixWebFramework.rendererExtensions.validators.RequiredAutoCompleteSelectionValidator">
-					<fr:property name="message" value="label.pleaseSelectOne.person" />
-					<fr:property name="bundle" value="ORGANIZATION_RESOURCES" />
-					<fr:property name="key" value="true" />
-				</fr:validator>
-			</fr:slot>
-			<fr:slot name="type" required="true" />
-		</fr:schema>
-		<fr:destination name="invalidate"
-			path='<%="/siadapManagement.do?unitId=" + unitId + "&method=invalidateAddExceedingQuotaSuggestion=" + year.toString()%>' />
-		<fr:destination name="cancel"
-			path='<%="/siadapManagement.do?unitId=" + unitId + "&method=viewUnitHarmonizationData&year=" + year.toString()%>' />
-	</fr:edit>
+<logic:equal value="false" name="unit" property="harmonizationFinished">
+	<logic:equal name="hasPeopleToSuggest" value="true">
+		<fr:edit name="bean" id="bean"
+			action='<%="/siadapManagement.do?unitId=" + unitId + "&method=addExceedingQuotaSuggestion&year=" + year.toString()%>'>
+			<fr:schema
+				type="module.siadap.domain.wrappers.SiadapSuggestionBean"
+				bundle="SIADAP_RESOURCES">
+				<fr:slot name="autoCompletePerson" layout="autoComplete" key="label.person"
+					bundle="ORGANIZATION_RESOURCES">
+					<fr:property name="labelField" value="partyName.content" />
+					<fr:property name="format" value="${presentationName}" />
+					<fr:property name="minChars" value="3" />
+					<fr:property name="args"
+						value="<%="provider=module.siadap.presentationTier.renderers.providers.ExceedingQuotaSuggestionProvider,unitId="+unitId+",year="+year%>" />
+					<fr:property name="size" value="60" />
+					<fr:validator
+						name="pt.ist.fenixWebFramework.rendererExtensions.validators.RequiredAutoCompleteSelectionValidator">
+						<fr:property name="message" value="label.pleaseSelectOne.person" />
+						<fr:property name="bundle" value="ORGANIZATION_RESOURCES" />
+						<fr:property name="key" value="true" />
+					</fr:validator>
+				</fr:slot>
+				<fr:slot name="type" required="true" />
+			</fr:schema>
+			<fr:destination name="invalidate"
+				path='<%="/siadapManagement.do?unitId=" + unitId + "&method=invalidateAddExceedingQuotaSuggestion=" + year.toString()%>' />
+			<fr:destination name="cancel"
+				path='<%="/siadapManagement.do?unitId=" + unitId + "&method=viewUnitHarmonizationData&year=" + year.toString()%>' />
+		</fr:edit>
+	</logic:equal>
 </logic:equal>
-
 <jsp:include page="/module/siadap/tracFeedBackSnip.jsp">
 	<jsp:param name="href" value="https://fenix-ashes.ist.utl.pt/trac/siadap/report/12" />
 </jsp:include>
