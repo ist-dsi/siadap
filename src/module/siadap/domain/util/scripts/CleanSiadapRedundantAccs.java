@@ -15,6 +15,7 @@ import module.siadap.domain.SiadapRootModule;
 import module.siadap.domain.SiadapYearConfiguration;
 import module.siadap.domain.util.SiadapMiscUtilClass;
 import myorg.domain.scheduler.WriteCustomTask;
+import myorg.util.JavaUtil;
 
 import org.joda.time.DateTime;
 
@@ -56,7 +57,7 @@ public class CleanSiadapRedundantAccs extends WriteCustomTask {
 				&& innerAcc.getChild() instanceof Person
 				//				&& SiadapMiscUtilClass.isObjectEqual(acc.getBeginDate(), innerAcc.getBeginDate())
 				//				&& SiadapMiscUtilClass.isObjectEqual(acc.getEndDate(), innerAcc.getEndDate())
-				&& SiadapMiscUtilClass.isObjectEqual(acc.getAccountabilityType(),
+				&& JavaUtil.isObjectEqualTo(acc.getAccountabilityType(),
 					innerAcc.getAccountabilityType())) {
 			    //so we have a duplicate one
 
@@ -88,7 +89,7 @@ public class CleanSiadapRedundantAccs extends WriteCustomTask {
 	    //we should delete the accountability if it has the same begin and end date as any other, and the one with the oldest creation date
 
 	    for (Accountability acc : duplicateAccsPerEvaluated.get(person)) {
-		if (!SiadapMiscUtilClass.isObjectEqual(earliestDateTimeFound.get(person), acc.getCreationDate())) {
+		if (!JavaUtil.isObjectEqualTo(earliestDateTimeFound.get(person), acc.getCreationDate())) {
 		    accsToDelete.add(acc);
 		}
 
@@ -120,7 +121,8 @@ public class CleanSiadapRedundantAccs extends WriteCustomTask {
 	int deleted = 0;
 	for (Accountability acc : accsToDelete) {
 	    deleted++;
-	    acc.obliviateIt();
+	    //	    acc.obliviateIt();
+	    throw new IllegalArgumentException("doesnt.do.anything");
 	}
 	out.println("Deleted " + deleted + " accountabilities");
 

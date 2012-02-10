@@ -386,7 +386,7 @@ public class ImportHarmonizationUnitStructureFromFile extends ReadCustomTask {
 			    //			    if (acc.isActiveNow()) {
 				//make sure that it will be active until the end of the year
 			    debugLn(" ------ Acc. for responsible added/augmented");
-				acc = acc.editDates(acc.getBeginDate(), lastDayOfYear(yearToUse));
+				acc.editDates(acc.getBeginDate(), lastDayOfYear(yearToUse));
 			    //			    }
 				if (acc.getChild().equals(responsible)) {
 				    responsiblesToAddNewAccsFor.remove(responsible);
