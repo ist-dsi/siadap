@@ -208,9 +208,19 @@ public class ExtendSiadapStructure extends WriteCustomTask {
 	    UserView.setUser(Authenticate.authenticate(User.findByUsername("ist23470")));
 	    for (SiadapBean siadapBean : siadapsToClone) {
 		Siadap siadap = siadapBean.getSiadap();
+		boolean siadapAlreadyExists = false;
+		for (Siadap currentSiadap : siadap.getEvaluated().getSiadapsAsEvaluated()) {
+		    if (currentSiadap.getYear().intValue() == YEAR_TO_EXTEND_TO) {
+			siadapAlreadyExists = true;
+			break;
+		    }
+
+		}
+		if (!siadapAlreadyExists) {
 		SiadapProcess.createNewProcess(siadap.getEvaluated(), YEAR_TO_EXTEND_TO, siadapBean.getDefaultSiadapUniverse(),
 			siadapBean.getCompetenceType());
 		clonedSiadaps++;
+		}
 	    }
 	} finally {
 	    UserView.setUser(null);
