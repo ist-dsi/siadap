@@ -44,12 +44,16 @@ public class Siadap extends Siadap_Base {
 
     public static final int MINIMUM_COMPETENCES_WITHOUT_OBJ_EVAL_NUMBER = 8;
 
-    public Siadap(int year, Person evaluated, SiadapUniverse siadapUniverse) {
+    public Siadap(int year, Person evaluated, SiadapUniverse siadapUniverse, CompetenceType competenceType) {
 	super();
 	setYear(year);
 	setEvaluated(evaluated);
 	setSiadapRootModule(SiadapRootModule.getInstance());
-	new SiadapEvaluationUniverse(this, siadapUniverse, true);
+	SiadapYearConfiguration.getSiadapYearConfiguration(getYear()).addSiadaps(this);
+	SiadapEvaluationUniverse siadapEvaluationUniverse = new SiadapEvaluationUniverse(this, siadapUniverse, competenceType,
+		true);
+	//	new Com
+	//	siadapEvaluationUniverse.add
     }
 
 
@@ -262,7 +266,7 @@ public class Siadap extends Siadap_Base {
 	    throw new SiadapException("error.must.configure.SIADAP.2.and.3.harm.relation.types.first");
 	}
 	//let's create the new SiadapEvaluationUniverse
-	SiadapEvaluationUniverse siadapEvaluationUniverse = new SiadapEvaluationUniverse(this, siadapUniverse, false);
+	SiadapEvaluationUniverse siadapEvaluationUniverse = new SiadapEvaluationUniverse(this, siadapUniverse, null, false);
 	CurricularPonderationEvaluationItem curricularPonderationEvaluationItem = new CurricularPonderationEvaluationItem(gradeToAssign, assignedExcellency, excellencyAwardJustification, curricularPonderationJustification, siadapEvaluationUniverse);
 	//let's connect this SiadapEvaluationUniverse with the specialunit
 	Person evaluated = getEvaluated();

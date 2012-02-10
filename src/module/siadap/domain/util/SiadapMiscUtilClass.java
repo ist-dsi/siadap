@@ -88,4 +88,21 @@ public class SiadapMiscUtilClass {
 	return new LocalDate(year, 12, 30);
     }
 
+    /**
+     * 
+     * @param object1
+     * @param object2
+     * @return true if object1 and object2 are the same. If both are null this
+     *         returns true
+     */
+    public static boolean isObjectEqual(Object object1, Object object2) {
+	if (object1 == null && object2 == null)
+	    return true;
+	if (object1 != null)
+	    return object1.equals(object2);
+	if (object2 != null)
+	    return object2.equals(object1);
+	return false;
+    }
+
 }

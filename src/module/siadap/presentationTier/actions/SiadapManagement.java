@@ -10,7 +10,6 @@ import module.organization.domain.Person;
 import module.organization.domain.Unit;
 import module.siadap.domain.ExceedingQuotaProposal;
 import module.siadap.domain.ExceedingQuotaSuggestionType;
-import module.siadap.domain.Siadap;
 import module.siadap.domain.SiadapProcess;
 import module.siadap.domain.SiadapUniverse;
 import module.siadap.domain.SiadapYearConfiguration;
@@ -21,7 +20,6 @@ import module.siadap.domain.wrappers.SiadapYearWrapper;
 import module.siadap.domain.wrappers.UnitSiadapWrapper;
 import module.siadap.presentationTier.renderers.providers.SiadapYearsFromExistingSiadapConfigurations;
 import module.workflow.domain.WorkflowProcess;
-import module.workflow.presentationTier.actions.ProcessManagement;
 import myorg.applicationTier.Authenticate.UserView;
 import myorg.domain.exceptions.DomainException;
 import myorg.presentationTier.actions.ContextBaseAction;
@@ -58,17 +56,17 @@ public class SiadapManagement extends ContextBaseAction {
 	return forward(request, "/module/siadap/prepareCreateSiadap.jsp");
     }
 
-    public final ActionForward createNewSiadapProcess(final ActionMapping mapping, final ActionForm form,
-	    final HttpServletRequest request, final HttpServletResponse response) {
-
-	Person person = getDomainObject(request, "personId");
-	Integer year = Integer.parseInt(request.getParameter("year"));
-	//let's try to assert the universe by getting previous SIADAPs, if any exist,
-	//otherwise, let's assign null here
-	SiadapProcess siadapProcess = SiadapProcess.createNewProcess(person, year, Siadap.getLastSiadapUniverseUsedBy(person));
-
-	return ProcessManagement.forwardToProcess(siadapProcess);
-    }
+    //    public final ActionForward createNewSiadapProcess(final ActionMapping mapping, final ActionForm form,
+    //	    final HttpServletRequest request, final HttpServletResponse response) {
+    //
+    //	Person person = getDomainObject(request, "personId");
+    //	Integer year = Integer.parseInt(request.getParameter("year"));
+    //	//let's try to assert the universe by getting previous SIADAPs, if any exist,
+    //	//otherwise, let's assign null here
+    //	SiadapProcess siadapProcess = SiadapProcess.createNewProcess(person, year, Siadap.getLastSiadapUniverseUsedBy(person));
+    //
+    //	return ProcessManagement.forwardToProcess(siadapProcess);
+    //    }
 
     public final ActionForward manageSiadap(final ActionMapping mapping, final ActionForm form, final HttpServletRequest request,
 	    final HttpServletResponse response) {
@@ -328,18 +326,10 @@ public class SiadapManagement extends ContextBaseAction {
 
 	List<UnitSiadapWrapper> unitSiadapEvaluations = new ArrayList<UnitSiadapWrapper>();
 
-	//TODO make this more uniform i.e. take out the IF in here
-	if (unit.equals(wrapper.getConfiguration().getSiadapStructureTopUnit())) {
-	    for (Unit subUnit : unit.getChildUnits(configuration.getUnitRelations())) {
-		unitSiadapEvaluations.add(new UnitSiadapWrapper(subUnit, year));
-	    }
-
-	} else {
 	for (Unit subUnit : unit.getChildUnits(configuration.getHarmonizationUnitRelations())) {
 	    unitSiadapEvaluations.add(new UnitSiadapWrapper(subUnit, year));
 	}
 
-	}
 	request.setAttribute("subUnits", unitSiadapEvaluations);
 
 	return forward(request, "/module/siadap/harmonization/viewUnit.jsp");

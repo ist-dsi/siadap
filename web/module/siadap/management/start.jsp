@@ -36,6 +36,11 @@
 <p>Download da listagem de hierarquias SIADAP (com universos)</p>
 </html:link>
 
+<%-- Link for the hierarchy excel file with SIADAP universe--%>
+<html:link action="/siadapPersonnelManagement.do?method=downloadSIADAPRawData" paramId="year" paramName="siadapYearWrapper" paramProperty="chosenYear">
+<p>Download da listagem com todos os dados SIADAP</p>
+</html:link>
+
 <fr:edit id="searchPerson" name="bean" action="<%="/siadapPersonnelManagement.do?method=viewPerson&year=" + year.toString()%>" >
 <fr:schema type="myorg.util.VariantBean" bundle="SIADAP_RESOURCES">
 		<fr:slot name="domainObject" layout="autoComplete" key="label.person" bundle="ORGANIZATION_RESOURCES">

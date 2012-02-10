@@ -309,6 +309,8 @@ public class PersonSiadapWrapper extends PartyWrapper implements Serializable {
     }
 
     public Unit getUnitWhereIsHarmonized(SiadapUniverse siadapUniverse) {
+	if (siadapUniverse == null)
+	    return null;
 	List<Unit> parentUnits = getParentUnits(getParty(), siadapUniverse.getHarmonizationRelation(getConfiguration()));
 	if (parentUnits.isEmpty())
 	    return null;
@@ -522,20 +524,22 @@ public class PersonSiadapWrapper extends PartyWrapper implements Serializable {
 
     @Service
     public void changeEvaluatorTo(Person newEvaluator, LocalDate dateOfChange) {
-	verifyDate(dateOfChange);
-	//	LocalDate now = new LocalDate();
-	LocalDate startOfYear = new LocalDate(dateOfChange.getYear(), 1, 1);
-	LocalDate endOfYear = new LocalDate(dateOfChange.getYear(), 12, 31);
-	SiadapYearConfiguration configuration = getConfiguration();
-	AccountabilityType evaluationRelation = configuration.getEvaluationRelation();
-	for (Accountability accountability : getParentAccountabilityTypes(evaluationRelation)) {
-	    if (accountability.isActiveNow() && accountability.getParent() instanceof Person
-		    && accountability.getChild() instanceof Person) {
-		accountability.editDates(accountability.getBeginDate(), dateOfChange);
-	    }
-	}
-	//let's
-	newEvaluator.addChild(getPerson(), evaluationRelation, startOfYear, endOfYear);
+	//TODO SIADAP-168
+	//	verifyDate(dateOfChange);
+	//	//	LocalDate now = new LocalDate();
+	//	LocalDate startOfYear = new LocalDate(dateOfChange.getYear(), 1, 1);
+	//	LocalDate endOfYear = new LocalDate(dateOfChange.getYear(), 12, 31);
+	//	SiadapYearConfiguration configuration = getConfiguration();
+	//	AccountabilityType evaluationRelation = configuration.getEvaluationRelation();
+	//	for (Accountability accountability : getParentAccountabilityTypes(evaluationRelation)) {
+	//	    if (accountability.isActiveNow() && accountability.getParent() instanceof Person
+	//		    && accountability.getChild() instanceof Person) {
+	//		accountability.editDates(accountability.getBeginDate(), dateOfChange);
+	//		accountability.setChild(newEvaluator);
+	//	    }
+	//	}
+	//	//let's
+	//	newEvaluator.addChild(getPerson(), evaluationRelation, startOfYear, endOfYear);
 
     }
 
@@ -631,9 +635,10 @@ public class PersonSiadapWrapper extends PartyWrapper implements Serializable {
     }
 
     public String getCareerName() {
-	if (getSiadap() == null || getSiadap().getCompetenceType() == null)
+	if (getSiadap() == null || getSiadap().getDefaultSiadapEvaluationUniverse() == null
+		|| getSiadap().getDefaultSiadapEvaluationUniverse().getCompetenceSlashCareerType() == null)
 	    return "";
-	return getSiadap().getCompetenceType().getName();
+	return getSiadap().getDefaultSiadapEvaluationUniverse().getCompetenceSlashCareerType().getName();
     }
 
     public Boolean getHomologationDone() {

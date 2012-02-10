@@ -48,12 +48,13 @@ import pt.ist.fenixWebFramework.renderers.utils.RenderUtils;
 import pt.ist.fenixWebFramework.services.Service;
 import pt.ist.fenixWebFramework.struts.annotations.Mapping;
 import pt.ist.fenixframework.plugins.remote.domain.exception.RemoteException;
+import pt.utl.ist.fenix.tools.util.excel.Spreadsheet;
+import pt.utl.ist.fenix.tools.util.excel.Spreadsheet.Row;
 
 @Mapping(path = "/siadapPersonnelManagement")
 public class SiadapPersonnelManagement extends ContextBaseAction {
 
     private static Logger logger = Logger.getLogger(SiadapPersonnelManagement.class.getName());
-
 
     public final ActionForward start(final ActionMapping mapping, final ActionForm form, final HttpServletRequest request,
 	    final HttpServletResponse response) throws Exception {
@@ -184,9 +185,8 @@ public class SiadapPersonnelManagement extends ContextBaseAction {
     @Service
     private void auxNotifyUser(ArrayList<String> usersEmails, String notificationSubject, String notificationContent) {
 	final VirtualHost virtualHost = VirtualHost.getVirtualHostForThread();
-	new Email(virtualHost.getApplicationSubTitle().getContent(),
-		    virtualHost.getSystemEmailAddress(), new String[] {}, usersEmails,
-		Collections.EMPTY_LIST, Collections.EMPTY_LIST, notificationSubject, notificationContent);
+	new Email(virtualHost.getApplicationSubTitle().getContent(), virtualHost.getSystemEmailAddress(), new String[] {},
+		usersEmails, Collections.EMPTY_LIST, Collections.EMPTY_LIST, notificationSubject, notificationContent);
 
     }
 
@@ -411,13 +411,58 @@ public class SiadapPersonnelManagement extends ContextBaseAction {
     }
 
     public final ActionForward downloadNormalSIADAPStructure(final ActionMapping mapping, final ActionForm form,
-	  final HttpServletRequest request, final HttpServletResponse response) throws Exception {
-	
+	    final HttpServletRequest request, final HttpServletResponse response) throws Exception {
+
 	SiadapRootModule siadapRootModule = SiadapRootModule.getInstance();
 	int year = Integer.parseInt(((String) getAttribute(request, "year")));
-	
+
 	return streamSpreadsheet(response, "SIADAP_hierarquia_" + year,
 		siadapRootModule.exportSIADAPHierarchy(year, false, true, false));
+    }
+
+    public final ActionForward downloadSIADAPRawData(final ActionMapping mapping, final ActionForm form,
+	    final HttpServletRequest request, final HttpServletResponse response) throws Exception {
+
+	SiadapRootModule siadapRootModule = SiadapRootModule.getInstance();
+	int year = Integer.parseInt(((String) getAttribute(request, "year")));
+
+	Spreadsheet siadapRawDataSpreadsheet = new Spreadsheet("SIADAP-" + year);
+
+	siadapRawDataSpreadsheet.setHeader("istId avaliado");
+	siadapRawDataSpreadsheet.setHeader("nome");
+	siadapRawDataSpreadsheet.setHeader("istId avaliador");
+	siadapRawDataSpreadsheet.setHeader("nome avaliador");
+	siadapRawDataSpreadsheet.setHeader("unidade onde trabalha");
+	siadapRawDataSpreadsheet.setHeader("unidade onde é harmonizado");
+	siadapRawDataSpreadsheet.setHeader("categoria SIADAP");
+	siadapRawDataSpreadsheet.setHeader("universo SIADAP");
+	siadapRawDataSpreadsheet.setHeader("Conta para quotas IST");
+
+	//let's get all of the SIADAPs
+	SiadapYearConfiguration siadapYearConfiguration = SiadapYearConfiguration.getSiadapYearConfiguration(year);
+	//	List<Siadap> siadaps = siadapYearConfiguration.getSiadaps();
+	List<Siadap> siadaps = SiadapRootModule.getInstance().getSiadaps();
+	for (Siadap siadap : siadaps) {
+	    if (siadap.getYear().intValue() == year) {
+		Row row = siadapRawDataSpreadsheet.addRow();
+		row.setCell(siadap.getEvaluated().getUser().getUsername());
+		row.setCell(siadap.getEvaluated().getPresentationName());
+		row.setCell(siadap.getEvaluator().getPerson().getUser().getUsername());
+		row.setCell(siadap.getEvaluator().getPerson().getPresentationName());
+		PersonSiadapWrapper evaluatedWrapper = new PersonSiadapWrapper(siadap.getEvaluated(), year);
+		row.setCell(evaluatedWrapper.getWorkingUnit().getUnit().getPresentationName());
+		row.setCell(evaluatedWrapper.getSiadap() == null
+			|| evaluatedWrapper.getUnitWhereIsHarmonized(evaluatedWrapper.getSiadap().getDefaultSiadapUniverse()) == null ? "-"
+			: evaluatedWrapper.getUnitWhereIsHarmonized(
+			evaluatedWrapper.getSiadap().getDefaultSiadapUniverse())
+			.getPresentationName());
+		row.setCell(String.valueOf(siadap.getDefaultSiadapUniverse()));
+		row.setCell(evaluatedWrapper.getCareerName());
+		row.setCell(evaluatedWrapper.isQuotaAware() ? "Sim" : "Não");
+	    }
+	}
+
+	return streamSpreadsheet(response, "SIADAP-" + year, siadapRawDataSpreadsheet);
     }
 
     public final ActionForward downloadSIADAPStructureWithUniverse(final ActionMapping mapping, final ActionForm form,
@@ -429,7 +474,19 @@ public class SiadapPersonnelManagement extends ContextBaseAction {
 	return streamSpreadsheet(response, "SIADAP_hierarquia_" + year,
 		siadapRootModule.exportSIADAPHierarchy(year, false, true, true));
 
+    }
 
+    private ActionForward streamSpreadsheet(final HttpServletResponse response, final String fileName,
+	    final Spreadsheet resultSheet) throws IOException {
+	response.setContentType("application/xls ");
+	response.setHeader("Content-disposition", "attachment; filename=" + fileName + ".xls");
+
+	ServletOutputStream outputStream = response.getOutputStream();
+	resultSheet.exportToXLSSheet(outputStream);
+	outputStream.flush();
+	outputStream.close();
+
+	return null;
     }
 
     private ActionForward streamSpreadsheet(final HttpServletResponse response, final String fileName,

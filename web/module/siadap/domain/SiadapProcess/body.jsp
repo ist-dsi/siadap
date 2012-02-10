@@ -154,10 +154,10 @@ pre {
 </div>
 
 <p><b>Carreira, no âmbito do SIADAP (Universo SIADAP):</b>
-		 <logic:notEmpty name="process" property="siadap.competenceType">
-		  	<bean:write name="process" property="siadap.competenceType.name"/> 
+		 <logic:notEmpty name="evaluatedPersonWrapper" property="careerName">
+		  	<bean:write name="evaluatedPersonWrapper" property="careerName"/> 
 		 </logic:notEmpty>
-		 <logic:empty name="process" property="siadap.competenceType">
+		 <logic:empty name="evaluatedPersonWrapper" property="careerName">
 		 	<bean:message key="competenceType.notDefined" bundle="SIADAP_RESOURCES"/>
 		 </logic:empty>
 		 <logic:empty name="process" property="siadap.defaultSiadapUniverse">

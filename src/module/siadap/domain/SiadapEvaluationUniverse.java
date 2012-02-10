@@ -21,11 +21,13 @@ public class SiadapEvaluationUniverse extends SiadapEvaluationUniverse_Base {
     private static final int PRECISION = 3;
     private static final int ROUND_MODE = BigDecimal.ROUND_HALF_EVEN;
 
-    public SiadapEvaluationUniverse(Siadap siadap, SiadapUniverse siadapUniverse, boolean defaultUniverse) {
+    public SiadapEvaluationUniverse(Siadap siadap, SiadapUniverse siadapUniverse, CompetenceType competenceType,
+	    boolean defaultUniverse) {
 	super();
 	setSiadap(siadap);
 	setSiadapUniverse(siadapUniverse);
 	setCurrentObjectiveVersion(0);
+	setCompetenceSlashCareerType(competenceType);
 	setDefaultEvaluationUniverse(defaultUniverse);
     }
 

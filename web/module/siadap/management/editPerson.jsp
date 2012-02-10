@@ -101,6 +101,8 @@ request.setAttribute("isManager", isManager);
 %>
 
 
+	<%-- Part responsible for the changes on the SIADAP proccess (and the SIADAP user) --%>
+<%--
 <logic:equal name="isAbleToChangeAnything" value="true">
 	<p><a href="#" id="changeUnit"> <bean:message key="label.changeWorkingUnit" bundle="SIADAP_RESOURCES"/> </a> | <a href="#" id="changeEvaluator"> <bean:message key="label.changeEvaluator" bundle="SIADAP_RESOURCES"/> </a> | <a href="#" id="changeSiadapUniverse"> <bean:message key="label.changeSiadapUniverse" bundle="SIADAP_RESOURCES"/> </a>
 	<logic:equal name="person" property="customEvaluatorDefined" value="true">
@@ -192,6 +194,7 @@ request.setAttribute("isManager", isManager);
 		</div>
 	</div>
 </logic:equal>
+--%>
 <script type="text/javascript">
 	$("#changeUnit").click(function() {
 		$("#changeEvaluatorDiv").hide();
@@ -288,12 +291,10 @@ request.setAttribute("isManager", isManager);
  <jsp:param value="<%=configuration.getWorkingRelation().getExternalId()%>" name="accountabilities"/>
  <jsp:param value="<%=configuration.getWorkingRelationWithNoQuota().getExternalId()%>" name="accountabilities"/>
  <jsp:param value="<%=configuration.getHarmonizationResponsibleRelation().getExternalId()%>" name="accountabilities"/>
- <jsp:param value="<%=year%>" name="startDateYear"/>
- <jsp:param value="1" name="startDateMonth"/>
- <jsp:param value="1" name="startDateDay"/>
  <jsp:param value="<%=year%>" name="endDateYear"/>
  <jsp:param value="12" name="endDateMonth"/>
  <jsp:param value="31" name="endDateDay"/>
+ <jsp:param value="true" name="showDeletedAccountabilities"/>
 </jsp:include>
 
 

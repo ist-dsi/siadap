@@ -575,4 +575,13 @@ relation ExceedingQuotaProposalRootModule {
 	}
 }
 
+relation SiadapEvaluationUniverseCompetenceType {
+	CompetenceType playsRole competenceSlashCareerType {
+		multiplicity 0..1;
+	}
+	SiadapEvaluationUniverse playsRole siadapEvaluationUniverses {
+		multiplicity *;
+	}
+}
+
 
