@@ -50,7 +50,6 @@ public class ImportTestUsers extends WriteCustomTask {
 
 	@Override
 	protected void doService() {
-		// TODO Auto-generated method stub
 		// let's try to get the group
 		MyOrg myOrg = MyOrg.getInstance();
 		NamedGroup siadapTestUserGroup = null;

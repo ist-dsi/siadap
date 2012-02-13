@@ -41,7 +41,6 @@ public enum SiadapProcessStateEnum implements IPresentableEnum {
     UNIMPLEMENTED_STATE;
 
     private SiadapProcessStateEnum() {
-	// TODO Auto-generated constructor stub
     }
 
     /**

@@ -6,7 +6,6 @@ import java.io.PrintWriter;
 import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -373,14 +372,6 @@ public class ImportSiadapStructure extends ReadCustomTask {
 
     }
 
-    public final static Comparator<String> ORDER_BY_EVALUATED_IST_ID = new Comparator<String>() {
-
-	@Override
-	public int compare(String o1, String o2) {
-	    // TODO Auto-generated method stub
-	    return 0;
-	}
-    };
 
     private void validateData() {
 	//let's get the data from the system into the input format
@@ -630,7 +621,6 @@ public class ImportSiadapStructure extends ReadCustomTask {
 	    final AccountabilityType evaluationRelation = configuration.getEvaluationRelation();
 
 	    PartyPredicate evalForYearPredicate = new AccTypeForGivenYearClassPredicate(evaluationRelation, today, null);
-	    // TODO Auto-generated method stub
 	    for (Responsible responsible : responsibles) {
 		Unit unit = responsible.getCenter().getUnit();
 		Person person = responsible.getUser().getPerson();
