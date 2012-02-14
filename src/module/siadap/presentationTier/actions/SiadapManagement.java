@@ -36,6 +36,7 @@ import pt.ist.fenixWebFramework.struts.annotations.Mapping;
 @Mapping(path = "/siadapManagement")
 public class SiadapManagement extends ContextBaseAction {
 
+    //TODO joantune: assert if this is used at all! (and what it was used for..)
     public final ActionForward prepareToCreateNewSiadapProcess(final ActionMapping mapping, final ActionForm form,
 	    final HttpServletRequest request, final HttpServletResponse response) {
 
@@ -55,6 +56,7 @@ public class SiadapManagement extends ContextBaseAction {
 
 	return forward(request, "/module/siadap/prepareCreateSiadap.jsp");
     }
+
 
     //    public final ActionForward createNewSiadapProcess(final ActionMapping mapping, final ActionForm form,
     //	    final HttpServletRequest request, final HttpServletResponse response) {

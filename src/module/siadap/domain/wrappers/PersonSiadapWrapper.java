@@ -15,6 +15,7 @@ import module.organization.domain.AccountabilityType;
 import module.organization.domain.Party;
 import module.organization.domain.Person;
 import module.organization.domain.Unit;
+import module.siadap.domain.CompetenceType;
 import module.siadap.domain.ExceedingQuotaProposal;
 import module.siadap.domain.Siadap;
 import module.siadap.domain.SiadapEvaluationUniverse;
@@ -207,6 +208,12 @@ public class PersonSiadapWrapper extends PartyWrapper implements Serializable {
 	} else
 	    return true;
 
+    }
+
+    public SiadapUniverse getDefaultSiadapUniverse() {
+	if (getSiadap() == null)
+	    return null;
+	return getSiadap().getDefaultSiadapUniverse();
     }
 
     public PersonSiadapWrapper getEvaluator() {
@@ -504,8 +511,8 @@ public class PersonSiadapWrapper extends PartyWrapper implements Serializable {
 	    }
 	}
 	unit.addChild(getPerson(),
-		withQuotas ? configuration.getWorkingRelation() : configuration.getWorkingRelationWithNoQuota(), startOfYear,
-		endOfYear);
+		withQuotas ? configuration.getWorkingRelation() : configuration.getWorkingRelationWithNoQuota(), dateOfChange,
+		null);
     }
 
     // use the version that allows a date instead (may not apply to all of the
@@ -524,22 +531,27 @@ public class PersonSiadapWrapper extends PartyWrapper implements Serializable {
 
     @Service
     public void changeEvaluatorTo(Person newEvaluator, LocalDate dateOfChange) {
-	//TODO SIADAP-168
-	//	verifyDate(dateOfChange);
-	//	//	LocalDate now = new LocalDate();
-	//	LocalDate startOfYear = new LocalDate(dateOfChange.getYear(), 1, 1);
-	//	LocalDate endOfYear = new LocalDate(dateOfChange.getYear(), 12, 31);
-	//	SiadapYearConfiguration configuration = getConfiguration();
-	//	AccountabilityType evaluationRelation = configuration.getEvaluationRelation();
-	//	for (Accountability accountability : getParentAccountabilityTypes(evaluationRelation)) {
-	//	    if (accountability.isActiveNow() && accountability.getParent() instanceof Person
-	//		    && accountability.getChild() instanceof Person) {
-	//		accountability.editDates(accountability.getBeginDate(), dateOfChange);
-	//		accountability.setChild(newEvaluator);
-	//	    }
-	//	}
-	//	//let's
-	//	newEvaluator.addChild(getPerson(), evaluationRelation, startOfYear, endOfYear);
+	verifyDate(dateOfChange);
+	LocalDate startOfYear = new LocalDate(dateOfChange.getYear(), 1, 1);
+	LocalDate endOfYear = new LocalDate(dateOfChange.getYear(), 12, 31);
+	SiadapYearConfiguration configuration = getConfiguration();
+	AccountabilityType evaluationRelation = configuration.getEvaluationRelation();
+	boolean needToAddAcc = false;
+	for (Accountability accountability : getParentAccountabilityTypes(evaluationRelation)) {
+	    if (accountability.isActiveNow() && accountability.getParent() instanceof Person
+		    && accountability.getChild() instanceof Person) {
+		//let's close it if we have a different person here
+		if (!accountability.getParent().equals(newEvaluator)) {
+		    accountability.editDates(accountability.getBeginDate(), dateOfChange);
+		    needToAddAcc = true;
+		}
+	    }
+	}
+	if (needToAddAcc) {
+	    //let's
+	    newEvaluator.addChild(getPerson(), evaluationRelation, dateOfChange, null);
+
+	}
 
     }
 
@@ -635,10 +647,17 @@ public class PersonSiadapWrapper extends PartyWrapper implements Serializable {
     }
 
     public String getCareerName() {
+	if (getDefaultCompetenceTypeObject() == null)
+	    return "";
+	return getDefaultCompetenceTypeObject().getName();
+    }
+
+    public CompetenceType getDefaultCompetenceTypeObject() {
 	if (getSiadap() == null || getSiadap().getDefaultSiadapEvaluationUniverse() == null
 		|| getSiadap().getDefaultSiadapEvaluationUniverse().getCompetenceSlashCareerType() == null)
-	    return "";
-	return getSiadap().getDefaultSiadapEvaluationUniverse().getCompetenceSlashCareerType().getName();
+	    return null;
+	return getSiadap().getDefaultSiadapEvaluationUniverse().getCompetenceSlashCareerType();
+
     }
 
     public Boolean getHomologationDone() {
@@ -692,20 +711,25 @@ public class PersonSiadapWrapper extends PartyWrapper implements Serializable {
     }
 
     @Service
-    public void changeDefaultUniverseTo(SiadapUniverse siadapUniverseToChangeTo) {
+    public void changeDefaultUniverseTo(SiadapUniverse siadapUniverseToChangeTo, LocalDate dateOfChange) {
 	SiadapUniverse defaultSiadapUniverse = getSiadap().getDefaultSiadapUniverse();
+
+	verifyDate(dateOfChange);
 	//let's check if we have a closed harmonization, if so, we shouldn't allow the change
 	Unit unitWhereIsHarmonized = getUnitWhereIsHarmonized(defaultSiadapUniverse);
 	if (new UnitSiadapWrapper(unitWhereIsHarmonized, getYear()).isHarmonizationFinished())
 	    throw new SiadapException("error.cant.change.siadap.universe.because.it.has.closed.harmonization");
+
 	//let's also change the Harmonization relation
 	Accountability retrieveDefaultHarmAccForGivenSiadapUniverse = retrieveDefaultHarmAccForGivenSiadapUniverse(getSiadap()
 		.getDefaultSiadapUniverse());
 	if (retrieveDefaultHarmAccForGivenSiadapUniverse != null) {
-	    //if we had one, let's change it's type
-	    retrieveDefaultHarmAccForGivenSiadapUniverse.setAccountabilityType(siadapUniverseToChangeTo
-		    .getHarmonizationRelation(getConfiguration()));
+	    //if we had one, let's close it
+	    retrieveDefaultHarmAccForGivenSiadapUniverse.setEndDate(dateOfChange);
 	}
+	//and now let's create a new one
+	retrieveDefaultHarmAccForGivenSiadapUniverse.getParent().addChild(getPerson(),
+		siadapUniverseToChangeTo.getHarmonizationRelation(getYear()), dateOfChange, null);
 
 	getSiadap().setDefaultSiadapUniverse(siadapUniverseToChangeTo);
     }

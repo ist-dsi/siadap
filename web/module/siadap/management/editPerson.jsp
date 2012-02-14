@@ -44,7 +44,8 @@
 			<fr:property name="subLayout" value="values"/>
 			<fr:property name="subSchema" value="view.UnitSiadapWrapper.name"/>
 		</fr:slot>
-		<fr:slot name="siadap.defaultSiadapUniverse"/>
+		<fr:slot name="defaultSiadapUniverse"/>
+		<fr:slot name="careerName"/>
 		<fr:slot name="quotaAware" key="label.evaluationForQuotas"/> 
 		<fr:slot name="evaluator" layout="null-as-label" key="label.evaluator">
 			<fr:property name="subLayout" value="values"/>
@@ -69,12 +70,9 @@
 		</html:link>
 	</logic:present>
 	<logic:notPresent name="person" property="siadap">
-		<html:link page="<%= "/siadapManagement.do?method=createNewSiadapProcess&year="
-			+ personWrapper.getYear() 
-			+ "&personId="
-			+  personId%>">
+		<a href="#" id="createSiadapLink">
 			<bean:message key="link.create" bundle="MYORG_RESOURCES"/>
-		</html:link>
+		</a>
 	</logic:notPresent>
 </p>
 
@@ -102,17 +100,66 @@ request.setAttribute("isManager", isManager);
 
 
 	<%-- Part responsible for the changes on the SIADAP proccess (and the SIADAP user) --%>
-<%--
 <logic:equal name="isAbleToChangeAnything" value="true">
-	<p><a href="#" id="changeUnit"> <bean:message key="label.changeWorkingUnit" bundle="SIADAP_RESOURCES"/> </a> | <a href="#" id="changeEvaluator"> <bean:message key="label.changeEvaluator" bundle="SIADAP_RESOURCES"/> </a> | <a href="#" id="changeSiadapUniverse"> <bean:message key="label.changeSiadapUniverse" bundle="SIADAP_RESOURCES"/> </a>
+	<p><a href="#" id="changeUnit"> <bean:message key="label.changeWorkingUnit" bundle="SIADAP_RESOURCES"/> </a> | <a href="#" id="changeEvaluator"> <bean:message key="label.changeEvaluator" bundle="SIADAP_RESOURCES"/> </a>
 	<logic:equal name="person" property="customEvaluatorDefined" value="true">
 		| <html:link page="<%="/siadapPersonnelManagement.do?method=removeCustomEvaluator&year=" + year.toString()%>" paramId="personId"  paramName="person"  paramProperty="person.externalId"><bean:message key="label.removeCustomEvaluator" bundle="SIADAP_RESOURCES"/> </html:link>
 	</logic:equal>
+	<logic:present name="personWrapper" property="siadap">
+		| <a href="#" id="changeSiadapUniverse"> <bean:message key="label.changeSiadapUniverse" bundle="SIADAP_RESOURCES"/> </a>
+		| <a href="#" id="changeCompetenceTypeLink"> <bean:message key="label.changeCompetenceType" bundle="SIADAP_RESOURCES"/> </a>
+	</logic:present> 
+	<logic:notPresent name="personWrapper" property="siadap">
+		| <bean:message key="label.changeSiadapUniverse" bundle="SIADAP_RESOURCES"/> (precisa criar o processo SIADAP antes)
+		| <bean:message key="label.changeCompetenceType" bundle="SIADAP_RESOURCES"/> (precisa criar o processo SIADAP antes)
+	</logic:notPresent>
 	</p>
+	
+	<div id="createSiadapDiv" style="display: none;">
+		<div class="highlightBox">
+			<p>Criar SIADAP:</p>
+			<fr:form action="<%="/siadapPersonnelManagement.do?method=createNewSiadapProcess&personId=" + personId + "&year=" + year.toString()%>">
+				<fr:edit id="createSiadapBean" name="createSiadapBean" visible="false"/>
+				
+				<fr:edit id="createSiadapBean1" name="createSiadapBean">
+					<fr:schema bundle="SIADAP_RESOURCES" type="module.siadap.presentationTier.actions.SiadapPersonnelManagement$SiadapCreationBean">
+						<fr:slot name="defaultSiadapUniverse"/>
+						<fr:slot name="competenceType" layout="menu-select">
+							<fr:property name="providerClass" value="module.siadap.presentationTier.renderers.providers.CompetenceTypeProvider" />
+							<fr:property name="format" value="${name}" />
+							<fr:property name="sortBy" value="name" />
+						</fr:slot>
+					</fr:schema>
+				</fr:edit>
+			<html:submit styleClass="inputbutton"><bean:message key="renderers.form.submit.name" bundle="RENDERER_RESOURCES"/></html:submit>
+			</fr:form>
+		</div>
+	</div>
+	
+	<div id="changeCompetenceTypeDiv" style="display: none;">
+		<div class="highlightBox">
+			<p>Mudar a carreira:</p>
+			<fr:form action="<%="/siadapPersonnelManagement.do?method=changeCompetenceType&activity=ChangePersonnelSituation&personId=" + personId + "&year=" + year.toString()%>">
+				<fr:edit id="changeCompetenceTypeBean" name="changeCompetenceTypeBean" visible="false"/>
+				
+				<fr:edit id="changeCompetenceTypeBean1" name="changeCompetenceTypeBean">
+					<fr:schema bundle="SIADAP_RESOURCES" type="module.siadap.presentationTier.actions.SiadapPersonnelManagement$CompetenceTypeBean">
+						<fr:slot name="competenceType" layout="menu-select">
+							<fr:property name="providerClass" value="module.siadap.presentationTier.renderers.providers.CompetenceTypeProvider" />
+							<fr:property name="format" value="${name}" />
+							<fr:property name="sortBy" value="name" />
+						</fr:slot>
+					</fr:schema>
+				</fr:edit>
+			<html:submit styleClass="inputbutton"><bean:message key="renderers.form.submit.name" bundle="RENDERER_RESOURCES"/></html:submit>
+			</fr:form>
+			
+		</div>
+	</div>
 	
 	<div id="changeUnitDiv" style="display: none;">
 		<div class="highlightBox">
-		<fr:form action="<%= "/siadapPersonnelManagement.do?method=changeWorkingUnit&personId=" + personId + "&year=" + year.toString() %>">
+		<fr:form action="<%= "/siadapPersonnelManagement.do?method=changeWorkingUnit&activity=ChangePersonnelSituation&personId=" + personId + "&year=" + year.toString() %>">
 		<fr:edit id="changeWorkingUnit" name="changeWorkingUnit" visible="false"/>
 	
 		<fr:edit id="changeWorkingUnit1" name="changeWorkingUnit" slot="unit" >
@@ -149,12 +196,13 @@ request.setAttribute("isManager", isManager);
 	
 	<div id="changeSiadapUniverseDiv" style="display: none;">
 		<div class="highlightBox">
-			<fr:form action="<%= "/siadapPersonnelManagement.do?method=changeSiadapUniverse&personId=" + personId + "&year=" + year.toString() %>">
+			<fr:form action="<%= "/siadapPersonnelManagement.do?method=changeSiadapUniverse&activity=ChangePersonnelSituation&personId=" + personId + "&year=" + year.toString() %>">
 				<fr:edit id="changeSiadapUniverse" name="changeSiadapUniverse">
 					<fr:schema type="module.siadap.presentationTier.actions.SiadapPersonnelManagement$ChangeSiadapUniverseBean" bundle="SIADAP_RESOURCES">
 						<fr:slot name="siadapUniverse" key="label.changeSiadapUniverse" bundle="SIADAP_RESOURCES" layout="radio">
 							<fr:validator name="pt.ist.fenixWebFramework.renderers.validators.RequiredValidator"/>
 						</fr:slot>
+						<fr:slot name="dateOfChange" layout="picker"/>
 					</fr:schema>
 				</fr:edit>
 				<html:submit styleClass="inputbutton"><bean:message key="renderers.form.submit.name" bundle="RENDERER_RESOURCES"/></html:submit>
@@ -165,7 +213,7 @@ request.setAttribute("isManager", isManager);
 	<div id="changeEvaluatorDiv" style="display: none;" >
 		<div class="highlightBox">
 		
-		<fr:form action="<%= "/siadapPersonnelManagement.do?method=changeEvaluator&personId=" + personId + "&year=" + year.toString() %>">
+		<fr:form action="<%= "/siadapPersonnelManagement.do?method=changeEvaluator&activity=ChangePersonnelSituation&personId=" + personId + "&year=" + year.toString() %>">
 		
 		<fr:edit id="changeEvaluator" name="changeEvaluator" visible="false"/>
 		
@@ -194,23 +242,44 @@ request.setAttribute("isManager", isManager);
 		</div>
 	</div>
 </logic:equal>
---%>
 <script type="text/javascript">
 	$("#changeUnit").click(function() {
 		$("#changeEvaluatorDiv").hide();
 		$("#changeSiadapUniverseDiv").hide();
+		$("#createSiadapDiv").hide();
+		$("#changeCompetenceTypeDiv").hide();
 		$("#changeUnitDiv").slideToggle();
+	});
+	$("#createSiadapLink").click(function(){
+		$("#changeEvaluatorDiv").hide();
+		$("#changeSiadapUniverseDiv").hide();
+		$("#changeUnitDiv").hide();
+		$("#changeCompetenceTypeDiv").hide();
+		$("#createSiadapDiv").slideToggle();
+		return false;
+	});
+	$("#changeCompetenceTypeLink").click(function(){
+		$("#changeEvaluatorDiv").hide();
+		$("#changeSiadapUniverseDiv").hide();
+		$("#changeUnitDiv").hide();
+		$("#createSiadapDiv").hide();
+		$("#changeCompetenceTypeDiv").slideToggle();
+		return false;
 	});
 	
 	$("#changeSiadapUniverse").click(function() {
 		$("#changeEvaluatorDiv").hide();
 		$("#changeUnitDiv").hide();
+		$("#createSiadapDiv").hide();
+		$("#changeCompetenceTypeDiv").hide();
 		$("#changeSiadapUniverseDiv").slideToggle();
 	});
 
 	$("#changeEvaluator").click(function() {
 		$("#changeUnitDiv").hide();
 		$("#changeSiadapUniverseDiv").hide();
+		$("#createSiadapDiv").hide();
+		$("#changeCompetenceTypeDiv").hide();
 		$("#changeEvaluatorDiv").slideToggle();
 	});
 </script>

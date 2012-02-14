@@ -50,12 +50,12 @@ public class ConvertCompetencesToSiadapUniverse extends ReadCustomTask {
 	for (Siadap siadap : siadaps) {
 	    if (getMainSiadapUniverse(siadap) == null) {
 		//let's assert the SIADAP based on the competences
-		if (siadap.getCompetenceType() == null)
+		if (siadap.getDefaultCompetenceType() == null)
 		{
 		    nrSiadapsUnableToMigrate++;
 		    siadapsUnableToMigrate.add(siadap);
 		}
-		else if (StringUtils.containsIgnoreCase("Dirigente Intermédio", siadap.getCompetenceType().getName())) {
+		else if (StringUtils.containsIgnoreCase("Dirigente Intermédio", siadap.getDefaultCompetenceType().getName())) {
 		    nrSiadapThrees++;
 		    nrSiadapsToMigrate++;
 		    auxMap.put(siadap, SiadapUniverse.SIADAP2);

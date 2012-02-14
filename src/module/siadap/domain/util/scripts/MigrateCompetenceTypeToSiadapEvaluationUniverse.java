@@ -26,8 +26,8 @@ public class MigrateCompetenceTypeToSiadapEvaluationUniverse extends WriteCustom
 	for (Siadap siadap : SiadapRootModule.getInstance().getSiadaps()) {
 	    SiadapEvaluationUniverse defaultSiadapEvaluationUniverse = siadap.getDefaultSiadapEvaluationUniverse();
 	    //let's get its CompetenceType, if it has one, let's set the relation
-	    if (defaultSiadapEvaluationUniverse != null && siadap.getCompetenceType() != null) {
-		defaultSiadapEvaluationUniverse.setCompetenceSlashCareerType(siadap.getCompetenceType());
+	    if (defaultSiadapEvaluationUniverse != null && siadap.getDefaultCompetenceType() != null) {
+		defaultSiadapEvaluationUniverse.setCompetenceSlashCareerType(siadap.getDefaultCompetenceType());
 		relationsDone++;
 	    }
  else {

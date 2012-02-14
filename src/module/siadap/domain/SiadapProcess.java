@@ -13,6 +13,7 @@ import module.siadap.activities.AcknowledgeEvaluationValidation;
 import module.siadap.activities.AcknowledgeHomologation;
 import module.siadap.activities.AutoEvaluation;
 import module.siadap.activities.ChangeCustomSchedule;
+import module.siadap.activities.ChangePersonnelSituation;
 import module.siadap.activities.CreateCompetenceEvaluation;
 import module.siadap.activities.CreateObjectiveEvaluation;
 import module.siadap.activities.CurricularPonderationAttribution;
@@ -34,6 +35,7 @@ import module.siadap.activities.SubmitAutoEvaluation;
 import module.siadap.activities.SubmitEvaluation;
 import module.siadap.activities.SubmitForObjectivesAcknowledge;
 import module.siadap.activities.ValidateEvaluation;
+import module.siadap.domain.exceptions.SiadapException;
 import module.siadap.domain.wrappers.PersonSiadapWrapper;
 import module.workflow.activities.ActivityInformation;
 import module.workflow.activities.WorkflowActivity;
@@ -84,12 +86,18 @@ public class SiadapProcess extends SiadapProcess_Base {
 	activities.add(new RevertNoEvaluation());
 	activities.add(new GrantExcellencyAward());
 	activities.add(new RevokeExcellencyAward());
+
+	//SiadapPersonnelManagement activities:
+	activities.add(new ChangePersonnelSituation());
     }
 
     private HashMap<User, ArrayList<String>> userWarningsKey = new HashMap<User, ArrayList<String>>();
 
     public SiadapProcess(Integer year, Person evaluated, SiadapUniverse siadapUniverse, CompetenceType competenceType) {
 	super();
+
+	if (competenceType == null || siadapUniverse == null)
+	    throw new SiadapException("error.create.siadap.must.fill.competenceType.and.SiadapUniverse");
 
 	User currentUser = UserView.getCurrentUser();
 	Person possibleEvaluator = currentUser.getPerson();
@@ -112,7 +120,7 @@ public class SiadapProcess extends SiadapProcess_Base {
 	setProcessNumber("S" + year + "/" + evaluated.getUser().getUsername());
 
 	new LabelLog(this, currentUser, this.getClass().getName() + ".creation", "resources/SiadapResources",
-		evaluated.getName(), year.toString());
+		evaluated.getName(), year.toString(), siadapUniverse.getLocalizedName(), competenceType.getName());
     }
 
     public List<String> getAndClearWarningMessages() {
@@ -186,7 +194,7 @@ public class SiadapProcess extends SiadapProcess_Base {
 
     @Service
     public static SiadapProcess createNewProcess(Person evaluated, Integer year, SiadapUniverse siadapUniverse,
-	    CompetenceType competenceType) {
+	    CompetenceType competenceType) throws SiadapException {
 	return new SiadapProcess(year, evaluated, siadapUniverse, competenceType);
     }
 

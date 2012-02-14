@@ -40,7 +40,7 @@ public class Siadap extends Siadap_Base {
     public static final int MINIMUM_PERFORMANCE_OBJECTIVES_NUMBER = 1;
     public static final int MINIMUM_QUALITY_OBJECTIVES_NUMBER = 1;
 
-    public static final int MINIMUM_COMPETENCES_WITH_OBJ_EVAL_NUMBER = 6;
+    public static final int MINIMUM_COMPETENCES_WITH_OBJ_EVAL_NUMBER = 5;
 
     public static final int MINIMUM_COMPETENCES_WITHOUT_OBJ_EVAL_NUMBER = 8;
 
@@ -218,19 +218,14 @@ public class Siadap extends Siadap_Base {
 
     /**
      * 
-     * @return the CompetenceType associated with this process or null if it
-     *         hasn't been set yet
+     * @return the default CompetenceType associated with this process or null
+     *         if it hasn't been set yet
      * @author João André Pereira Antunes (joao.antunes@tagus.ist.utl.pt)
      */
-    public CompetenceType getCompetenceType() {
-	if (!hasAnySiadapEvaluationItems2())
+    public CompetenceType getDefaultCompetenceType() {
+	if (getDefaultSiadapEvaluationUniverse() == null)
 	    return null;
-	ArrayList<SiadapEvaluationItem> evaluationItems = new ArrayList<SiadapEvaluationItem>(getSiadapEvaluationItems2());
-	for (SiadapEvaluationItem siadapEvaluationItem : evaluationItems) {
-	    if (siadapEvaluationItem instanceof CompetenceEvaluation)
-		return ((CompetenceEvaluation) siadapEvaluationItem).getCompetence().getCompetenceType();
-	}
-	return null;
+	return getDefaultSiadapEvaluationUniverse().getCompetenceSlashCareerType();
     }
     
     @Service

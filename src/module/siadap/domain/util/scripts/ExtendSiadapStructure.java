@@ -51,7 +51,7 @@ public class ExtendSiadapStructure extends WriteCustomTask {
 	private final Siadap siadap;
 
 	SiadapBean(Siadap siadap) {
-	    competenceType = siadap.getCompetenceType();
+	    competenceType = siadap.getDefaultCompetenceType();
 	    defaultSiadapUniverse = siadap.getDefaultSiadapUniverse();
 	    this.siadap = siadap;
 

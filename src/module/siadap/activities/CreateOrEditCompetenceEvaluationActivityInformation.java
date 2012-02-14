@@ -16,7 +16,7 @@ public class CreateOrEditCompetenceEvaluationActivityInformation extends Activit
 	ContainsCompetenceType {
 
     private Siadap siadap;
-    private CompetenceType competenceType;
+    private final CompetenceType competenceType;
     private List<Competence> competences;
     // Variable used to make sure that the JSP is displayed to the user upon
     // creation/edition of the competences
@@ -29,7 +29,7 @@ public class CreateOrEditCompetenceEvaluationActivityInformation extends Activit
 	super(process, activity);
 	setCompetences(new ArrayList<Competence>(getSiadap().getCompetences()));
 	// setCompetences(process.getSiadap().getCompetences());
-	setCompetenceType(process.getSiadap().getCompetenceType());
+	this.competenceType = process.getSiadap().getDefaultCompetenceType();
 	if (process.getSiadap().getEvaluatedOnlyByCompetences() == null) {
 	    setEvaluatedOnlyByCompetences(Boolean.FALSE);
 	} else {
@@ -49,16 +49,6 @@ public class CreateOrEditCompetenceEvaluationActivityInformation extends Activit
 
     public void setSiadap(Siadap siadap) {
 	this.siadap = siadap;
-    }
-
-    public void setCompetenceType(CompetenceType competenceType) {
-	// clean the other fields if this is changed
-	if (this.competenceType != null && this.competenceType != competenceType) {
-	    // setCompetences(new ArrayList<Competence>());
-	    getCompetences().clear();
-	    setInputDisplayed(false);
-	}
-	this.competenceType = competenceType;
     }
 
     @Override

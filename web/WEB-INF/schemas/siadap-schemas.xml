@@ -1,11 +1,6 @@
 <schema bundle="SIADAP_RESOURCES" name="siadap.module.siadap.activities.CreateOrEditCompetenceEvaluationActivityInformation.postback"
 		type="module.siadap.activities.CreateOrEditCompetenceEvaluationActivityInformation">
-		<slot name="competenceType" layout="menu-select-postback">
-			<property name="providerClass"
-				value="module.siadap.presentationTier.renderers.providers.CompetenceTypeProvider" />
-			<property name="format" value="${name}" />
-			<property name="sortBy" value="name" />
-		</slot>
+		<slot name="competenceType" read-only="true"/>
 		<slot name="evaluatedOnlyByCompetences" layout="radio-postback" help="activity.CreateOrEditCompetenceEvaluation.evaluatedOnlyByCompetences.help"
 		validator="pt.ist.fenixWebFramework.renderers.validators.RequiredValidator" key="activity.CreateOrEditCompetenceEvaluation.evaluatedOnlyByCompetences">
 			<property name="bundle" value="SIADAP_RESOURCES"/>

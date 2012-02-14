@@ -18,7 +18,7 @@ public enum SiadapStatisticsSummaryBoardUniversesEnum implements IPresentableEnu
     KNOWN_CATEGORY {
 	@Override
 	public String getCategoryString(Siadap siadap) {
-	    return siadap.getCompetenceType().getName();
+	    return siadap.getDefaultCompetenceType().getName();
 	}
 
 	@Override
