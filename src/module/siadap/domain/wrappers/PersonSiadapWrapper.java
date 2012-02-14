@@ -536,14 +536,16 @@ public class PersonSiadapWrapper extends PartyWrapper implements Serializable {
 	LocalDate endOfYear = new LocalDate(dateOfChange.getYear(), 12, 31);
 	SiadapYearConfiguration configuration = getConfiguration();
 	AccountabilityType evaluationRelation = configuration.getEvaluationRelation();
-	boolean needToAddAcc = false;
+	boolean needToAddAcc = true;
 	for (Accountability accountability : getParentAccountabilityTypes(evaluationRelation)) {
 	    if (accountability.isActiveNow() && accountability.getParent() instanceof Person
 		    && accountability.getChild() instanceof Person) {
 		//let's close it if we have a different person here
 		if (!accountability.getParent().equals(newEvaluator)) {
 		    accountability.editDates(accountability.getBeginDate(), dateOfChange);
-		    needToAddAcc = true;
+		}
+ else {
+		    needToAddAcc = false;
 		}
 	    }
 	}
@@ -608,16 +610,18 @@ public class PersonSiadapWrapper extends PartyWrapper implements Serializable {
 
     @Service
     public void removeCustomEvaluator() {
-	LocalDate now = new LocalDate();
-	//make sure we are making changes in the current year TODO not sure if this is what we want for all of the use cases, but for now let's keep it this way
-	verifyDate(now);
-	AccountabilityType evaluationRelation = getConfiguration().getEvaluationRelation();
-	for (Accountability accountability : getParentAccountabilityTypes(evaluationRelation)) {
-	    if (accountability.isActiveNow() && accountability.getChild() instanceof Person
-		    && accountability.getParent() instanceof Person) {
-		accountability.editDates(accountability.getBeginDate(), now.minusDays(1));
-	    }
-	}
+	return;
+	//TODO refactor this accordingly
+	//	LocalDate now = new LocalDate();
+	//	//make sure we are making changes in the current year TODO not sure if this is what we want for all of the use cases, but for now let's keep it this way
+	//	verifyDate(now);
+	//	AccountabilityType evaluationRelation = getConfiguration().getEvaluationRelation();
+	//	for (Accountability accountability : getParentAccountabilityTypes(evaluationRelation)) {
+	//	    if (accountability.isActiveNow() && accountability.getChild() instanceof Person
+	//		    && accountability.getParent() instanceof Person) {
+	//		accountability.editDates(accountability.getBeginDate(), now.minusDays(1));
+	//	    }
+	//	}
     }
 
     @Service

@@ -101,19 +101,26 @@ request.setAttribute("isManager", isManager);
 
 	<%-- Part responsible for the changes on the SIADAP proccess (and the SIADAP user) --%>
 <logic:equal name="isAbleToChangeAnything" value="true">
-	<p><a href="#" id="changeUnit"> <bean:message key="label.changeWorkingUnit" bundle="SIADAP_RESOURCES"/> </a> | <a href="#" id="changeEvaluator"> <bean:message key="label.changeEvaluator" bundle="SIADAP_RESOURCES"/> </a>
-	<logic:equal name="person" property="customEvaluatorDefined" value="true">
-		| <html:link page="<%="/siadapPersonnelManagement.do?method=removeCustomEvaluator&year=" + year.toString()%>" paramId="personId"  paramName="person"  paramProperty="person.externalId"><bean:message key="label.removeCustomEvaluator" bundle="SIADAP_RESOURCES"/> </html:link>
-	</logic:equal>
 	<logic:present name="personWrapper" property="siadap">
-		| <a href="#" id="changeSiadapUniverse"> <bean:message key="label.changeSiadapUniverse" bundle="SIADAP_RESOURCES"/> </a>
-		| <a href="#" id="changeCompetenceTypeLink"> <bean:message key="label.changeCompetenceType" bundle="SIADAP_RESOURCES"/> </a>
+		<p><a href="#" id="changeUnit"> <bean:message key="label.changeWorkingUnit" bundle="SIADAP_RESOURCES"/> </a> | <a href="#" id="changeEvaluator"> <bean:message key="label.changeEvaluator" bundle="SIADAP_RESOURCES"/> </a>
+			<logic:equal name="person" property="customEvaluatorDefined" value="true">
+			| <%-- <html:link page="<%="/siadapPersonnelManagement.do?method=removeCustomEvaluator&year=" + year.toString()%>" paramId="personId"  paramName="person"  paramProperty="person.externalId"> --%>
+				<bean:message key="label.removeCustomEvaluator" bundle="SIADAP_RESOURCES"/>  (desactivado temporariamente)
+			 <%--  </html:link> --%>
+			</logic:equal>
+			| <a href="#" id="changeSiadapUniverse"> <bean:message key="label.changeSiadapUniverse" bundle="SIADAP_RESOURCES"/> </a>
+			| <a href="#" id="changeCompetenceTypeLink"> <bean:message key="label.changeCompetenceType" bundle="SIADAP_RESOURCES"/> </a>
+		</p>
 	</logic:present> 
 	<logic:notPresent name="personWrapper" property="siadap">
-		| <bean:message key="label.changeSiadapUniverse" bundle="SIADAP_RESOURCES"/> (precisa criar o processo SIADAP antes)
-		| <bean:message key="label.changeCompetenceType" bundle="SIADAP_RESOURCES"/> (precisa criar o processo SIADAP antes)
-	</logic:notPresent>
+<p>(funcionalidades desactivadas, crie o processo SIADAP antes)</p>
+	<p>
+	    <bean:message key="label.changeWorkingUnit" bundle="SIADAP_RESOURCES"/>
+	    |<bean:message key="label.changeEvaluator" bundle="SIADAP_RESOURCES"/>			
+		| <bean:message key="label.changeSiadapUniverse" bundle="SIADAP_RESOURCES"/> 
+		| <bean:message key="label.changeCompetenceType" bundle="SIADAP_RESOURCES"/>
 	</p>
+	</logic:notPresent>
 	
 	<div id="createSiadapDiv" style="display: none;">
 		<div class="highlightBox">
