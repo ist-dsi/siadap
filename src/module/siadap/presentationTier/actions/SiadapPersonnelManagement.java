@@ -36,7 +36,6 @@ import module.workflow.activities.ActivityInformation;
 import module.workflow.activities.WorkflowActivity;
 import module.workflow.domain.WorkflowProcess;
 import myorg.applicationTier.Authenticate.UserView;
-import myorg.domain.User;
 import myorg.domain.VirtualHost;
 import myorg.domain.exceptions.DomainException;
 import myorg.presentationTier.actions.ContextBaseAction;
@@ -327,56 +326,7 @@ public class SiadapPersonnelManagement extends ContextBaseAction {
     public final ActionForward removeCustomEvaluator(final ActionMapping mapping, final ActionForm form,
 	    final HttpServletRequest request, final HttpServletResponse response) throws Exception {
 
-	int year = Integer.parseInt(request.getParameter("year"));
-	PersonSiadapWrapper personWrapper = new PersonSiadapWrapper((Person) getDomainObject(request, "personId"), year);
-	//let's retrieve the important fields to assert if anything changed at all
-	Person oldEvaluator = personWrapper.getEvaluator().getPerson();
-
-	personWrapper.removeCustomEvaluator();
-
-	Person newEvaluator = personWrapper.getEvaluator().getPerson();
-
-	if (!oldEvaluator.equals(newEvaluator)) {
-	    Person evaluated = personWrapper.getPerson();
-	    User evaluatedUser = evaluated.getUser();
-	    Person evaluator = personWrapper.getEvaluator().getPerson();
-	    User evaluatorUser = evaluator.getUser();
-	    LocalDate dateOfChange = new LocalDate();
-
-	    //notify the users who have access to this interface
-	    String notificationSubject = BundleUtil.getFormattedStringFromResourceBundle(Siadap.SIADAP_BUNDLE_STRING,
-		    "manage.siadapStructure.notification.email.managers.changeEvaluator.subject", String.valueOf(year),
-		    evaluated.getName(), evaluatedUser.getUsername(), evaluator.getName(), evaluatorUser.getUsername());
-	    String notificationContent = BundleUtil.getFormattedStringFromResourceBundle(Siadap.SIADAP_BUNDLE_STRING,
-		    "manage.siadapStructure.notification.email.managers.changeEvaluator.content", String.valueOf(year),
-		    evaluated.getName(), evaluatedUser.getUsername(), evaluator.getName(), evaluatorUser.getUsername(),
-		    dateOfChange.toString());
-
-	    notifySiadapStructureManagementUsers(request, notificationSubject, notificationContent);
-
-	    //notify the direct intervenients
-	    //notifying the new evaluator
-	    notificationSubject = BundleUtil.getFormattedStringFromResourceBundle(Siadap.SIADAP_BUNDLE_STRING,
-		    "manage.siadapStructure.notification.email.person.changeEvaluator.evaluator.subject", String.valueOf(year),
-		    evaluated.getName(), evaluatedUser.getUsername());
-
-	    notificationContent = BundleUtil.getFormattedStringFromResourceBundle(Siadap.SIADAP_BUNDLE_STRING,
-		    "manage.siadapStructure.notification.email.person.changeEvaluator.evaluator.content", String.valueOf(year),
-		    evaluated.getName(), evaluatedUser.getUsername(), dateOfChange.toString());
-
-	    notifyUser(request, notificationSubject, notificationContent, evaluator);
-
-	    //notifying the evaluated
-	    notificationSubject = BundleUtil.getFormattedStringFromResourceBundle(Siadap.SIADAP_BUNDLE_STRING,
-		    "manage.siadapStructure.notification.email.person.changeEvaluator.evaluated.subject", String.valueOf(year),
-		    evaluator.getName(), evaluatorUser.getUsername());
-
-	    notificationContent = BundleUtil.getFormattedStringFromResourceBundle(Siadap.SIADAP_BUNDLE_STRING,
-		    "manage.siadapStructure.notification.email.person.changeEvaluator.evaluated.content", String.valueOf(year),
-		    evaluator.getName(), evaluatorUser.getUsername(), dateOfChange.toString());
-	}
-
-	return viewPerson(mapping, form, request, response);
+	return changePersonnelSituation(mapping, form, request, response, new RemoveCustomEvaluatorBean());
     }
 
     public final ActionForward downloadNormalSIADAPStructure(final ActionMapping mapping, final ActionForm form,
@@ -472,6 +422,28 @@ public class SiadapPersonnelManagement extends ContextBaseAction {
 	return null;
     }
 
+    public static class RemoveCustomEvaluatorBean extends ActivityInformationBeanWrapper implements Serializable {
+
+	@Override
+	public boolean hasAllNeededInfo() {
+	    return true;
+	}
+
+	@Override
+	public void execute(SiadapProcess process) throws SiadapException {
+	    new PersonSiadapWrapper(process.getSiadap().getEvaluated(), process.getSiadap().getYear()).removeCustomEvaluator();
+
+	}
+
+	@Override
+	public String[] getArgumentsDescription(SiadapProcess process) {
+	    return new String[] { BundleUtil.getFormattedStringFromResourceBundle(Siadap.SIADAP_BUNDLE_STRING,
+		    RemoveCustomEvaluatorBean.class.getSimpleName(), process.getSiadap().getEvaluator().getPerson()
+			    .getPresentationName()) };
+	}
+
+    }
+
     public static class ChangeSiadapUniverseBean extends ActivityInformationBeanWrapper implements Serializable {
 	private SiadapUniverse siadapUniverse;
 
@@ -516,7 +488,7 @@ public class SiadapPersonnelManagement extends ContextBaseAction {
 	}
 
 	@Override
-	public String[] getArgumentsDescription() {
+	public String[] getArgumentsDescription(SiadapProcess process) {
 	    return new String[] { BundleUtil.getFormattedStringFromResourceBundle(Siadap.SIADAP_BUNDLE_STRING,
 		    ChangeSiadapUniverseBean.class.getSimpleName(), getSiadapUniverse().getLocalizedName(), getDateOfChange()
 			    .toString()) };
@@ -594,7 +566,7 @@ public class SiadapPersonnelManagement extends ContextBaseAction {
 	}
 
 	@Override
-	public String[] getArgumentsDescription() {
+	public String[] getArgumentsDescription(SiadapProcess process) {
 	    return new String[] { BundleUtil.getFormattedStringFromResourceBundle(Siadap.SIADAP_BUNDLE_STRING,
  ChangeEvaluatorBean.class.getSimpleName(),
 			    getEvaluator().getPresentationName(), getDateOfChange().toString()) };
@@ -627,7 +599,7 @@ public class SiadapPersonnelManagement extends ContextBaseAction {
 	}
 
 	@Override
-	public String[] getArgumentsDescription() {
+	public String[] getArgumentsDescription(SiadapProcess process) {
 	    return new String[] { BundleUtil.getFormattedStringFromResourceBundle(Siadap.SIADAP_BUNDLE_STRING,
 		    CompetenceTypeBean.class.getSimpleName(), competenceType.getName()) };
 	}
@@ -681,7 +653,7 @@ public class SiadapPersonnelManagement extends ContextBaseAction {
 	}
 
 	@Override
-	public String[] getArgumentsDescription() {
+	public String[] getArgumentsDescription(SiadapProcess process) {
 	    String countsForInstitutionalQuotas = (withQuotas) ? BundleUtil.getFormattedStringFromResourceBundle(
 		    Siadap.SIADAP_BUNDLE_STRING, "siadap.true.yes") : BundleUtil.getFormattedStringFromResourceBundle(
 		    Siadap.SIADAP_BUNDLE_STRING, "siadap.false.no");
@@ -708,7 +680,7 @@ public class SiadapPersonnelManagement extends ContextBaseAction {
 	 * 
 	 * @return an array of strings with the arguments description
 	 */
-	public abstract String[] getArgumentsDescription();
+	public abstract String[] getArgumentsDescription(SiadapProcess process);
 
     }
 

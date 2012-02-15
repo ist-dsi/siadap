@@ -26,6 +26,7 @@ import module.siadap.domain.SiadapUniverse;
 import module.siadap.domain.SiadapYearConfiguration;
 import module.siadap.domain.exceptions.SiadapException;
 import module.siadap.domain.scoring.SiadapGlobalEvaluation;
+import module.siadap.domain.util.SiadapMiscUtilClass;
 import myorg.applicationTier.Authenticate.UserView;
 import myorg.domain.User;
 import myorg.domain.exceptions.DomainException;
@@ -49,7 +50,6 @@ public class PersonSiadapWrapper extends PartyWrapper implements Serializable {
 
     private Boolean harmonizationCurrentAssessmentForExcellencyAwardForSIADAP2;
     private Boolean harmonizationCurrentAssessmentForExcellencyAwardForSIADAP3;
-
 
     public PersonSiadapWrapper(Person person, int year) {
 	super(year);
@@ -283,8 +283,9 @@ public class PersonSiadapWrapper extends PartyWrapper implements Serializable {
 	Siadap siadap = getSiadap();
 	if (siadap == null)
 	    return SiadapGlobalEvaluation.NONEXISTING.getLocalizedName();
-	SiadapEvaluationUniverse siadapEvaluationUniverseForSiadapUniverse = siadap.getSiadapEvaluationUniverseForSiadapUniverse(siadapUniverse);
-	if (siadapEvaluationUniverseForSiadapUniverse == null )
+	SiadapEvaluationUniverse siadapEvaluationUniverseForSiadapUniverse = siadap
+		.getSiadapEvaluationUniverseForSiadapUniverse(siadapUniverse);
+	if (siadapEvaluationUniverseForSiadapUniverse == null)
 	    return SiadapGlobalEvaluation.NONEXISTING.getLocalizedName();
 	else
 	    excellencyGiven = siadapEvaluationUniverseForSiadapUniverse.hasExcellencyAwarded();
@@ -381,7 +382,7 @@ public class PersonSiadapWrapper extends PartyWrapper implements Serializable {
     //	Siadap siadap = getSiadap();
     //	return siadap != null ? (siadap.isEvaluationDone() ? siadap.getTotalEvaluationScoring() : null) : null;
     //    }
-    
+
     public BigDecimal getTotalEvaluationScoring(SiadapUniverse siadapUniverse) {
 	Siadap siadap = getSiadap();
 	SiadapEvaluationUniverse siadapEvaluationUniverse = siadap.getSiadapEvaluationUniverseForSiadapUniverse(siadapUniverse);
@@ -543,8 +544,7 @@ public class PersonSiadapWrapper extends PartyWrapper implements Serializable {
 		//let's close it if we have a different person here
 		if (!accountability.getParent().equals(newEvaluator)) {
 		    accountability.editDates(accountability.getBeginDate(), dateOfChange);
-		}
- else {
+		} else {
 		    needToAddAcc = false;
 		}
 	    }
@@ -568,13 +568,12 @@ public class PersonSiadapWrapper extends PartyWrapper implements Serializable {
     public SiadapUniverse getSiadapUniverseWhichIsBeingHarmonized(Unit unit) {
 	//let's try to find this person ('ourselves') directly, if not let's descend if we are an harmonization unit 
 	UnitSiadapWrapper unitWrapper = new UnitSiadapWrapper(unit, getYear());
-	if (!unitWrapper.isHarmonizationUnit())
-	{
+	if (!unitWrapper.isHarmonizationUnit()) {
 	    throw new IllegalArgumentException("you're doing it wrong :D harmonization units only");
 	}
 	return getSiadapUniverseInGivenUnit(unit);
     }
-    
+
     private SiadapUniverse getSiadapUniverseInGivenUnit(Unit unit) {
 	SiadapYearConfiguration siadapYearConfiguration = getConfiguration();
 	AccountabilityType siadap2HarmonizationRelation = siadapYearConfiguration.getSiadap2HarmonizationRelation();
@@ -603,44 +602,51 @@ public class PersonSiadapWrapper extends PartyWrapper implements Serializable {
 
     }
 
-
     public boolean isCustomEvaluatorDefined() {
 	return !getParentPersons(getConfiguration().getEvaluationRelation()).isEmpty();
     }
 
     @Service
     public void removeCustomEvaluator() {
-	return;
-	//TODO refactor this accordingly
-	//	LocalDate now = new LocalDate();
-	//	//make sure we are making changes in the current year TODO not sure if this is what we want for all of the use cases, but for now let's keep it this way
-	//	verifyDate(now);
-	//	AccountabilityType evaluationRelation = getConfiguration().getEvaluationRelation();
-	//	for (Accountability accountability : getParentAccountabilityTypes(evaluationRelation)) {
-	//	    if (accountability.isActiveNow() && accountability.getChild() instanceof Person
-	//		    && accountability.getParent() instanceof Person) {
-	//		accountability.editDates(accountability.getBeginDate(), now.minusDays(1));
-	//	    }
-	//	}
+	AccountabilityType evaluationRelation = getConfiguration().getEvaluationRelation();
+	for (Accountability accountability : getParentAccountabilityTypes(evaluationRelation)) {
+	    if (accountability.isActiveNow() && accountability.getChild() instanceof Person
+		    && accountability.getParent() instanceof Person) {
+		//ok, so we have the acc.
+		LocalDate dateToEndTheAcc = new LocalDate();
+		if (accountability.getBeginDate().getYear() == getYear()) {
+		    if (dateToEndTheAcc.isBefore(accountability.getBeginDate().plusDays(1))) {
+			//then we actually have to 'delete' it
+			accountability.delete();
+		    }
+		    dateToEndTheAcc = accountability.getBeginDate().plusDays(1);
+		} else {
+		    //let's close it on the last day of the previous year
+		    dateToEndTheAcc = SiadapMiscUtilClass.lastDayOfYear(getYear() - 1);
+		}
+		if (!accountability.isErased()) {
+		    accountability.setEndDate(dateToEndTheAcc);
+		}
+	    }
+	}
     }
 
     @Service
     public void removeHarmonizationAssessments(SiadapUniverse siadapUniverse, Unit harmonizationUnit) {
 	if (getSiadap() == null || harmonizationUnit == null)
 	    throw new SiadapException("error.invalid.data");
-	
+
 	SiadapEvaluationUniverse evaluationUniverse = getSiadap().getSiadapEvaluationUniverseForSiadapUniverse(siadapUniverse);
 	if ((evaluationUniverse.getHarmonizationAssessment() != null && !evaluationUniverse.getHarmonizationAssessment())
 		|| (evaluationUniverse.getHarmonizationAssessmentForExcellencyAward() != null && !evaluationUniverse
-			.getHarmonizationAssessmentForExcellencyAward()))
-	{
+			.getHarmonizationAssessmentForExcellencyAward())) {
 	    //if we had a No on the harmonizationAssessment or in the regular one we might have an ExceedingQuotaProposal
-	//so let's check if it is so, and if it is, remove it and adjust the priority numbers of the rest of them
+	    //so let's check if it is so, and if it is, remove it and adjust the priority numbers of the rest of them
 	    ExceedingQuotaProposal quotaProposalFor = ExceedingQuotaProposal.getQuotaProposalFor(harmonizationUnit, getYear(),
 		    getPerson(), siadapUniverse, isQuotaAware());
 	    if (quotaProposalFor != null)
 		quotaProposalFor.remove();
-	    
+
 	}
 	evaluationUniverse.removeHarmonizationAssessments();
     }
@@ -814,7 +820,8 @@ public class PersonSiadapWrapper extends PartyWrapper implements Serializable {
 
 	if (siadapEvaluationUniverseForSiadapUniverse == null)
 	    return false;
-	return isHarmonizationPeriodOpen() && siadapEvaluationUniverseForSiadapUniverse.getHarmonizationDate() == null
+	return isHarmonizationPeriodOpen()
+		&& siadapEvaluationUniverseForSiadapUniverse.getHarmonizationDate() == null
 		&& (siadapEvaluationUniverseForSiadapUniverse.getHarmonizationAssessment() != null || siadapEvaluationUniverseForSiadapUniverse
 			.getHarmonizationAssessmentForExcellencyAward() != null);
     }
@@ -856,10 +863,9 @@ public class PersonSiadapWrapper extends PartyWrapper implements Serializable {
 		quotaProposalFor.remove();
 	    }
 	}
-	
+
 	//we must have an excellent of false if we have a regular of true
-	if (siadapEvaluationUniverseForSiadapUniverse.hasExcellencyAwardedFromEvaluator())
-	{
+	if (siadapEvaluationUniverseForSiadapUniverse.hasExcellencyAwardedFromEvaluator()) {
 	    if (harmonizationCurrentAssessmentForExcellencyAward != null && harmonizationCurrentAssessmentForExcellencyAward
 		    && harmonizationCurrentAssessment != null && !harmonizationCurrentAssessment) {
 		throw new SiadapException("error.harmonization.inconsistency.between.excellency.and.regular.assessment");

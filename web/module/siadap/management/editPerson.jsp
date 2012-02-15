@@ -104,9 +104,9 @@ request.setAttribute("isManager", isManager);
 	<logic:present name="personWrapper" property="siadap">
 		<p><a href="#" id="changeUnit"> <bean:message key="label.changeWorkingUnit" bundle="SIADAP_RESOURCES"/> </a> | <a href="#" id="changeEvaluator"> <bean:message key="label.changeEvaluator" bundle="SIADAP_RESOURCES"/> </a>
 			<logic:equal name="person" property="customEvaluatorDefined" value="true">
-			| <%-- <html:link page="<%="/siadapPersonnelManagement.do?method=removeCustomEvaluator&year=" + year.toString()%>" paramId="personId"  paramName="person"  paramProperty="person.externalId"> --%>
-				<bean:message key="label.removeCustomEvaluator" bundle="SIADAP_RESOURCES"/>  (desactivado temporariamente)
-			 <%--  </html:link> --%>
+			| <html:link page="<%="/siadapPersonnelManagement.do?method=removeCustomEvaluator&activity=ChangePersonnelSituation&year=" + year.toString()%>" paramId="personId"  paramName="person"  paramProperty="person.externalId">
+				<bean:message key="label.removeCustomEvaluator" bundle="SIADAP_RESOURCES"/>
+			  </html:link> 
 			</logic:equal>
 			| <a href="#" id="changeSiadapUniverse"> <bean:message key="label.changeSiadapUniverse" bundle="SIADAP_RESOURCES"/> </a>
 			| <a href="#" id="changeCompetenceTypeLink"> <bean:message key="label.changeCompetenceType" bundle="SIADAP_RESOURCES"/> </a>

@@ -61,7 +61,7 @@ public class ChangePersonnelSituation extends
 
     @Override
     protected String[] getArgumentsDescription(ChangePersonnelSituationActivityInformation activityInformation) {
-	return (activityInformation.getBeanWrapper().getArgumentsDescription());
+	return (activityInformation.getBeanWrapper().getArgumentsDescription(activityInformation.getProcess()));
     }
 
 
