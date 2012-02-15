@@ -14,6 +14,9 @@
 <%@ taglib uri="/WEB-INF/struts-logic.tld" prefix="logic"%>
 <%@ taglib uri="/WEB-INF/fenix-renderers.tld" prefix="fr"%>
 
+<script src="<%= request.getContextPath() + "/javaScript/jquery.alerts.js"%>" type="text/javascript"></script>
+<script src="<%= request.getContextPath() + "/javaScript/alertHandlers.js"%>" type="text/javascript"></script>
+
 <bean:define id="user" name="USER_SESSION_ATTRIBUTE" property="user"/>
 <bean:define id="year" name="person" property="year"/>
 <bean:define id="personWrapper" name="person"  type="module.siadap.domain.wrappers.PersonSiadapWrapper"/>
@@ -110,6 +113,12 @@ request.setAttribute("isManager", isManager);
 			</logic:equal>
 			| <a href="#" id="changeSiadapUniverse"> <bean:message key="label.changeSiadapUniverse" bundle="SIADAP_RESOURCES"/> </a>
 			| <a href="#" id="changeCompetenceTypeLink"> <bean:message key="label.changeCompetenceType" bundle="SIADAP_RESOURCES"/> </a>
+		    | <html:link styleId="removeSiadap"  page="<%="/siadapPersonnelManagement.do?method=removeSiadap&year="+year.toString()%>" paramName="person" paramProperty="person.externalId" paramId="personId">
+				<bean:message key="label.management.removeSiadap" bundle="SIADAP_RESOURCES"/>
+		      </html:link>
+		      <script type="text/javascript">
+		      	linkConfirmationHook('removeSiadap', '<bean:message key="label.management.removeSiadap.confirmationMessage" bundle="SIADAP_RESOURCES"/>','<bean:message key="label.management.removeSiadap" bundle="SIADAP_RESOURCES"/>');
+		      </script>
 		</p>
 	</logic:present> 
 	<logic:notPresent name="personWrapper" property="siadap">
@@ -119,6 +128,7 @@ request.setAttribute("isManager", isManager);
 	    |<bean:message key="label.changeEvaluator" bundle="SIADAP_RESOURCES"/>			
 		| <bean:message key="label.changeSiadapUniverse" bundle="SIADAP_RESOURCES"/> 
 		| <bean:message key="label.changeCompetenceType" bundle="SIADAP_RESOURCES"/>
+		| <bean:message key="label.management.removeSiadap" bundle="SIADAP_RESOURCES"/>
 	</p>
 	</logic:notPresent>
 	

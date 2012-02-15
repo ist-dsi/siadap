@@ -17,7 +17,11 @@ public class RemoveObjectiveEvaluation extends WorkflowActivity<SiadapProcess, R
     public boolean isActive(SiadapProcess process, User user) {
 	Siadap siadap = process.getSiadap();
 	SiadapYearConfiguration siadapYearConfiguration = siadap.getSiadapYearConfiguration();
-	return siadapYearConfiguration.isCurrentUserMemberOfCCA() || siadap.getObjectiveSpecificationInterval().containsNow()
+	if (siadapYearConfiguration.isCurrentUserMemberOfCCA())
+	    return true;
+	if (siadap.getEvaluator() == null)
+	    return false;
+	return siadap.getObjectiveSpecificationInterval().containsNow()
 		&& siadap.getEvaluator().getPerson().getUser() == user
 		&& SiadapProcessStateEnum.getState(siadap).ordinal() <= SiadapProcessStateEnum.WAITING_EVAL_OBJ_ACK.ordinal();
     }

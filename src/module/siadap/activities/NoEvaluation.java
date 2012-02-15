@@ -14,7 +14,8 @@ public class NoEvaluation extends WorkflowActivity<SiadapProcess, NoEvaluationAc
 	Siadap siadap = process.getSiadap();
 	return !siadap.isWithSkippedEvaluation()
 		&& !siadap.isDefaultEvaluationDone()
-		&& (siadap.getEvaluator().getPerson().getUser() == user || siadap.getSiadapYearConfiguration().getCcaMembers()
+		&& ((siadap.getEvaluator() != null && siadap.getEvaluator().getPerson().getUser() == user) || siadap
+			.getSiadapYearConfiguration().getCcaMembers()
 			.contains(user.getPerson())) && siadap.getValidated() == null
 		&& (siadap.getSiadapYearConfiguration().getCcaMembers().contains(user.getPerson())
 			|| siadap.getEvaluationInterval().containsNow() || siadap.getObjectiveSpecificationInterval()

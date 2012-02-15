@@ -13,6 +13,8 @@ public class SealObjectivesAndCompetences extends WorkflowActivity<SiadapProcess
     @Override
     public boolean isActive(SiadapProcess process, User user) {
 	Siadap siadap = process.getSiadap();
+	if (siadap.getEvaluator() == null)
+	    return false;
 	return user == siadap.getEvaluator().getPerson().getUser() && siadap.getObjectiveSpecificationInterval().containsNow()
 		&& siadap.getObjectivesAndCompetencesSealedDate() == null;
     }

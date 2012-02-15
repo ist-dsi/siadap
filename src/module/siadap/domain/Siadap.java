@@ -725,6 +725,14 @@ public class Siadap extends Siadap_Base {
 	return true;
     }
 
+    public boolean hasAnySiadapEvaluationItemsInAnyUniverse() {
+	for (SiadapEvaluationUniverse siadapEvalUniverse : getSiadapEvaluationUniverses()) {
+	    if (!siadapEvalUniverse.getSiadapEvaluationItems().isEmpty())
+		return true;
+	}
+	return false;
+    }
+
     public List<SiadapEvaluationItem> getSiadapEvaluationItems2() {
 	List<SiadapEvaluationItem> siadapEvaluationItems = getDefaultSiadapEvaluationUniverse().getSiadapEvaluationItems();
 	    if (siadapEvaluationItems != null && siadapEvaluationItems.size() > 0)
@@ -744,6 +752,26 @@ public class Siadap extends Siadap_Base {
     public void setDefaultSiadapUniverse(SiadapUniverse siadapUniverseToChangeTo) {
 	getDefaultSiadapEvaluationUniverse().setSiadapUniverse(siadapUniverseToChangeTo);
 
+    }
+
+    /**
+     * Deletes the proccess and everything which is associated with it
+     */
+    public void delete()
+    {
+	removeEvaluated();
+	SiadapProcess process = getProcess();
+	removeProcess();
+	process.delete();
+	for (SiadapEvaluationUniverse siadapEvalUni : getSiadapEvaluationUniverses())
+	{
+	    removeSiadapEvaluationUniverses(siadapEvalUni);
+	    siadapEvalUni.delete();
+	}
+	removeSiadapRootModule();
+	setYear(null);
+	removeSiadapYearConfiguration();
+	deleteDomainObject();
     }
 
     /**

@@ -136,6 +136,9 @@ public class SiadapYearConfiguration extends SiadapYearConfiguration_Base {
     }
 
     public static SiadapYearConfiguration getSiadapYearConfiguration(Integer year) {
+	if (year == null) {
+	    return null;
+	}
 	for (SiadapYearConfiguration configuration : SiadapRootModule.getInstance().getYearConfigurations()) {
 	    if (configuration.getYear() == year) {
 		//TODO remove these lines after a while

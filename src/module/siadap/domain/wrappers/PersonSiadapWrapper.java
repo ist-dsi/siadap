@@ -501,9 +501,9 @@ public class PersonSiadapWrapper extends PartyWrapper implements Serializable {
     @Service
     public void changeWorkingUnitTo(Unit unit, Boolean withQuotas, LocalDate dateOfChange) {
 	verifyDate(dateOfChange);
-	LocalDate now = new LocalDate();
-	LocalDate startOfYear = new LocalDate(dateOfChange.getYear(), 1, 1);
-	LocalDate endOfYear = new LocalDate(dateOfChange.getYear(), 12, 31);
+	//if he has already submitted the eval objectives and competences for the evaluated person, we shouldn't do this
+	if (getSiadap().getRequestedAcknowledgeDate() != null)
+	    throw new SiadapException("error.changing.working.unit.already.submitted.for.acknowledgement");
 	SiadapYearConfiguration configuration = getConfiguration();
 	for (Accountability accountability : getParentAccountabilityTypes(configuration.getWorkingRelation(),
 		configuration.getWorkingRelationWithNoQuota())) {
@@ -533,6 +533,8 @@ public class PersonSiadapWrapper extends PartyWrapper implements Serializable {
     @Service
     public void changeEvaluatorTo(Person newEvaluator, LocalDate dateOfChange) {
 	verifyDate(dateOfChange);
+	if (getSiadap().getRequestedAcknowledgeDate() != null)
+	    throw new SiadapException("error.changing.evaluator.already.submitted.for.acknowledgement");
 	LocalDate startOfYear = new LocalDate(dateOfChange.getYear(), 1, 1);
 	LocalDate endOfYear = new LocalDate(dateOfChange.getYear(), 12, 31);
 	SiadapYearConfiguration configuration = getConfiguration();
@@ -881,5 +883,34 @@ public class PersonSiadapWrapper extends PartyWrapper implements Serializable {
 
     public void setHarmonizationCurrentAssessmentForSIADAP2(Boolean assessment) {
 	this.harmonizationCurrentAssessmentForSIADAP2 = assessment;
+    }
+
+    /**
+     * 
+     * @throws SiadapException
+     *             if the SIADAP has already some info and thus cannot be
+     *             deleted
+     */
+    @Service
+    public void removeSiadap() throws SiadapException {
+	//check to see if we can remove the proccess
+	if (getSiadap().hasAnySiadapEvaluationItemsInAnyUniverse() || !getSiadap().getProcess().getComments().isEmpty())
+	    throw new SiadapException("error.has.items.in.it");
+	//ok, so now let's remove that and the relations
+	getSiadap().delete();
+	for (Accountability acc : getPerson().getParentAccountabilities(getConfiguration().getUnitRelations(),
+		getConfiguration().getHarmonizationUnitRelations(), getConfiguration().getWorkingRelation(),
+		getConfiguration().getWorkingRelationWithNoQuota(), getConfiguration().getEvaluationRelation(),
+		getConfiguration().getSiadap2HarmonizationRelation(), getConfiguration().getSiadap3HarmonizationRelation())) {
+	    if (acc.isActive(SiadapMiscUtilClass.lastDayOfYearWhereAccsAreActive(getYear()))) {
+
+		//let's close it on the last day of the previous year, or, in case it has a beginning year equal to this one, let's delete it because it was a mistake
+		if (acc.getBeginDate().getYear() == getYear()) {
+		    acc.delete();
+		} else {
+		    acc.setEndDate(SiadapMiscUtilClass.lastDayOfYear(getYear() - 1));
+		}
+	    }
+	}
     }
 }

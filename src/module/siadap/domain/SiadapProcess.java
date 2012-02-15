@@ -40,6 +40,7 @@ import module.siadap.domain.wrappers.PersonSiadapWrapper;
 import module.workflow.activities.ActivityInformation;
 import module.workflow.activities.WorkflowActivity;
 import module.workflow.domain.LabelLog;
+import module.workflow.domain.WorkflowLog;
 import module.workflow.domain.WorkflowProcess;
 import myorg.applicationTier.Authenticate.UserView;
 import myorg.domain.RoleType;
@@ -383,6 +384,24 @@ public class SiadapProcess extends SiadapProcess_Base {
 	}
 	new LabelLog(this, UserView.getCurrentUser(), "label.removedHarmonizationAssessment.for", "resources/SiadapResources",
 		siadapUniverseLocalizedName);
+
+    }
+
+    /**
+     * Deletes the proccess if it has no relevant info on it (more than one
+     * logged activity, any comment, etc)
+     */
+    protected void delete() {
+	releaseProcess();
+	List<WorkflowLog> executionLogs = getExecutionLogs();
+	if (executionLogs.size() > 1)
+	    throw new SiadapException("error.has.items.in.it");
+	for (WorkflowLog exLog : executionLogs) {
+	    removeExecutionLogs(exLog);
+	}
+	removeSiadap();
+	removeWorkflowSystem();
+	deleteDomainObject();
 
     }
 

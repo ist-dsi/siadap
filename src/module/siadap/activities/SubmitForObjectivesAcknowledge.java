@@ -22,6 +22,8 @@ public class SubmitForObjectivesAcknowledge extends WorkflowActivity<SiadapProce
     @Override
     public boolean isActive(SiadapProcess process, User user) {
 	Siadap siadap = process.getSiadap();
+	if (siadap.getEvaluator() == null)
+	    return false;
 	return user == siadap.getEvaluator().getPerson().getUser() && siadap.isWithObjectivesFilled()
 		&& siadap.isCoherentOnTypeOfEvaluation() && siadap.hasAllEvaluationItemsValid()
 		&& siadap.getRequestedAcknowledgeDate() == null && siadap.getObjectivesAndCompetencesSealedDate() != null;

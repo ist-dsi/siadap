@@ -314,4 +314,14 @@ public class SiadapEvaluationUniverse extends SiadapEvaluationUniverse_Base {
 
     }
 
+    /**
+     * Removes itself if there are no SiadapEvaluationItems associated or
+     * SiadapAutoEvaluation or SiadapEvaluation
+     */
+    public void delete() {
+	removeCompetenceSlashCareerType();
+	removeSiadap();
+	deleteDomainObject();
+    }
+
 }

@@ -329,6 +329,22 @@ public class SiadapPersonnelManagement extends ContextBaseAction {
 	return changePersonnelSituation(mapping, form, request, response, new RemoveCustomEvaluatorBean());
     }
 
+    public final ActionForward removeSiadap(final ActionMapping mapping, final ActionForm form, final HttpServletRequest request,
+	    final HttpServletResponse response) throws Exception {
+
+	int year = Integer.parseInt(request.getParameter("year"));
+	Person evaluated = (Person) getDomainObject(request, "personId");
+
+	try {
+	    new PersonSiadapWrapper(evaluated, year).removeSiadap();
+	} catch (DomainException ex) {
+	    addMessage(request, ex.getKey(), ex.getArgs());
+	}
+
+	return viewPerson(mapping, form, request, response);
+
+    }
+
     public final ActionForward downloadNormalSIADAPStructure(final ActionMapping mapping, final ActionForm form,
 	    final HttpServletRequest request, final HttpServletResponse response) throws Exception {
 
@@ -595,6 +611,8 @@ public class SiadapPersonnelManagement extends ContextBaseAction {
 
 	@Override
 	public void execute(SiadapProcess process) throws SiadapException {
+	    if (process.getSiadap().getCompetences() != null && process.getSiadap().getCompetences().isEmpty() == false)
+		throw new SiadapException("error.changing.competence.type.cant.due.to.existing.competences.defined");
 	    process.getSiadap().getDefaultSiadapEvaluationUniverse().setCompetenceSlashCareerType(getCompetenceType());
 	}
 
