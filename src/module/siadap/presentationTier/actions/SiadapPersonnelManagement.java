@@ -159,7 +159,12 @@ public class SiadapPersonnelManagement extends ContextBaseAction {
 	//checking for the existence of the e-mail addresses of the SiadapStructureManagementGroup users and let's warn if they don't exist
 	SiadapYearConfiguration configuration = SiadapYearConfiguration.getSiadapYearConfiguration(year);
 	for (Person structureMngmntMember : configuration.getStructureManagementGroupMembers()) {
-	    String emailAddress = ContactsIstSystem.retrieveLatestEmailAddress(person);
+	    String emailAddress = null;
+	    try {
+		emailAddress = ContactsIstSystem.retrieveLatestEmailAddress(person);
+	    } catch (NullPointerException ex) {
+		ex.printStackTrace();
+	    }
 	    if (emailAddress == null || StringUtils.isBlank(emailAddress)) {
 		addMessage(request, "WARNING", "manage.siadapStructure.person.has.no.valid.emailaddress",
 			new String[] { structureMngmntMember.getName() });
