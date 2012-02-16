@@ -117,8 +117,6 @@ public class SiadapManagement extends ContextBaseAction {
 	SiadapYearConfiguration configuration = getDomainObject(request, "configurationId");
 	VariantBean bean = getRenderedObject("ccaMember");
 	configuration.addCcaMembers(((Person) bean.getDomainObject()));
-	// add them also to the unique (for now TODO) group
-	SiadapYearConfiguration.addCCAMember(((Person) bean.getDomainObject()).getUser());
 	// TODO make the nodes access list to be updated
 	RenderUtils.invalidateViewState("ccaMember");
 	return showConfiguration(mapping, form, request, response);
@@ -183,8 +181,6 @@ public class SiadapManagement extends ContextBaseAction {
 	SiadapYearConfiguration configuration = getDomainObject(request, "configurationId");
 	Person person = getDomainObject(request, "personId");
 	configuration.removeCcaMembers(person);
-	// remove them from the persistent group as well
-	SiadapYearConfiguration.removeCCAMember(person.getUser());
 	return showConfiguration(mapping, form, request, response);
     }
 

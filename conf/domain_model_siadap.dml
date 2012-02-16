@@ -481,7 +481,9 @@ relation Siadap2HarmonizationSiadapYearConfiguration {
 }
 
 relation SiadapYearConfigurationCCAMembers {
-	SiadapYearConfiguration playsRole siadapYearConfigurationForCCAMembers;
+	SiadapYearConfiguration playsRole siadapYearConfigurationForCCAMembers {
+		multiplicity *;
+	}
 	.module.organization.domain.Person playsRole ccaMembers {
 		multiplicity *;
 	}

@@ -678,7 +678,7 @@ public class PersonSiadapWrapper extends PartyWrapper implements Serializable {
     }
 
     public boolean isCCAMember() {
-	return getConfiguration().getCcaMembers().contains(getPerson());
+	return SiadapRootModule.getInstance().getSiadapCCAGroup().isMember(getPerson().getUser());
     }
 
     public boolean isHomologationMember() {

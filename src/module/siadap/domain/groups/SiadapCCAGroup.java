@@ -22,7 +22,7 @@ public class SiadapCCAGroup extends SiadapCCAGroup_Base {
 	return isMember(user, SiadapMiscUtilClass.returnLastUsableYear());
     }
 
-    public static boolean isMember(User user, Integer year) {
+    private static boolean isMember(User user, Integer year) {
 	SiadapYearConfiguration configuration = SiadapYearConfiguration.getSiadapYearConfiguration(year);
 	return configuration.getCcaMembers().contains(user.getPerson());
     }
@@ -41,7 +41,7 @@ public class SiadapCCAGroup extends SiadapCCAGroup_Base {
 	return getMembers(new LocalDate().getYear());
     }
 
-    public Set<User> getMembers(Integer year) {
+    private Set<User> getMembers(Integer year) {
 	SiadapYearConfiguration configuration = SiadapYearConfiguration.getSiadapYearConfiguration(year);
 	Set<Person> groupPersons = configuration.getCcaMembersSet();
 
