@@ -108,7 +108,8 @@ public class SiadapProcess extends SiadapProcess_Base {
 	boolean belongsToASuperGroup = false;
 	if ((configuration.getCcaMembers() != null && configuration.getCcaMembers().contains(currentUser.getPerson()))
 		|| (configuration.getScheduleEditors() != null && configuration.getScheduleEditors().contains(
-			currentUser.getPerson())) || Role.getRole(RoleType.MANAGER).isMember(currentUser)) {
+			currentUser.getPerson())) || Role.getRole(RoleType.MANAGER).isMember(currentUser)
+		|| configuration.getStructureManagementGroupMembers().contains(currentUser.getPerson())) {
 	    belongsToASuperGroup = true;
 	}
 	if (!belongsToASuperGroup) {
