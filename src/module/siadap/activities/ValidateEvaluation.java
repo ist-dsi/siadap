@@ -12,13 +12,15 @@ public class ValidateEvaluation extends WorkflowActivity<SiadapProcess, Activity
     public boolean isActive(SiadapProcess process, User user) {
 	Siadap siadap = process.getSiadap();
 
-	return siadap.getSiadapYearConfiguration().isPersonMemberOfCCA(user.getPerson()) && siadap.getHarmonizationDate() != null
-		&& siadap.getValidated() == null;
+	//	return siadap.getSiadapYearConfiguration().isPersonMemberOfCCA(user.getPerson()) && siadap.getHarmonizationDate() != null
+	//		&& siadap.getValidated() == null;
+	//TODO joantune: remove this, it has been replaced by the more generic validation activity
+	return false;
     }
 
     @Override
     protected void process(ActivityInformation<SiadapProcess> activityInformation) {
-	activityInformation.getProcess().getSiadap().setValidated(Boolean.TRUE);
+	//	activityInformation.getProcess().getSiadap().setValidated(Boolean.TRUE);
     }
 
     @Override

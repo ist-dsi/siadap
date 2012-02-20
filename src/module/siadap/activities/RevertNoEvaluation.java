@@ -15,7 +15,7 @@ public class RevertNoEvaluation extends WorkflowActivity<SiadapProcess, Activity
 		&& ((siadap.getEvaluator() != null && siadap.getEvaluator().getPerson().getUser() == user) || siadap
 			.getSiadapYearConfiguration().getCcaMembers()
 			.contains(user.getPerson()))
-		&& siadap.getValidated() == null
+		&& siadap.getValidationDateOfDefaultEvaluation() == null
 		&& (siadap.getSiadapYearConfiguration().getCcaMembers().contains(user.getPerson())
 			|| siadap.getEvaluationInterval().containsNow() || siadap.getObjectiveSpecificationInterval()
 			.containsNow());

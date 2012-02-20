@@ -1,19 +1,19 @@
 package module.siadap.activities;
 
-import org.joda.time.LocalDate;
-
 import module.siadap.domain.Siadap;
 import module.siadap.domain.SiadapProcess;
 import module.workflow.activities.ActivityInformation;
 import module.workflow.activities.WorkflowActivity;
 import myorg.domain.User;
 
+import org.joda.time.LocalDate;
+
 public class AcknowledgeEvaluationValidation extends WorkflowActivity<SiadapProcess, ActivityInformation<SiadapProcess>> {
 
     @Override
     public boolean isActive(SiadapProcess process, User user) {
 	Siadap siadap = process.getSiadap();
-	return siadap.getEvaluated().getUser() == user && siadap.getValidated() != null
+	return siadap.getEvaluated().getUser() == user && siadap.getValidationDateOfDefaultEvaluation() != null
 		&& siadap.getAcknowledgeValidationDate() == null;
     }
 

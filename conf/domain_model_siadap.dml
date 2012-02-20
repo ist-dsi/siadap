@@ -101,8 +101,6 @@ class Siadap {
 	LocalDate acknowledgeHomologationDate;
 	
 	
-	/* Validação da avaliação - feita pelo CCA */
-	Boolean validated;
 	
 	/* a data em que foi submetida, após validação pelo CCA, ao avaliado para que este possa vê-la na
 	plataforma. (este passo intermédio é importante porque o avaliador deve comunicar antes deste a ter
@@ -139,7 +137,6 @@ class SiadapEvaluationUniverse
 	Boolean harmonizationAssessment;
 	Boolean harmonizationAssessmentForExcellencyAward;
 	
-	Boolean ccaAssessment;
 	
 	/* TODO: joantune: Yet to be fully defined the meaning*/
 	BigDecimal evaluatorClassification;
@@ -148,6 +145,9 @@ class SiadapEvaluationUniverse
 	BigDecimal harmonizationClassification;
 	Boolean harmonizationClassificationExcellencyAward;
 	
+	/* Validação da avaliação - feita pelo CCA */
+	LocalDate validationDate;
+	Boolean ccaAssessment;
 	BigDecimal ccaClassification;
 	Boolean ccaClassificationExcellencyAward;
 	

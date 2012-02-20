@@ -184,6 +184,31 @@ public class PersonSiadapWrapper extends PartyWrapper implements Serializable {
 	return getSiadap() != null;
     }
 
+    /**
+     * 
+     * @param universe
+     *            the universe to consider the validation for
+     * @return true if it hasn't been validated and it has been harmonized,
+     *         false otherwise
+     */
+    private boolean isAbleToBeValidated(SiadapUniverse universe) {
+	SiadapEvaluationUniverse siadapEvaluationUniverseForSiadapUniverse = getSiadap()
+		.getSiadapEvaluationUniverseForSiadapUniverse(universe);
+	if (siadapEvaluationUniverseForSiadapUniverse == null)
+	    return false;
+	return siadapEvaluationUniverseForSiadapUniverse.getValidationDate() == null
+		&& siadapEvaluationUniverseForSiadapUniverse.getHarmonizationDate() != null;
+
+    }
+
+    public boolean isSiadap2AbleToBeValidated() {
+	return isAbleToBeValidated(SiadapUniverse.SIADAP2);
+    }
+
+    public boolean isSiadap3AbleToBeValidated() {
+	return isAbleToBeValidated(SiadapUniverse.SIADAP3);
+    }
+
     public Siadap getSiadap() {
 	return getConfiguration() == null ? null : getConfiguration().getSiadapFor(getPerson(), getYear());
     }
@@ -729,11 +754,6 @@ public class PersonSiadapWrapper extends PartyWrapper implements Serializable {
 
 	}
 	evaluationUniverse.removeHarmonizationAssessments();
-    }
-
-    public Boolean getProcessValidation() {
-	Siadap siadap = getSiadap();
-	return siadap != null ? siadap.getValidated() : null;
     }
 
     public String getCareerName() {

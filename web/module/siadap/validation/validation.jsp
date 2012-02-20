@@ -134,6 +134,27 @@ color: darkRed;
 						 </html:link> --%>
 	</logic:notEmpty>
 	
+	<script type="text/javascript">
+	 $(document).ready(function() {
+		//identifying rows of non harmonized people, and marking them in red
+		$("tr").each(function(index, tr) { 
+			var trChildren = $(tr).children();
+			 if (trChildren.size() === 9) 
+				{
+				 if ($(trChildren[6]).text().trim() === "" && $(trChildren[7]).text().trim() === "" && $(trChildren[8]).text().trim() === "" )
+					{
+					//if we have no text in these three fields, we are in a tr of an unharmonized eval
+					$(tr).addClass("noHarmonization");
+					//let's show the generic warning, if it is not shown yet
+					$(tr).closest('table').prev("div.highlightBox").show(500);
+					} 
+				}
+		});
+		
+		
+	}); 
+	</script>
+	
 	
 	<fr:form action="<%="/siadapManagement.do?method=applyValidationData&year=" + year.toString() + "&unitId=" + unitId.toString() %>"> 
 		<fr:edit id="siadapUniverseWrappersList" name="siadapUniverseWrappers" visible="false"/>
@@ -178,7 +199,10 @@ color: darkRed;
 						</tr>
 					</table>
 				</div>	
-				<%-- Summary table --%>
+				<%-- END Summary table --%>
+				<div class="highlightBox" style="display: none;">
+					Atenção, este universo contem avaliações ainda não harmonizadas
+				</div>
 			
 				</logic:notEmpty>
 				
@@ -201,19 +225,18 @@ color: darkRed;
 						<fr:slot name="harmonizationCurrentAssessmentForExcellencyAwardForSIADAP2" layout="radio" key="label.harmonization.assessment.forExcellencyAward" readOnly="true"/> 
 						
 						<fr:slot name="validationCurrentAssessmentForSIADAP2" layout="radio" key="label.validation.validationCurrentAssessment">
-						<%-- 
-							<fr:property name="readOnlyIf" value="TODO" /> --%>
+							<fr:property name="readOnlyIf" value="siadap2AbleToBeValidated" />
 							<fr:property name="classes" value="inline-list"/>
 						</fr:slot>
 						<fr:slot name="validationCurrentAssessmentForExcellencyAwardForSIADAP2" layout="radio" key="label.validation.validationCurrentAssessmentForExcellencyAward">
+							<fr:property name="readOnlyIf" value="siadap2AbleToBeValidated" />
 							<fr:property name="classes" value="inline-list"/>
 						</fr:slot>
 						<fr:slot name="validationClassificationForSIADAP2" key="label.validation.classification">
+							<fr:property name="readOnlyIf" value="siadap2AbleToBeValidated" />
 							<fr:property name="size" value="5"/>
 							<fr:property name="maxLength" value="5"/>
 						</fr:slot>
-						<%-- 
-							<fr:property name="readOnlyIf" value="TODO" /> --%>
 						<%
 						} else {
 						%>
@@ -226,15 +249,16 @@ color: darkRed;
 						<fr:slot name="harmonizationCurrentAssessmentForSIADAP3" layout="radio" key="label.harmonization.assessment" readOnly="true"/> 
 						<fr:slot name="harmonizationCurrentAssessmentForExcellencyAwardForSIADAP3" layout="radio" key="label.harmonization.assessment.forExcellencyAward" readOnly="true"/> 
 						<fr:slot name="validationCurrentAssessmentForSIADAP3" layout="radio" key="label.validation.validationCurrentAssessment">
-						<%-- 
-							<fr:property name="readOnlyIf" value="TODO" /> --%>
+							<fr:property name="readOnlyIf" value="siadap3AbleToBeValidated" />
 							<fr:property name="classes" value="inline-list"/>
 						</fr:slot>
 						<fr:slot name="validationCurrentAssessmentForExcellencyAwardForSIADAP3" layout="radio" key="label.validation.validationCurrentAssessmentForExcellencyAward">
+							<fr:property name="readOnlyIf" value="siadap3AbleToBeValidated" />
 							<fr:property name="classes" value="inline-list"/>
 						</fr:slot>
 						
 						<fr:slot name="validationClassificationForSIADAP3" key="label.validation.classification">
+							<fr:property name="readOnlyIf" value="siadap3AbleToBeValidated" />
 							<fr:property name="size" value="5"/>
 							<fr:property name="maxLength" value="5"/>
 						</fr:slot>

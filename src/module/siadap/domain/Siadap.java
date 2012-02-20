@@ -99,6 +99,13 @@ public class Siadap extends Siadap_Base {
 	return getEvaluationSealedDate() != null;
     }
 
+    public LocalDate getValidationDateOfDefaultEvaluation() {
+	SiadapEvaluationUniverse defaultSiadapEvaluationUniverse = getDefaultSiadapEvaluationUniverse();
+	if (defaultSiadapEvaluationUniverse == null)
+	    return null;
+	return defaultSiadapEvaluationUniverse.getValidationDate();
+    }
+
     public boolean isEvaluationDone(SiadapUniverse siadapUniverse)
     {
 	SiadapEvaluationUniverse siadapEvaluationUniverseForSiadapUniverse = getSiadapEvaluationUniverseForSiadapUniverse(siadapUniverse);

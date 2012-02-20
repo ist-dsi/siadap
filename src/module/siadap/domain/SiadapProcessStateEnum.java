@@ -101,7 +101,7 @@ public enum SiadapProcessStateEnum implements IPresentableEnum {
 	    return NOT_YET_EVALUATED;
 	else if (siadap.getHarmonizationDate() == null)
 	    return WAITING_HARMONIZATION;
-	else if (siadap.getValidated() == null)
+	else if (siadap.getValidationDateOfDefaultEvaluation() == null)
 	    return WAITING_VALIDATION;
 	return UNIMPLEMENTED_STATE;
 

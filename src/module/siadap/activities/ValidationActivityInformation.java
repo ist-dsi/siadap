@@ -15,6 +15,8 @@ import module.workflow.activities.ActivityInformation;
 import module.workflow.activities.WorkflowActivity;
 import module.workflow.domain.WorkflowProcess;
 
+import org.joda.time.LocalDate;
+
 /**
  * @author João Antunes (joao.antunes@tagus.ist.utl.pt) - 17 de Fev de 2012
  * 
@@ -138,6 +140,9 @@ public class ValidationActivityInformation extends ActivityInformation<SiadapPro
 
 		if (!personWrapper.getSiadap().hasCompleteValidationAssessment(siadapUniverse))
 		    throw new SiadapException("error.validation.can.not.close.without.validating.everybody");
+
+		personWrapper.getSiadap().getSiadapEvaluationUniverseForSiadapUniverse(siadapUniverse)
+			.setValidationDate(new LocalDate());
 	    }
 
 	    @Override
