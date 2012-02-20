@@ -35,6 +35,7 @@ import module.siadap.activities.SubmitAutoEvaluation;
 import module.siadap.activities.SubmitEvaluation;
 import module.siadap.activities.SubmitForObjectivesAcknowledge;
 import module.siadap.activities.ValidateEvaluation;
+import module.siadap.activities.Validation;
 import module.siadap.domain.exceptions.SiadapException;
 import module.siadap.domain.wrappers.PersonSiadapWrapper;
 import module.workflow.activities.ActivityInformation;
@@ -88,8 +89,11 @@ public class SiadapProcess extends SiadapProcess_Base {
 	activities.add(new GrantExcellencyAward());
 	activities.add(new RevokeExcellencyAward());
 
+	activities.add(new Validation());
+
 	//SiadapPersonnelManagement activities:
 	activities.add(new ChangePersonnelSituation());
+
     }
 
     private HashMap<User, ArrayList<String>> userWarningsKey = new HashMap<User, ArrayList<String>>();
@@ -177,6 +181,16 @@ public class SiadapProcess extends SiadapProcess_Base {
     @Override
     public <T extends WorkflowActivity<? extends WorkflowProcess, ? extends ActivityInformation>> List<T> getActivities() {
 	return (List<T>) activities;
+    }
+
+    public static WorkflowActivity<? extends WorkflowProcess, ? extends ActivityInformation<?>> getActivityStaticly(
+	    String activityName) {
+	for (WorkflowActivity<? extends WorkflowProcess, ? extends ActivityInformation<?>> activity : activities) {
+	    if (activity.getName().equals(activityName)) {
+		return activity;
+	    }
+	}
+	return null;
     }
 
     @Override

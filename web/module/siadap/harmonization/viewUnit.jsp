@@ -87,7 +87,7 @@
 </div>
  --%>
 <logic:equal name="currentUnit" property="responsibleForHarmonization" value="true">
-	<%-- <logic:equal name="currentUnit" property="aboveQuotas" value="true">
+	<%-- <logic:equal name="currentUnit" property="aboveQuotasHarmonization" value="true">
 	
 		<bean:define id="currentHighQuota" name="currentUnit" property="currentUsedHighGradeQuota"/>
 		<bean:define id="highQuota" name="currentUnit" property="highGradeQuota"/>
@@ -488,7 +488,7 @@ color: #999;
 				</tr>
 			</table>
 		</div>
-	 		<logic:equal name="people-withQuotas-SIADAP2" property="siadapUniverseWithQuotasAboveQuota" value="true">
+	 		<logic:equal name="people-withQuotas-SIADAP2" property="siadapUniverseWithQuotasAboveQuotaHarmonization" value="true">
 			
 				<bean:define id="relevantQuota" name="people-withQuotas-SIADAP2" property="relevantQuota"/>
 				
@@ -603,7 +603,7 @@ color: #999;
 			</table>
 		</div>
 			<p>
-			<logic:equal name="people-withQuotas-SIADAP3" property="siadapUniverseWithQuotasAboveQuota" value="true">
+			<logic:equal name="people-withQuotas-SIADAP3" property="siadapUniverseWithQuotasAboveQuotaHarmonization" value="true">
 			
 				<bean:define id="relevantQuota" name="people-withQuotas-SIADAP3" property="relevantQuota"/>
 				
@@ -720,7 +720,7 @@ color: #999;
 			</table>
 		</div>
 			<p>
-			<logic:equal name="people-withoutQuotas-SIADAP2" property="siadapUniverseWithQuotasAboveQuota" value="true">
+			<logic:equal name="people-withoutQuotas-SIADAP2" property="siadapUniverseWithQuotasAboveQuotaHarmonization" value="true">
 			
 				<bean:define id="relevantQuota" name="people-withoutQuotas-SIADAP2" property="relevantQuota"/>
 				
@@ -838,7 +838,7 @@ color: #999;
 			</table>
 		</div>	
 			<div>
-			<logic:equal name="people-withoutQuotas-SIADAP3" property="siadapUniverseWithQuotasAboveQuota" value="true">
+			<logic:equal name="people-withoutQuotas-SIADAP3" property="siadapUniverseWithQuotasAboveQuotaHarmonization" value="true">
 				
 				<bean:define id="relevantQuota" name="people-withoutQuotas-SIADAP3" property="relevantQuota"/>
 				<bean:define id="currentHarmonizedRelevants" name="people-withoutQuotas-SIADAP3" property="currentHarmonizedRelevants"/>
@@ -1075,6 +1075,7 @@ color: #999;
 						--%>
 						<fr:slot name="totalPeopleHarmonizedInUnit" key="label.totalEvaluated"/>
 						<fr:slot name="totalPeopleHarmonizedInUnitWithSiadapStarted" key="label.totalPeopleWithSiadapHarmonizedInUnit"/>
+						<fr:slot name="harmonizationFinished" key="label.validation.harmonization.closed"/>
 					</fr:schema>
 					<fr:layout name="tabular">
 						<fr:property name="classes" value="tstyle2"/>

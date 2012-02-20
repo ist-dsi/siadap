@@ -365,6 +365,17 @@ public class Siadap extends Siadap_Base {
 
     }
 
+    public boolean hasCompleteValidationAssessment(SiadapUniverse siadapUniverse) {
+	SiadapEvaluationUniverse siadapEvaluationUniverse = getSiadapEvaluationUniverseForSiadapUniverse(siadapUniverse);
+	if (siadapEvaluationUniverse == null)
+	    return false;
+	if (siadapEvaluationUniverse.getCcaAssessment() == null
+		|| siadapEvaluationUniverse.getCcaClassificationExcellencyAward() == null
+		|| siadapEvaluationUniverse.getCcaClassification() == null)
+	    return false;
+	return true;
+    }
+
     public BigDecimal getDefaultTotalEvaluationScoring() {
 	return getDefaultSiadapEvaluationUniverse().getTotalEvaluationScoring();
     }

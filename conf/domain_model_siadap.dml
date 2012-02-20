@@ -78,6 +78,9 @@ class SiadapYearConfiguration {
 	Boolean lockHarmonizationOnQuota;
 	
 	Boolean lockHarmonizationOnQuotaOutsideOfQuotaUniverses;
+	
+	Boolean closedValidation;
+	
 }
 
 class Siadap {
@@ -135,6 +138,8 @@ class SiadapEvaluationUniverse
 	LocalDate harmonizationDate;
 	Boolean harmonizationAssessment;
 	Boolean harmonizationAssessmentForExcellencyAward;
+	
+	Boolean ccaAssessment;
 	
 	/* TODO: joantune: Yet to be fully defined the meaning*/
 	BigDecimal evaluatorClassification;

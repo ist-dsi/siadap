@@ -133,6 +133,7 @@ public class SiadapYearConfiguration extends SiadapYearConfiguration_Base {
 
 	setSiadapRootModule(SiadapRootModule.getInstance());
 	setLockHarmonizationOnQuota(Boolean.FALSE);
+	setClosedValidation(Boolean.FALSE);
     }
 
     public static SiadapYearConfiguration getSiadapYearConfiguration(Integer year) {

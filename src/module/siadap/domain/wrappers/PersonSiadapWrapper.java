@@ -51,6 +51,16 @@ public class PersonSiadapWrapper extends PartyWrapper implements Serializable {
     private Boolean harmonizationCurrentAssessmentForExcellencyAwardForSIADAP2;
     private Boolean harmonizationCurrentAssessmentForExcellencyAwardForSIADAP3;
 
+
+    private Boolean validationCurrentAssessmentForSIADAP3;
+    private Boolean validationCurrentAssessmentForSIADAP2;
+
+    private Boolean validationCurrentAssessmentForExcellencyAwardForSIADAP2;
+    private Boolean validationCurrentAssessmentForExcellencyAwardForSIADAP3;
+
+    private BigDecimal validationClassificationForSIADAP3;
+    private BigDecimal validationClassificationForSIADAP2;
+
     public PersonSiadapWrapper(Person person, int year) {
 	super(year);
 	this.person = person;
@@ -77,7 +87,14 @@ public class PersonSiadapWrapper extends PartyWrapper implements Serializable {
 		    .getSiadapEvaluationUniverseForSiadapUniverse(SiadapUniverse.SIADAP2);
 	    if (siadapEvaluationUniverseForSIADAP2 == null) {
 		this.harmonizationCurrentAssessmentForSIADAP2 = null;
+		setValidationCurrentAssessmentForSIADAP2(null);
+		setValidationCurrentAssessmentForExcellencyAwardForSIADAP2(null);
+		setValidationClassificationForSIADAP2(null);
 	    } else {
+		setValidationCurrentAssessmentForSIADAP2(siadapEvaluationUniverseForSIADAP2.getCcaAssessment());
+		setValidationCurrentAssessmentForExcellencyAwardForSIADAP2(siadapEvaluationUniverseForSIADAP2
+			.getCcaClassificationExcellencyAward());
+		setValidationClassificationForSIADAP2(siadapEvaluationUniverseForSIADAP2.getCcaClassification());
 		this.harmonizationCurrentAssessmentForSIADAP2 = siadapEvaluationUniverseForSIADAP2.getHarmonizationAssessment();
 		this.harmonizationCurrentAssessmentForExcellencyAwardForSIADAP2 = siadapEvaluationUniverseForSIADAP2
 			.getHarmonizationAssessmentForExcellencyAward();
@@ -85,12 +102,69 @@ public class PersonSiadapWrapper extends PartyWrapper implements Serializable {
 
 	    if (siadapEvaluationUniverseForSIADAP3 == null) {
 		this.harmonizationCurrentAssessmentForSIADAP3 = null;
+		setValidationCurrentAssessmentForSIADAP3(null);
+		setValidationCurrentAssessmentForExcellencyAwardForSIADAP3(null);
+		setValidationClassificationForSIADAP3(null);
 	    } else {
+		setValidationCurrentAssessmentForSIADAP3(siadapEvaluationUniverseForSIADAP3.getCcaAssessment());
+		setValidationCurrentAssessmentForExcellencyAwardForSIADAP3(siadapEvaluationUniverseForSIADAP3
+			.getCcaClassificationExcellencyAward());
+		setValidationClassificationForSIADAP3(siadapEvaluationUniverseForSIADAP3.getCcaClassification());
 		this.harmonizationCurrentAssessmentForSIADAP3 = siadapEvaluationUniverseForSIADAP3.getHarmonizationAssessment();
 		this.harmonizationCurrentAssessmentForExcellencyAwardForSIADAP3 = siadapEvaluationUniverseForSIADAP3
 			.getHarmonizationAssessmentForExcellencyAward();
 	    }
 	}
+    }
+
+    public Boolean getValidationCurrentAssessmentForSIADAP3() {
+	return validationCurrentAssessmentForSIADAP3;
+    }
+
+    public void setValidationCurrentAssessmentForSIADAP3(Boolean validationCurrentAssessmentForSIADAP3) {
+	this.validationCurrentAssessmentForSIADAP3 = validationCurrentAssessmentForSIADAP3;
+    }
+
+    public Boolean getValidationCurrentAssessmentForSIADAP2() {
+	return validationCurrentAssessmentForSIADAP2;
+    }
+
+    public void setValidationCurrentAssessmentForSIADAP2(Boolean validationCurrentAssessmentForSIADAP2) {
+	this.validationCurrentAssessmentForSIADAP2 = validationCurrentAssessmentForSIADAP2;
+    }
+
+    public Boolean getValidationCurrentAssessmentForExcellencyAwardForSIADAP2() {
+	return validationCurrentAssessmentForExcellencyAwardForSIADAP2;
+    }
+
+    public void setValidationCurrentAssessmentForExcellencyAwardForSIADAP2(
+	    Boolean validationCurrentAssessmentForExcellencyAwardForSIADAP2) {
+	this.validationCurrentAssessmentForExcellencyAwardForSIADAP2 = validationCurrentAssessmentForExcellencyAwardForSIADAP2;
+    }
+
+    public Boolean getValidationCurrentAssessmentForExcellencyAwardForSIADAP3() {
+	return validationCurrentAssessmentForExcellencyAwardForSIADAP3;
+    }
+
+    public void setValidationCurrentAssessmentForExcellencyAwardForSIADAP3(
+	    Boolean validationCurrentAssessmentForExcellencyAwardForSIADAP3) {
+	this.validationCurrentAssessmentForExcellencyAwardForSIADAP3 = validationCurrentAssessmentForExcellencyAwardForSIADAP3;
+    }
+
+    public BigDecimal getValidationClassificationForSIADAP3() {
+	return validationClassificationForSIADAP3;
+    }
+
+    public void setValidationClassificationForSIADAP3(BigDecimal validationClassificationForSIADAP3) {
+	this.validationClassificationForSIADAP3 = validationClassificationForSIADAP3;
+    }
+
+    public BigDecimal getValidationClassificationForSIADAP2() {
+	return validationClassificationForSIADAP2;
+    }
+
+    public void setValidationClassificationForSIADAP2(BigDecimal validationClassificationForSIADAP2) {
+	this.validationClassificationForSIADAP2 = validationClassificationForSIADAP2;
     }
 
     public Person getPerson() {
@@ -279,24 +353,28 @@ public class PersonSiadapWrapper extends PartyWrapper implements Serializable {
     }
 
     public String getTotalQualitativeEvaluationScoring(SiadapUniverse siadapUniverse) {
+	return getTotalQualitativeEvaluationScoringObject(siadapUniverse).getLocalizedName();
+    }
+
+    public SiadapGlobalEvaluation getTotalQualitativeEvaluationScoringObject(SiadapUniverse siadapUniverse) {
 	boolean excellencyGiven = false;
 	Siadap siadap = getSiadap();
 	if (siadap == null)
-	    return SiadapGlobalEvaluation.NONEXISTING.getLocalizedName();
+	    return SiadapGlobalEvaluation.NONEXISTING;
 	SiadapEvaluationUniverse siadapEvaluationUniverseForSiadapUniverse = siadap
 		.getSiadapEvaluationUniverseForSiadapUniverse(siadapUniverse);
 	if (siadapEvaluationUniverseForSiadapUniverse == null)
-	    return SiadapGlobalEvaluation.NONEXISTING.getLocalizedName();
+	    return SiadapGlobalEvaluation.NONEXISTING;
 	else
 	    excellencyGiven = siadapEvaluationUniverseForSiadapUniverse.hasExcellencyAwarded();
 	if (!siadap.isEvaluationDone(siadapUniverse) && !siadapEvaluationUniverseForSiadapUniverse.isWithSkippedEvaluation()) {
-	    return SiadapGlobalEvaluation.NONEXISTING.getLocalizedName();
+	    return SiadapGlobalEvaluation.NONEXISTING;
 	}
 	if (siadapEvaluationUniverseForSiadapUniverse.isWithSkippedEvaluation())
-	    return SiadapGlobalEvaluation.WITHSKIPPEDEVAL.getLocalizedName();
+	    return SiadapGlobalEvaluation.WITHSKIPPEDEVAL;
 
 	return SiadapGlobalEvaluation.getGlobalEvaluation(siadapEvaluationUniverseForSiadapUniverse.getTotalEvaluationScoring(),
-		excellencyGiven).getLocalizedName();
+		excellencyGiven);
     }
 
     public String getTotalQualitativeEvaluationScoringSiadap2() {

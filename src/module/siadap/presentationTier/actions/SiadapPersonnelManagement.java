@@ -101,11 +101,10 @@ public class SiadapPersonnelManagement extends ContextBaseAction {
 	return viewPerson(mapping, form, request, response);
 
     }
-    
+
     private final ActionForward changePersonnelSituation(final ActionMapping mapping, final ActionForm form,
 	    final HttpServletRequest request, final HttpServletResponse response,
-	    ActivityInformationBeanWrapper informationBeanWrapper) throws Exception
-    {
+	    ActivityInformationBeanWrapper informationBeanWrapper) throws Exception {
 	int year = Integer.parseInt(request.getParameter("year"));
 	Person evaluated = (Person) getDomainObject(request, "personId");
 	PersonSiadapWrapper personSiadapWrapper = new PersonSiadapWrapper(evaluated, year);
@@ -125,16 +124,15 @@ public class SiadapPersonnelManagement extends ContextBaseAction {
 	    activity.execute(activityInformation);
 
 	} catch (DomainException ex) {
-	    addMessage(request, ex.getKey(), ex.getArgs());
-	}
- catch (ActivityException ex) {
-	    addMessage(request, ex.getMessage());
+	    addLocalizedMessage(request, ex.getLocalizedMessage());
+	} catch (ActivityException e) {
+	    addLocalizedMessage(request, e.getMessage());
 	}
 
 	return viewPerson(mapping, form, request, response);
     }
-    
-     public final ActionForward changeCompetenceType(final ActionMapping mapping, final ActionForm form,
+
+    public final ActionForward changeCompetenceType(final ActionMapping mapping, final ActionForm form,
 	    final HttpServletRequest request, final HttpServletResponse response) throws Exception {
 
 	CompetenceTypeBean competenceTypeBean = getRenderedObject("changeCompetenceTypeBean");
@@ -588,8 +586,8 @@ public class SiadapPersonnelManagement extends ContextBaseAction {
 
 	@Override
 	public String[] getArgumentsDescription(SiadapProcess process) {
-	    return new String[] { BundleUtil.getFormattedStringFromResourceBundle(Siadap.SIADAP_BUNDLE_STRING,
- ChangeEvaluatorBean.class.getSimpleName(),
+	    return new String[] { BundleUtil
+		    .getFormattedStringFromResourceBundle(Siadap.SIADAP_BUNDLE_STRING, ChangeEvaluatorBean.class.getSimpleName(),
 			    getEvaluator().getPresentationName(), getDateOfChange().toString()) };
 	}
     }
@@ -637,7 +635,6 @@ public class SiadapPersonnelManagement extends ContextBaseAction {
 	public ChangeWorkingUnitBean() {
 	    this.dateOfChange = new LocalDate();
 	}
-
 
 	public Unit getUnit() {
 	    return unit;

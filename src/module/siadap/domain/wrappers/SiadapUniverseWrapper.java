@@ -5,6 +5,7 @@ package module.siadap.domain.wrappers;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -47,12 +48,14 @@ public class SiadapUniverseWrapper implements Serializable {
     private final String universeDescription;
 
     private final int numberRelevantPeopleInUniverse;
-    private final int excellencyQuota;
+    private final BigDecimal excellencyQuota;
     private final int currentEvaluationExcellents;
     private final int currentHarmonizedExcellents;
-    private final int relevantQuota;
+    private final int currentValidatedExcellents;
+    private final BigDecimal relevantQuota;
     private final int currentEvaluationRelevants;
     private final int currentHarmonizedRelevants;
+    private final int currentValidatedRelevants;
 
     public static final String SIADAP2_WITH_QUOTAS = "siadap2WithQuotas";
     public static final String SIADAP3_WITH_QUOTAS = "siadap3WithQuotas";
@@ -72,6 +75,41 @@ public class SiadapUniverseWrapper implements Serializable {
     public static final String SIADAP3_WITHOUT_QUOTAS_HIGH_SUGGESTION = "siadap3WithoutQuotasHighSugg";
     private final SiadapUniverse siadapUniverseEnum;
 
+    private final static int HARMONIZATION_SCALE = 0;
+    private final static RoundingMode HARMONIZATION_ROUND_MODE = RoundingMode.DOWN;
+
+    private final static int VALIDATION_SCALE = 2;
+    private final static RoundingMode VALIDATION_ROUND_MODE = RoundingMode.HALF_EVEN;
+
+    public static enum UniverseDisplayMode {
+	VALIDATION {
+	    @Override
+	    public int getScale() {
+		return VALIDATION_SCALE;
+	    }
+
+	    @Override
+	    public RoundingMode getQuotaRoundingMode() {
+		return VALIDATION_ROUND_MODE;
+	    }
+	},
+	HARMONIZATION {
+	    @Override
+	    public int getScale() {
+		return HARMONIZATION_SCALE;
+	    }
+
+	    @Override
+	    public RoundingMode getQuotaRoundingMode() {
+		return HARMONIZATION_ROUND_MODE;
+	    }
+	};
+
+	public abstract int getScale();
+
+	public abstract RoundingMode getQuotaRoundingMode();
+    }
+
     /**
      * Constructor used to make a wrapper suitable for harmonization purposes;
      * 
@@ -82,7 +120,8 @@ public class SiadapUniverseWrapper implements Serializable {
      * @param relevantQuotaPercentagePoints
      */
     public SiadapUniverseWrapper(Set<PersonSiadapWrapper> siadapUniverseOfPeople, String universeDescription,
-	    SiadapUniverse universeToConsider, int excellencyQuotaPercentagePoints, int relevantQuotaPercentagePoints) {
+	    SiadapUniverse universeToConsider, int excellencyQuotaPercentagePoints, int relevantQuotaPercentagePoints,
+	    UniverseDisplayMode universeDisplayMode) {
 	this.siadapUniverse = siadapUniverseOfPeople;
 	this.universeDescription = universeDescription;
 
@@ -96,14 +135,35 @@ public class SiadapUniverseWrapper implements Serializable {
 	}
 
 	this.numberRelevantPeopleInUniverse = relevantPeople;
-	this.excellencyQuota = calculateQuota(this.getNumberRelevantPeopleInUniverse(), excellencyQuotaPercentagePoints);
-	this.relevantQuota = calculateQuota(this.getNumberRelevantPeopleInUniverse(), relevantQuotaPercentagePoints);
+	if (universeDisplayMode != null) {
+	this.excellencyQuota = calculateQuota(this.getNumberRelevantPeopleInUniverse(), excellencyQuotaPercentagePoints)
+		.setScale(universeDisplayMode.getScale(), universeDisplayMode.getQuotaRoundingMode());
+	this.relevantQuota = calculateQuota(this.getNumberRelevantPeopleInUniverse(), relevantQuotaPercentagePoints).setScale(
+		universeDisplayMode.getScale(), universeDisplayMode.getQuotaRoundingMode());
 
-	this.currentEvaluationExcellents = getCurrentExcellents(universeToConsider, false);
-	this.currentEvaluationRelevants = getCurrentRelevants(universeToConsider, false);
+	} else {
+	    this.excellencyQuota = calculateQuota(this.getNumberRelevantPeopleInUniverse(), excellencyQuotaPercentagePoints);
+	    this.relevantQuota = calculateQuota(this.getNumberRelevantPeopleInUniverse(), relevantQuotaPercentagePoints);
+	}
 
-	this.currentHarmonizedExcellents = getCurrentExcellents(universeToConsider, true);
-	this.currentHarmonizedRelevants = getCurrentRelevants(universeToConsider, true);
+
+
+	this.currentEvaluationExcellents = getCurrentExcellents(universeToConsider, false, false);
+	this.currentEvaluationRelevants = getCurrentRelevants(universeToConsider, false, false);
+
+	this.currentHarmonizedExcellents = getCurrentExcellents(universeToConsider, true, false);
+	this.currentHarmonizedRelevants = getCurrentRelevants(universeToConsider, true, false);
+	
+	switch (universeDisplayMode) {
+	case VALIDATION:
+	    this.currentValidatedExcellents = getCurrentExcellents(universeToConsider, false, true);
+	    this.currentValidatedRelevants = getCurrentRelevants(universeToConsider, false, true);
+	    break;
+	case HARMONIZATION:
+	default:
+	    this.currentValidatedExcellents = 0;
+	    this.currentValidatedRelevants = 0;
+	}
 
 	this.siadapUniverseForSuggestions = null;
 
@@ -114,12 +174,14 @@ public class SiadapUniverseWrapper implements Serializable {
 
 	//a null simple universe and everything else intended for the harmonization purposes
 	this.siadapUniverse = null;
-	this.excellencyQuota = 0;
-	this.relevantQuota = 0;
+	this.excellencyQuota = BigDecimal.ZERO;
+	this.relevantQuota = BigDecimal.ZERO;
 	this.currentEvaluationExcellents = 0;
 	this.currentEvaluationRelevants = 0;
 	this.currentHarmonizedExcellents = 0;
 	this.currentHarmonizedRelevants = 0;
+	this.currentValidatedExcellents = 0;
+	this.currentValidatedRelevants = 0;
 
 	this.siadapUniverseForSuggestions = new ArrayList<SiadapSuggestionBean>();
 	HashSet<SiadapSuggestionBean> siadapUniverseForSuggestionsSet = new HashSet<SiadapSuggestionBean>();
@@ -137,8 +199,13 @@ public class SiadapUniverseWrapper implements Serializable {
 
     }
 
-    public boolean isAboveQuotas() {
-	return (currentHarmonizedExcellents > excellencyQuota || currentHarmonizedRelevants > relevantQuota);
+    /**
+     * 
+     * @return true if it is above quotas, rounding the quota to the integer
+     *         value by truncating, false otherwise
+     */
+    public boolean isAboveQuotasHarmonization() {
+	return (currentHarmonizedExcellents > excellencyQuota.intValue() || currentHarmonizedRelevants > relevantQuota.intValue());
     }
 
     public String getCurrentHarmonizedRelevantsHTMLClass() {
@@ -149,19 +216,33 @@ public class SiadapUniverseWrapper implements Serializable {
 	return "current-harmonized-excellents-" + universeDescription;
     }
 
-    public boolean isSiadapUniverseWithQuotasAboveQuota() {
-	return (currentHarmonizedRelevants > relevantQuota || currentHarmonizedExcellents > excellencyQuota);
+    public String getCurrentValidatedRelevantsHTMLClass() {
+	return "current-validated-relevants-" + universeDescription;
     }
 
-    private int getCurrentExcellents(SiadapUniverse siadapUniverse, boolean considerHarmonizedOnly) {
+    public String getCurrentValidatedExcellentsHTMLClass() {
+	return "current-validated-excellents-" + universeDescription;
+    }
+
+    /**
+     * 
+     * @return true if it is above quotas, rounding the quota to the integer
+     *         value by truncating, false otherwise
+     */
+    public boolean isSiadapUniverseWithQuotasAboveQuotaHarmonization() {
+	return (currentHarmonizedRelevants > relevantQuota.intValue() || currentHarmonizedExcellents > excellencyQuota.intValue());
+    }
+
+    private int getCurrentExcellents(SiadapUniverse siadapUniverse, boolean considerHarmonizedOnly, boolean considerValidatedOnly) {
 	Predicate predicateToUse = new SiadapGradePredicate(considerHarmonizedOnly, siadapUniverse,
-		SiadapGlobalEvaluation.EXCELLENCY);
+		SiadapGlobalEvaluation.EXCELLENCY, considerValidatedOnly);
 	return getNrEvaluationsBasedOnPredicate(this.siadapUniverse, predicateToUse);
 
     }
 
-    private int getCurrentRelevants(SiadapUniverse siadapUniverse, boolean considerHarmonizedOnly) {
-	Predicate predicateToUse = new SiadapGradePredicate(considerHarmonizedOnly, siadapUniverse, SiadapGlobalEvaluation.HIGH);
+    private int getCurrentRelevants(SiadapUniverse siadapUniverse, boolean considerHarmonizedOnly, boolean considerValidatedOnly) {
+	Predicate predicateToUse = new SiadapGradePredicate(considerHarmonizedOnly, siadapUniverse, SiadapGlobalEvaluation.HIGH,
+		considerValidatedOnly);
 	return getNrEvaluationsBasedOnPredicate(this.siadapUniverse, predicateToUse);
 
     }
@@ -182,11 +263,11 @@ public class SiadapUniverseWrapper implements Serializable {
      *            the percentage points of quota
      * @return how many people it represents, it is never 0 due to SIADAPs rules
      */
-    private int calculateQuota(int totalPeople, Integer quota) {
+    private BigDecimal calculateQuota(int totalPeople, Integer quota) {
 	BigDecimal result = new BigDecimal(totalPeople).multiply(new BigDecimal(quota)).divide(new BigDecimal(100));
 
 	int value = result.intValue();
-	return value > 0 ? value : 1; //if the quota is 0 the the quota shifts to 1
+	return value > 0 ? result : BigDecimal.ONE; //if the quota is 0 the the quota shifts to 1
 
     }
 
@@ -200,12 +281,14 @@ public class SiadapUniverseWrapper implements Serializable {
      */
     private class SiadapGradePredicate implements Predicate {
 	private final boolean considerHarmonizedOnly;
+	private final boolean considerValidatedOnly;
 	private final SiadapUniverse siadapUniverseToConsider;
 	private final SiadapGlobalEvaluation siadapGlobalEvaluation;
 
 	SiadapGradePredicate(boolean considerHarmonizedOnly, SiadapUniverse siadapUniverseToConsider,
-		SiadapGlobalEvaluation siadapGlobalEvaluation) {
+		SiadapGlobalEvaluation siadapGlobalEvaluation, boolean considerValidatedOnly) {
 	    this.considerHarmonizedOnly = considerHarmonizedOnly;
+	    this.considerValidatedOnly = considerValidatedOnly;
 	    this.siadapUniverseToConsider = siadapUniverseToConsider;
 	    this.siadapGlobalEvaluation = siadapGlobalEvaluation;
 	}
@@ -220,7 +303,8 @@ public class SiadapUniverseWrapper implements Serializable {
 			    && siadap.getSiadapEvaluationUniverseForSiadapUniverse(siadapUniverseToConsider)
 				    .getHarmonizationAssessment() != null
 			    && siadap.getSiadapEvaluationUniverseForSiadapUniverse(siadapUniverseToConsider)
-				    .getHarmonizationAssessment() && checkForPositivelyHarmonizedExcellent(personSiadapWrapper)))) {
+				    .getHarmonizationAssessment() && checkForPositivelyHarmonizedExcellent(personSiadapWrapper)))
+		    && (!considerValidatedOnly || siadap.hasCompleteValidationAssessment(siadapUniverseToConsider))) {
 		return true;
 	    }
 	    return false;
@@ -265,7 +349,7 @@ public class SiadapUniverseWrapper implements Serializable {
 	return universeDescription;
     }
 
-    public int getExcellencyQuota() {
+    public BigDecimal getExcellencyQuota() {
 	return excellencyQuota;
     }
 
@@ -277,7 +361,7 @@ public class SiadapUniverseWrapper implements Serializable {
 	return currentHarmonizedExcellents;
     }
 
-    public int getRelevantQuota() {
+    public BigDecimal getRelevantQuota() {
 	return relevantQuota;
     }
 
@@ -303,5 +387,13 @@ public class SiadapUniverseWrapper implements Serializable {
 
     public int getNumberRelevantPeopleInUniverse() {
 	return numberRelevantPeopleInUniverse;
+    }
+
+    public int getCurrentValidatedExcellents() {
+	return currentValidatedExcellents;
+    }
+
+    public int getCurrentValidatedRelevants() {
+	return currentValidatedRelevants;
     }
 }

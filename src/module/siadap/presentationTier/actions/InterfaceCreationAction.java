@@ -36,7 +36,6 @@ public class InterfaceCreationAction extends BaseAction {
 
 	PersistentGroup managerGroup = Role.getRole(RoleType.MANAGER);
 
-
 	ActionNode.createActionNode(virtualHost, homeNode, "/siadapManagement", "manageSiadap", "resources.SiadapResources",
 		"link.siadap.start", UserGroup.getInstance());
 
@@ -44,15 +43,14 @@ public class InterfaceCreationAction extends BaseAction {
 		"resources.SiadapResources", "link.siadap.compentencesManagement", Role.getRole(RoleType.MANAGER));
 
 	ActionNode.createActionNode(virtualHost, homeNode, "/siadapManagement", "showConfiguration", "resources.SiadapResources",
-		"link.siadap.showConfiguration",  managerGroup);
+		"link.siadap.showConfiguration", managerGroup);
 
 	//use the static group TODO alter this	
 	ActionNode.createActionNode(virtualHost, homeNode, "/siadapPersonnelManagement", "start", "resources.SiadapResources",
 		"link.siadap.structureManagement", SiadapYearConfiguration.getStructureManagementGroup());
 
 	//use the static group TODO alter this	
-	ActionNode.createActionNode(virtualHost, homeNode, "/siadapManagement",
-		"manageHarmonizationUnitsForMode&mode=processValidation", "resources.SiadapResources",
+	ActionNode.createActionNode(virtualHost, homeNode, "/siadapManagement", "validate", "resources.SiadapResources",
 		"link.siadap.validationProcedure", SiadapYearConfiguration.getCcaMembersGroup());
 
 	//use the static group TODO alter this	
@@ -76,8 +74,7 @@ public class InterfaceCreationAction extends BaseAction {
 	final VirtualHost virtualHost = getDomainObject(request, "virtualHostToManageId");
 	final Node node = getDomainObject(request, "parentOfNodesToManageId");
 
-	ActionNode.createActionNode(virtualHost, node, "/siadapProcessCount", "showUnit",
- "resources.SiadapResources",
+	ActionNode.createActionNode(virtualHost, node, "/siadapProcessCount", "showUnit", "resources.SiadapResources",
 		"link.siadapProcessCount", SiadapRootModule.getInstance().getStatisticsAccessUnionGroup());
 
 	return forwardToMuneConfiguration(request, virtualHost, node);
