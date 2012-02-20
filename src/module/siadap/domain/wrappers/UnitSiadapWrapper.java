@@ -106,7 +106,7 @@ public class UnitSiadapWrapper extends PartyWrapper implements Serializable {
      *         evaluator, from this unit and those below (using the
      *         {@link SiadapYearConfiguration#getHarmonizationUnitRelations()})
      */
-    private Set<PersonSiadapWrapper> getValidationPersonSiadapWrappers(final SiadapUniverse universe,
+    protected Set<PersonSiadapWrapper> getValidationPersonSiadapWrappers(final SiadapUniverse universe,
 	    final boolean belongsToInstitutionalQuota) {
 
 	List<PersonSiadapWrapper> listPeopleToUse = new ArrayList<PersonSiadapWrapper>();

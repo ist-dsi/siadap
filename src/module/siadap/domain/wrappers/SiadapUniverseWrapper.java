@@ -17,6 +17,7 @@ import module.siadap.domain.ExceedingQuotaProposal;
 import module.siadap.domain.Siadap;
 import module.siadap.domain.SiadapEvaluationUniverse;
 import module.siadap.domain.SiadapUniverse;
+import module.siadap.domain.SiadapYearConfiguration;
 import module.siadap.domain.scoring.SiadapGlobalEvaluation;
 
 import org.apache.commons.collections.Predicate;
@@ -56,6 +57,16 @@ public class SiadapUniverseWrapper implements Serializable {
     private final int currentEvaluationRelevants;
     private final int currentHarmonizedRelevants;
     private final int currentValidatedRelevants;
+
+    private final int globalNumberRelevantPeopleInUniverse;
+    private final BigDecimal globalExcellencyQuota;
+    private final int globalCurrentEvaluationExcellents;
+    private final int globalCurrentHarmonizedExcellents;
+    private final int globalCurrentValidatedExcellents;
+    private final BigDecimal globalRelevantQuota;
+    private final int globalCurrentEvaluationRelevants;
+    private final int globalCurrentHarmonizedRelevants;
+    private final int globalCurrentValidatedRelevants;
 
     public static final String SIADAP2_WITH_QUOTAS = "siadap2WithQuotas";
     public static final String SIADAP3_WITH_QUOTAS = "siadap3WithQuotas";
@@ -128,41 +139,95 @@ public class SiadapUniverseWrapper implements Serializable {
 	this.siadapUniverseEnum = universeToConsider;
 
 	int relevantPeople = 0;
-	for (PersonSiadapWrapper personSiadapWrapper : siadapUniverseOfPeople) {
-	    if (!personSiadapWrapper.isWithSkippedEval(siadapUniverseEnum)) {
-		relevantPeople++;
+	//we are assuming that if we are showing the validation, we already have only the relevant people
+	if (universeDisplayMode.equals(UniverseDisplayMode.HARMONIZATION)) {
+	    for (PersonSiadapWrapper personSiadapWrapper : siadapUniverseOfPeople) {
+		if (!personSiadapWrapper.isWithSkippedEval(siadapUniverseEnum)) {
+		    relevantPeople++;
+		}
 	    }
+
+	} else {
+	    relevantPeople = siadapUniverseOfPeople.size();
 	}
 
 	this.numberRelevantPeopleInUniverse = relevantPeople;
 	if (universeDisplayMode != null) {
-	this.excellencyQuota = calculateQuota(this.getNumberRelevantPeopleInUniverse(), excellencyQuotaPercentagePoints)
-		.setScale(universeDisplayMode.getScale(), universeDisplayMode.getQuotaRoundingMode());
-	this.relevantQuota = calculateQuota(this.getNumberRelevantPeopleInUniverse(), relevantQuotaPercentagePoints).setScale(
-		universeDisplayMode.getScale(), universeDisplayMode.getQuotaRoundingMode());
+	    this.excellencyQuota = calculateQuota(this.getNumberRelevantPeopleInUniverse(), excellencyQuotaPercentagePoints)
+		    .setScale(universeDisplayMode.getScale(), universeDisplayMode.getQuotaRoundingMode());
+	    this.relevantQuota = calculateQuota(this.getNumberRelevantPeopleInUniverse(), relevantQuotaPercentagePoints)
+		    .setScale(universeDisplayMode.getScale(), universeDisplayMode.getQuotaRoundingMode());
 
 	} else {
 	    this.excellencyQuota = calculateQuota(this.getNumberRelevantPeopleInUniverse(), excellencyQuotaPercentagePoints);
 	    this.relevantQuota = calculateQuota(this.getNumberRelevantPeopleInUniverse(), relevantQuotaPercentagePoints);
 	}
 
+	this.currentEvaluationExcellents = getCurrentExcellents(this.siadapUniverse, universeToConsider, false, false);
+	this.currentEvaluationRelevants = getCurrentRelevants(this.siadapUniverse, universeToConsider, false, false);
 
+	this.currentHarmonizedExcellents = getCurrentExcellents(this.siadapUniverse, universeToConsider, true, false);
+	this.currentHarmonizedRelevants = getCurrentRelevants(this.siadapUniverse, universeToConsider, true, false);
 
-	this.currentEvaluationExcellents = getCurrentExcellents(universeToConsider, false, false);
-	this.currentEvaluationRelevants = getCurrentRelevants(universeToConsider, false, false);
-
-	this.currentHarmonizedExcellents = getCurrentExcellents(universeToConsider, true, false);
-	this.currentHarmonizedRelevants = getCurrentRelevants(universeToConsider, true, false);
-	
 	switch (universeDisplayMode) {
 	case VALIDATION:
-	    this.currentValidatedExcellents = getCurrentExcellents(universeToConsider, false, true);
-	    this.currentValidatedRelevants = getCurrentRelevants(universeToConsider, false, true);
+	    this.currentValidatedExcellents = getCurrentExcellents(this.siadapUniverse, universeToConsider, false, true);
+	    this.currentValidatedRelevants = getCurrentRelevants(this.siadapUniverse, universeToConsider, false, true);
+
+	    //let's use one person from the list to get the top structure unit
+	    PersonSiadapWrapper personSiadapWrapper = null;
+	    try {
+		personSiadapWrapper = siadapUniverseOfPeople.iterator().next();
+	    } catch (java.util.NoSuchElementException ex) {
+	    }
+	    if (personSiadapWrapper != null) {
+		SiadapYearConfiguration configuration = personSiadapWrapper.getConfiguration();
+		Set<PersonSiadapWrapper> globalUniverse = new UnitSiadapWrapper(configuration.getSiadapStructureTopUnit(),
+			configuration.getYear()).getValidationPersonSiadapWrappers(universeToConsider,
+			personSiadapWrapper.isQuotaAware());
+
+		this.globalCurrentEvaluationExcellents = getCurrentExcellents(globalUniverse, siadapUniverseEnum, false, false);
+		this.globalCurrentEvaluationRelevants = getCurrentRelevants(globalUniverse, siadapUniverseEnum, false, false);
+
+		this.globalCurrentHarmonizedExcellents = getCurrentExcellents(globalUniverse, siadapUniverseEnum, true, false);
+		this.globalCurrentHarmonizedRelevants = getCurrentRelevants(globalUniverse, siadapUniverseEnum, true, false);
+
+		this.globalCurrentValidatedExcellents = getCurrentExcellents(globalUniverse, siadapUniverseEnum, false, true);
+		this.globalCurrentValidatedRelevants = getCurrentRelevants(globalUniverse, siadapUniverseEnum, false, true);
+
+		this.globalNumberRelevantPeopleInUniverse = globalUniverse.size();
+
+		this.globalExcellencyQuota = calculateQuota(globalNumberRelevantPeopleInUniverse, excellencyQuotaPercentagePoints)
+			.setScale(universeDisplayMode.getScale(), universeDisplayMode.getQuotaRoundingMode());
+		this.globalRelevantQuota = calculateQuota(globalNumberRelevantPeopleInUniverse, relevantQuotaPercentagePoints)
+			.setScale(universeDisplayMode.getScale(), universeDisplayMode.getQuotaRoundingMode());
+	    } else {
+		this.globalCurrentEvaluationExcellents = 0;
+		this.globalCurrentEvaluationRelevants = 0;
+		this.globalCurrentHarmonizedExcellents = 0;
+		this.globalCurrentHarmonizedRelevants = 0;
+		this.globalCurrentValidatedExcellents = 0;
+		this.globalCurrentValidatedRelevants = 0;
+		this.globalExcellencyQuota = null;
+		this.globalNumberRelevantPeopleInUniverse = 0;
+		this.globalRelevantQuota = null;
+	    }
+
 	    break;
 	case HARMONIZATION:
 	default:
 	    this.currentValidatedExcellents = 0;
 	    this.currentValidatedRelevants = 0;
+
+	    this.globalCurrentEvaluationExcellents = 0;
+	    this.globalCurrentEvaluationRelevants = 0;
+	    this.globalCurrentHarmonizedExcellents = 0;
+	    this.globalCurrentHarmonizedRelevants = 0;
+	    this.globalCurrentValidatedExcellents = 0;
+	    this.globalCurrentValidatedRelevants = 0;
+	    this.globalExcellencyQuota = null;
+	    this.globalNumberRelevantPeopleInUniverse = 0;
+	    this.globalRelevantQuota = null;
 	}
 
 	this.siadapUniverseForSuggestions = null;
@@ -196,6 +261,17 @@ public class SiadapUniverseWrapper implements Serializable {
 	this.numberRelevantPeopleInUniverse = getSiadapUniverseForSuggestions().size();
 
 	this.universeDescription = universeDescription;
+
+	//no need for the global fields here
+	this.globalCurrentEvaluationExcellents = 0;
+	this.globalCurrentEvaluationRelevants = 0;
+	this.globalCurrentHarmonizedExcellents = 0;
+	this.globalCurrentHarmonizedRelevants = 0;
+	this.globalCurrentValidatedExcellents = 0;
+	this.globalCurrentValidatedRelevants = 0;
+	this.globalExcellencyQuota = null;
+	this.globalNumberRelevantPeopleInUniverse = 0;
+	this.globalRelevantQuota = null;
 
     }
 
@@ -233,17 +309,19 @@ public class SiadapUniverseWrapper implements Serializable {
 	return (currentHarmonizedRelevants > relevantQuota.intValue() || currentHarmonizedExcellents > excellencyQuota.intValue());
     }
 
-    private int getCurrentExcellents(SiadapUniverse siadapUniverse, boolean considerHarmonizedOnly, boolean considerValidatedOnly) {
+    private int getCurrentExcellents(Collection<PersonSiadapWrapper> siadapPersonWrappersUniverse, SiadapUniverse siadapUniverse,
+	    boolean considerHarmonizedOnly, boolean considerValidatedOnly) {
 	Predicate predicateToUse = new SiadapGradePredicate(considerHarmonizedOnly, siadapUniverse,
 		SiadapGlobalEvaluation.EXCELLENCY, considerValidatedOnly);
-	return getNrEvaluationsBasedOnPredicate(this.siadapUniverse, predicateToUse);
+	return getNrEvaluationsBasedOnPredicate(siadapPersonWrappersUniverse, predicateToUse);
 
     }
 
-    private int getCurrentRelevants(SiadapUniverse siadapUniverse, boolean considerHarmonizedOnly, boolean considerValidatedOnly) {
+    private int getCurrentRelevants(Collection<PersonSiadapWrapper> siadapPersonWrappersUniverse, SiadapUniverse siadapUniverse,
+	    boolean considerHarmonizedOnly, boolean considerValidatedOnly) {
 	Predicate predicateToUse = new SiadapGradePredicate(considerHarmonizedOnly, siadapUniverse, SiadapGlobalEvaluation.HIGH,
 		considerValidatedOnly);
-	return getNrEvaluationsBasedOnPredicate(this.siadapUniverse, predicateToUse);
+	return getNrEvaluationsBasedOnPredicate(siadapPersonWrappersUniverse, predicateToUse);
 
     }
 
@@ -395,5 +473,41 @@ public class SiadapUniverseWrapper implements Serializable {
 
     public int getCurrentValidatedRelevants() {
 	return currentValidatedRelevants;
+    }
+
+    public int getGlobalNumberRelevantPeopleInUniverse() {
+	return globalNumberRelevantPeopleInUniverse;
+    }
+
+    public BigDecimal getGlobalExcellencyQuota() {
+	return globalExcellencyQuota;
+    }
+
+    public int getGlobalCurrentEvaluationExcellents() {
+	return globalCurrentEvaluationExcellents;
+    }
+
+    public int getGlobalCurrentHarmonizedExcellents() {
+	return globalCurrentHarmonizedExcellents;
+    }
+
+    public int getGlobalCurrentValidatedExcellents() {
+	return globalCurrentValidatedExcellents;
+    }
+
+    public BigDecimal getGlobalRelevantQuota() {
+	return globalRelevantQuota;
+    }
+
+    public int getGlobalCurrentEvaluationRelevants() {
+	return globalCurrentEvaluationRelevants;
+    }
+
+    public int getGlobalCurrentHarmonizedRelevants() {
+	return globalCurrentHarmonizedRelevants;
+    }
+
+    public int getGlobalCurrentValidatedRelevants() {
+	return globalCurrentValidatedRelevants;
     }
 }

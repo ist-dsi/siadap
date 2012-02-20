@@ -334,6 +334,8 @@ public class SiadapManagement extends ContextBaseAction {
 	Unit unit = (Unit) (getDomainObject(request, "unitId") == null ? siadapYearWrapper.getSiadapYearConfiguration()
 		.getSiadapStructureTopUnit() : getDomainObject(request, "unitId"));
 
+	RenderUtils.invalidateViewState();
+
 	return validateUnit(mapping, form, request, response, new UnitSiadapWrapper(unit, siadapYearWrapper.getChosenYear()));
 
     }

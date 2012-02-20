@@ -168,14 +168,28 @@ color: darkRed;
 				
 				<%-- Summary table --%>
 				<div class="infobox">
-					<table class="tstyle2">
+					<table class="tstyle4">
+						<logic:equal value="false" name="unit" property="siadapStructureTopUnit">
+							<tr>
+								<th colspan="6">Unidade:</th>
+								<th colspan="6">Global:</th>
+							</tr>
+						</logic:equal>
 						<tr>
-							<th><bean:message key="label.harmonization.totalHarmonizedInUniverse" bundle="SIADAP_RESOURCES" />
-							<td><fr:view name="siadapUniverseWrapper" property="numberRelevantPeopleInUniverse"/></td>
+							<th><bean:message key="label.validation.totalEvaluations" bundle="SIADAP_RESOURCES" />
+							<td <%=unitWrapper.isSiadapStructureTopUnit() ?  "" : "colspan='5'" %>><fr:view name="siadapUniverseWrapper" property="numberRelevantPeopleInUniverse"/></td>
+							<%-- exclusively global part --%>
+							<logic:equal value="false" name="unit" property="siadapStructureTopUnit">
+								<td colspan="5"><fr:view name="siadapUniverseWrapper" property="globalNumberRelevantPeopleInUniverse"/></td>
+							</logic:equal>
 						</tr>
 						<tr>
 							<th><bean:message key="label.harmonization.quota.excellents" bundle="SIADAP_RESOURCES" />
-							<td><fr:view name="siadapUniverseWrapper" property="excellencyQuota"/></td>
+							<td <%=unitWrapper.isSiadapStructureTopUnit() ?  "" : "colspan='5'"%>><fr:view name="siadapUniverseWrapper" property="excellencyQuota"/></td>
+							<%-- exclusively global part --%>
+							<logic:equal value="false" name="unit" property="siadapStructureTopUnit">
+								<td colspan="5"><fr:view name="siadapUniverseWrapper" property="excellencyQuota"/></td>
+							</logic:equal>
 						</tr>
 						<tr>
 							<th><bean:message key="label.harmonization.current.excellents.used.quota" bundle="SIADAP_RESOURCES" />
@@ -184,10 +198,23 @@ color: darkRed;
 							<td class="<%=((SiadapUniverseWrapper) siadapUniverseWrapper).getCurrentHarmonizedExcellentsHTMLClass()%>"><fr:view name="siadapUniverseWrapper" property="currentHarmonizedExcellents"/></td>
 							<th><bean:message key="label.validated.summary.board" bundle="SIADAP_RESOURCES" /></th>
 							<td class="<%=((SiadapUniverseWrapper) siadapUniverseWrapper).getCurrentValidatedExcellentsHTMLClass()%>"><fr:view name="siadapUniverseWrapper" property="currentValidatedExcellents"/></td>
+							
+							<%-- exclusively global part --%>
+							<logic:equal value="false" name="unit" property="siadapStructureTopUnit">
+								<td><fr:view name="siadapUniverseWrapper" property="globalCurrentEvaluationExcellents"/></td>
+								<th><bean:message key="label.harmonized" bundle="SIADAP_RESOURCES" /></th>
+								<td class="<%=((SiadapUniverseWrapper) siadapUniverseWrapper).getCurrentHarmonizedExcellentsHTMLClass()+"_global"%>"><fr:view name="siadapUniverseWrapper" property="globalCurrentHarmonizedExcellents"/></td>
+								<th><bean:message key="label.validated.summary.board" bundle="SIADAP_RESOURCES" /></th>
+								<td class="<%=((SiadapUniverseWrapper) siadapUniverseWrapper).getCurrentValidatedExcellentsHTMLClass()+"_global"%>"><fr:view name="siadapUniverseWrapper" property="globalCurrentValidatedExcellents"/></td>
+							</logic:equal>
 						</tr>
 						<tr>
 							<th><bean:message key="label.harmonization.quota.relevant" bundle="SIADAP_RESOURCES" />
-							<td><fr:view name="siadapUniverseWrapper" property="relevantQuota"/></td>
+							<td <%=unitWrapper.isSiadapStructureTopUnit() ? "" : "colspan='5'" %>><fr:view name="siadapUniverseWrapper" property="relevantQuota"/></td>
+							<%-- exclusively global part --%>
+							<logic:equal value="false" name="unit" property="siadapStructureTopUnit">
+								<td colspan="5"><fr:view name="siadapUniverseWrapper" property="globalRelevantQuota"/></td>
+							</logic:equal>
 						</tr>
 						<tr>
 							<th><bean:message key="label.harmonization.current.relevant.used.quota" bundle="SIADAP_RESOURCES" />
@@ -196,12 +223,21 @@ color: darkRed;
 							<td class="<%=((SiadapUniverseWrapper) siadapUniverseWrapper).getCurrentHarmonizedRelevantsHTMLClass()%>"><fr:view name="siadapUniverseWrapper" property="currentHarmonizedRelevants"/></td>
 							<th><bean:message key="label.validated.summary.board" bundle="SIADAP_RESOURCES" /></th>
 							<td class="<%=((SiadapUniverseWrapper) siadapUniverseWrapper).getCurrentValidatedRelevantsHTMLClass()%>"><fr:view name="siadapUniverseWrapper" property="currentValidatedRelevants"/></td>
+							
+							<%-- exclusively global part --%>
+							<logic:equal value="false" name="unit" property="siadapStructureTopUnit">
+								<td><fr:view name="siadapUniverseWrapper" property="globalCurrentEvaluationRelevants"/></td>
+								<th><bean:message key="label.harmonized" bundle="SIADAP_RESOURCES" /></th>
+								<td class="<%=((SiadapUniverseWrapper) siadapUniverseWrapper).getCurrentHarmonizedRelevantsHTMLClass()+"_global"%>"><fr:view name="siadapUniverseWrapper" property="globalCurrentHarmonizedRelevants"/></td>
+								<th><bean:message key="label.validated.summary.board" bundle="SIADAP_RESOURCES" /></th>
+								<td class="<%=((SiadapUniverseWrapper) siadapUniverseWrapper).getCurrentValidatedRelevantsHTMLClass()+"_global"%>"><fr:view name="siadapUniverseWrapper" property="globalCurrentValidatedRelevants"/></td>
+							</logic:equal>
 						</tr>
 					</table>
 				</div>	
 				<%-- END Summary table --%>
 				<div class="highlightBox" style="display: none;">
-					Atenção, este universo contem avaliações ainda não harmonizadas
+					Atenção, este universo contem avaliações cuja harmonização ainda não foi encerrada. Isto pode fazer com que haja pareceres de harmonização que se venham a alterar.
 				</div>
 			
 				</logic:notEmpty>
@@ -225,15 +261,14 @@ color: darkRed;
 						<fr:slot name="harmonizationCurrentAssessmentForExcellencyAwardForSIADAP2" layout="radio" key="label.harmonization.assessment.forExcellencyAward" readOnly="true"/> 
 						
 						<fr:slot name="validationCurrentAssessmentForSIADAP2" layout="radio" key="label.validation.validationCurrentAssessment">
-							<fr:property name="readOnlyIf" value="siadap2AbleToBeValidated" />
+							<fr:property name="readOnlyIfNot" value="siadap2AbleToBeValidated" />
 							<fr:property name="classes" value="inline-list"/>
 						</fr:slot>
 						<fr:slot name="validationCurrentAssessmentForExcellencyAwardForSIADAP2" layout="radio" key="label.validation.validationCurrentAssessmentForExcellencyAward">
-							<fr:property name="readOnlyIf" value="siadap2AbleToBeValidated" />
+							<fr:property name="readOnlyIfNot" value="siadap2AbleToBeValidated" />
 							<fr:property name="classes" value="inline-list"/>
 						</fr:slot>
 						<fr:slot name="validationClassificationForSIADAP2" key="label.validation.classification">
-							<fr:property name="readOnlyIf" value="siadap2AbleToBeValidated" />
 							<fr:property name="size" value="5"/>
 							<fr:property name="maxLength" value="5"/>
 						</fr:slot>
@@ -249,16 +284,15 @@ color: darkRed;
 						<fr:slot name="harmonizationCurrentAssessmentForSIADAP3" layout="radio" key="label.harmonization.assessment" readOnly="true"/> 
 						<fr:slot name="harmonizationCurrentAssessmentForExcellencyAwardForSIADAP3" layout="radio" key="label.harmonization.assessment.forExcellencyAward" readOnly="true"/> 
 						<fr:slot name="validationCurrentAssessmentForSIADAP3" layout="radio" key="label.validation.validationCurrentAssessment">
-							<fr:property name="readOnlyIf" value="siadap3AbleToBeValidated" />
+							<fr:property name="readOnlyIfNot" value="siadap3AbleToBeValidated" />
 							<fr:property name="classes" value="inline-list"/>
 						</fr:slot>
 						<fr:slot name="validationCurrentAssessmentForExcellencyAwardForSIADAP3" layout="radio" key="label.validation.validationCurrentAssessmentForExcellencyAward">
-							<fr:property name="readOnlyIf" value="siadap3AbleToBeValidated" />
+							<fr:property name="readOnlyIfNot" value="siadap3AbleToBeValidated" />
 							<fr:property name="classes" value="inline-list"/>
 						</fr:slot>
 						
 						<fr:slot name="validationClassificationForSIADAP3" key="label.validation.classification">
-							<fr:property name="readOnlyIf" value="siadap3AbleToBeValidated" />
 							<fr:property name="size" value="5"/>
 							<fr:property name="maxLength" value="5"/>
 						</fr:slot>

@@ -376,6 +376,9 @@ public class Siadap extends Siadap_Base {
 	SiadapEvaluationUniverse siadapEvaluationUniverse = getSiadapEvaluationUniverseForSiadapUniverse(siadapUniverse);
 	if (siadapEvaluationUniverse == null)
 	    return false;
+	//it depends on the grade, so if we have a grade of regular, we won't need an assessment
+	if (SiadapGlobalEvaluation.MEDIUM.accepts(siadapEvaluationUniverse.getTotalEvaluationScoring(), false))
+	    return true;
 	if (siadapEvaluationUniverse.getCcaAssessment() == null
 		|| siadapEvaluationUniverse.getCcaClassificationExcellencyAward() == null
 		|| siadapEvaluationUniverse.getCcaClassification() == null)
