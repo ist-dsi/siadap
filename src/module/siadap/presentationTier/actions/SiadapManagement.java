@@ -1,7 +1,9 @@
 package module.siadap.presentationTier.actions;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -380,18 +382,20 @@ public class SiadapManagement extends ContextBaseAction {
 	UniverseDisplayMode displayMode = UniverseDisplayMode.HARMONIZATION;
 	SiadapUniverseWrapper peopleWithQuotasSIADAP2 = new SiadapUniverseWrapper(
 		wrapper.getSiadap2AndWorkingRelationWithQuotaUniverse(), "siadap2WithQuotas", SiadapUniverse.SIADAP2,
-		configuration.getQuotaExcellencySiadap2WithQuota(), configuration.getQuotaRelevantSiadap2WithQuota(), displayMode);
+		configuration.getQuotaExcellencySiadap2WithQuota(), configuration.getQuotaRelevantSiadap2WithQuota(),
+		displayMode, null);
 	SiadapUniverseWrapper peopleWithQuotasSIADAP3 = new SiadapUniverseWrapper(
 		wrapper.getSiadap3AndWorkingRelationWithQuotaUniverse(), "siadap3WithQuotas", SiadapUniverse.SIADAP3,
-		configuration.getQuotaExcellencySiadap3WithQuota(), configuration.getQuotaRelevantSiadap3WithQuota(), displayMode);
+		configuration.getQuotaExcellencySiadap3WithQuota(), configuration.getQuotaRelevantSiadap3WithQuota(),
+		displayMode, null);
 	SiadapUniverseWrapper peopleWithoutQuotasSIADAP2 = new SiadapUniverseWrapper(
 		wrapper.getSiadap2AndWorkingRelationWithoutQuotaUniverse(), "siadap2WithoutQuotas", SiadapUniverse.SIADAP2,
 		configuration.getQuotaExcellencySiadap2WithoutQuota(), configuration.getQuotaRelevantSiadap2WithoutQuota(),
-		displayMode);
+		displayMode, null);
 	SiadapUniverseWrapper peopleWithoutQuotasSIADAP3 = new SiadapUniverseWrapper(
 		wrapper.getSiadap3AndWorkingRelationWithoutQuotaUniverse(), "siadap3WithoutQuotas", SiadapUniverse.SIADAP3,
 		configuration.getQuotaExcellencySiadap3WithoutQuota(), configuration.getQuotaRelevantSiadap3WithoutQuota(),
-		displayMode);
+		displayMode, null);
 
 	request.setAttribute("people-withQuotas-SIADAP2", peopleWithQuotasSIADAP2);
 	request.setAttribute("people-withQuotas-SIADAP3", peopleWithQuotasSIADAP3);
@@ -645,76 +649,52 @@ public class SiadapManagement extends ContextBaseAction {
 	    List<ExceedingQuotaProposal> quotaProposals = ExceedingQuotaProposal
 		    .getQuotaProposalsFor(unitWrapper.getUnit(), year);
 
-	    List<ExceedingQuotaProposal> siadap2WithQuotasExcellents = new ArrayList<ExceedingQuotaProposal>();
-	    List<ExceedingQuotaProposal> siadap2WithQuotasRelevants = new ArrayList<ExceedingQuotaProposal>();
+	    Map<ExceedingQuotaSuggestionType, List<ExceedingQuotaProposal>> siadap2WithQuotas = new HashMap<ExceedingQuotaSuggestionType, List<ExceedingQuotaProposal>>();
 
-	    List<ExceedingQuotaProposal> siadap3WithoutQuotasExcellents = new ArrayList<ExceedingQuotaProposal>();
-	    List<ExceedingQuotaProposal> siadap3WithoutQuotasRelevants = new ArrayList<ExceedingQuotaProposal>();
+	    Map<ExceedingQuotaSuggestionType, List<ExceedingQuotaProposal>> siadap3WithQuotas = new HashMap<ExceedingQuotaSuggestionType, List<ExceedingQuotaProposal>>();
 
-	    List<ExceedingQuotaProposal> siadap2WithoutQuotasExcellents = new ArrayList<ExceedingQuotaProposal>();
-	    List<ExceedingQuotaProposal> siadap2WithoutQuotasRelevants = new ArrayList<ExceedingQuotaProposal>();
+	    Map<ExceedingQuotaSuggestionType, List<ExceedingQuotaProposal>> siadap3WithoutQuotas = new HashMap<ExceedingQuotaSuggestionType, List<ExceedingQuotaProposal>>();
 
-	    List<ExceedingQuotaProposal> siadap3WithQuotasExcellents = new ArrayList<ExceedingQuotaProposal>();
-	    List<ExceedingQuotaProposal> siadap3WithQuotasRelevants = new ArrayList<ExceedingQuotaProposal>();
+	    Map<ExceedingQuotaSuggestionType, List<ExceedingQuotaProposal>> siadap2WithoutQuotas = new HashMap<ExceedingQuotaSuggestionType, List<ExceedingQuotaProposal>>();
 
-	    for (ExceedingQuotaProposal proposal : quotaProposals) {
-		switch (proposal.getSiadapUniverse()) {
-		case SIADAP2:
-		    if (proposal.getWithinOrganizationQuotaUniverse()) {
-			if (proposal.getSuggestionType().equals(ExceedingQuotaSuggestionType.EXCELLENCY_SUGGESTION))
-			    siadap2WithQuotasExcellents.add(proposal);
-			else if (proposal.getSuggestionType().equals(ExceedingQuotaSuggestionType.HIGH_SUGGESTION))
-			    siadap2WithQuotasRelevants.add(proposal);
-		    } else {
-			if (proposal.getSuggestionType().equals(ExceedingQuotaSuggestionType.EXCELLENCY_SUGGESTION))
-			    siadap2WithoutQuotasExcellents.add(proposal);
-			else if (proposal.getSuggestionType().equals(ExceedingQuotaSuggestionType.HIGH_SUGGESTION))
-			    siadap2WithoutQuotasRelevants.add(proposal);
-		    }
-		    break;
-		case SIADAP3:
-		    if (proposal.getWithinOrganizationQuotaUniverse()) {
-			if (proposal.getSuggestionType().equals(ExceedingQuotaSuggestionType.EXCELLENCY_SUGGESTION))
-			    siadap3WithQuotasExcellents.add(proposal);
-			else if (proposal.getSuggestionType().equals(ExceedingQuotaSuggestionType.HIGH_SUGGESTION))
-			    siadap3WithQuotasRelevants.add(proposal);
-		    } else {
-			if (proposal.getSuggestionType().equals(ExceedingQuotaSuggestionType.EXCELLENCY_SUGGESTION))
-			    siadap3WithoutQuotasExcellents.add(proposal);
-			else if (proposal.getSuggestionType().equals(ExceedingQuotaSuggestionType.HIGH_SUGGESTION))
-			    siadap3WithoutQuotasRelevants.add(proposal);
-		    }
-		    break;
-		}
-	    }
+	    ExceedingQuotaProposal.organizeAndFillExceedingQuotaProposals(unitWrapper.getUnit(), year, siadap2WithQuotas,
+		    siadap3WithoutQuotas, siadap2WithoutQuotas, siadap3WithQuotas);
 
+
+	    //TODO (?) REFACTOR: joantune - this can be remade to use the maps that are used for the validation, it would be cleaner 
 	    //let's make the several universes and add them to be rendered in the page
-	    siadapUniverseWrappers.add(new SiadapUniverseWrapper(siadap2WithQuotasExcellents,
+	    siadapUniverseWrappers.add(new SiadapUniverseWrapper(siadap2WithQuotas
+		    .get(ExceedingQuotaSuggestionType.EXCELLENCY_SUGGESTION),
 		    SiadapUniverseWrapper.SIADAP2_WITH_QUOTAS_EXCELLENT_SUGGESTION, SiadapUniverse.SIADAP2, unitWrapper, true));
 
-	    siadapUniverseWrappers.add(new SiadapUniverseWrapper(siadap2WithQuotasRelevants,
+	    siadapUniverseWrappers.add(new SiadapUniverseWrapper(siadap2WithQuotas
+		    .get(ExceedingQuotaSuggestionType.HIGH_SUGGESTION),
 		    SiadapUniverseWrapper.SIADAP2_WITH_QUOTAS_HIGH_SUGGESTION, SiadapUniverse.SIADAP2, unitWrapper, true));
 
 	    siadapUniverseWrappers
-		    .add(new SiadapUniverseWrapper(siadap2WithoutQuotasExcellents,
+		    .add(new SiadapUniverseWrapper(siadap2WithoutQuotas.get(ExceedingQuotaSuggestionType.EXCELLENCY_SUGGESTION),
 			    SiadapUniverseWrapper.SIADAP2_WITHOUT_QUOTAS_EXCELLENT_SUGGESTION, SiadapUniverse.SIADAP2,
 			    unitWrapper, false));
 
-	    siadapUniverseWrappers.add(new SiadapUniverseWrapper(siadap2WithoutQuotasRelevants,
+	    siadapUniverseWrappers.add(new SiadapUniverseWrapper(siadap2WithoutQuotas
+		    .get(ExceedingQuotaSuggestionType.HIGH_SUGGESTION),
 		    SiadapUniverseWrapper.SIADAP2_WITHOUT_QUOTAS_HIGH_SUGGESTION, SiadapUniverse.SIADAP2, unitWrapper, false));
 
-	    siadapUniverseWrappers.add(new SiadapUniverseWrapper(siadap3WithQuotasExcellents,
+	    siadapUniverseWrappers.add(new SiadapUniverseWrapper(siadap3WithQuotas
+		    .get(ExceedingQuotaSuggestionType.EXCELLENCY_SUGGESTION),
 		    SiadapUniverseWrapper.SIADAP3_WITH_QUOTAS_EXCELLENT_SUGGESTION, SiadapUniverse.SIADAP3, unitWrapper, true));
 
-	    siadapUniverseWrappers.add(new SiadapUniverseWrapper(siadap3WithQuotasRelevants,
+	    siadapUniverseWrappers.add(new SiadapUniverseWrapper(siadap3WithQuotas
+		    .get(ExceedingQuotaSuggestionType.HIGH_SUGGESTION),
 		    SiadapUniverseWrapper.SIADAP3_WITH_QUOTAS_HIGH_SUGGESTION, SiadapUniverse.SIADAP3, unitWrapper, true));
 
 	    siadapUniverseWrappers
-		    .add(new SiadapUniverseWrapper(siadap3WithoutQuotasExcellents,
+		    .add(new SiadapUniverseWrapper(siadap3WithoutQuotas.get(ExceedingQuotaSuggestionType.EXCELLENCY_SUGGESTION),
 			    SiadapUniverseWrapper.SIADAP3_WITHOUT_QUOTAS_EXCELLENT_SUGGESTION, SiadapUniverse.SIADAP3,
 			    unitWrapper, false));
 
-	    siadapUniverseWrappers.add(new SiadapUniverseWrapper(siadap3WithoutQuotasRelevants,
+	    siadapUniverseWrappers.add(new SiadapUniverseWrapper(siadap3WithoutQuotas
+		    .get(ExceedingQuotaSuggestionType.HIGH_SUGGESTION),
 		    SiadapUniverseWrapper.SIADAP3_WITHOUT_QUOTAS_HIGH_SUGGESTION, SiadapUniverse.SIADAP3, unitWrapper, false));
 
 	} else

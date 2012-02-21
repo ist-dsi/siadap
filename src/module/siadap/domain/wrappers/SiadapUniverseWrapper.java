@@ -9,11 +9,15 @@ import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import module.siadap.domain.ExceedingQuotaProposal;
+import module.siadap.domain.ExceedingQuotaSuggestionType;
 import module.siadap.domain.Siadap;
 import module.siadap.domain.SiadapEvaluationUniverse;
 import module.siadap.domain.SiadapUniverse;
@@ -39,6 +43,15 @@ import org.apache.commons.collections.Predicate;
  */
 public class SiadapUniverseWrapper implements Serializable {
 
+    public static final Comparator<SiadapUniverseWrapper> COMPARATOR_BY_UNIVERSE = new Comparator<SiadapUniverseWrapper>() {
+
+	@Override
+	public int compare(SiadapUniverseWrapper o1, SiadapUniverseWrapper o2) {
+	    return o1.getUniverseDescription().compareTo(o2.getUniverseDescription()) == 0 ? -1 : o1.getUniverseDescription()
+		    .compareTo(o2.getUniverseDescription());
+	}
+    };
+
     /**
      * Default serial version ID
      */
@@ -46,6 +59,7 @@ public class SiadapUniverseWrapper implements Serializable {
     private final Set<PersonSiadapWrapper> siadapUniverse;
 
     private final List<SiadapSuggestionBean> siadapUniverseForSuggestions;
+    private final Map<ExceedingQuotaSuggestionType, List<SiadapSuggestionBean>> siadapExceedingQuotaSuggestionsByTypeForUniverse;
     private final String universeDescription;
 
     private final int numberRelevantPeopleInUniverse;
@@ -132,9 +146,11 @@ public class SiadapUniverseWrapper implements Serializable {
      */
     public SiadapUniverseWrapper(Set<PersonSiadapWrapper> siadapUniverseOfPeople, String universeDescription,
 	    SiadapUniverse universeToConsider, int excellencyQuotaPercentagePoints, int relevantQuotaPercentagePoints,
-	    UniverseDisplayMode universeDisplayMode) {
+	    UniverseDisplayMode universeDisplayMode,
+	    Map<ExceedingQuotaSuggestionType, List<ExceedingQuotaProposal>> suggestionsByType) {
 	this.siadapUniverse = siadapUniverseOfPeople;
 	this.universeDescription = universeDescription;
+
 
 	this.siadapUniverseEnum = universeToConsider;
 
@@ -231,6 +247,18 @@ public class SiadapUniverseWrapper implements Serializable {
 	}
 
 	this.siadapUniverseForSuggestions = null;
+	
+	this.siadapExceedingQuotaSuggestionsByTypeForUniverse = new HashMap<ExceedingQuotaSuggestionType, List<SiadapSuggestionBean>>();
+	
+	for (ExceedingQuotaSuggestionType suggestionType : suggestionsByType.keySet()) {
+	    List<SiadapSuggestionBean> suggestionTypeList = new ArrayList<SiadapSuggestionBean>();
+	    this.siadapExceedingQuotaSuggestionsByTypeForUniverse.put(suggestionType, suggestionTypeList);
+	    for (ExceedingQuotaProposal quotaProposal : suggestionsByType.get(suggestionType))
+	    {
+		suggestionTypeList.add(new SiadapSuggestionBean(quotaProposal));
+	    }
+	    Collections.sort(suggestionTypeList, SiadapSuggestionBean.COMPARATOR_BY_PRIORITY_NUMBER);
+	}
 
     }
 
@@ -272,6 +300,8 @@ public class SiadapUniverseWrapper implements Serializable {
 	this.globalExcellencyQuota = null;
 	this.globalNumberRelevantPeopleInUniverse = 0;
 	this.globalRelevantQuota = null;
+
+	this.siadapExceedingQuotaSuggestionsByTypeForUniverse = null;
 
     }
 
@@ -509,5 +539,9 @@ public class SiadapUniverseWrapper implements Serializable {
 
     public int getGlobalCurrentValidatedRelevants() {
 	return globalCurrentValidatedRelevants;
+    }
+
+    public Map<ExceedingQuotaSuggestionType, List<SiadapSuggestionBean>> getSiadapExceedingQuotaSuggestionsByTypeForUniverse() {
+	return siadapExceedingQuotaSuggestionsByTypeForUniverse;
     }
 }

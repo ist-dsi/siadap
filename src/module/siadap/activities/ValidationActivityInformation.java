@@ -5,6 +5,7 @@ package module.siadap.activities;
 
 import java.math.BigDecimal;
 
+import module.siadap.domain.Siadap;
 import module.siadap.domain.SiadapEvaluationUniverse;
 import module.siadap.domain.SiadapProcess;
 import module.siadap.domain.SiadapUniverse;
@@ -14,6 +15,7 @@ import module.siadap.domain.wrappers.PersonSiadapWrapper;
 import module.workflow.activities.ActivityInformation;
 import module.workflow.activities.WorkflowActivity;
 import module.workflow.domain.WorkflowProcess;
+import myorg.util.BundleUtil;
 
 import org.joda.time.LocalDate;
 
@@ -106,6 +108,7 @@ public class ValidationActivityInformation extends ActivityInformation<SiadapPro
 
 	    }
 
+
 	    @Override
 	    public boolean hasAllneededInfo(PersonSiadapWrapper personWrapper, SiadapUniverse universe) {
 		//if there is something different for the given universe, we will set it and thus return true
@@ -155,7 +158,8 @@ public class ValidationActivityInformation extends ActivityInformation<SiadapPro
 	public abstract void process(PersonSiadapWrapper personWrapper, SiadapUniverse siadapUniverse);
 
 	public String[] getArgumentsDescription(ValidationActivityInformation activityInformation) {
-	    return new String[] { getClass().getSimpleName() };
+	    return new String[] { BundleUtil.getFormattedStringFromResourceBundle(Siadap.SIADAP_BUNDLE_STRING, name(),
+		    activityInformation.getSiadapUniverse().name()) };
 	}
 
 	public abstract boolean hasAllneededInfo(PersonSiadapWrapper personWrapper, SiadapUniverse universe);

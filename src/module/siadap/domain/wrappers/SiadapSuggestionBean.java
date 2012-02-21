@@ -32,7 +32,9 @@ public class SiadapSuggestionBean implements Serializable {
 		if (priorityNumber2 == null)
 		    return 1;
 	    }
-	    return priorityNumber1.compareTo(priorityNumber2);
+	    return priorityNumber1.compareTo(priorityNumber2) == 0 ? o1.getProposal().getExternalId()
+		    .compareTo(o2.getProposal().getExternalId())
+		    : priorityNumber1.compareTo(priorityNumber2);
 	}
     };
 

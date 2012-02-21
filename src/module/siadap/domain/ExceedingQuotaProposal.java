@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
 
 import module.organization.domain.Person;
 import module.organization.domain.Unit;
@@ -36,7 +37,8 @@ public class ExceedingQuotaProposal extends ExceedingQuotaProposal_Base {
 		if (priorityNumber2 == null)
 		    return 1;
 	    }
-	    return priorityNumber1.compareTo(priorityNumber2);
+	    return priorityNumber1.compareTo(priorityNumber2) == 0 ? o1.getExternalId().compareTo(o2.getExternalId())
+		    : priorityNumber1.compareTo(priorityNumber2);
 	}
     };
 
@@ -88,6 +90,86 @@ public class ExceedingQuotaProposal extends ExceedingQuotaProposal_Base {
 	}
 
 	return exceedingQuotaProposalsToReturn;
+
+    }
+
+    /**
+     * Fills the appropriate provided maps with the suggestions separated
+     * 
+     * @param unit
+     *            the unit for which to fill them
+     * @param year
+     *            the year
+     * @param siadap2WithQuotas
+     *            the Map with the SIADAP2 With Quotas
+     * @param siadap3WithoutQuotas
+     *            - self explanatory
+     * @param siadap2WithoutQuotas
+     *            - self explanatory
+     * @param siadap3WithQuotas
+     *            - self explanatory
+     */
+    public static void organizeAndFillExceedingQuotaProposals(final Unit unit, final int year,
+	    Map<ExceedingQuotaSuggestionType, List<ExceedingQuotaProposal>> siadap2WithQuotas,
+	    Map<ExceedingQuotaSuggestionType, List<ExceedingQuotaProposal>> siadap3WithoutQuotas,
+	    Map<ExceedingQuotaSuggestionType, List<ExceedingQuotaProposal>> siadap2WithoutQuotas,
+	    Map<ExceedingQuotaSuggestionType, List<ExceedingQuotaProposal>> siadap3WithQuotas) {
+	List<ExceedingQuotaProposal> quotaProposals = ExceedingQuotaProposal.getQuotaProposalsFor(unit, year);
+
+	List<ExceedingQuotaProposal> siadap2WithQuotasExcellents = new ArrayList<ExceedingQuotaProposal>();
+	List<ExceedingQuotaProposal> siadap2WithQuotasRelevants = new ArrayList<ExceedingQuotaProposal>();
+
+	List<ExceedingQuotaProposal> siadap3WithoutQuotasExcellents = new ArrayList<ExceedingQuotaProposal>();
+	List<ExceedingQuotaProposal> siadap3WithoutQuotasRelevants = new ArrayList<ExceedingQuotaProposal>();
+
+	List<ExceedingQuotaProposal> siadap2WithoutQuotasExcellents = new ArrayList<ExceedingQuotaProposal>();
+	List<ExceedingQuotaProposal> siadap2WithoutQuotasRelevants = new ArrayList<ExceedingQuotaProposal>();
+
+	List<ExceedingQuotaProposal> siadap3WithQuotasExcellents = new ArrayList<ExceedingQuotaProposal>();
+	List<ExceedingQuotaProposal> siadap3WithQuotasRelevants = new ArrayList<ExceedingQuotaProposal>();
+
+	for (ExceedingQuotaProposal proposal : quotaProposals) {
+	    switch (proposal.getSiadapUniverse()) {
+	    case SIADAP2:
+		if (proposal.getWithinOrganizationQuotaUniverse()) {
+		    if (proposal.getSuggestionType().equals(ExceedingQuotaSuggestionType.EXCELLENCY_SUGGESTION))
+			siadap2WithQuotasExcellents.add(proposal);
+		    else if (proposal.getSuggestionType().equals(ExceedingQuotaSuggestionType.HIGH_SUGGESTION))
+			siadap2WithQuotasRelevants.add(proposal);
+		} else {
+		    if (proposal.getSuggestionType().equals(ExceedingQuotaSuggestionType.EXCELLENCY_SUGGESTION))
+			siadap2WithoutQuotasExcellents.add(proposal);
+		    else if (proposal.getSuggestionType().equals(ExceedingQuotaSuggestionType.HIGH_SUGGESTION))
+			siadap2WithoutQuotasRelevants.add(proposal);
+		}
+		break;
+	    case SIADAP3:
+		if (proposal.getWithinOrganizationQuotaUniverse()) {
+		    if (proposal.getSuggestionType().equals(ExceedingQuotaSuggestionType.EXCELLENCY_SUGGESTION))
+			siadap3WithQuotasExcellents.add(proposal);
+		    else if (proposal.getSuggestionType().equals(ExceedingQuotaSuggestionType.HIGH_SUGGESTION))
+			siadap3WithQuotasRelevants.add(proposal);
+		} else {
+		    if (proposal.getSuggestionType().equals(ExceedingQuotaSuggestionType.EXCELLENCY_SUGGESTION))
+			siadap3WithoutQuotasExcellents.add(proposal);
+		    else if (proposal.getSuggestionType().equals(ExceedingQuotaSuggestionType.HIGH_SUGGESTION))
+			siadap3WithoutQuotasRelevants.add(proposal);
+		}
+		break;
+	    }
+	}
+
+	siadap2WithoutQuotas.put(ExceedingQuotaSuggestionType.EXCELLENCY_SUGGESTION, siadap2WithoutQuotasExcellents);
+	siadap2WithoutQuotas.put(ExceedingQuotaSuggestionType.HIGH_SUGGESTION, siadap2WithoutQuotasRelevants);
+
+	siadap3WithoutQuotas.put(ExceedingQuotaSuggestionType.EXCELLENCY_SUGGESTION, siadap3WithoutQuotasExcellents);
+	siadap3WithoutQuotas.put(ExceedingQuotaSuggestionType.HIGH_SUGGESTION, siadap3WithoutQuotasRelevants);
+
+	siadap3WithQuotas.put(ExceedingQuotaSuggestionType.EXCELLENCY_SUGGESTION, siadap3WithQuotasExcellents);
+	siadap3WithQuotas.put(ExceedingQuotaSuggestionType.HIGH_SUGGESTION, siadap3WithQuotasRelevants);
+
+	siadap2WithQuotas.put(ExceedingQuotaSuggestionType.EXCELLENCY_SUGGESTION, siadap2WithQuotasExcellents);
+	siadap2WithQuotas.put(ExceedingQuotaSuggestionType.HIGH_SUGGESTION, siadap2WithQuotasRelevants);
 
     }
 

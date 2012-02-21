@@ -5,9 +5,12 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
+import java.util.TreeSet;
 
 import module.organization.domain.Accountability;
 import module.organization.domain.AccountabilityType;
@@ -18,6 +21,8 @@ import module.organization.domain.Unit;
 import module.siadap.activities.Validation;
 import module.siadap.activities.ValidationActivityInformation;
 import module.siadap.activities.ValidationActivityInformation.ValidationSubActivity;
+import module.siadap.domain.ExceedingQuotaProposal;
+import module.siadap.domain.ExceedingQuotaSuggestionType;
 import module.siadap.domain.Siadap;
 import module.siadap.domain.SiadapEvaluationUniverse;
 import module.siadap.domain.SiadapProcess;
@@ -70,29 +75,43 @@ public class UnitSiadapWrapper extends PartyWrapper implements Serializable {
 
     public Set<SiadapUniverseWrapper> getValidationUniverseWrappers() {
 
-	Set<SiadapUniverseWrapper> universeWrappers = new HashSet<SiadapUniverseWrapper>();
+	Set<SiadapUniverseWrapper> universeWrappers = new TreeSet<SiadapUniverseWrapper>(
+		SiadapUniverseWrapper.COMPARATOR_BY_UNIVERSE);
+
 
 	UniverseDisplayMode universeDisplayMode = UniverseDisplayMode.VALIDATION;
 
+	Map<ExceedingQuotaSuggestionType, List<ExceedingQuotaProposal>> siadap2WithQuotas = new HashMap<ExceedingQuotaSuggestionType, List<ExceedingQuotaProposal>>();
+
+	Map<ExceedingQuotaSuggestionType, List<ExceedingQuotaProposal>> siadap3WithQuotas = new HashMap<ExceedingQuotaSuggestionType, List<ExceedingQuotaProposal>>();
+
+	Map<ExceedingQuotaSuggestionType, List<ExceedingQuotaProposal>> siadap3WithoutQuotas = new HashMap<ExceedingQuotaSuggestionType, List<ExceedingQuotaProposal>>();
+
+	Map<ExceedingQuotaSuggestionType, List<ExceedingQuotaProposal>> siadap2WithoutQuotas = new HashMap<ExceedingQuotaSuggestionType, List<ExceedingQuotaProposal>>();
+
+	ExceedingQuotaProposal.organizeAndFillExceedingQuotaProposals(getUnit(), getYear(), siadap2WithQuotas,
+		siadap3WithoutQuotas, siadap2WithoutQuotas, siadap3WithQuotas);
+
 	universeWrappers.add(new SiadapUniverseWrapper(getValidationPersonSiadapWrappers(SiadapUniverse.SIADAP2, true),
 		SiadapUniverseWrapper.SIADAP2_WITH_QUOTAS, SiadapUniverse.SIADAP2, getConfiguration()
-			.getQuotaExcellencySiadap2WithQuota(), getConfiguration().getQuotaRelevantSiadap2WithQuota(),
-		universeDisplayMode));
+			.getQuotaExcellencySiadap2WithQuota().intValue(), getConfiguration().getQuotaRelevantSiadap2WithQuota()
+			.intValue(),
+		universeDisplayMode, siadap2WithQuotas));
 
 	universeWrappers.add(new SiadapUniverseWrapper(getValidationPersonSiadapWrappers(SiadapUniverse.SIADAP2, false),
 		SiadapUniverseWrapper.SIADAP2_WITHOUT_QUOTAS, SiadapUniverse.SIADAP2, getConfiguration()
 			.getQuotaExcellencySiadap2WithoutQuota(), getConfiguration().getQuotaRelevantSiadap2WithoutQuota(),
-		universeDisplayMode));
+		universeDisplayMode, siadap2WithoutQuotas));
 
 	universeWrappers.add(new SiadapUniverseWrapper(getValidationPersonSiadapWrappers(SiadapUniverse.SIADAP3, true),
 		SiadapUniverseWrapper.SIADAP3_WITH_QUOTAS, SiadapUniverse.SIADAP3, getConfiguration()
 			.getQuotaExcellencySiadap3WithQuota(), getConfiguration().getQuotaRelevantSiadap3WithQuota(),
-		universeDisplayMode));
+		universeDisplayMode, siadap3WithQuotas));
 
 	universeWrappers.add(new SiadapUniverseWrapper(getValidationPersonSiadapWrappers(SiadapUniverse.SIADAP3, false),
 		SiadapUniverseWrapper.SIADAP3_WITHOUT_QUOTAS, SiadapUniverse.SIADAP3, getConfiguration()
 			.getQuotaExcellencySiadap3WithoutQuota(), getConfiguration().getQuotaRelevantSiadap3WithoutQuota(),
-		universeDisplayMode));
+		universeDisplayMode, siadap3WithoutQuotas));
 
 	return universeWrappers;
     }
@@ -287,9 +306,10 @@ public class UnitSiadapWrapper extends PartyWrapper implements Serializable {
 	    ValidationSubActivity validationSubActivity) throws DomainException, ActivityException {
 
 	//if we are closing down the validation, we should make sure that this is the top unit
-	if (validationSubActivity.equals(ValidationSubActivity.TERMINATE_VALIDATION)
-		&& !getUnit().equals(getConfiguration().getSiadapStructureTopUnit()))
-	    throw new SiadapException("error.validation.must.be.closed.on.top.unit.only");
+	if (validationSubActivity.equals(ValidationSubActivity.TERMINATE_VALIDATION)) {
+	    if (!getUnit().equals(getConfiguration().getSiadapStructureTopUnit()))
+		throw new SiadapException("error.validation.must.be.closed.on.top.unit.only");
+	}
 
 	WorkflowActivity activity = SiadapProcess.getActivityStaticly(Validation.class.getSimpleName());
 
@@ -678,26 +698,26 @@ public class UnitSiadapWrapper extends PartyWrapper implements Serializable {
     public boolean isSiadap2WithQuotasAboveQuota() {
 	return new SiadapUniverseWrapper(getSiadap2AndWorkingRelationWithQuotaUniverse(), "siadap2WithQuotas",
 		SiadapUniverse.SIADAP2, getConfiguration().getQuotaExcellencySiadap2WithQuota(), getConfiguration()
-			.getQuotaRelevantSiadap2WithQuota(), null).isAboveQuotasHarmonization();
+			.getQuotaRelevantSiadap2WithQuota(), null, null).isAboveQuotasHarmonization();
     }
 
     public boolean isSiadap2WithoutQuotasAboveQuota() {
 	return new SiadapUniverseWrapper(getSiadap2AndWorkingRelationWithoutQuotaUniverse(), "siadap2WithoutQuotas",
 		SiadapUniverse.SIADAP2, getConfiguration().getQuotaExcellencySiadap2WithoutQuota(), getConfiguration()
-			.getQuotaRelevantSiadap2WithoutQuota(), null).isAboveQuotasHarmonization();
+			.getQuotaRelevantSiadap2WithoutQuota(), null, null).isAboveQuotasHarmonization();
     }
 
     public boolean isSiadap3WithQuotasAboveQuota() {
 
 	return new SiadapUniverseWrapper(getSiadap3AndWorkingRelationWithQuotaUniverse(), "siadap3WithQuotas",
 		SiadapUniverse.SIADAP3, getConfiguration().getQuotaExcellencySiadap3WithQuota(), getConfiguration()
-			.getQuotaRelevantSiadap3WithQuota(), null).isAboveQuotasHarmonization();
+			.getQuotaRelevantSiadap3WithQuota(), null, null).isAboveQuotasHarmonization();
     }
 
     public boolean isSiadap3WithoutQuotasAboveQuota() {
 	return new SiadapUniverseWrapper(getSiadap3AndWorkingRelationWithoutQuotaUniverse(), "siadap3WithoutQuotas",
 		SiadapUniverse.SIADAP3, getConfiguration().getQuotaExcellencySiadap3WithoutQuota(), getConfiguration()
-			.getQuotaRelevantSiadap3WithoutQuota(), null).isAboveQuotasHarmonization();
+			.getQuotaRelevantSiadap3WithoutQuota(), null, null).isAboveQuotasHarmonization();
     }
 
     public UnitSiadapWrapper getSuperiorHarmonizationUnitWrapper() {
