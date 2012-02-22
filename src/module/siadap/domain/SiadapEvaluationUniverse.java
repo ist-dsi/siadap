@@ -76,7 +76,8 @@ public class SiadapEvaluationUniverse extends SiadapEvaluationUniverse_Base {
 	    return CurricularPonderationEvaluationItem.getCurricularPonderationValue(this);
 	}
 	//let's make see the other special case, i.e. when the evaluated is only evaluated by competences
-	if (getSiadap().getEvaluatedOnlyByCompetences()) {
+	final Boolean evaluatedOnlyByCompetences = getSiadap().getEvaluatedOnlyByCompetences();
+	if (evaluatedOnlyByCompetences != null && evaluatedOnlyByCompetences.booleanValue()) {
 	    return getEvaluationScoring(getCompetenceEvaluations());
 	}
 
@@ -113,7 +114,8 @@ public class SiadapEvaluationUniverse extends SiadapEvaluationUniverse_Base {
     }
 
     public int getObjectivesPonderation() {
-	if (getSiadap().getEvaluatedOnlyByCompetences()) {
+	final Boolean evaluatedOnlyByCompetences = getSiadap().getEvaluatedOnlyByCompetences();
+	if (evaluatedOnlyByCompetences != null && evaluatedOnlyByCompetences.booleanValue()) {
 	    return 0;
 	}
 	if (getSiadapUniverse() == SiadapUniverse.SIADAP2)
@@ -124,7 +126,8 @@ public class SiadapEvaluationUniverse extends SiadapEvaluationUniverse_Base {
     }
 
     public int getCompetencesPonderation() {
-	if (getSiadap().getEvaluatedOnlyByCompetences()) {
+	final Boolean evaluatedOnlyByCompetences = getSiadap().getEvaluatedOnlyByCompetences();
+	if (evaluatedOnlyByCompetences != null && evaluatedOnlyByCompetences.booleanValue()) {
 	    return 100;
 	}
 	if (getSiadapUniverse() == SiadapUniverse.SIADAP2)

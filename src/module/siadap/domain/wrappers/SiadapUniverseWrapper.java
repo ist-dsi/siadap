@@ -156,7 +156,7 @@ public class SiadapUniverseWrapper implements Serializable {
 
 	int relevantPeople = 0;
 	//we are assuming that if we are showing the validation, we already have only the relevant people
-	if (universeDisplayMode.equals(UniverseDisplayMode.HARMONIZATION)) {
+	if (universeDisplayMode == UniverseDisplayMode.HARMONIZATION) {
 	    for (PersonSiadapWrapper personSiadapWrapper : siadapUniverseOfPeople) {
 		if (!personSiadapWrapper.isWithSkippedEval(siadapUniverseEnum)) {
 		    relevantPeople++;
@@ -185,6 +185,9 @@ public class SiadapUniverseWrapper implements Serializable {
 	this.currentHarmonizedExcellents = getCurrentExcellents(this.siadapUniverse, universeToConsider, true, false);
 	this.currentHarmonizedRelevants = getCurrentRelevants(this.siadapUniverse, universeToConsider, true, false);
 
+	if (universeDisplayMode == null) {
+	    universeDisplayMode = UniverseDisplayMode.HARMONIZATION;
+	}
 	switch (universeDisplayMode) {
 	case VALIDATION:
 	    this.currentValidatedExcellents = getCurrentExcellents(this.siadapUniverse, universeToConsider, false, true);
