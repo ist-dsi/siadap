@@ -250,14 +250,16 @@ public class SiadapUniverseWrapper implements Serializable {
 	
 	this.siadapExceedingQuotaSuggestionsByTypeForUniverse = new HashMap<ExceedingQuotaSuggestionType, List<SiadapSuggestionBean>>();
 	
-	for (ExceedingQuotaSuggestionType suggestionType : suggestionsByType.keySet()) {
-	    List<SiadapSuggestionBean> suggestionTypeList = new ArrayList<SiadapSuggestionBean>();
-	    this.siadapExceedingQuotaSuggestionsByTypeForUniverse.put(suggestionType, suggestionTypeList);
-	    for (ExceedingQuotaProposal quotaProposal : suggestionsByType.get(suggestionType))
-	    {
-		suggestionTypeList.add(new SiadapSuggestionBean(quotaProposal));
+	if (suggestionsByType != null) {
+	    for (ExceedingQuotaSuggestionType suggestionType : suggestionsByType.keySet()) {
+		List<SiadapSuggestionBean> suggestionTypeList = new ArrayList<SiadapSuggestionBean>();
+		this.siadapExceedingQuotaSuggestionsByTypeForUniverse.put(suggestionType, suggestionTypeList);
+		for (ExceedingQuotaProposal quotaProposal : suggestionsByType.get(suggestionType))
+		{
+		    suggestionTypeList.add(new SiadapSuggestionBean(quotaProposal));
+		}
+		Collections.sort(suggestionTypeList, SiadapSuggestionBean.COMPARATOR_BY_PRIORITY_NUMBER);
 	    }
-	    Collections.sort(suggestionTypeList, SiadapSuggestionBean.COMPARATOR_BY_PRIORITY_NUMBER);
 	}
 
     }
