@@ -393,11 +393,11 @@ relation SiadapYearConfigurationSiadap {
 	}
 }
 
-relation SiadapYearConfigurationSiadapStructureManagementGroupInstance {
+/*relation SiadapYearConfigurationSiadapStructureManagementGroupInstance {
 	SiadapYearConfiguration playsRole siadapYearConfiguration;
 	groups.SiadapStructureManagementGroup playsRole siadapStructureManagementGroup;
 	
-}
+}*/
 
 relation SiadapYearConfigurationSiadapRootModule {
 	SiadapRootModule playsRole siadapRootModule;
@@ -495,14 +495,18 @@ relation SiadapYearConfigurationCCAMembers {
 }
 
 relation SiadapYearConfigurationSiadapStructureManagementGroup {
-	SiadapYearConfiguration playsRole siadapYearConfiguration;
+	SiadapYearConfiguration playsRole siadapYearConfigurationForStructureManagementGroupMembers {
+		multiplicity *;
+	}
 	.module.organization.domain.Person playsRole structureManagementGroupMembers {
 		multiplicity *;
 	}
 }
 
 relation SiadapYearConfigurationScheduleEditorsMembers {
-	SiadapYearConfiguration playsRole siadapYearConfigurationForScheduleEditors;
+	SiadapYearConfiguration playsRole siadapYearConfigurationForScheduleEditors {
+		multiplicity *;
+	}
 	.module.organization.domain.Person playsRole scheduleEditors {
 		multiplicity *;
 	}
@@ -510,14 +514,18 @@ relation SiadapYearConfigurationScheduleEditorsMembers {
 
 
 relation SiadapYearConfigurationRevertStateMembers {
-	SiadapYearConfiguration playsRole siadapYearConfigurationForRevertStateGroupMember;
+	SiadapYearConfiguration playsRole siadapYearConfigurationForRevertStateGroupMember {
+		multiplicity *;
+	}
 	.module.organization.domain.Person playsRole revertStateGroupMember {
 		multiplicity *;
 	}
 }
 
 relation HomologationMembers {
-	SiadapYearConfiguration playsRole siadapYearConfigurationForHomologationMembers;
+	SiadapYearConfiguration playsRole siadapYearConfigurationForHomologationMembers {
+		multiplicity *;
+	}
 	.module.organization.domain.Person playsRole homologationMembers {
 		multiplicity *;
 	}

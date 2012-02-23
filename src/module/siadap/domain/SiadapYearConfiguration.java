@@ -4,6 +4,7 @@ import java.util.List;
 
 import jvstm.cps.ConsistencyPredicate;
 import module.organization.domain.Person;
+import module.siadap.domain.groups.SiadapCCAGroup;
 import module.siadap.domain.groups.SiadapStructureManagementGroup;
 import module.siadap.domain.wrappers.UnitSiadapWrapper;
 import myorg.applicationTier.Authenticate.UserView;
@@ -25,10 +26,10 @@ public class SiadapYearConfiguration extends SiadapYearConfiguration_Base {
     private static final String CCA_MEMBERS_GROUPNAME = "CCA Members";
     private static final String HOMOLOGATION_MEMBERS_GROUPNAME = "Homologation Members";
 
-    private static NamedGroup ccaMembersGroup;
+    private static SiadapCCAGroup ccaMembersGroup;
     private static SiadapStructureManagementGroup siadapStructureManagementGroup;
 
-    public static NamedGroup getCcaMembersGroup() {
+    public static SiadapCCAGroup getCcaMembersGroup() {
 	initGroups();
 	return ccaMembersGroup;
     }
@@ -51,10 +52,8 @@ public class SiadapYearConfiguration extends SiadapYearConfiguration_Base {
 	    return;
 	//get the ccaMembersGroup
 	for (PersistentGroup group : MyOrg.getInstance().getPersistentGroups()) {
-	    if (group instanceof NamedGroup) {
-		if (((NamedGroup) group).getName().equals(CCA_MEMBERS_GROUPNAME)) {
-		    ccaMembersGroup = (NamedGroup) group;
-		}
+	    if (group instanceof SiadapCCAGroup) {
+		ccaMembersGroup = (SiadapCCAGroup) group;
 	    }
 	}
 	//let us create the group if we haven't found it
@@ -80,10 +79,6 @@ public class SiadapYearConfiguration extends SiadapYearConfiguration_Base {
     @Service
     private static void createStructureManagementGroup() {
 	siadapStructureManagementGroup = new SiadapStructureManagementGroup();
-	SiadapRootModule.getInstance().setSiadapStructureManagementGroup(siadapStructureManagementGroup);
-	for (SiadapYearConfiguration siadapYearConfiguration : SiadapRootModule.getInstance().getYearConfigurations()) {
-	    siadapYearConfiguration.setSiadapStructureManagementGroup(siadapStructureManagementGroup);
-	}
     }
 
     @Service
@@ -93,12 +88,7 @@ public class SiadapYearConfiguration extends SiadapYearConfiguration_Base {
 
     @Service
     private static void createCCAMembersGroup() {
-	ccaMembersGroup = new NamedGroup(CCA_MEMBERS_GROUPNAME);
-    }
-
-    @Service
-    public static void addCCAMember(User user) {
-	getCcaMembersGroup().addUsers(user);
+	ccaMembersGroup = new SiadapCCAGroup();
     }
 
     @Service
@@ -109,12 +99,6 @@ public class SiadapYearConfiguration extends SiadapYearConfiguration_Base {
     @Service
     public static void removeHomologationMember(User user) {
 	getHomologationMembersGroup().removeUsers(user);
-    }
-
-    @Service
-    public static void removeCCAMember(User user) {
-	getCcaMembersGroup().removeUsers(user);
-
     }
 
     // 5% of
