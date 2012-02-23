@@ -636,8 +636,6 @@ public class PersonSiadapWrapper extends PartyWrapper implements Serializable {
     @Service
     public void changeEvaluatorTo(Person newEvaluator, LocalDate dateOfChange) {
 	verifyDate(dateOfChange);
-	if (getSiadap().getRequestedAcknowledgeDate() != null)
-	    throw new SiadapException("error.changing.evaluator.already.submitted.for.acknowledgement");
 	LocalDate startOfYear = new LocalDate(dateOfChange.getYear(), 1, 1);
 	LocalDate endOfYear = new LocalDate(dateOfChange.getYear(), 12, 31);
 	SiadapYearConfiguration configuration = getConfiguration();
