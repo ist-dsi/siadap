@@ -2,19 +2,21 @@ package module.siadap.domain;
 
 import java.math.BigDecimal;
 
+import module.organization.domain.Person;
 import module.siadap.domain.scoring.IScoring;
 
 public class CurricularPonderationEvaluationItem extends CurricularPonderationEvaluationItem_Base {
     
     protected CurricularPonderationEvaluationItem(BigDecimal assignedGrade, Boolean assignedExcellency,
 	    String excellencyAwardJustification, String curricularPonderationJustification,
-	    SiadapEvaluationUniverse siadapEvaluationUniverse) {
+	    SiadapEvaluationUniverse siadapEvaluationUniverse, Person evaluator) {
         super();
 	setSiadapEvaluationUniverse(siadapEvaluationUniverse);
 	setEvaluation(assignedGrade);
 	setExcellencyAward(assignedExcellency);
 	setExcellencyAwardJustification(excellencyAwardJustification);
 	setCurricularPonderationJustification(curricularPonderationJustification);
+	setAssignedCPEvaluator(evaluator);
     }
 
     //TODO do the edit (similar to the constructor) with the difference of being associated with an activity (yet to be required)

@@ -237,14 +237,18 @@ public class Siadap extends Siadap_Base {
     
     @Service
     public void createCurricularPonderation(SiadapUniverse siadapUniverse, BigDecimal gradeToAssign, Boolean assignedExcellency,
-	    String excellencyAwardJustification, String curricularPonderationJustification)
+	    String excellencyAwardJustification, String curricularPonderationJustification, Person evaluator)
     {
 	//let's validate everything
-	if (siadapUniverse == null || assignedExcellency == null
+	if (siadapUniverse == null || assignedExcellency == null || evaluator == null
 		|| !SiadapGlobalEvaluation.isValidGrade(gradeToAssign, assignedExcellency.booleanValue())
 		|| (assignedExcellency.booleanValue() && StringUtils.isEmpty(excellencyAwardJustification))
 		|| StringUtils.isEmpty(curricularPonderationJustification))
 	    throw new SiadapException("invalid.data.for.creation.of.a.curricular.ponderation");
+
+	//let's if we don't have an evaluation for the given universe
+	if (getSiadapEvaluationUniverseForSiadapUniverse(siadapUniverse) != null)
+	    throw new SiadapException("error.curricular.ponderation.cannot.have.more.than.one.eval.for.universe");
 
 	SiadapYearConfiguration siadapYearConfiguration = getSiadapYearConfiguration();
 	Unit siadapSpecialHarmonizationUnit = siadapYearConfiguration.getSiadapSpecialHarmonizationUnit();
@@ -269,11 +273,14 @@ public class Siadap extends Siadap_Base {
 	}
 	//let's create the new SiadapEvaluationUniverse
 	SiadapEvaluationUniverse siadapEvaluationUniverse = new SiadapEvaluationUniverse(this, siadapUniverse, null, false);
-	CurricularPonderationEvaluationItem curricularPonderationEvaluationItem = new CurricularPonderationEvaluationItem(gradeToAssign, assignedExcellency, excellencyAwardJustification, curricularPonderationJustification, siadapEvaluationUniverse);
+	CurricularPonderationEvaluationItem curricularPonderationEvaluationItem = new CurricularPonderationEvaluationItem(
+		gradeToAssign, assignedExcellency, excellencyAwardJustification, curricularPonderationJustification,
+		siadapEvaluationUniverse, evaluator);
 	//let's connect this SiadapEvaluationUniverse with the specialunit
 	Person evaluated = getEvaluated();
 	//let's remove the current accountability that it might have for the given SiadapUniverse
 	
+	Accountability accToRemove = null;
 	LocalDate dateToUse = null;
 	//let's search for the previous accountability
 	for (Accountability accountability : evaluated.getParentAccountabilities(accTypeToReplace))
@@ -283,8 +290,11 @@ public class Siadap extends Siadap_Base {
 	    {
 		if (accountability.isActive(SiadapMiscUtilClass.lastDayOfYear(getYear())))
 		{
-		    //this is the one to replace, let's get it's begindate
+		    //this is the one to replace, let's get its begindate
 		    dateToUse = accountability.getBeginDate();
+		    accToRemove = accountability;
+		    //let's actually be conservative here. If we already have one, let's just abort
+		    throw new SiadapException("already.with.a.curricular.ponderation.attributed");
 		}
 	    }
 	}
@@ -295,6 +305,8 @@ public class Siadap extends Siadap_Base {
 	    dateToUse = new LocalDate(getYear(), 12, 30);
 	}
 	
+	if (accToRemove != null)
+	    accToRemove.delete();
 	evaluated.addParent(siadapSpecialHarmonizationUnit, accTypeToReplace, dateToUse,
 		SiadapMiscUtilClass.lastDayOfYear(getYear()));
 

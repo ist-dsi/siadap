@@ -51,7 +51,7 @@
 <schema bundle="SIADAP_RESOURCES" name="activityInformation.CurricularPonderationAttribution"
 		type="module.siadap.activities.CurricularPonderationActivityInformation">
 		<slot name="siadap.defaultSiadapUniverse" key="activity.CurricularPonderationAttribution.label.currentSiadapUniverse" read-only="true"/>
-		<slot name="siadapUniverseToApply" validator="pt.ist.fenixWebFramework.renderers.validators.RequiredValidator" key="activity.CurricularPonderationAttribution.label.siadapUniverseToApply"/>
+		<slot name="siadapUniverseToApply" validator="pt.ist.fenixWebFramework.renderers.validators.RequiredValidator" key="activity.CurricularPonderationAttribution.label.siadapUniverseToApply" read-only="true"/>
 		<slot name="curricularPonderationRemarks" validator="pt.ist.fenixWebFramework.renderers.validators.RequiredValidator" key="activity.CurricularPonderationAttribution.label.curricularPonderationRemarks" layout="longText">
 			<property name="bundle" value="SIADAP_RESOURCES"/>
 			<property name="rows" value="8" />
@@ -62,7 +62,25 @@
 			<property name="rows" value="8" />
 			<property name="columns" value="50" />
 		</slot>
-		<slot name="assignedGrade" validator="pt.ist.fenixWebFramework.renderers.validators.RequiredValidator" key="activity.CurricularPonderationAttribution.label.assignedGrade" />
+		<slot name="assignedGrade" validator="pt.ist.fenixWebFramework.renderers.validators.RequiredValidator" key="activity.CurricularPonderationAttribution.label.assignedGrade">
+			<property name="maxLength" value="5"/>
+			<property name="size" value="5"/>
+		</slot>
+		<slot name="evaluator" layout="autoComplete" validator="pt.ist.fenixWebFramework.renderers.validators.RequiredValidator">
+			<property name="labelField" value="name"/>
+			<property name="format" value="${name} (${user.username})"/>
+			<property name="minChars" value="3"/>		
+			<property name="args" value="provider=module.organization.presentationTier.renderers.providers.PersonAutoCompleteProvider"/>
+			<property name="size" value="60"/>
+				<!--
+			<validator name="pt.ist.fenixWebFramework.rendererExtensions.validators.RequiredAutoCompleteSelectionValidator">
+				<property name="message" value="label.pleaseSelectOne.unit"/>
+				<property name="bundle" value="ORGANIZATION_RESOURCES"/>
+				<property name="key" value="true"/>
+			</validator>
+				-->
+		</slot>
+			
 </schema>
 		
 <schema name="view.competence.name" bundle="SIADAP_RESOURCES"

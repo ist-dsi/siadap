@@ -22,6 +22,7 @@ public abstract class SiadapEvaluationItem extends SiadapEvaluationItem_Base {
 	super();
 	setWhenCreated(new DateTime());
 	setSiadapRootModule(SiadapRootModule.getInstance());
+	setOjbConcreteClass(getClass().getName());
     }
     
     /**

@@ -182,6 +182,7 @@ class SiadapAutoEvaluation {
 class SiadapEvaluationItem {
 	DateTime whenCreated;	
 	LocalDate acknowledgeDate;
+	String ojbConcreteClass;
 }
 
 class CurricularPonderationEvaluationItem extends SiadapEvaluationItem {
@@ -272,6 +273,15 @@ relation SiadapRootModuleSiadapEvaluationItem {
 		multiplicity *;
 	}
 	SiadapRootModule playsRole siadapRootModule;
+}
+
+relation PersonCurricularPonderationEvaluationItem {
+	CurricularPonderationEvaluationItem playsRole curricularPonderations {
+		multiplicity *;
+	}
+	.module.organization.domain.Person playsRole assignedCPEvaluator {
+		multiplicity 1;
+	}
 }
 
 relation SiadapRootModuleCompetence {

@@ -5,6 +5,7 @@ package module.siadap.activities;
 
 import module.siadap.domain.Siadap;
 import module.siadap.domain.SiadapProcess;
+import module.siadap.domain.SiadapYearConfiguration;
 import module.siadap.domain.scoring.SiadapGlobalEvaluation;
 import module.workflow.activities.ActivityInformation;
 import module.workflow.activities.WorkflowActivity;
@@ -21,10 +22,10 @@ public class CurricularPonderationAttribution extends WorkflowActivity<SiadapPro
 
     @Override
     public boolean isActive(SiadapProcess process, User user) {
-	//	Siadap siadap = process.getSiadap();
-	//	SiadapYearConfiguration siadapYearConfiguration = siadap.getSiadapYearConfiguration();
-	//	if (!siadap.hasAnAssociatedCurricularPonderationEval() && siadapYearConfiguration.isCurrentUserMemberOfCCA())
-	//	    return true;
+	Siadap siadap = process.getSiadap();
+	SiadapYearConfiguration siadapYearConfiguration = siadap.getSiadapYearConfiguration();
+	if (!siadap.hasAnAssociatedCurricularPonderationEval() && siadapYearConfiguration.isCurrentUserMemberOfCCA())
+	    return true;
 	return false;
     }
 
@@ -38,7 +39,8 @@ public class CurricularPonderationAttribution extends WorkflowActivity<SiadapPro
 	Siadap siadap = activityInformation.getSiadap();
 	siadap.createCurricularPonderation(activityInformation.getSiadapUniverseToApply(),
 		activityInformation.getAssignedGrade(), activityInformation.getAssignExcellentGrade(),
-		activityInformation.getExcellentGradeJustification(), activityInformation.getCurricularPonderationRemarks());
+		activityInformation.getExcellentGradeJustification(), activityInformation.getCurricularPonderationRemarks(),
+		activityInformation.getEvaluator());
     }
 
     //Ponderação curricular atríbuida no universo {0} com a nota {1} ({2}) - Observações "{3}"
@@ -51,7 +53,8 @@ public class CurricularPonderationAttribution extends WorkflowActivity<SiadapPro
 		activityInformation.getSiadapUniverseToApply().getLocalizedName(),
 		activityInformation.getAssignedGrade().toString(),
 		SiadapGlobalEvaluation.getGlobalEvaluation(activityInformation.getAssignedGrade(),
-			activityInformation.getAssignExcellentGrade().booleanValue()).getLocalizedName(), observations };
+			activityInformation.getAssignExcellentGrade().booleanValue()).getLocalizedName(), observations,
+		activityInformation.getEvaluator().getPresentationName() };
     }
 
     @Override
