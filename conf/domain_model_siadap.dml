@@ -182,7 +182,7 @@ class SiadapAutoEvaluation {
 class SiadapEvaluationItem {
 	DateTime whenCreated;	
 	LocalDate acknowledgeDate;
-	String ojbConcreteClass;
+	//String ojbConcreteClass;
 }
 
 class CurricularPonderationEvaluationItem extends SiadapEvaluationItem {
