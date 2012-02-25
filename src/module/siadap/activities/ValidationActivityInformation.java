@@ -92,7 +92,8 @@ public class ValidationActivityInformation extends ActivityInformation<SiadapPro
 		if (validationAssessment != null && validationAssessment) {
 		    if (validationGrade != null)
 			//something went wrong in the interface, or someone fiddled with this!!
-			throw new SiadapException("error.validation.grade.inconsistent");
+			//TODO as soon as JS is implemented to always give null here, remove this comment
+			//			throw new SiadapException("error.validation.grade.inconsistent");
 		    gradeInEffect = harmonizationClassification;
 		    validationGrade = gradeInEffect;
 		} else {

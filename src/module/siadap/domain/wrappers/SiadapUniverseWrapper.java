@@ -63,6 +63,7 @@ public class SiadapUniverseWrapper implements Serializable {
     private final String universeDescription;
 
     private final int numberRelevantPeopleInUniverse;
+    private final int numberTotalRelevantForQuotaPeopleInUniverse;
     private final BigDecimal excellencyQuota;
     private final int currentEvaluationExcellents;
     private final int currentHarmonizedExcellents;
@@ -73,6 +74,7 @@ public class SiadapUniverseWrapper implements Serializable {
     private final int currentValidatedRelevants;
 
     private final int globalNumberRelevantPeopleInUniverse;
+    private final int globalNumberTotalRelevantForQuotaPeopleInUniverse;
     private final BigDecimal globalExcellencyQuota;
     private final int globalCurrentEvaluationExcellents;
     private final int globalCurrentHarmonizedExcellents;
@@ -147,9 +149,9 @@ public class SiadapUniverseWrapper implements Serializable {
     public SiadapUniverseWrapper(Set<PersonSiadapWrapper> siadapUniverseOfPeople, String universeDescription,
 	    SiadapUniverse universeToConsider, int excellencyQuotaPercentagePoints, int relevantQuotaPercentagePoints,
 	    UniverseDisplayMode universeDisplayMode,
-	    Map<ExceedingQuotaSuggestionType, List<ExceedingQuotaProposal>> suggestionsByType) {
-	this.siadapUniverse = siadapUniverseOfPeople;
+	    Map<ExceedingQuotaSuggestionType, List<ExceedingQuotaProposal>> suggestionsByType, Integer numberTotalRelevant) {
 	this.universeDescription = universeDescription;
+	this.siadapUniverse = siadapUniverseOfPeople;
 
 
 	this.siadapUniverseEnum = universeToConsider;
@@ -162,19 +164,36 @@ public class SiadapUniverseWrapper implements Serializable {
 		    relevantPeople++;
 		}
 	    }
+	    this.numberTotalRelevantForQuotaPeopleInUniverse = relevantPeople;
 
 	} else {
 	    relevantPeople = siadapUniverseOfPeople.size();
+	    this.numberTotalRelevantForQuotaPeopleInUniverse = numberTotalRelevant.intValue();
 	}
 
 	this.numberRelevantPeopleInUniverse = relevantPeople;
+
 	if (universeDisplayMode != null) {
-	    this.excellencyQuota = calculateQuota(this.getNumberRelevantPeopleInUniverse(), excellencyQuotaPercentagePoints)
+	    switch (universeDisplayMode) {
+	    case VALIDATION:
+		this.excellencyQuota = calculateQuota(this.getNumberTotalRelevantForQuotaPeopleInUniverse(),
+			excellencyQuotaPercentagePoints).setScale(universeDisplayMode.getScale(),
+			universeDisplayMode.getQuotaRoundingMode());
+		this.relevantQuota = calculateQuota(this.getNumberTotalRelevantForQuotaPeopleInUniverse(),
+			relevantQuotaPercentagePoints).setScale(universeDisplayMode.getScale(),
+			universeDisplayMode.getQuotaRoundingMode());
+		break;
+	    case HARMONIZATION:
+	    default:
+		this.excellencyQuota = calculateQuota(this.getNumberRelevantPeopleInUniverse(), excellencyQuotaPercentagePoints)
 		    .setScale(universeDisplayMode.getScale(), universeDisplayMode.getQuotaRoundingMode());
 	    this.relevantQuota = calculateQuota(this.getNumberRelevantPeopleInUniverse(), relevantQuotaPercentagePoints)
 		    .setScale(universeDisplayMode.getScale(), universeDisplayMode.getQuotaRoundingMode());
+		break;
+	    }
 
 	} else {
+
 	    this.excellencyQuota = calculateQuota(this.getNumberRelevantPeopleInUniverse(), excellencyQuotaPercentagePoints);
 	    this.relevantQuota = calculateQuota(this.getNumberRelevantPeopleInUniverse(), relevantQuotaPercentagePoints);
 	}
@@ -201,9 +220,13 @@ public class SiadapUniverseWrapper implements Serializable {
 	    }
 	    if (personSiadapWrapper != null) {
 		SiadapYearConfiguration configuration = personSiadapWrapper.getConfiguration();
-		Set<PersonSiadapWrapper> globalUniverse = new UnitSiadapWrapper(configuration.getSiadapStructureTopUnit(),
-			configuration.getYear()).getValidationPersonSiadapWrappers(universeToConsider,
-			personSiadapWrapper.isQuotaAware());
+		Map<Integer, Set<PersonSiadapWrapper>> validationPersonSiadapWrappers = new UnitSiadapWrapper(
+			configuration.getSiadapStructureTopUnit(), configuration.getYear()).getValidationPersonSiadapWrappers(
+			universeToConsider, personSiadapWrapper.isQuotaAware());
+
+		Set<PersonSiadapWrapper> globalUniverse = validationPersonSiadapWrappers.values().iterator().next();
+		this.globalNumberTotalRelevantForQuotaPeopleInUniverse = validationPersonSiadapWrappers.keySet().iterator()
+			.next();
 
 		this.globalCurrentEvaluationExcellents = getCurrentExcellents(globalUniverse, siadapUniverseEnum, false, false);
 		this.globalCurrentEvaluationRelevants = getCurrentRelevants(globalUniverse, siadapUniverseEnum, false, false);
@@ -216,9 +239,11 @@ public class SiadapUniverseWrapper implements Serializable {
 
 		this.globalNumberRelevantPeopleInUniverse = globalUniverse.size();
 
-		this.globalExcellencyQuota = calculateQuota(globalNumberRelevantPeopleInUniverse, excellencyQuotaPercentagePoints)
+		this.globalExcellencyQuota = calculateQuota(globalNumberTotalRelevantForQuotaPeopleInUniverse,
+			excellencyQuotaPercentagePoints)
 			.setScale(universeDisplayMode.getScale(), universeDisplayMode.getQuotaRoundingMode());
-		this.globalRelevantQuota = calculateQuota(globalNumberRelevantPeopleInUniverse, relevantQuotaPercentagePoints)
+		this.globalRelevantQuota = calculateQuota(globalNumberTotalRelevantForQuotaPeopleInUniverse,
+			relevantQuotaPercentagePoints)
 			.setScale(universeDisplayMode.getScale(), universeDisplayMode.getQuotaRoundingMode());
 	    } else {
 		this.globalCurrentEvaluationExcellents = 0;
@@ -229,6 +254,7 @@ public class SiadapUniverseWrapper implements Serializable {
 		this.globalCurrentValidatedRelevants = 0;
 		this.globalExcellencyQuota = null;
 		this.globalNumberRelevantPeopleInUniverse = 0;
+		this.globalNumberTotalRelevantForQuotaPeopleInUniverse = 0;
 		this.globalRelevantQuota = null;
 	    }
 
@@ -247,6 +273,7 @@ public class SiadapUniverseWrapper implements Serializable {
 	    this.globalExcellencyQuota = null;
 	    this.globalNumberRelevantPeopleInUniverse = 0;
 	    this.globalRelevantQuota = null;
+	    this.globalNumberTotalRelevantForQuotaPeopleInUniverse = 0;
 	}
 
 	this.siadapUniverseForSuggestions = null;
@@ -270,6 +297,7 @@ public class SiadapUniverseWrapper implements Serializable {
     public SiadapUniverseWrapper(List<ExceedingQuotaProposal> quotaProposals, String universeDescription,
 	    SiadapUniverse universeToConsider, UnitSiadapWrapper unitBeingSuggestionsMadeFor, boolean quotasUniverse) {
 
+
 	//a null simple universe and everything else intended for the harmonization purposes
 	this.siadapUniverse = null;
 	this.excellencyQuota = BigDecimal.ZERO;
@@ -280,6 +308,9 @@ public class SiadapUniverseWrapper implements Serializable {
 	this.currentHarmonizedRelevants = 0;
 	this.currentValidatedExcellents = 0;
 	this.currentValidatedRelevants = 0;
+
+	this.numberTotalRelevantForQuotaPeopleInUniverse = 0;
+	this.globalNumberTotalRelevantForQuotaPeopleInUniverse = 0;
 
 	this.siadapUniverseForSuggestions = new ArrayList<SiadapSuggestionBean>();
 	HashSet<SiadapSuggestionBean> siadapUniverseForSuggestionsSet = new HashSet<SiadapSuggestionBean>();
@@ -548,5 +579,13 @@ public class SiadapUniverseWrapper implements Serializable {
 
     public Map<ExceedingQuotaSuggestionType, List<SiadapSuggestionBean>> getSiadapExceedingQuotaSuggestionsByTypeForUniverse() {
 	return siadapExceedingQuotaSuggestionsByTypeForUniverse;
+    }
+
+    public int getNumberTotalRelevantForQuotaPeopleInUniverse() {
+	return numberTotalRelevantForQuotaPeopleInUniverse;
+    }
+
+    public int getGlobalNumberTotalRelevantForQuotaPeopleInUniverse() {
+	return globalNumberTotalRelevantForQuotaPeopleInUniverse;
     }
 }

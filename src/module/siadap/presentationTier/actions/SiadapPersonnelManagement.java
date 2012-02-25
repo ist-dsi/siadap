@@ -21,6 +21,7 @@ import module.organization.domain.Unit;
 import module.siadap.activities.ChangePersonnelSituationActivityInformation;
 import module.siadap.domain.CompetenceType;
 import module.siadap.domain.Siadap;
+import module.siadap.domain.SiadapEvaluationUniverse;
 import module.siadap.domain.SiadapProcess;
 import module.siadap.domain.SiadapRootModule;
 import module.siadap.domain.SiadapUniverse;
@@ -393,13 +394,77 @@ public class SiadapPersonnelManagement extends ContextBaseAction {
 			|| evaluatedWrapper.getUnitWhereIsHarmonized(evaluatedWrapper.getSiadap().getDefaultSiadapUniverse()) == null ? "-"
 			: evaluatedWrapper.getUnitWhereIsHarmonized(evaluatedWrapper.getSiadap().getDefaultSiadapUniverse())
 				.getPresentationName());
-		row.setCell(String.valueOf(siadap.getDefaultSiadapUniverse()));
 		row.setCell(evaluatedWrapper.getCareerName());
+		row.setCell(String.valueOf(siadap.getDefaultSiadapUniverse()));
 		row.setCell(evaluatedWrapper.isQuotaAware() ? "Sim" : "Não");
 	    }
 	}
 
 	return streamSpreadsheet(response, "SIADAP-" + year, siadapRawDataSpreadsheet);
+    }
+
+    public final ActionForward downloadSIADAPRawDataWithConfidentialData(final ActionMapping mapping, final ActionForm form,
+	    final HttpServletRequest request, final HttpServletResponse response) throws Exception {
+
+	SiadapRootModule siadapRootModule = SiadapRootModule.getInstance();
+	int year = Integer.parseInt(((String) getAttribute(request, "year")));
+
+	Spreadsheet siadapRawDataSpreadsheet = new Spreadsheet("SIADAP-" + year);
+
+	siadapRawDataSpreadsheet.setHeader("istId avaliado");
+	siadapRawDataSpreadsheet.setHeader("nome");
+	siadapRawDataSpreadsheet.setHeader("istId avaliador");
+	siadapRawDataSpreadsheet.setHeader("nome avaliador");
+	siadapRawDataSpreadsheet.setHeader("unidade onde trabalha");
+	siadapRawDataSpreadsheet.setHeader("unidade onde é harmonizado");
+	siadapRawDataSpreadsheet.setHeader("categoria SIADAP");
+	siadapRawDataSpreadsheet.setHeader("universo SIADAP");
+	siadapRawDataSpreadsheet.setHeader("Conta para quotas IST");
+	siadapRawDataSpreadsheet.setHeader("não avaliado");
+	siadapRawDataSpreadsheet.setHeader("nota quantitativa");
+	siadapRawDataSpreadsheet.setHeader("nota qualitativa");
+	siadapRawDataSpreadsheet.setHeader("parecer harmonização");
+	siadapRawDataSpreadsheet.setHeader("parecer excelente harmonização");
+
+	//let's get all of the SIADAPs
+	SiadapYearConfiguration siadapYearConfiguration = SiadapYearConfiguration.getSiadapYearConfiguration(year);
+	//	List<Siadap> siadaps = siadapYearConfiguration.getSiadaps();
+	List<Siadap> siadaps = SiadapRootModule.getInstance().getSiadaps();
+	for (Siadap siadap : siadaps) {
+	    if (siadap.getYear().intValue() == year) {
+		Row row = siadapRawDataSpreadsheet.addRow();
+		row.setCell(siadap.getEvaluated().getUser().getUsername());
+		row.setCell(siadap.getEvaluated().getPresentationName());
+		row.setCell(siadap.getEvaluator().getPerson().getUser().getUsername());
+		row.setCell(siadap.getEvaluator().getPerson().getPresentationName());
+		PersonSiadapWrapper evaluatedWrapper = new PersonSiadapWrapper(siadap.getEvaluated(), year);
+		row.setCell(evaluatedWrapper.getWorkingUnit().getUnit().getPresentationName());
+		row.setCell(evaluatedWrapper.getSiadap() == null
+			|| evaluatedWrapper.getUnitWhereIsHarmonized(evaluatedWrapper.getSiadap().getDefaultSiadapUniverse()) == null ? "-"
+			: evaluatedWrapper.getUnitWhereIsHarmonized(evaluatedWrapper.getSiadap().getDefaultSiadapUniverse())
+				.getPresentationName());
+		row.setCell(evaluatedWrapper.getCareerName());
+		row.setCell(String.valueOf(siadap.getDefaultSiadapUniverse()));
+		row.setCell(evaluatedWrapper.isQuotaAware() ? "Sim" : "Não");
+		row.setCell(siadap.isWithSkippedEvaluation() ? "Sim" : "Não");
+		row.setCell(siadap.getDefaultTotalEvaluationScoring());
+		if (siadap.getDefaultSiadapUniverse() != null)
+		{
+		    SiadapEvaluationUniverse defaultSiadapEvaluationUniverse = siadap.getDefaultSiadapEvaluationUniverse();
+		    row.setCell(evaluatedWrapper.getTotalQualitativeEvaluationScoring(siadap.getDefaultSiadapUniverse()));
+		    row.setCell(defaultSiadapEvaluationUniverse.getHarmonizationAssessment() != null
+			    && defaultSiadapEvaluationUniverse.getHarmonizationAssessment() ? "Sim" : "Não");
+		    row.setCell(defaultSiadapEvaluationUniverse.getHarmonizationAssessmentForExcellencyAward() != null
+			    && defaultSiadapEvaluationUniverse.getHarmonizationAssessmentForExcellencyAward() ? "Sim" : "Não");
+		}else
+		    row.setCell("-");
+		row.setCell("-");
+		row.setCell("-");
+		row.setCell("-");
+	    }
+	}
+
+	return streamSpreadsheet(response, "SIADAP-" + year + "-all-data", siadapRawDataSpreadsheet);
     }
 
     public final ActionForward downloadSIADAPStructureWithUniverse(final ActionMapping mapping, final ActionForm form,

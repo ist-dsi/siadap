@@ -1,8 +1,13 @@
+<%@page import="myorg.domain.User"%>
+<%@page import="pt.ist.fenixWebFramework.security.UserView"%>
+<%@page import="module.siadap.domain.SiadapYearConfiguration"%>
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html"%>
 <%@ taglib uri="/WEB-INF/struts-bean.tld" prefix="bean"%>
 <%@ taglib uri="/WEB-INF/struts-logic.tld" prefix="logic"%>
 <%@ taglib uri="/WEB-INF/fenix-renderers.tld" prefix="fr"%>
+
+<bean:define id="user" name="USER_SESSION_ATTRIBUTE" property="user"/>
 
 <h2><bean:message key="link.siadap.structureManagement" bundle="SIADAP_RESOURCES"/></h2>
 
@@ -40,6 +45,13 @@
 <html:link action="/siadapPersonnelManagement.do?method=downloadSIADAPRawData" paramId="year" paramName="siadapYearWrapper" paramProperty="chosenYear">
 <p>Download da listagem com todos os dados SIADAP</p>
 </html:link>
+
+<%-- Link for the hierarchy excel file with SIADAP universe and confidential data--%>
+<% if (SiadapYearConfiguration.getSiadapYearConfiguration((Integer)year).getCcaMembers().contains(((User)user).getPerson())) { %>
+<html:link action="/siadapPersonnelManagement.do?method=downloadSIADAPRawDataWithConfidentialData" paramId="year" paramName="siadapYearWrapper" paramProperty="chosenYear">
+<p>Download da listagem com todos os dados SIADAP e detalhes de avaliações (apenas disponível ao CCA)</p>
+</html:link>
+<% } %>
 
 <fr:edit id="searchPerson" name="bean" action="<%="/siadapPersonnelManagement.do?method=viewPerson&year=" + year.toString()%>" >
 <fr:schema type="myorg.util.VariantBean" bundle="SIADAP_RESOURCES">

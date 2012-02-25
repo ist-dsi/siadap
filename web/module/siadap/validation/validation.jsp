@@ -178,23 +178,27 @@ color: darkRed;
 							</tr>
 						</logic:equal>
 						<tr>
-							<th><bean:message key="label.validation.totalEvaluations" bundle="SIADAP_RESOURCES" />
-							<td <%=unitWrapper.isSiadapStructureTopUnit() ?  "" : "colspan='5'" %>><fr:view name="siadapUniverseWrapper" property="numberRelevantPeopleInUniverse"/></td>
+							<th><bean:message key="label.validation.totalEvaluations" bundle="SIADAP_RESOURCES" /></th>
+							<td <%=unitWrapper.isSiadapStructureTopUnit() ?  "" : "colspan='2'"%>><fr:view name="siadapUniverseWrapper" property="numberRelevantPeopleInUniverse"/></td>
+							<th>de</th>
+							<td <%=unitWrapper.isSiadapStructureTopUnit() ?  "" : "colspan='2'"%>><fr:view name="siadapUniverseWrapper" property="numberTotalRelevantForQuotaPeopleInUniverse"/></td>
 							<%-- exclusively global part --%>
 							<logic:equal value="false" name="unit" property="siadapStructureTopUnit">
-								<td colspan="5"><fr:view name="siadapUniverseWrapper" property="globalNumberRelevantPeopleInUniverse"/></td>
+								<td colspan="2"><fr:view name="siadapUniverseWrapper" property="globalNumberRelevantPeopleInUniverse"/></td>
+								<th>de</th>
+								<td colspan="3"><fr:view name="siadapUniverseWrapper" property="globalNumberTotalRelevantForQuotaPeopleInUniverse"/></td>
 							</logic:equal>
 						</tr>
 						<tr>
-							<th><bean:message key="label.harmonization.quota.excellents" bundle="SIADAP_RESOURCES" />
+							<th><bean:message key="label.harmonization.quota.excellents" bundle="SIADAP_RESOURCES" /></th>
 							<td <%=unitWrapper.isSiadapStructureTopUnit() ?  "" : "colspan='5'"%>><fr:view name="siadapUniverseWrapper" property="excellencyQuota"/></td>
 							<%-- exclusively global part --%>
 							<logic:equal value="false" name="unit" property="siadapStructureTopUnit">
-								<td colspan="5"><fr:view name="siadapUniverseWrapper" property="excellencyQuota"/></td>
+								<td colspan="5"><fr:view name="siadapUniverseWrapper" property="globalExcellencyQuota"/></td>
 							</logic:equal>
 						</tr>
 						<tr>
-							<th><bean:message key="label.harmonization.current.excellents.used.quota" bundle="SIADAP_RESOURCES" />
+							<th><bean:message key="label.harmonization.current.excellents.used.quota" bundle="SIADAP_RESOURCES" /></th>
 							<td><fr:view name="siadapUniverseWrapper" property="currentEvaluationExcellents"/></td>
 							<th><bean:message key="label.harmonized" bundle="SIADAP_RESOURCES" /></th>
 							<td class="<%=((SiadapUniverseWrapper) siadapUniverseWrapper).getCurrentHarmonizedExcellentsHTMLClass()%>"><fr:view name="siadapUniverseWrapper" property="currentHarmonizedExcellents"/></td>
@@ -211,7 +215,7 @@ color: darkRed;
 							</logic:equal>
 						</tr>
 						<tr>
-							<th><bean:message key="label.harmonization.quota.relevant" bundle="SIADAP_RESOURCES" />
+							<th><bean:message key="label.harmonization.quota.relevant" bundle="SIADAP_RESOURCES" /></th>
 							<td <%=unitWrapper.isSiadapStructureTopUnit() ? "" : "colspan='5'" %>><fr:view name="siadapUniverseWrapper" property="relevantQuota"/></td>
 							<%-- exclusively global part --%>
 							<logic:equal value="false" name="unit" property="siadapStructureTopUnit">
@@ -219,7 +223,7 @@ color: darkRed;
 							</logic:equal>
 						</tr>
 						<tr>
-							<th><bean:message key="label.harmonization.current.relevant.used.quota" bundle="SIADAP_RESOURCES" />
+							<th><bean:message key="label.harmonization.current.relevant.used.quota" bundle="SIADAP_RESOURCES" /></th>
 							<td><fr:view name="siadapUniverseWrapper" property="currentEvaluationRelevants"/></td>
 							<th><bean:message key="label.harmonized" bundle="SIADAP_RESOURCES" /></th>
 							<td class="<%=((SiadapUniverseWrapper) siadapUniverseWrapper).getCurrentHarmonizedRelevantsHTMLClass()%>"><fr:view name="siadapUniverseWrapper" property="currentHarmonizedRelevants"/></td>
@@ -243,96 +247,6 @@ color: darkRed;
 				</div>
 			
 				</logic:notEmpty>
-				
-			 	<fr:edit name="siadapUniverseWrapper" property="siadapUniverse" nested="true">
-					<fr:schema type="module.siadap.domain.wrappers.PersonSiadapWrapper" bundle="SIADAP_RESOURCES">
-						<fr:slot name="person.name" key="label.evaluated" bundle="SIADAP_RESOURCES" readOnly="true" />
-						<fr:slot name="person.user.username" key="label.login.username" bundle="MYORG_RESOURCES" readOnly="true" />
-						<% 
-						SiadapUniverseWrapper siadapUWrapper = (SiadapUniverseWrapper) siadapUniverseWrapper;
-						if (siadapUWrapper.getSiadapUniverseEnum().equals(SiadapUniverse.SIADAP2))
-						{
-						    %>
-						<fr:slot name="totalEvaluationScoringSiadap2" layout="null-as-label" key="label.totalEvaluationScoring" readOnly="true">
-							<fr:property name="subLayout" value="" />
-						</fr:slot>
-						<fr:slot name="totalQualitativeEvaluationScoringSiadap2" layout="null-as-label" key="label.totalQualitativeEvaluationScoring" readOnly="true">
-							<fr:property name="subLayout" value="" />
-						</fr:slot>
-						<fr:slot name="harmonizationCurrentAssessmentForSIADAP2" layout="radio" key="label.harmonization.assessment" readOnly="true"/> 
-						<fr:slot name="harmonizationCurrentAssessmentForExcellencyAwardForSIADAP2" layout="radio" key="label.harmonization.assessment.forExcellencyAward" readOnly="true"/> 
-						
-						<fr:slot name="validationCurrentAssessmentForSIADAP2" layout="radio" key="label.validation.validationCurrentAssessment">
-							<fr:property name="readOnlyIfNot" value="siadap2AbleToBeValidated" />
-							<fr:property name="classes" value="inline-list"/>
-						</fr:slot>
-						<fr:slot name="validationCurrentAssessmentForExcellencyAwardForSIADAP2" layout="radio" key="label.validation.validationCurrentAssessmentForExcellencyAward">
-							<fr:property name="readOnlyIfNot" value="siadap2AbleToBeValidated" />
-							<fr:property name="classes" value="inline-list"/>
-						</fr:slot>
-						<fr:slot name="validationClassificationForSIADAP2" key="label.validation.classification">
-							<fr:property name="size" value="5"/>
-							<fr:property name="maxLength" value="5"/>
-						</fr:slot>
-						<%
-						} else {
-						%>
-						<fr:slot name="totalEvaluationScoringSiadap3" layout="null-as-label" key="label.totalEvaluationScoring" readOnly="true"> 
-							<fr:property name="subLayout" value="" />
-						</fr:slot>
-						<fr:slot name="totalQualitativeEvaluationScoringSiadap3" layout="null-as-label" key="label.totalQualitativeEvaluationScoring" readOnly="true">
-							<fr:property name="subLayout" value="" />
-						</fr:slot>
-						<fr:slot name="harmonizationCurrentAssessmentForSIADAP3" layout="radio" key="label.harmonization.assessment" readOnly="true"/> 
-						<fr:slot name="harmonizationCurrentAssessmentForExcellencyAwardForSIADAP3" layout="radio" key="label.harmonization.assessment.forExcellencyAward" readOnly="true"/> 
-						<fr:slot name="validationCurrentAssessmentForSIADAP3" layout="radio" key="label.validation.validationCurrentAssessment">
-							<fr:property name="readOnlyIfNot" value="siadap3AbleToBeValidated" />
-							<fr:property name="classes" value="inline-list"/>
-						</fr:slot>
-						<fr:slot name="validationCurrentAssessmentForExcellencyAwardForSIADAP3" layout="radio" key="label.validation.validationCurrentAssessmentForExcellencyAward">
-							<fr:property name="readOnlyIfNot" value="siadap3AbleToBeValidated" />
-							<fr:property name="classes" value="inline-list"/>
-						</fr:slot>
-						
-						<fr:slot name="validationClassificationForSIADAP3" key="label.validation.classification">
-							<fr:property name="size" value="5"/>
-							<fr:property name="maxLength" value="5"/>
-						</fr:slot>
-						<% } %>
-						
-					</fr:schema>
-					<fr:layout name="tabular-row">
-						<fr:property name="classes" value="tstyle2" />
-						<fr:property name="columnClasses" value="aleft,aleft,," />
-					<%-- 	<fr:property name="link(create)" value="/siadapManagement.do?method=createNewSiadapProcess" />
-						<fr:property name="bundle(create)" value="MYORG_RESOURCES" />
-						<fr:property name="key(create)" value="link.create" />
-						<fr:property name="param(create)" value="personWrapper.person.externalId/personId" />
-						<fr:property name="order(create)" value="1" />
-						<fr:property name="visibleIf(create)" value="personWrapper.currentUserAbleToCreateProcess" /> 
-			
-						<fr:property name="link(viewProcess)" value="/workflowProcessManagement.do?method=viewProcess" />
-						<fr:property name="bundle(viewProcess)" value="MYORG_RESOURCES" />
-						<fr:property name="key(viewProcess)" value="link.view" />
-						<fr:property name="param(viewProcess)" value="personWrapper.siadap.process.externalId/processId" />
-						<fr:property name="order(viewProcess)" value="1" />
-			 			<fr:property name="visibleIf(viewProcess)" value="personWrapper.accessibleToCurrentUser" />
-			 			
-			 			<logic:equal value="false" name="unit" property="harmonizationFinished">
-							<fr:property name="link(removeSuggestion)" value="<%="/siadapManagement.do?method=removeExceedingQuotaProposal&year="+year+"&unitId="+unitId%>" />
-							<fr:property name="bundle(removeSuggestion)" value="SIADAP_RESOURCES" />
-							<fr:property name="key(removeSuggestion)" value="link.remove.ExceedingQuotaProposal" />
-							<fr:property name="param(removeSuggestion)" value="proposal.externalId/proposalId" />
-							<fr:property name="order(removeSuggestion)" value="2" />
-						</logic:equal>
-			
-			<%--
-						<fr:property name="sortParameter" value="sortByQuotas" />
-						<fr:property name="sortUrl" value="<%= "/siadapManagement.do?method=viewUnitHarmonizationData&unitId=" + unitId + "&year=" + year.toString()%>" />
-						<fr:property name="sortBy" value="<%= request.getParameter("sortByQuotas") == null ? "person.partyName=asc" : request.getParameter("sortByQuotas") %>" />
-			 --%>
-					</fr:layout>
-				</fr:edit>
 				
 			 <%-- Suggestions part --%>			 
 				<logic:notEmpty name="siadapUniverseWrapper" property="siadapExceedingQuotaSuggestionsByTypeForUniverse">
@@ -456,6 +370,96 @@ color: darkRed;
 						</fr:layout>
 					</fr:edit> --%>
 				</logic:notEmpty>
+			 	<fr:edit name="siadapUniverseWrapper" property="siadapUniverse" nested="true">
+					<fr:schema type="module.siadap.domain.wrappers.PersonSiadapWrapper" bundle="SIADAP_RESOURCES">
+						<fr:slot name="person.name" key="label.evaluated" bundle="SIADAP_RESOURCES" readOnly="true" />
+						<fr:slot name="person.user.username" key="label.login.username" bundle="MYORG_RESOURCES" readOnly="true" />
+						<% 
+						SiadapUniverseWrapper siadapUWrapper = (SiadapUniverseWrapper) siadapUniverseWrapper;
+						if (siadapUWrapper.getSiadapUniverseEnum().equals(SiadapUniverse.SIADAP2))
+						{
+						    %>
+						<fr:slot name="totalEvaluationScoringSiadap2" layout="null-as-label" key="label.totalEvaluationScoring" readOnly="true">
+							<fr:property name="subLayout" value="" />
+						</fr:slot>
+						<fr:slot name="totalQualitativeEvaluationScoringSiadap2" layout="null-as-label" key="label.totalQualitativeEvaluationScoring" readOnly="true">
+							<fr:property name="subLayout" value="" />
+						</fr:slot>
+						<fr:slot name="harmonizationCurrentAssessmentForSIADAP2" layout="radio" key="label.harmonization.assessment" readOnly="true"/> 
+						<fr:slot name="harmonizationCurrentAssessmentForExcellencyAwardForSIADAP2" layout="radio" key="label.harmonization.assessment.forExcellencyAward" readOnly="true"/> 
+						
+						<fr:slot name="validationCurrentAssessmentForSIADAP2" layout="radio" key="label.validation.validationCurrentAssessment">
+							<fr:property name="readOnlyIfNot" value="siadap2AbleToBeValidated" />
+							<fr:property name="classes" value="inline-list"/>
+						</fr:slot>
+						<fr:slot name="validationCurrentAssessmentForExcellencyAwardForSIADAP2" layout="radio" key="label.validation.validationCurrentAssessmentForExcellencyAward">
+							<fr:property name="readOnlyIfNot" value="siadap2AbleToBeValidated" />
+							<fr:property name="classes" value="inline-list"/>
+						</fr:slot>
+						<fr:slot name="validationClassificationForSIADAP2" key="label.validation.classification">
+							<fr:property name="size" value="5"/>
+							<fr:property name="maxLength" value="5"/>
+						</fr:slot>
+						<%
+						} else {
+						%>
+						<fr:slot name="totalEvaluationScoringSiadap3" layout="null-as-label" key="label.totalEvaluationScoring" readOnly="true"> 
+							<fr:property name="subLayout" value="" />
+						</fr:slot>
+						<fr:slot name="totalQualitativeEvaluationScoringSiadap3" layout="null-as-label" key="label.totalQualitativeEvaluationScoring" readOnly="true">
+							<fr:property name="subLayout" value="" />
+						</fr:slot>
+						<fr:slot name="harmonizationCurrentAssessmentForSIADAP3" layout="radio" key="label.harmonization.assessment" readOnly="true"/> 
+						<fr:slot name="harmonizationCurrentAssessmentForExcellencyAwardForSIADAP3" layout="radio" key="label.harmonization.assessment.forExcellencyAward" readOnly="true"/> 
+						<fr:slot name="validationCurrentAssessmentForSIADAP3" layout="radio" key="label.validation.validationCurrentAssessment">
+							<fr:property name="readOnlyIfNot" value="siadap3AbleToBeValidated" />
+							<fr:property name="classes" value="inline-list"/>
+						</fr:slot>
+						<fr:slot name="validationCurrentAssessmentForExcellencyAwardForSIADAP3" layout="radio" key="label.validation.validationCurrentAssessmentForExcellencyAward">
+							<fr:property name="readOnlyIfNot" value="siadap3AbleToBeValidated" />
+							<fr:property name="classes" value="inline-list"/>
+						</fr:slot>
+						
+						<fr:slot name="validationClassificationForSIADAP3" key="label.validation.classification">
+							<fr:property name="size" value="5"/>
+							<fr:property name="maxLength" value="5"/>
+						</fr:slot>
+						<% } %>
+						
+					</fr:schema>
+					<fr:layout name="tabular-row">
+						<fr:property name="classes" value="tstyle2" />
+						<fr:property name="columnClasses" value="aleft,aleft,," />
+					<%-- 	<fr:property name="link(create)" value="/siadapManagement.do?method=createNewSiadapProcess" />
+						<fr:property name="bundle(create)" value="MYORG_RESOURCES" />
+						<fr:property name="key(create)" value="link.create" />
+						<fr:property name="param(create)" value="personWrapper.person.externalId/personId" />
+						<fr:property name="order(create)" value="1" />
+						<fr:property name="visibleIf(create)" value="personWrapper.currentUserAbleToCreateProcess" /> 
+			
+						<fr:property name="link(viewProcess)" value="/workflowProcessManagement.do?method=viewProcess" />
+						<fr:property name="bundle(viewProcess)" value="MYORG_RESOURCES" />
+						<fr:property name="key(viewProcess)" value="link.view" />
+						<fr:property name="param(viewProcess)" value="personWrapper.siadap.process.externalId/processId" />
+						<fr:property name="order(viewProcess)" value="1" />
+			 			<fr:property name="visibleIf(viewProcess)" value="personWrapper.accessibleToCurrentUser" />
+			 			
+			 			<logic:equal value="false" name="unit" property="harmonizationFinished">
+							<fr:property name="link(removeSuggestion)" value="<%="/siadapManagement.do?method=removeExceedingQuotaProposal&year="+year+"&unitId="+unitId%>" />
+							<fr:property name="bundle(removeSuggestion)" value="SIADAP_RESOURCES" />
+							<fr:property name="key(removeSuggestion)" value="link.remove.ExceedingQuotaProposal" />
+							<fr:property name="param(removeSuggestion)" value="proposal.externalId/proposalId" />
+							<fr:property name="order(removeSuggestion)" value="2" />
+						</logic:equal>
+			
+			<%--
+						<fr:property name="sortParameter" value="sortByQuotas" />
+						<fr:property name="sortUrl" value="<%= "/siadapManagement.do?method=viewUnitHarmonizationData&unitId=" + unitId + "&year=" + year.toString()%>" />
+						<fr:property name="sortBy" value="<%= request.getParameter("sortByQuotas") == null ? "person.partyName=asc" : request.getParameter("sortByQuotas") %>" />
+			 --%>
+					</fr:layout>
+				</fr:edit>
+				
 				
 	</logic:iterate>
 	<html:submit styleClass="inputbutton">
