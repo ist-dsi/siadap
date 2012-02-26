@@ -90,7 +90,7 @@ public class ValidationActivityInformation extends ActivityInformation<SiadapPro
 		    throw new SiadapException("error.validation.must.have.harmonization.grade");
 		BigDecimal gradeInEffect = null;
 		if (validationAssessment != null && validationAssessment) {
-		    if (validationGrade != null)
+		    //		    if (validationGrade != null)
 			//something went wrong in the interface, or someone fiddled with this!!
 			//TODO as soon as JS is implemented to always give null here, remove this comment
 			//			throw new SiadapException("error.validation.grade.inconsistent");

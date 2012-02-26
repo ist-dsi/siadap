@@ -321,7 +321,9 @@ public class UnitSiadapWrapper extends PartyWrapper implements Serializable {
 	//if we are closing down the validation, we should make sure that this is the top unit
 	if (validationSubActivity.equals(ValidationSubActivity.TERMINATE_VALIDATION)) {
 	    if (!getUnit().equals(getConfiguration().getSiadapStructureTopUnit()))
+ {
 		throw new SiadapException("error.validation.must.be.closed.on.top.unit.only");
+	    }
 	}
 
 	WorkflowActivity activity = SiadapProcess.getActivityStaticly(Validation.class.getSimpleName());
