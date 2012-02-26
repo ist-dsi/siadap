@@ -103,9 +103,10 @@ color: darkRed;
 </style> 
 	<%-- Control links --%>
 	<logic:equal name="unit" property="siadapStructureTopUnit" value="true">
-		<html:link page="<%="/siadapManagement.do?method=terminateValidation&year="+year.toString()%>" >
+		<%-- <html:link page="<%="/siadapManagement.do?method=terminateValidation&year="+year.toString()%>" >
 			<bean:message key="label.terminateValidation" bundle="SIADAP_RESOURCES"/>
-		</html:link> 
+		</html:link>  --%>
+			<bean:message key="label.terminateValidation" bundle="SIADAP_RESOURCES"/> (temporariamente desactivado)
 	</logic:equal>
 	<logic:notEmpty name="unit" property="unitAboveViaHarmRelation" >
 		<div class="infobox">
