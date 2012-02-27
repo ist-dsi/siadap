@@ -314,7 +314,7 @@ public class SiadapManagement extends ContextBaseAction {
 	    addLocalizedMessage(request, ex.getMessage());
 	}
 
-	return validateUnit(mapping, form, request, response, unitWrapper);
+	return validateUnit(mapping, form, request, response, unitWrapper, siadapUniverseWrappers);
 
     }
 
@@ -339,12 +339,14 @@ public class SiadapManagement extends ContextBaseAction {
 
 	RenderUtils.invalidateViewState();
 
-	return validateUnit(mapping, form, request, response, new UnitSiadapWrapper(unit, siadapYearWrapper.getChosenYear()));
+	return validateUnit(mapping, form, request, response, new UnitSiadapWrapper(unit, siadapYearWrapper.getChosenYear()),
+		null);
 
     }
 
     public final ActionForward validateUnit(final ActionMapping mapping, final ActionForm form, final HttpServletRequest request,
-	    final HttpServletResponse response, UnitSiadapWrapper unitWrapper) {
+	    final HttpServletResponse response, UnitSiadapWrapper unitWrapper,
+	    Collection<SiadapUniverseWrapper> siadapUniverseWrappers) {
 
 	request.setAttribute("siadapYearWrapper", new SiadapYearWrapper(unitWrapper.getYear()));
 
@@ -355,7 +357,11 @@ public class SiadapManagement extends ContextBaseAction {
 	//	}
 
 	request.setAttribute("unit", unitWrapper);
-	request.setAttribute("siadapUniverseWrappers", unitWrapper.getValidationUniverseWrappers());
+	if (siadapUniverseWrappers == null)
+	    request.setAttribute("siadapUniverseWrappers", unitWrapper.getValidationUniverseWrappers());
+	else {
+	    request.setAttribute("siadapUniverseWrappers", siadapUniverseWrappers);
+	}
 
 	return forward(request, "/module/siadap/validation/validation.jsp");
     }

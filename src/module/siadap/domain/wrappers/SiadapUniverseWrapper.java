@@ -167,7 +167,10 @@ public class SiadapUniverseWrapper implements Serializable {
 
 	} else {
 	    relevantPeople = siadapUniverseOfPeople.size();
-	    this.numberTotalRelevantForQuotaPeopleInUniverse = numberTotalRelevant.intValue();
+	    if (numberTotalRelevant != null)
+		this.numberTotalRelevantForQuotaPeopleInUniverse = numberTotalRelevant.intValue();
+	    else
+		this.numberTotalRelevantForQuotaPeopleInUniverse = 0;
 	}
 
 	this.numberRelevantPeopleInUniverse = relevantPeople;
@@ -461,8 +464,8 @@ public class SiadapUniverseWrapper implements Serializable {
 		    || siadapGlobalEvaluation.equals(SiadapGlobalEvaluation.HIGH)) {
 		if (siadapGlobalEvaluation.equals(SiadapGlobalEvaluation.EXCELLENCY)) {
 		    //we are just looking for an excellent, so we will only have it if we have a positive excellency assessment
-		return evaluationUniverse.getCcaClassificationExcellencyAward() != null
-			&& evaluationUniverse.getCcaClassificationExcellencyAward();
+		    return evaluationUniverse.getCcaClassificationExcellencyAward() != null
+			    && evaluationUniverse.getCcaClassificationExcellencyAward();
 		}
 		return (evaluationUniverse.getCcaClassificationExcellencyAward() != null && evaluationUniverse
 			.getCcaClassificationExcellencyAward())

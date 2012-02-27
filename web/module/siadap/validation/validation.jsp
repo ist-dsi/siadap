@@ -1,3 +1,4 @@
+<%@page import="java.util.Collection"%>
 <%@page import="module.siadap.domain.ExceedingQuotaSuggestionType"%>
 <%@page import="java.util.Map"%>
 <%@page import="java.util.Set"%>
@@ -77,7 +78,7 @@ String unitIdJava = unitFromWrapper == null ? "" : unitFromWrapper.getExternalId
 </style>
 <%-- *END* Error messages *END* --%>
 <%
-Set<SiadapUniverseWrapper> siadapUniverseWrappers = (Set<SiadapUniverseWrapper>)request.getAttribute("siadapUniverseWrappers");
+Collection<SiadapUniverseWrapper> siadapUniverseWrappers = (Collection<SiadapUniverseWrapper>)request.getAttribute("siadapUniverseWrappers");
 boolean noData=true;
 for (SiadapUniverseWrapper siadapUniverseWrapper : siadapUniverseWrappers)
 {
@@ -105,8 +106,8 @@ color: darkRed;
 	<logic:equal name="unit" property="siadapStructureTopUnit" value="true">
 		<%-- <html:link page="<%="/siadapManagement.do?method=terminateValidation&year="+year.toString()%>" >
 			<bean:message key="label.terminateValidation" bundle="SIADAP_RESOURCES"/>
-		</html:link>  --%>
-			<bean:message key="label.terminateValidation" bundle="SIADAP_RESOURCES"/> (temporariamente desactivado)
+		</html:link> --%>
+		<bean:message key="label.terminateValidation" bundle="SIADAP_RESOURCES"/> (temporariamente desactivado)
 	</logic:equal>
 	<logic:notEmpty name="unit" property="unitAboveViaHarmRelation" >
 		<div class="infobox">
@@ -138,8 +139,63 @@ color: darkRed;
 	</logic:notEmpty>
 	
 	<script type="text/javascript">
+	//goes to the row of the given element and updates the grade accordingly to the value that should be updated, if we have a 'null' value on the grade
+	function updateGrade(element)
+	{
+		//let's get the row
+		var row = $(element).parents("tr");
+		//let's get the grade input
+		var gradeInput = $(row.children()[8]).find("input[type='text']");
+		
+		//and let's get the given grade
+		var givenGrade = $(row.children()[2]).text().trim();
+		
+		
+		
+		if (gradeInput.val() === "")
+			{
+			var gradeToSet = "";
+			//let's set it based on the grade
+			if (parseFloat(givenGrade) >= 4)
+				gradeToSet = "3.999";
+			if (parseFloat(givenGrade) < 2)
+				gradeToSet = "2.000";
+			gradeInput.val(gradeToSet);
+			}
+		
+		
+		
+	}
+	
+	var anythingChanged = false;
+	
+	function beforeExit(e) {
+		if (anythingChanged === true)
+			{
+			
+		  var message = "Existem alterações por gravar, se fechar a página irá perde-las, tem a certeza que pretende continuar?",
+		  e = e || window.event;
+		  // For IE and Firefox
+		  if (e) {
+		    e.returnValue = message;
+		  }
+
+		  // For Safari
+		  return message;
+			}
+		else {
+			return;
+		}
+		};
+	
 	 $(document).ready(function() {
 		//identifying rows of non harmonized people, and marking them in red
+		$("input").change( function () {
+			anythingChanged = true;
+		});
+	 	$("form[id='siadapData']").submit(function () {
+			anythingChanged = false;
+		}); 
 		$("tr").each(function(index, tr) { 
 			var trChildren = $(tr).children();
 			 if (trChildren.size() === 9) 
@@ -151,15 +207,31 @@ color: darkRed;
 					//let's show the generic warning, if it is not shown yet
 					$(tr).closest('table').prev("div.highlightBox").show(500);
 					} 
+				 
+				 //let's make sure that when we put it to assessment to no, it will render the grade if the grade field is null
+				 $($(trChildren[6]).find("input")).each(function(indexInArray, input) {
+					 if ($(this).next().text().trim() === 'Não')
+						 {
+						 $(this).change(function() {
+							 if (this.checked === true)
+								 updateGrade(this);
+						 });
+							 if (this.checked === true)
+								 updateGrade(this);
+						 }
+					 });
+				 
+				 //$($($("tr")[20]).children()[6]).find("input").each(function(indexInArray, input) { if ($(this).next().text().trim() === 'Não') $(this).change(function() { if ($(this).checked === true) alert('cenas');}); })
+				 
 				}
 		});
 		
-		
+		window.onbeforeunload = beforeExit;
 	}); 
 	</script>
 	
 	
-	<fr:form action="<%="/siadapManagement.do?method=applyValidationData&year=" + year.toString() + "&unitId=" + unitId.toString() %>"> 
+	<fr:form id="siadapData" action="<%="/siadapManagement.do?method=applyValidationData&year=" + year.toString() + "&unitId=" + unitId.toString() %>"> 
 		<fr:edit id="siadapUniverseWrappersList" name="siadapUniverseWrappers" visible="false"/>
 		
     		<logic:iterate id="siadapUniverseWrapper" name="siadapUniverseWrappers">
