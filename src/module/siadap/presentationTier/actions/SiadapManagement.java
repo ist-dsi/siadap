@@ -1,6 +1,7 @@
 package module.siadap.presentationTier.actions;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -302,11 +303,11 @@ public class SiadapManagement extends ContextBaseAction {
 
     private final ActionForward executeValidation(final ActionMapping mapping, final ActionForm form,
 	    final HttpServletRequest request, final HttpServletResponse response,
-	    List<SiadapUniverseWrapper> siadapUniverseWrapperList, ValidationSubActivity validationSubActivity,
+	    Collection<SiadapUniverseWrapper> siadapUniverseWrappers, ValidationSubActivity validationSubActivity,
 	    UnitSiadapWrapper unitWrapper) {
 
 	try {
-	    unitWrapper.executeValidation(siadapUniverseWrapperList, validationSubActivity);
+	    unitWrapper.executeValidation(siadapUniverseWrappers, validationSubActivity);
 	} catch (DomainException ex) {
 	    addLocalizedMessage(request, ex.getLocalizedMessage());
 	} catch (ActivityException ex) {
@@ -474,8 +475,7 @@ public class SiadapManagement extends ContextBaseAction {
 	SiadapYearConfiguration siadapYearConfiguration = SiadapYearConfiguration.getSiadapYearConfiguration(year);
 	UnitSiadapWrapper unitWrapper = new UnitSiadapWrapper(siadapYearConfiguration.getSiadapStructureTopUnit(), year);
 
-	return executeValidation(mapping, form, request, response,
-		new ArrayList<SiadapUniverseWrapper>(unitWrapper.getValidationUniverseWrappers()),
+	return executeValidation(mapping, form, request, response, unitWrapper.getAllUniverseWrappersOfAllPeopleInSubUnits(),
 		ValidationSubActivity.TERMINATE_VALIDATION, unitWrapper);
 
     }
@@ -659,7 +659,6 @@ public class SiadapManagement extends ContextBaseAction {
 
 	    ExceedingQuotaProposal.organizeAndFillExceedingQuotaProposals(unitWrapper.getUnit(), year, siadap2WithQuotas,
 		    siadap3WithoutQuotas, siadap2WithoutQuotas, siadap3WithQuotas);
-
 
 	    //TODO (?) REFACTOR: joantune - this can be remade to use the maps that are used for the validation, it would be cleaner 
 	    //let's make the several universes and add them to be rendered in the page

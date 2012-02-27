@@ -153,7 +153,6 @@ public class SiadapUniverseWrapper implements Serializable {
 	this.universeDescription = universeDescription;
 	this.siadapUniverse = siadapUniverseOfPeople;
 
-
 	this.siadapUniverseEnum = universeToConsider;
 
 	int relevantPeople = 0;
@@ -186,9 +185,9 @@ public class SiadapUniverseWrapper implements Serializable {
 	    case HARMONIZATION:
 	    default:
 		this.excellencyQuota = calculateQuota(this.getNumberRelevantPeopleInUniverse(), excellencyQuotaPercentagePoints)
-		    .setScale(universeDisplayMode.getScale(), universeDisplayMode.getQuotaRoundingMode());
-	    this.relevantQuota = calculateQuota(this.getNumberRelevantPeopleInUniverse(), relevantQuotaPercentagePoints)
-		    .setScale(universeDisplayMode.getScale(), universeDisplayMode.getQuotaRoundingMode());
+			.setScale(universeDisplayMode.getScale(), universeDisplayMode.getQuotaRoundingMode());
+		this.relevantQuota = calculateQuota(this.getNumberRelevantPeopleInUniverse(), relevantQuotaPercentagePoints)
+			.setScale(universeDisplayMode.getScale(), universeDisplayMode.getQuotaRoundingMode());
 		break;
 	    }
 
@@ -240,11 +239,11 @@ public class SiadapUniverseWrapper implements Serializable {
 		this.globalNumberRelevantPeopleInUniverse = globalUniverse.size();
 
 		this.globalExcellencyQuota = calculateQuota(globalNumberTotalRelevantForQuotaPeopleInUniverse,
-			excellencyQuotaPercentagePoints)
-			.setScale(universeDisplayMode.getScale(), universeDisplayMode.getQuotaRoundingMode());
+			excellencyQuotaPercentagePoints).setScale(universeDisplayMode.getScale(),
+			universeDisplayMode.getQuotaRoundingMode());
 		this.globalRelevantQuota = calculateQuota(globalNumberTotalRelevantForQuotaPeopleInUniverse,
-			relevantQuotaPercentagePoints)
-			.setScale(universeDisplayMode.getScale(), universeDisplayMode.getQuotaRoundingMode());
+			relevantQuotaPercentagePoints).setScale(universeDisplayMode.getScale(),
+			universeDisplayMode.getQuotaRoundingMode());
 	    } else {
 		this.globalCurrentEvaluationExcellents = 0;
 		this.globalCurrentEvaluationRelevants = 0;
@@ -277,15 +276,14 @@ public class SiadapUniverseWrapper implements Serializable {
 	}
 
 	this.siadapUniverseForSuggestions = null;
-	
+
 	this.siadapExceedingQuotaSuggestionsByTypeForUniverse = new HashMap<ExceedingQuotaSuggestionType, List<SiadapSuggestionBean>>();
-	
+
 	if (suggestionsByType != null) {
 	    for (ExceedingQuotaSuggestionType suggestionType : suggestionsByType.keySet()) {
 		List<SiadapSuggestionBean> suggestionTypeList = new ArrayList<SiadapSuggestionBean>();
 		this.siadapExceedingQuotaSuggestionsByTypeForUniverse.put(suggestionType, suggestionTypeList);
-		for (ExceedingQuotaProposal quotaProposal : suggestionsByType.get(suggestionType))
-		{
+		for (ExceedingQuotaProposal quotaProposal : suggestionsByType.get(suggestionType)) {
 		    suggestionTypeList.add(new SiadapSuggestionBean(quotaProposal));
 		}
 		Collections.sort(suggestionTypeList, SiadapSuggestionBean.COMPARATOR_BY_PRIORITY_NUMBER);
@@ -296,7 +294,6 @@ public class SiadapUniverseWrapper implements Serializable {
 
     public SiadapUniverseWrapper(List<ExceedingQuotaProposal> quotaProposals, String universeDescription,
 	    SiadapUniverse universeToConsider, UnitSiadapWrapper unitBeingSuggestionsMadeFor, boolean quotasUniverse) {
-
 
 	//a null simple universe and everything else intended for the harmonization purposes
 	this.siadapUniverse = null;
@@ -448,20 +445,43 @@ public class SiadapUniverseWrapper implements Serializable {
 				    .getHarmonizationAssessment() != null
 			    && siadap.getSiadapEvaluationUniverseForSiadapUniverse(siadapUniverseToConsider)
 				    .getHarmonizationAssessment() && checkForPositivelyHarmonizedExcellent(personSiadapWrapper)))
-		    && (!considerValidatedOnly || siadap.hasCompleteValidationAssessment(siadapUniverseToConsider))) {
+		    && (!considerValidatedOnly || (siadap.hasCompleteValidationAssessment(siadapUniverseToConsider) && hasPositiveValidationAssessment(personSiadapWrapper)))) {
 		return true;
 	    }
 	    return false;
 	}
 
+	private boolean hasPositiveValidationAssessment(PersonSiadapWrapper personSiadapWrapper) {
+	    Siadap siadap = personSiadapWrapper.getSiadap();
+	    SiadapEvaluationUniverse evaluationUniverse = siadap
+		    .getSiadapEvaluationUniverseForSiadapUniverse(siadapUniverseToConsider);
+	    if (evaluationUniverse == null)
+		return false;
+	    if (siadapGlobalEvaluation.equals(SiadapGlobalEvaluation.EXCELLENCY)
+		    || siadapGlobalEvaluation.equals(SiadapGlobalEvaluation.HIGH)) {
+		if (siadapGlobalEvaluation.equals(SiadapGlobalEvaluation.EXCELLENCY)) {
+		    //we are just looking for an excellent, so we will only have it if we have a positive excellency assessment
+		return evaluationUniverse.getCcaClassificationExcellencyAward() != null
+			&& evaluationUniverse.getCcaClassificationExcellencyAward();
+		}
+		return (evaluationUniverse.getCcaClassificationExcellencyAward() != null && evaluationUniverse
+			.getCcaClassificationExcellencyAward())
+			|| (evaluationUniverse.getCcaAssessment() != null && evaluationUniverse.getCcaAssessment());
+		//we won't check the grade as we already checked it before coming here
+	    } else {
+		return evaluationUniverse.getCcaAssessment() != null && evaluationUniverse.getCcaAssessment();
+	    }
+	}
+
 	private boolean hasGradeWithinRange(PersonSiadapWrapper personSiadapWrapper) {
 	    Siadap siadap = personSiadapWrapper.getSiadap();
-	    SiadapGlobalEvaluation globalEvaluationEnum = siadap.getSiadapGlobalEvaluationEnum(siadapUniverseToConsider);
+	    SiadapGlobalEvaluation globalEvaluationEnum = siadap.getSiadapGlobalEvaluationEnum(siadapUniverseToConsider,
+		    considerValidatedOnly);
 	    if (globalEvaluationEnum.equals(SiadapGlobalEvaluation.EXCELLENCY)) {
 		return (siadapGlobalEvaluation.equals(SiadapGlobalEvaluation.HIGH) || siadapGlobalEvaluation
 			.equals(SiadapGlobalEvaluation.EXCELLENCY));
 	    }
-	    return siadap.hasGivenSiadapGlobalEvaluation(siadapGlobalEvaluation, siadapUniverseToConsider);
+	    return siadap.hasGivenSiadapGlobalEvaluation(siadapGlobalEvaluation, siadapUniverseToConsider, considerValidatedOnly);
 
 	}
 

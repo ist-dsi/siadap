@@ -388,14 +388,7 @@ public class Siadap extends Siadap_Base {
 	SiadapEvaluationUniverse siadapEvaluationUniverse = getSiadapEvaluationUniverseForSiadapUniverse(siadapUniverse);
 	if (siadapEvaluationUniverse == null)
 	    return false;
-	//it depends on the grade, so if we have a grade of regular, we won't need an assessment
-	if (SiadapGlobalEvaluation.MEDIUM.accepts(siadapEvaluationUniverse.getTotalEvaluationScoring(), false))
-	    return true;
-	if (siadapEvaluationUniverse.getCcaAssessment() == null
-		|| siadapEvaluationUniverse.getCcaClassificationExcellencyAward() == null
-		|| siadapEvaluationUniverse.getCcaClassification() == null)
-	    return false;
-	return true;
+	return siadapEvaluationUniverse.hasCompleteValidationAssessment();
     }
 
     public BigDecimal getDefaultTotalEvaluationScoring() {
@@ -420,7 +413,12 @@ public class Siadap extends Siadap_Base {
     //    }
 
     public SiadapGlobalEvaluation getSiadapGlobalEvaluationEnum(SiadapUniverse siadapUniverse) {
-	return getSiadapEvaluationUniverseForSiadapUniverse(siadapUniverse).getSiadapGlobalEvaluationEnum();
+	return getSiadapGlobalEvaluationEnum(siadapUniverse, false);
+
+    }
+
+    public SiadapGlobalEvaluation getSiadapGlobalEvaluationEnum(SiadapUniverse siadapUniverse, boolean considerValidation) {
+	return getSiadapEvaluationUniverseForSiadapUniverse(siadapUniverse).getSiadapGlobalEvaluationEnum(considerValidation);
 
     }
 
@@ -438,6 +436,11 @@ public class Siadap extends Siadap_Base {
     public boolean hasGivenSiadapGlobalEvaluation(SiadapGlobalEvaluation siadapGlobalEvaluation,
 	    SiadapUniverse siadapUniverseToConsider)
     {
+	return hasGivenSiadapGlobalEvaluation(siadapGlobalEvaluation, siadapUniverseToConsider, false);
+    }
+
+    public boolean hasGivenSiadapGlobalEvaluation(SiadapGlobalEvaluation siadapGlobalEvaluation,
+	    SiadapUniverse siadapUniverseToConsider, boolean considerValidation) {
 	SiadapEvaluationUniverse siadapEvaluationUniverseForSiadapUniverse = getSiadapEvaluationUniverseForSiadapUniverse(siadapUniverseToConsider);
 	if (siadapEvaluationUniverseForSiadapUniverse == null && siadapGlobalEvaluation.equals(SiadapGlobalEvaluation.NONEXISTING)) {
 	    return true;
@@ -453,10 +456,21 @@ public class Siadap extends Siadap_Base {
 	    else
 		return false;
 	}
+	BigDecimal gradeToUse = null;
+	boolean excellencyAward = false;
+	//if we have a compelte validation assessment, we should use that
+	if (considerValidation && siadapEvaluationUniverseForSiadapUniverse.hasCompleteValidationAssessment()) {
+	    gradeToUse = siadapEvaluationUniverseForSiadapUniverse.getCcaClassification();
+	    excellencyAward = siadapEvaluationUniverseForSiadapUniverse.getCcaClassificationExcellencyAward();
+	} else {
+	    gradeToUse = siadapEvaluationUniverseForSiadapUniverse.getTotalEvaluationScoring();
+	    excellencyAward = siadapEvaluationUniverseForSiadapUniverse.hasExcellencyAwarded();
+	}
 
-	return siadapGlobalEvaluation.accepts(siadapEvaluationUniverseForSiadapUniverse.getTotalEvaluationScoring(),
-		siadapEvaluationUniverseForSiadapUniverse.hasExcellencyAwarded());
+	return siadapGlobalEvaluation.accepts(gradeToUse, excellencyAward);
+
     }
+
 
     //    public boolean hasExcellentSiadapEvaluation(SiadapUniverse siadapUniverseToConsider) {
     //	SiadapEvaluationUniverse siadapEvaluationUniverseForSiadapUniverse = getSiadapEvaluationUniverseForSiadapUniverse(siadapUniverseToConsider);

@@ -66,9 +66,18 @@ public class SiadapEvaluationUniverse extends SiadapEvaluationUniverse_Base {
 		|| SiadapGlobalEvaluation.ZERO.accepts(getTotalEvaluationScoring(), hasExcellencyAwarded());
     }
 
-    public SiadapGlobalEvaluation getSiadapGlobalEvaluationEnum() {
-	return SiadapGlobalEvaluation.getGlobalEvaluation(getTotalEvaluationScoring(), hasExcellencyAwarded());
+    public SiadapGlobalEvaluation getSiadapGlobalEvaluationEnum(boolean considerValidation) {
+	if (considerValidation && hasCompleteValidationAssessment())
+	    return SiadapGlobalEvaluation.getGlobalEvaluation(getCcaClassification(), getCcaClassificationExcellencyAward());
+	else
+	    return SiadapGlobalEvaluation.getGlobalEvaluation(getTotalEvaluationScoring(), hasExcellencyAwarded());
     }
+
+    public SiadapGlobalEvaluation getSiadapGlobalEvaluationEnum() {
+	return getSiadapGlobalEvaluationEnum(false);
+
+    }
+
     public BigDecimal getTotalEvaluationScoring() {
 	if (isWithSkippedEvaluation())
 	    return null;
@@ -90,6 +99,17 @@ public class SiadapEvaluationUniverse extends SiadapEvaluationUniverse_Base {
 
     public List<CompetenceEvaluation> getCompetenceEvaluations() {
 	return getEvaluations(CompetenceEvaluation.class, null, null);
+    }
+
+    protected boolean hasCompleteValidationAssessment() {
+	if (isWithSkippedEvaluation())
+	    return true;
+	//it depends on the grade, so if we have a grade of regular, we won't need an assessment
+	if (SiadapGlobalEvaluation.MEDIUM.accepts(getTotalEvaluationScoring(), false))
+	    return true;
+	if (getCcaAssessment() == null || getCcaClassificationExcellencyAward() == null || getCcaClassification() == null)
+	    return false;
+	return true;
     }
 
     public BigDecimal getPonderatedObjectivesScoring() {
