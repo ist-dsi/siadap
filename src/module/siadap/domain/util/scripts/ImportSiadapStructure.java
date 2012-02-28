@@ -32,20 +32,22 @@ import org.joda.time.LocalDate;
 
 import pt.ist.expenditureTrackingSystem.domain.organization.CostCenter;
 import pt.ist.fenixframework.pstm.AbstractDomainObject;
+import pt.utl.ist.fenix.tools.util.i18n.Language;
 import pt.utl.ist.fenix.tools.util.i18n.MultiLanguageString;
 
 public class ImportSiadapStructure extends ReadCustomTask {
 
     Map<Integer, List<Evaluator>> avaliators = new HashMap<Integer, List<Evaluator>>();
     List<Responsible> responsibles = new ArrayList<Responsible>();
-    //    public static Map<String, String> unknownUsersMap = new HashMap<String, String>();
+    // public static Map<String, String> unknownUsersMap = new HashMap<String,
+    // String>();
 
     public static final boolean debugModeOn = false;
 
     /**
      * Contains all of the User objects that have been mapped by this script
      */
-    //    public static Set<User> mappedUsers = new HashSet<User>();
+    // public static Set<User> mappedUsers = new HashSet<User>();
 
     /**
      * Assert if one should go over the Evaluation relations and end them if the
@@ -57,23 +59,23 @@ public class ImportSiadapStructure extends ReadCustomTask {
     public static final boolean removeEvaluationRelationsForUnmappedUsers = false;
     private static boolean inDevelopmentSystem = false;
 
-    //    static {
-    //	unknownUsersMap.put("ist25068", "Pedro Miguel Simões Coito");
-    //	unknownUsersMap.put("ist25072", "Alvarinho Carvalho do Espirito Santo");
-    //	unknownUsersMap.put("ist25079", "Adolfo Pereira Moura");
-    //	unknownUsersMap.put("ist25095", "Marcelo Gurgel Figueiredo Moleiro");
-    //	unknownUsersMap.put("ist25096", "Rute Catarina Panaças Guerreiro");
-    //	unknownUsersMap.put("ist25104", "Teresa Jacinto de Oliveira Marques");
-    //	unknownUsersMap.put("ist25106", "Miriam Mano Ferreira");
-    //	unknownUsersMap.put("ist25109", "Elisabete Moreira de Oliveira Pino");
-    //	unknownUsersMap.put("ist25110", "Dino Rodrigues Pereira das Neves");
-    //	unknownUsersMap.put("ist25111", "Fábio André Duarte Morgado");
-    //	unknownUsersMap.put("ist25112", "Hugo Alexandre Gonçalves Furtado");
-    //	unknownUsersMap.put("ist25115", "Sandra Nazaré Gomes da Fonseca");
-    //	unknownUsersMap.put("ist25118", "Joana Alves Lindinho Nunes de Castro");
-    //	unknownUsersMap.put("ist25121", "Aurora Bonfim de Carvalho Oliveira");
-    //	unknownUsersMap.put("ist25125", "Tiago Luís Ramos Silva Machado");
-    //    }
+    // static {
+    // unknownUsersMap.put("ist25068", "Pedro Miguel Simões Coito");
+    // unknownUsersMap.put("ist25072", "Alvarinho Carvalho do Espirito Santo");
+    // unknownUsersMap.put("ist25079", "Adolfo Pereira Moura");
+    // unknownUsersMap.put("ist25095", "Marcelo Gurgel Figueiredo Moleiro");
+    // unknownUsersMap.put("ist25096", "Rute Catarina Panaças Guerreiro");
+    // unknownUsersMap.put("ist25104", "Teresa Jacinto de Oliveira Marques");
+    // unknownUsersMap.put("ist25106", "Miriam Mano Ferreira");
+    // unknownUsersMap.put("ist25109", "Elisabete Moreira de Oliveira Pino");
+    // unknownUsersMap.put("ist25110", "Dino Rodrigues Pereira das Neves");
+    // unknownUsersMap.put("ist25111", "Fábio André Duarte Morgado");
+    // unknownUsersMap.put("ist25112", "Hugo Alexandre Gonçalves Furtado");
+    // unknownUsersMap.put("ist25115", "Sandra Nazaré Gomes da Fonseca");
+    // unknownUsersMap.put("ist25118", "Joana Alves Lindinho Nunes de Castro");
+    // unknownUsersMap.put("ist25121", "Aurora Bonfim de Carvalho Oliveira");
+    // unknownUsersMap.put("ist25125", "Tiago Luís Ramos Silva Machado");
+    // }
 
     ArrayList<String> costCentersMartelados = new ArrayList<String>();
 
@@ -333,20 +335,21 @@ public class ImportSiadapStructure extends ReadCustomTask {
     @Override
     public void doIt() {
 	try {
-	    //	    FileInputStream fstream = new FileInputStream("/home/joantune/CIIST-Wspace/siadap-import-with-adist.csv");
+	    // FileInputStream fstream = new
+	    // FileInputStream("/home/joantune/CIIST-Wspace/siadap-import-with-adist.csv");
 	    StringReader csvContentReader = new StringReader(csvContent);
 	    // Get the object of DataInputStream
-	    //	    DataInputStream in = new DataInputStream(fstream);
+	    // DataInputStream in = new DataInputStream(fstream);
 	    BufferedReader br = new BufferedReader(csvContentReader);
 	    String strLine;
 	    // Read File Line By Line
 	    while ((strLine = br.readLine()) != null) {
 		processLine(strLine);
-		//let's also add each line to the originalRelationList
+		// let's also add each line to the originalRelationList
 		originalRelationsList.add(strLine);
 	    }
 	    // Close the input stream
-	    //	    in.close();
+	    // in.close();
 	} catch (IOException e) {// Catch exception if any
 	    out.println("Error: " + e.getMessage());
 	}
@@ -367,14 +370,13 @@ public class ImportSiadapStructure extends ReadCustomTask {
 
 	migrateStuff();
 
-	//let's verify the data
+	// let's verify the data
 	validateData();
 
     }
 
-
     private void validateData() {
-	//let's get the data from the system into the input format
+	// let's get the data from the system into the input format
 	LocalDate today = new LocalDate();
 	SiadapYearConfiguration configuration = SiadapYearConfiguration.getSiadapYearConfiguration(today.getYear());
 	out.println("Retrieving statistics for SIADAP for year: " + today.getYear());
@@ -384,13 +386,13 @@ public class ImportSiadapStructure extends ReadCustomTask {
 
 	allAccountabilities.addAll(evaluationRelation.getAccountabilities());
 
-	//going through all of the evaluation relations that are active now
+	// going through all of the evaluation relations that are active now
 
 	HashSet<User> evaluators = new HashSet<User>();
 
 	for (Accountability accountability : allAccountabilities) {
 	    if (accountability.isActiveNow()) {
-		//now, lets get all of the evaluators
+		// now, lets get all of the evaluators
 		if (accountability.getParent() instanceof Person) {
 		    evaluators.add(((Person) accountability.getParent()).getUser());
 		}
@@ -401,12 +403,14 @@ public class ImportSiadapStructure extends ReadCustomTask {
 	    }
 	}
 
-	//now let's iterate through each of the evaluators and get all of the persons that are evaluated
+	// now let's iterate through each of the evaluators and get all of the
+	// persons that are evaluated
 
 	for (User user : evaluators) {
 	    PersonSiadapWrapper evaluatorSiadapWrapper = new PersonSiadapWrapper(user.getPerson(), today.getYear());
 	    for (PersonSiadapWrapper evaluatedPerson : evaluatorSiadapWrapper.getPeopleToEvaluate()) {
-		//let's get his cost center and write the line out for each person
+		// let's get his cost center and write the line out for each
+		// person
 		String stringToWrite = evaluatedPerson.getWorkingUnit().getUnit().getAcronym().substring(4) + ","
 			+ evaluatedPerson.getPerson().getUser().getUsername() + ","
 			+ evaluatorSiadapWrapper.getPerson().getUser().getUsername() + ",";
@@ -417,7 +421,7 @@ public class ImportSiadapStructure extends ReadCustomTask {
 	    }
 	}
 
-	//sort both lists
+	// sort both lists
 	Collections.sort(originalRelationsList);
 	Collections.sort(systemsRelationsList);
 
@@ -508,8 +512,7 @@ public class ImportSiadapStructure extends ReadCustomTask {
 		    if (evaluatedPerson == null) {
 			out.println("Warning, no Person found, istId: " + evaluated.istId + " importing it");
 			if (inDevelopmentSystem) {
-
-			    Person p = Person.create(MultiLanguageString.i18n().add("pt", "DUMMY USER").finish(),
+			    Person p = Person.create(new MultiLanguageString().with(Language.pt, "DUMMY USER"),
 				    Person.getPartyTypeInstance());
 			    p.setUser(user);
 			} else {
@@ -527,20 +530,23 @@ public class ImportSiadapStructure extends ReadCustomTask {
 			    workingRelationWithNoQuota, today, null);
 
 		    for (Accountability acc : evaluatedPerson.getParentAccountabilities()) {
-			//if we are talking about a different unit with a valid any kind of working relation, let's remove it
+			// if we are talking about a different unit with a valid
+			// any kind of working relation, let's remove it
 			if (acc.getParent() != unit
 				&& (workingPartyPredicate.eval(null, acc) || workingNoQuotaPartyPredicate.eval(null, acc))
 				&& acc.getParent() instanceof Unit) {
-			    //remove
+			    // remove
 			    out.println("Going to remove previous working relation for " + acc.getChild().getPartyName() + " "
 				    + acc.getDetailsString() + " from unit " + acc.getParent().getPresentationName());
 			    evaluatedPerson.removeParent(acc);
 			}
-			//or also, if we are talking about the same unit, but with a different kind of valid working relation, let's remove it
+			// or also, if we are talking about the same unit, but
+			// with a different kind of valid working relation,
+			// let's remove it
 			if (acc.getParent() == unit
 				&& ((evaluated.getAdist() && workingPartyPredicate.eval(null, acc)) || (!evaluated.getAdist() && workingNoQuotaPartyPredicate
 					.eval(null, acc)))) {
-			    //remove
+			    // remove
 			    out.println("Going to remove previous invalid type working relation for "
 				    + acc.getChild().getPartyName() + " " + acc.getDetailsString() + " from unit "
 				    + acc.getParent().getPresentationName());
@@ -556,11 +562,12 @@ public class ImportSiadapStructure extends ReadCustomTask {
 			evaluatedPerson.addParent(unit, workingRelationWithNoQuota,
 				minParentBeginningDateExistence(unit, startOfTheYear), endOfTheYear);
 		    }
-		    //let's remove any custom eval relations that might be present for this evaluatedPerson
+		    // let's remove any custom eval relations that might be
+		    // present for this evaluatedPerson
 		    for (Accountability acc : evaluatedPerson.getParentAccountabilities()) {
 			if (!acc.getParent().equals(evaluatorPerson) && evalForYearPredicate.eval(evaluatedPerson, acc)
 				&& acc.getChild() instanceof Person && acc.getParent() instanceof Person) {
-			    //remove
+			    // remove
 			    out.println("Going to remove previous personal eval rel for " + acc.getChild().getPartyName() + " "
 				    + acc.getDetailsString() + " with unit " + acc.getParent().getPresentationName());
 			    evaluatedPerson.removeParent(acc);
@@ -624,7 +631,7 @@ public class ImportSiadapStructure extends ReadCustomTask {
 	    for (Responsible responsible : responsibles) {
 		Unit unit = responsible.getCenter().getUnit();
 		Person person = responsible.getUser().getPerson();
-		//let's remove the previous responsibles
+		// let's remove the previous responsibles
 		for (Accountability acc : unit.getChildAccountabilities()) {
 		    if (acc.getChild() != person && evalForYearPredicate.eval(acc.getChild(), acc)) {
 			debug("Going to remove previous responsible " + acc.getChild().getPartyName() + " "
@@ -680,7 +687,7 @@ public class ImportSiadapStructure extends ReadCustomTask {
 		if (user.getPerson() == null) {
 		    if (inDevelopmentSystem) {
 
-			Person p = Person.create(MultiLanguageString.i18n().add("pt", "DUMMY USER").finish(),
+			Person p = Person.create(new MultiLanguageString().with(Language.pt, "DUMMY USER"),
 				Person.getPartyTypeInstance());
 			p.setUser(user);
 		    } else {
@@ -700,16 +707,16 @@ public class ImportSiadapStructure extends ReadCustomTask {
 
     }
 
-    //    static protected void addMappedUserByUsername(String username) {
+    // static protected void addMappedUserByUsername(String username) {
     //
-    //	User user = User.findByUsername(username);
+    // User user = User.findByUsername(username);
     //
-    //	if (user == null) {
-    //		user = User.createNewUser(username);
-    //	    	out.println("Created user: " + username);
-    //	} else
-    //	    mappedUsers.add(user);
-    //    }
+    // if (user == null) {
+    // user = User.createNewUser(username);
+    // out.println("Created user: " + username);
+    // } else
+    // mappedUsers.add(user);
+    // }
 
     static protected CostCenter validateCCenter(String centerString, CostCenter c, ArrayList<String> costCentersMartelados)
 	    throws Error {
@@ -838,13 +845,13 @@ public class ImportSiadapStructure extends ReadCustomTask {
 	List<Evaluated> evaluated;
 
 	public Evaluator(String istId) {
-	    //	    addMappedUserByUsername(istId);
+	    // addMappedUserByUsername(istId);
 	    this.istId = istId.trim();
 	    evaluated = new ArrayList<Evaluated>();
 	}
 
 	public void addEvaluated(String istId, Boolean adist) {
-	    //	    addMappedUserByUsername(istId);
+	    // addMappedUserByUsername(istId);
 	    evaluated.add(new Evaluated(istId, adist));
 	}
 
@@ -868,7 +875,7 @@ public class ImportSiadapStructure extends ReadCustomTask {
 	public Evaluated(String istId, Boolean adist) {
 	    this.istId = istId.trim();
 	    this.adist = adist;
-	    //	    addMappedUserByUsername(this.istId);
+	    // addMappedUserByUsername(this.istId);
 	}
 
 	public boolean getAdist() {
@@ -885,7 +892,7 @@ public class ImportSiadapStructure extends ReadCustomTask {
 	String costCenterOId;
 
 	public Responsible(User user, CostCenter center) {
-	    //	    mappedUsers.add(user);
+	    // mappedUsers.add(user);
 	    this.userOId = user.getExternalId();
 	    this.costCenterOId = center.getExternalId();
 	}
