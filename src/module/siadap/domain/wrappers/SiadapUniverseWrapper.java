@@ -14,7 +14,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import module.siadap.domain.ExceedingQuotaProposal;
 import module.siadap.domain.ExceedingQuotaSuggestionType;
@@ -56,7 +55,7 @@ public class SiadapUniverseWrapper implements Serializable {
      * Default serial version ID
      */
     private static final long serialVersionUID = 1L;
-    private final Set<PersonSiadapWrapper> siadapUniverse;
+    private final Collection<PersonSiadapWrapper> siadapUniverse;
 
     private final List<SiadapSuggestionBean> siadapUniverseForSuggestions;
     private final Map<ExceedingQuotaSuggestionType, List<SiadapSuggestionBean>> siadapExceedingQuotaSuggestionsByTypeForUniverse;
@@ -146,7 +145,7 @@ public class SiadapUniverseWrapper implements Serializable {
      * @param excellencyQuotaPercentagePoints
      * @param relevantQuotaPercentagePoints
      */
-    public SiadapUniverseWrapper(Set<PersonSiadapWrapper> siadapUniverseOfPeople, String universeDescription,
+    public SiadapUniverseWrapper(Collection<PersonSiadapWrapper> siadapUniverseOfPeople, String universeDescription,
 	    SiadapUniverse universeToConsider, int excellencyQuotaPercentagePoints, int relevantQuotaPercentagePoints,
 	    UniverseDisplayMode universeDisplayMode,
 	    Map<ExceedingQuotaSuggestionType, List<ExceedingQuotaProposal>> suggestionsByType, Integer numberTotalRelevant) {
@@ -222,11 +221,11 @@ public class SiadapUniverseWrapper implements Serializable {
 	    }
 	    if (personSiadapWrapper != null) {
 		SiadapYearConfiguration configuration = personSiadapWrapper.getConfiguration();
-		Map<Integer, Set<PersonSiadapWrapper>> validationPersonSiadapWrappers = new UnitSiadapWrapper(
+		Map<Integer, Collection<PersonSiadapWrapper>> validationPersonSiadapWrappers = new UnitSiadapWrapper(
 			configuration.getSiadapStructureTopUnit(), configuration.getYear()).getValidationPersonSiadapWrappers(
 			universeToConsider, personSiadapWrapper.isQuotaAware());
 
-		Set<PersonSiadapWrapper> globalUniverse = validationPersonSiadapWrappers.values().iterator().next();
+		Collection<PersonSiadapWrapper> globalUniverse = validationPersonSiadapWrappers.values().iterator().next();
 		this.globalNumberTotalRelevantForQuotaPeopleInUniverse = validationPersonSiadapWrappers.keySet().iterator()
 			.next();
 
@@ -508,7 +507,7 @@ public class SiadapUniverseWrapper implements Serializable {
 
     }
 
-    public Set<PersonSiadapWrapper> getSiadapUniverse() {
+    public Collection<PersonSiadapWrapper> getSiadapUniverse() {
 	return siadapUniverse;
     }
 

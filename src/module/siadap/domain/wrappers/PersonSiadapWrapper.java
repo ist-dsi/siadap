@@ -39,6 +39,19 @@ import pt.ist.fenixframework.plugins.remote.domain.exception.RemoteException;
 
 public class PersonSiadapWrapper extends PartyWrapper implements Serializable {
 
+    public static final Comparator<PersonSiadapWrapper> PERSON_COMPARATOR_BY_NAME_FALLBACK_YEAR_THEN_PERSON_OID = new Comparator<PersonSiadapWrapper>() {
+
+	@Override
+	public int compare(PersonSiadapWrapper o1, PersonSiadapWrapper o2) {
+	    int nameComparison = o1.getName().compareTo(o2.getName());
+	    if (nameComparison == 0)
+		return (o1.getYear() - o2.getYear()) == 0 ? o1.getPerson().getExternalId()
+			.compareTo(o2.getPerson().getExternalId()) : o1.getYear() - o2.getYear();
+
+	    return nameComparison;
+	}
+    };
+
     private Person person;
 
     /*

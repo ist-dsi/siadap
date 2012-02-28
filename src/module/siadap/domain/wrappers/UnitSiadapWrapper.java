@@ -101,7 +101,7 @@ public class UnitSiadapWrapper extends PartyWrapper implements Serializable {
 
     }
 
-    public Set<SiadapUniverseWrapper> getValidationUniverseWrappers() {
+    public Collection<SiadapUniverseWrapper> getValidationUniverseWrappers() {
 
 	Set<SiadapUniverseWrapper> universeWrappers = new TreeSet<SiadapUniverseWrapper>(
 		SiadapUniverseWrapper.COMPARATOR_BY_UNIVERSE);
@@ -119,13 +119,13 @@ public class UnitSiadapWrapper extends PartyWrapper implements Serializable {
 	ExceedingQuotaProposal.organizeAndFillExceedingQuotaProposals(getUnit(), getYear(), siadap2WithQuotas,
 		siadap3WithoutQuotas, siadap2WithoutQuotas, siadap3WithQuotas);
 
-	Map<Integer, Set<PersonSiadapWrapper>> validationSiadap2WithQuotas = getValidationPersonSiadapWrappers(
+	Map<Integer, Collection<PersonSiadapWrapper>> validationSiadap2WithQuotas = getValidationPersonSiadapWrappers(
 		SiadapUniverse.SIADAP2, true);
-	Map<Integer, Set<PersonSiadapWrapper>> validationSiadap3WithQuotas = getValidationPersonSiadapWrappers(
+	Map<Integer, Collection<PersonSiadapWrapper>> validationSiadap3WithQuotas = getValidationPersonSiadapWrappers(
 		SiadapUniverse.SIADAP3, true);
-	Map<Integer, Set<PersonSiadapWrapper>> validationSiadap2WithoutQuotas = getValidationPersonSiadapWrappers(
+	Map<Integer, Collection<PersonSiadapWrapper>> validationSiadap2WithoutQuotas = getValidationPersonSiadapWrappers(
 		SiadapUniverse.SIADAP2, false);
-	Map<Integer, Set<PersonSiadapWrapper>> validationSiadap3WithoutQuotas = getValidationPersonSiadapWrappers(
+	Map<Integer, Collection<PersonSiadapWrapper>> validationSiadap3WithoutQuotas = getValidationPersonSiadapWrappers(
 		SiadapUniverse.SIADAP3, false);
 
 	universeWrappers.add(new SiadapUniverseWrapper(validationSiadap2WithQuotas.values().iterator().next(),
@@ -161,7 +161,7 @@ public class UnitSiadapWrapper extends PartyWrapper implements Serializable {
      *         evaluator, from this unit and those below (using the
      *         {@link SiadapYearConfiguration#getHarmonizationUnitRelations()})
      */
-    protected Map<Integer, Set<PersonSiadapWrapper>> getValidationPersonSiadapWrappers(final SiadapUniverse universe,
+    protected Map<Integer, Collection<PersonSiadapWrapper>> getValidationPersonSiadapWrappers(final SiadapUniverse universe,
 	    final boolean belongsToInstitutionalQuota) {
 
 	List<PersonSiadapWrapper> listPeopleToUse = new ArrayList<PersonSiadapWrapper>();
@@ -200,8 +200,9 @@ public class UnitSiadapWrapper extends PartyWrapper implements Serializable {
 		    }
 		}, Collections.singleton(getConfiguration().getHarmonizationUnitRelations()),
 		universe.getHarmonizationRelation(getConfiguration()));
-	HashMap<Integer, Set<PersonSiadapWrapper>> hashMap = new HashMap<Integer, Set<PersonSiadapWrapper>>();
-	hashMap.put(new Integer(counter[0]), new HashSet<PersonSiadapWrapper>(listPeopleToUse));
+	HashMap<Integer, Collection<PersonSiadapWrapper>> hashMap = new HashMap<Integer, Collection<PersonSiadapWrapper>>();
+	Collections.sort(listPeopleToUse, PersonSiadapWrapper.PERSON_COMPARATOR_BY_NAME_FALLBACK_YEAR_THEN_PERSON_OID);
+	hashMap.put(new Integer(counter[0]), listPeopleToUse);
 	return hashMap;
 
     }

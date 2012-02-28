@@ -310,11 +310,13 @@ public class SiadapManagement extends ContextBaseAction {
 	    unitWrapper.executeValidation(siadapUniverseWrappers, validationSubActivity);
 	} catch (DomainException ex) {
 	    addLocalizedMessage(request, ex.getLocalizedMessage());
+	    return validateUnit(mapping, form, request, response, unitWrapper, siadapUniverseWrappers);
 	} catch (ActivityException ex) {
 	    addLocalizedMessage(request, ex.getMessage());
+	    return validateUnit(mapping, form, request, response, unitWrapper, siadapUniverseWrappers);
 	}
 
-	return validateUnit(mapping, form, request, response, unitWrapper, siadapUniverseWrappers);
+	return validateUnit(mapping, form, request, response, unitWrapper, null);
 
     }
 
