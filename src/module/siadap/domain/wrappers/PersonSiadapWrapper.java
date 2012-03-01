@@ -64,7 +64,6 @@ public class PersonSiadapWrapper extends PartyWrapper implements Serializable {
     private Boolean harmonizationCurrentAssessmentForExcellencyAwardForSIADAP2;
     private Boolean harmonizationCurrentAssessmentForExcellencyAwardForSIADAP3;
 
-
     private Boolean validationCurrentAssessmentForSIADAP3;
     private Boolean validationCurrentAssessmentForSIADAP2;
 
@@ -831,15 +830,42 @@ public class PersonSiadapWrapper extends PartyWrapper implements Serializable {
 	return emailAddress;
     }
 
-    @Service
+    /**
+     * @see #changeDefaultUniverseTo(SiadapUniverse, LocalDate, boolean) - it's
+     *      equal but with a force of false
+     */
     public void changeDefaultUniverseTo(SiadapUniverse siadapUniverseToChangeTo, LocalDate dateOfChange) {
+	changeDefaultUniverseTo(siadapUniverseToChangeTo, dateOfChange, false);
+    }
+
+    /**
+     * 
+     * @param siadapUniverseToChangeTo
+     *            the default {@link SiadapUniverse} to change to
+     * @param dateOfChange
+     *            the date to change
+     * @param forceChange
+     *            if set to true, it will allow to make the change even if the
+     *            evaluation has been harmonized, but NOT if it has been
+     *            validated
+     */
+    @Service
+    public void changeDefaultUniverseTo(SiadapUniverse siadapUniverseToChangeTo, LocalDate dateOfChange, boolean forceChange) {
 	SiadapUniverse defaultSiadapUniverse = getSiadap().getDefaultSiadapUniverse();
 
 	verifyDate(dateOfChange);
-	//let's check if we have a closed harmonization, if so, we shouldn't allow the change
-	Unit unitWhereIsHarmonized = getUnitWhereIsHarmonized(defaultSiadapUniverse);
-	if (new UnitSiadapWrapper(unitWhereIsHarmonized, getYear()).isHarmonizationFinished())
-	    throw new SiadapException("error.cant.change.siadap.universe.because.it.has.closed.harmonization");
+	if (!forceChange) {
+	    //let's check if we have a closed harmonization, if so, we shouldn't allow the change
+	    Unit unitWhereIsHarmonized = getUnitWhereIsHarmonized(defaultSiadapUniverse);
+	    if (new UnitSiadapWrapper(unitWhereIsHarmonized, getYear()).isHarmonizationFinished())
+		throw new SiadapException("error.cant.change.siadap.universe.because.it.has.closed.harmonization");
+	} else {
+	    //let's make sure it is not validated
+	    if (getSiadap().getDefaultSiadapEvaluationUniverse() != null) {
+		if (getSiadap().getDefaultSiadapEvaluationUniverse().getValidationDate() != null)
+		    throw new SiadapException("error.cant.change.siadap.universe.because.it.has.closed.validation");
+	    }
+	}
 
 	//let's also change the Harmonization relation
 	Accountability retrieveDefaultHarmAccForGivenSiadapUniverse = retrieveDefaultHarmAccForGivenSiadapUniverse(getSiadap()

@@ -1,3 +1,4 @@
+<%@page import="module.siadap.domain.SiadapRootModule"%>
 <%@page import="module.organization.domain.AccountabilityType"%>
 <%@page import="module.organization.domain.Accountability"%>
 <%@page import="java.util.ArrayList"%>
@@ -87,6 +88,10 @@ SiadapYearConfiguration configuration = SiadapYearConfiguration.getSiadapYearCon
 
 boolean isAbleToChangeAnything = false;
 boolean isManager = false;
+boolean isCCAMember = false;
+if (SiadapRootModule.getInstance().getSiadapCCAGroup().isMember(currentUser)) {
+    isCCAMember = true;
+}
 //if (configuration.getCcaMembers().contains(person) || Role.getRole(RoleType.MANAGER).isMember(currentUser) )
 if (Role.getRole(RoleType.MANAGER).isMember(currentUser) || configuration.isUserMemberOfStructureManagementGroup(currentUser) )
 {
@@ -99,6 +104,7 @@ if (Role.getRole(RoleType.MANAGER).isMember(currentUser))
 
 request.setAttribute("isAbleToChangeAnything", isAbleToChangeAnything);
 request.setAttribute("isManager", isManager);
+request.setAttribute("isCCAMember", isCCAMember);
 %>
 
 
@@ -116,9 +122,13 @@ request.setAttribute("isManager", isManager);
 		    | <html:link styleId="removeSiadap"  page="<%="/siadapPersonnelManagement.do?method=removeSiadap&year="+year.toString()%>" paramName="person" paramProperty="person.externalId" paramId="personId">
 				<bean:message key="label.management.removeSiadap" bundle="SIADAP_RESOURCES"/>
 		      </html:link>
-		      <script type="text/javascript">
-		      	linkConfirmationHook('removeSiadap', '<bean:message key="label.management.removeSiadap.confirmationMessage" bundle="SIADAP_RESOURCES"/>','<bean:message key="label.management.removeSiadap" bundle="SIADAP_RESOURCES"/>');
-		      </script>
+			  <script type="text/javascript">
+			   	linkConfirmationHook('removeSiadap', '<bean:message key="label.management.removeSiadap.confirmationMessage" bundle="SIADAP_RESOURCES"/>','<bean:message key="label.management.removeSiadap" bundle="SIADAP_RESOURCES"/>');
+			  </script>
+		    
+		    <logic:equal value="true" name="isCCAMember">
+		    	| <a href="#" id="forceChangeSiadapUniverse"> <bean:message key="label.forceChangeSiadapUniverse" bundle="SIADAP_RESOURCES"/> </a>
+		    </logic:equal>
 		</p>
 	</logic:present> 
 	<logic:notPresent name="personWrapper" property="siadap">
@@ -129,6 +139,9 @@ request.setAttribute("isManager", isManager);
 		| <bean:message key="label.changeSiadapUniverse" bundle="SIADAP_RESOURCES"/> 
 		| <bean:message key="label.changeCompetenceType" bundle="SIADAP_RESOURCES"/>
 		| <bean:message key="label.management.removeSiadap" bundle="SIADAP_RESOURCES"/>
+		<logic:equal value="true" name="isCCAMember">
+		| <bean:message key="label.forceChangeSiadapUniverse" bundle="SIADAP_RESOURCES"/> 
+		</logic:equal>
 	</p>
 	</logic:notPresent>
 	
@@ -227,6 +240,26 @@ request.setAttribute("isManager", isManager);
 		</div>
 	</div>
 	
+	<logic:equal value="true" name="isCCAMember">
+		<div id="forceChangeSiadapUniverseDiv" style="display: none;">
+			<div class="highlightBox">
+				<fr:form action="<%= "/siadapPersonnelManagement.do?method=changeSiadapUniverse&activity=ChangePersonnelSituation&force=true&personId=" + personId + "&year=" + year.toString() %>">
+					<fr:edit id="forceChangeSiadapUniverse" name="forceChangeSiadapUniverse">
+						<fr:schema type="module.siadap.presentationTier.actions.SiadapPersonnelManagement$ChangeSiadapUniverseBean" bundle="SIADAP_RESOURCES">
+							<fr:slot name="siadapUniverse" key="label.changeSiadapUniverse" bundle="SIADAP_RESOURCES" layout="radio">
+								<fr:validator name="pt.ist.fenixWebFramework.renderers.validators.RequiredValidator"/>
+							</fr:slot>
+							<fr:slot name="justificationForForcingChange" key="label.changeSiadapUniverse.justification" bundle="SIADAP_RESOURCES">
+								<fr:validator name="pt.ist.fenixWebFramework.renderers.validators.RequiredValidator"/>
+							</fr:slot>
+							<fr:slot name="dateOfChange" layout="picker"/>
+						</fr:schema>
+					</fr:edit>
+					<html:submit styleClass="inputbutton"><bean:message key="renderers.form.submit.name" bundle="RENDERER_RESOURCES"/></html:submit>
+				</fr:form>
+			</div>
+		</div>
+	</logic:equal>
 	<div id="changeEvaluatorDiv" style="display: none;" >
 		<div class="highlightBox">
 		
@@ -263,6 +296,7 @@ request.setAttribute("isManager", isManager);
 	$("#changeUnit").click(function() {
 		$("#changeEvaluatorDiv").hide();
 		$("#changeSiadapUniverseDiv").hide();
+		$("#forceChangeSiadapUniverseDiv").hide();
 		$("#createSiadapDiv").hide();
 		$("#changeCompetenceTypeDiv").hide();
 		$("#changeUnitDiv").slideToggle();
@@ -270,6 +304,7 @@ request.setAttribute("isManager", isManager);
 	$("#createSiadapLink").click(function(){
 		$("#changeEvaluatorDiv").hide();
 		$("#changeSiadapUniverseDiv").hide();
+		$("#forceChangeSiadapUniverseDiv").hide();
 		$("#changeUnitDiv").hide();
 		$("#changeCompetenceTypeDiv").hide();
 		$("#createSiadapDiv").slideToggle();
@@ -278,6 +313,7 @@ request.setAttribute("isManager", isManager);
 	$("#changeCompetenceTypeLink").click(function(){
 		$("#changeEvaluatorDiv").hide();
 		$("#changeSiadapUniverseDiv").hide();
+		$("#forceChangeSiadapUniverseDiv").hide();
 		$("#changeUnitDiv").hide();
 		$("#createSiadapDiv").hide();
 		$("#changeCompetenceTypeDiv").slideToggle();
@@ -289,6 +325,7 @@ request.setAttribute("isManager", isManager);
 		$("#changeUnitDiv").hide();
 		$("#createSiadapDiv").hide();
 		$("#changeCompetenceTypeDiv").hide();
+		$("#forceChangeSiadapUniverseDiv").hide();
 		$("#changeSiadapUniverseDiv").slideToggle();
 	});
 
@@ -297,8 +334,19 @@ request.setAttribute("isManager", isManager);
 		$("#changeSiadapUniverseDiv").hide();
 		$("#createSiadapDiv").hide();
 		$("#changeCompetenceTypeDiv").hide();
+		$("#forceChangeSiadapUniverseDiv").hide();
 		$("#changeEvaluatorDiv").slideToggle();
 	});
+	
+	$("#forceChangeSiadapUniverse").click(function() {
+		$("#changeEvaluatorDiv").hide();
+		$("#changeUnitDiv").hide();
+		$("#createSiadapDiv").hide();
+		$("#changeCompetenceTypeDiv").hide();
+		$("#changeSiadapUniverseDiv").hide();
+		$("#forceChangeSiadapUniverseDiv").slideToggle();
+	});
+
 </script>
 
 <logic:notEmpty name="person" property="peopleToEvaluate"> 

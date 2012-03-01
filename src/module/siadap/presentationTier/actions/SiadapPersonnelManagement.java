@@ -175,7 +175,8 @@ public class SiadapPersonnelManagement extends ContextBaseAction {
 	request.setAttribute("changeWorkingUnit", new ChangeWorkingUnitBean());
 	request.setAttribute("changeEvaluator", new ChangeEvaluatorBean());
 	request.setAttribute("createSiadapBean", new SiadapCreationBean(personSiadapWrapper));
-	request.setAttribute("changeSiadapUniverse", new ChangeSiadapUniverseBean(person, year));
+	request.setAttribute("changeSiadapUniverse", new ChangeSiadapUniverseBean(person, year, false));
+	request.setAttribute("forceChangeSiadapUniverse", new ChangeSiadapUniverseBean(person, year, true));
 	request.setAttribute("changeCompetenceTypeBean", new CompetenceTypeBean(personSiadapWrapper));
 	request.setAttribute("history", personSiadapWrapper.getAccountabilitiesHistory());
 	return forward(request, "/module/siadap/management/editPerson.jsp");
@@ -322,8 +323,13 @@ public class SiadapPersonnelManagement extends ContextBaseAction {
 
     public final ActionForward changeSiadapUniverse(final ActionMapping mapping, final ActionForm form,
 	    final HttpServletRequest request, final HttpServletResponse response) throws Exception {
-
-	ChangeSiadapUniverseBean changeUniverseBean = getRenderedObject("changeSiadapUniverse");
+	boolean forceChange = Boolean.parseBoolean(request.getParameter("force"));
+	ChangeSiadapUniverseBean changeUniverseBean = null;
+	if (forceChange) {
+	    changeUniverseBean = getRenderedObject("forceChangeSiadapUniverse");
+	} else {
+	    changeUniverseBean = getRenderedObject("changeSiadapUniverse");
+	}
 	return changePersonnelSituation(mapping, form, request, response, changeUniverseBean);
     }
 
@@ -533,13 +539,18 @@ public class SiadapPersonnelManagement extends ContextBaseAction {
 
 	private LocalDate dateOfChange;
 
-	ChangeSiadapUniverseBean(Person person, int year) {
+	private String justificationForForcingChange;
+
+	private final boolean forceChange;
+
+	ChangeSiadapUniverseBean(Person person, int year, boolean forceChange) {
 	    SiadapYearConfiguration siadapYearConfiguration = SiadapYearConfiguration.getSiadapYearConfiguration(year);
 	    Siadap siadapFor = (siadapYearConfiguration == null) ? null : siadapYearConfiguration.getSiadapFor(person);
 	    if (siadapFor == null)
 		this.setSiadapUniverse(null);
 	    else
 		this.setSiadapUniverse(siadapFor.getDefaultSiadapUniverse());
+	    this.forceChange = forceChange;
 	}
 
 	public SiadapUniverse getSiadapUniverse() {
@@ -552,7 +563,8 @@ public class SiadapPersonnelManagement extends ContextBaseAction {
 
 	@Override
 	public boolean hasAllNeededInfo() {
-	    return siadapUniverse != null && dateOfChange != null;
+	    return ((siadapUniverse != null && dateOfChange != null) && (!forceChange || !StringUtils
+		    .isBlank(justificationForForcingChange)));
 	}
 
 	public LocalDate getDateOfChange() {
@@ -566,16 +578,33 @@ public class SiadapPersonnelManagement extends ContextBaseAction {
 	@Override
 	public void execute(SiadapProcess process) throws SiadapException {
 	    Siadap siadap = process.getSiadap();
+	    //extra verification
+	    if (forceChange && !SiadapRootModule.getInstance().getSiadapCCAGroup().isMember(UserView.getCurrentUser()))
+		throw new SiadapException("only.cca.should.be.able.to.force.change");
+
 	    new PersonSiadapWrapper(siadap.getEvaluated(), siadap.getYear()).changeDefaultUniverseTo(getSiadapUniverse(),
-		    getDateOfChange());
+		    getDateOfChange(), forceChange);
 
 	}
 
 	@Override
 	public String[] getArgumentsDescription(SiadapProcess process) {
+	    if (!forceChange)
 	    return new String[] { BundleUtil.getFormattedStringFromResourceBundle(Siadap.SIADAP_BUNDLE_STRING,
 		    ChangeSiadapUniverseBean.class.getSimpleName(), getSiadapUniverse().getLocalizedName(), getDateOfChange()
 			    .toString()) };
+	    else
+		return new String[] { BundleUtil.getFormattedStringFromResourceBundle(Siadap.SIADAP_BUNDLE_STRING,
+			ChangeSiadapUniverseBean.class.getSimpleName() + ".forced", getSiadapUniverse().getLocalizedName(),
+			getDateOfChange().toString(), getJustificationForForcingChange()) };
+	}
+
+	public String getJustificationForForcingChange() {
+	    return justificationForForcingChange;
+	}
+
+	public void setJustificationForForcingChange(String justificationForForcingChange) {
+	    this.justificationForForcingChange = justificationForForcingChange;
 	}
 
     }

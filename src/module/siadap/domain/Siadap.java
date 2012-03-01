@@ -797,6 +797,12 @@ public class Siadap extends Siadap_Base {
     }
 
     public void setDefaultSiadapUniverse(SiadapUniverse siadapUniverseToChangeTo) {
+	//if we have another one, we should throw an exception
+	if (getSiadapEvaluationUniverseForSiadapUniverse(siadapUniverseToChangeTo) != null
+		&& !getSiadapEvaluationUniverseForSiadapUniverse(siadapUniverseToChangeTo).equals(
+			getDefaultSiadapEvaluationUniverse())) {
+	    throw new SiadapException("error.cant.change.default.universe.because.theres.another.eval.in.that.universe");
+	}
 	getDefaultSiadapEvaluationUniverse().setSiadapUniverse(siadapUniverseToChangeTo);
 
     }
