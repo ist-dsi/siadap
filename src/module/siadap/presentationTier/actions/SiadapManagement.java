@@ -17,6 +17,8 @@ import module.siadap.domain.ExceedingQuotaSuggestionType;
 import module.siadap.domain.SiadapProcess;
 import module.siadap.domain.SiadapUniverse;
 import module.siadap.domain.SiadapYearConfiguration;
+import module.siadap.domain.exceptions.SiadapException;
+import module.siadap.domain.exceptions.ValidationTerminationException;
 import module.siadap.domain.wrappers.PersonSiadapWrapper;
 import module.siadap.domain.wrappers.SiadapSuggestionBean;
 import module.siadap.domain.wrappers.SiadapUniverseWrapper;
@@ -306,14 +308,23 @@ public class SiadapManagement extends ContextBaseAction {
 	    Collection<SiadapUniverseWrapper> siadapUniverseWrappers, ValidationSubActivity validationSubActivity,
 	    UnitSiadapWrapper unitWrapper) {
 
+	ArrayList<SiadapException> warningMessages = new ArrayList<SiadapException>();
 	try {
-	    unitWrapper.executeValidation(siadapUniverseWrappers, validationSubActivity);
+	    warningMessages = unitWrapper.executeValidation(siadapUniverseWrappers, validationSubActivity);
+
+	} catch (ValidationTerminationException ex) {
+	    addLocalizedMessage(request, ex.getLocalizedMessage());
+	    return validateUnit(mapping, form, request, response, unitWrapper, null);
 	} catch (DomainException ex) {
 	    addLocalizedMessage(request, ex.getLocalizedMessage());
 	    return validateUnit(mapping, form, request, response, unitWrapper, siadapUniverseWrappers);
 	} catch (ActivityException ex) {
 	    addLocalizedMessage(request, ex.getMessage());
 	    return validateUnit(mapping, form, request, response, unitWrapper, siadapUniverseWrappers);
+	}
+
+	for (SiadapException warningMessage : warningMessages) {
+	    addLocalizedWarningMessage(request, warningMessage.getLocalizedMessage());
 	}
 
 	return validateUnit(mapping, form, request, response, unitWrapper, null);

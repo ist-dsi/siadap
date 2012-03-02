@@ -67,7 +67,7 @@ public class SiadapEvaluationUniverse extends SiadapEvaluationUniverse_Base {
     }
 
     public SiadapGlobalEvaluation getSiadapGlobalEvaluationEnum(boolean considerValidation) {
-	if (considerValidation && hasCompleteValidationAssessment())
+	if (considerValidation && hasValidationAssessment())
 	    return SiadapGlobalEvaluation.getGlobalEvaluation(getCcaClassification(), getCcaClassificationExcellencyAward());
 	else
 	    return SiadapGlobalEvaluation.getGlobalEvaluation(getTotalEvaluationScoring(), hasExcellencyAwarded());
@@ -101,12 +101,23 @@ public class SiadapEvaluationUniverse extends SiadapEvaluationUniverse_Base {
 	return getEvaluations(CompetenceEvaluation.class, null, null);
     }
 
+    /**
+     * 
+     * @return true if the evaluation needs no more validation assessments
+     *         (either because it has a skipped eval or is a MEDIUM or it has a
+     *         CcaAssessment, classification, and excellencyAward)
+     */
     protected boolean hasCompleteValidationAssessment() {
 	if (isWithSkippedEvaluation())
 	    return true;
 	//it depends on the grade, so if we have a grade of regular, we won't need an assessment
 	if (SiadapGlobalEvaluation.MEDIUM.accepts(getTotalEvaluationScoring(), false))
 	    return true;
+	return hasValidationAssessment();
+
+    }
+
+    protected boolean hasValidationAssessment() {
 	if (getCcaAssessment() == null || getCcaClassificationExcellencyAward() == null || getCcaClassification() == null)
 	    return false;
 	return true;

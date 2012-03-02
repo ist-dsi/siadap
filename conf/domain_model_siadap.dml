@@ -151,6 +151,9 @@ class SiadapEvaluationUniverse
 	BigDecimal ccaClassification;
 	Boolean ccaClassificationExcellencyAward;
 	
+	LocalDate submittedForValidationAcknowledgementDate;
+	LocalDate validationAcknowledgedDate;
+	
 
 }
 

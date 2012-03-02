@@ -29,6 +29,7 @@ import module.siadap.domain.SiadapProcess;
 import module.siadap.domain.SiadapUniverse;
 import module.siadap.domain.SiadapYearConfiguration;
 import module.siadap.domain.exceptions.SiadapException;
+import module.siadap.domain.exceptions.ValidationTerminationException;
 import module.siadap.domain.scoring.SiadapGlobalEvaluation;
 import module.siadap.domain.util.SiadapMiscUtilClass;
 import module.siadap.domain.wrappers.SiadapUniverseWrapper.UniverseDisplayMode;
@@ -82,20 +83,29 @@ public class UnitSiadapWrapper extends PartyWrapper implements Serializable {
 
 	SiadapUniverseWrapper peopleWithQuotasSIADAP2 = new SiadapUniverseWrapper(
 		getSiadap2AndWorkingRelationWithQuotaUniverse(), "siadap2WithQuotas", SiadapUniverse.SIADAP2,
-		configuration.getQuotaExcellencySiadap2WithQuota(), configuration.getQuotaRelevantSiadap2WithQuota(), null, null,
+		configuration.getQuotaExcellencySiadap2WithQuota(), configuration.getQuotaRelevantSiadap2WithQuota(),
+		UniverseDisplayMode.VALIDATION, null,
 		null);
 	SiadapUniverseWrapper peopleWithQuotasSIADAP3 = new SiadapUniverseWrapper(
 		getSiadap3AndWorkingRelationWithQuotaUniverse(), "siadap3WithQuotas", SiadapUniverse.SIADAP3,
-		configuration.getQuotaExcellencySiadap3WithQuota(), configuration.getQuotaRelevantSiadap3WithQuota(), null, null,
+		configuration.getQuotaExcellencySiadap3WithQuota(), configuration.getQuotaRelevantSiadap3WithQuota(),
+		UniverseDisplayMode.VALIDATION, null,
 		null);
 	SiadapUniverseWrapper peopleWithoutQuotasSIADAP2 = new SiadapUniverseWrapper(
 		getSiadap2AndWorkingRelationWithoutQuotaUniverse(), "siadap2WithoutQuotas", SiadapUniverse.SIADAP2,
-		configuration.getQuotaExcellencySiadap2WithoutQuota(), configuration.getQuotaRelevantSiadap2WithoutQuota(), null,
+		configuration.getQuotaExcellencySiadap2WithoutQuota(), configuration.getQuotaRelevantSiadap2WithoutQuota(),
+		UniverseDisplayMode.VALIDATION,
 		null, null);
 	SiadapUniverseWrapper peopleWithoutQuotasSIADAP3 = new SiadapUniverseWrapper(
 		getSiadap3AndWorkingRelationWithoutQuotaUniverse(), "siadap3WithoutQuotas", SiadapUniverse.SIADAP3,
-		configuration.getQuotaExcellencySiadap3WithoutQuota(), configuration.getQuotaRelevantSiadap3WithoutQuota(), null,
+		configuration.getQuotaExcellencySiadap3WithoutQuota(), configuration.getQuotaRelevantSiadap3WithoutQuota(),
+		UniverseDisplayMode.VALIDATION,
 		null, null);
+
+	universeWrappers.add(peopleWithoutQuotasSIADAP3);
+	universeWrappers.add(peopleWithoutQuotasSIADAP2);
+	universeWrappers.add(peopleWithQuotasSIADAP3);
+	universeWrappers.add(peopleWithQuotasSIADAP2);
 
 	return universeWrappers;
 
@@ -343,13 +353,29 @@ public class UnitSiadapWrapper extends PartyWrapper implements Serializable {
     }
 
     @Service
-    public void executeValidation(Collection<SiadapUniverseWrapper> siadapUniverseWrappers,
+    public ArrayList<SiadapException> executeValidation(Collection<SiadapUniverseWrapper> siadapUniverseWrappers,
+
 	    ValidationSubActivity validationSubActivity) throws DomainException, ActivityException {
 
+	ArrayList<SiadapException> warningsToReturn = new ArrayList<SiadapException>();
+	HashSet<Person> evaluatorsToNotify = new HashSet<Person>();
 	//if we are closing down the validation, we should make sure that this is the top unit
 	if (validationSubActivity.equals(ValidationSubActivity.TERMINATE_VALIDATION)) {
 	    if (!getUnit().equals(getConfiguration().getSiadapStructureTopUnit())) {
-		throw new SiadapException("error.validation.must.be.closed.on.top.unit.only");
+		throw new ValidationTerminationException("error.validation.must.be.closed.on.top.unit.only");
+	    }
+	    //let's check if it is already closed or not
+	    if (getConfiguration().getClosedValidation())
+		throw new SiadapException("error.validation.already.closed");
+	    //let's check the quotas
+	    for (SiadapUniverseWrapper siadapUniverseWrapper : siadapUniverseWrappers) {
+		if (siadapUniverseWrapper.isAboveQuotasValidation()) {
+		    throw new ValidationTerminationException("error.validation.above.quotas", siadapUniverseWrapper
+			    .getSiadapUniverseEnum()
+			    .getLocalizedName(),
+			    siadapUniverseWrapper.getSiadapUniverse().iterator().next().isQuotaAware() ? "Sim" : "Não");
+		}
+
 	    }
 	}
 
@@ -361,9 +387,32 @@ public class UnitSiadapWrapper extends PartyWrapper implements Serializable {
 			activity, validationSubActivity, universeWrapper.getSiadapUniverseEnum());
 		if (validationActivityInformation.hasAllneededInfo()) {
 		    activity.execute(validationActivityInformation);
+		    if (validationSubActivity.equals(ValidationSubActivity.TERMINATE_VALIDATION)) {
+			//let's add the evaluator to the list of evaluators to notify
+			if (personSiadapWrapper.getEvaluator() != null)
+			    evaluatorsToNotify.add(personSiadapWrapper.getEvaluator().getPerson());
+		    }
 		}
 	    }
 	}
+
+	//mark as validated
+	getConfiguration().setClosedValidation(Boolean.TRUE);
+
+	//notify whoever
+	for (Person evaluator : evaluatorsToNotify) {
+	    try {
+		ValidationSubActivity.notifyEvaluatorOfFinishedValidation(evaluator, getYear());
+	    } catch (SiadapException ex) {
+		warningsToReturn.add(ex);
+	    }
+
+	}
+	return warningsToReturn;
+    }
+
+    public boolean isClosedValidation() {
+	return getConfiguration().getClosedValidation();
     }
 
     //    public int getTotalRelevantEvaluationsForUnit() {
@@ -1003,7 +1052,7 @@ public class UnitSiadapWrapper extends PartyWrapper implements Serializable {
 	SiadapUniverseFilter siadapUniverseFilter = new SiadapUniverseFilter(excludeResponsibles, getYear(), this, true,
 		includePositivelyHarmonizedOnly, SiadapUniverse.SIADAP2);
 	List<PersonSiadapWrapper> universePersons = new ArrayList<PersonSiadapWrapper>();
-	getUnitAttachedPersons(unit, universePersons, isHarmonizationUnit(), siadapUniverseFilter,
+	getUnitAttachedPersons(unit, universePersons, isHarmonizationUnit() || isSiadapStructureTopUnit(), siadapUniverseFilter,
 		Collections.singleton(getConfiguration().getHarmonizationUnitRelations()), siadap2HarmonizationRelation);
 
 	return new HashSet<PersonSiadapWrapper>(universePersons);
@@ -1028,7 +1077,7 @@ public class UnitSiadapWrapper extends PartyWrapper implements Serializable {
 		includePositivelyHarmonizedOnly, SiadapUniverse.SIADAP3);
 
 	List<PersonSiadapWrapper> universePersons = new ArrayList<PersonSiadapWrapper>();
-	getUnitAttachedPersons(unit, universePersons, isHarmonizationUnit(), siadapUniverseFilter,
+	getUnitAttachedPersons(unit, universePersons, isHarmonizationUnit() || isSiadapStructureTopUnit(), siadapUniverseFilter,
 		Collections.singleton(getConfiguration().getHarmonizationUnitRelations()), siadap3HarmonizationRelation);
 	return new HashSet<PersonSiadapWrapper>(universePersons);
 
@@ -1052,7 +1101,7 @@ public class UnitSiadapWrapper extends PartyWrapper implements Serializable {
 		includePositivelyHarmonizedOnly, SiadapUniverse.SIADAP2);
 
 	List<PersonSiadapWrapper> universePersons = new ArrayList<PersonSiadapWrapper>();
-	getUnitAttachedPersons(unit, universePersons, isHarmonizationUnit(), siadapUniverseFilter,
+	getUnitAttachedPersons(unit, universePersons, isHarmonizationUnit() || isSiadapStructureTopUnit(), siadapUniverseFilter,
 		Collections.singleton(getConfiguration().getHarmonizationUnitRelations()), siadap2HarmonizationRelation);
 	return new HashSet<PersonSiadapWrapper>(universePersons);
 
@@ -1076,7 +1125,7 @@ public class UnitSiadapWrapper extends PartyWrapper implements Serializable {
 		includePositivelyHarmonizedOnly, SiadapUniverse.SIADAP3);
 
 	List<PersonSiadapWrapper> universePersons = new ArrayList<PersonSiadapWrapper>();
-	getUnitAttachedPersons(unit, universePersons, isHarmonizationUnit(), siadapUniverseFilter,
+	getUnitAttachedPersons(unit, universePersons, isHarmonizationUnit() || isSiadapStructureTopUnit(), siadapUniverseFilter,
 		Collections.singleton(getConfiguration().getHarmonizationUnitRelations()), siadap3HarmonizationRelation);
 	return new HashSet<PersonSiadapWrapper>(universePersons);
 

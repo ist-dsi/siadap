@@ -9,8 +9,6 @@ import java.util.MissingResourceException;
 import module.organization.domain.Person;
 import module.organizationIst.domain.listner.LoginListner;
 import module.siadap.activities.AcknowledgeEvaluationObjectives;
-import module.siadap.activities.AcknowledgeEvaluationValidation;
-import module.siadap.activities.AcknowledgeHomologation;
 import module.siadap.activities.AutoEvaluation;
 import module.siadap.activities.ChangeCustomSchedule;
 import module.siadap.activities.ChangePersonnelSituation;
@@ -20,16 +18,12 @@ import module.siadap.activities.CurricularPonderationAttribution;
 import module.siadap.activities.EditCompetenceEvaluation;
 import module.siadap.activities.EditObjectiveEvaluation;
 import module.siadap.activities.Evaluation;
-import module.siadap.activities.GrantExcellencyAward;
-import module.siadap.activities.Homologate;
 import module.siadap.activities.NoEvaluation;
-import module.siadap.activities.NotValidateEvaluation;
 import module.siadap.activities.RemoveCustomSchedule;
 import module.siadap.activities.RemoveObjectiveEvaluation;
 import module.siadap.activities.RevertNoEvaluation;
 import module.siadap.activities.RevertState;
 import module.siadap.activities.RevertStateActivityInformation;
-import module.siadap.activities.RevokeExcellencyAward;
 import module.siadap.activities.SealObjectivesAndCompetences;
 import module.siadap.activities.SubmitAutoEvaluation;
 import module.siadap.activities.SubmitEvaluation;
@@ -78,16 +72,16 @@ public class SiadapProcess extends SiadapProcess_Base {
 	activities.add(new SubmitEvaluation());
 	activities.add(new CurricularPonderationAttribution());
 	activities.add(new ValidateEvaluation());
-	activities.add(new AcknowledgeEvaluationValidation());
-	activities.add(new Homologate());
-	activities.add(new AcknowledgeHomologation());
+	//	activities.add(new AcknowledgeEvaluationValidation());
+	//	activities.add(new Homologate());
+	//	activities.add(new AcknowledgeHomologation());
 	activities.add(new EditObjectiveEvaluation());
 	activities.add(new SubmitForObjectivesAcknowledge());
-	activities.add(new NotValidateEvaluation());
+	//	activities.add(new NotValidateEvaluation());
 	activities.add(new NoEvaluation());
 	activities.add(new RevertNoEvaluation());
-	activities.add(new GrantExcellencyAward());
-	activities.add(new RevokeExcellencyAward());
+	//	activities.add(new GrantExcellencyAward());
+	//	activities.add(new RevokeExcellencyAward());
 
 	activities.add(new Validation());
 
@@ -271,7 +265,7 @@ public class SiadapProcess extends SiadapProcess_Base {
 	return isUserEvaluated(UserView.getCurrentUser());
     }
 
-    public void checkEmailExistenceImportAndWarnOnError(Person person) {
+    public static void checkEmailExistenceImportAndWarnOnError(Person person) {
 	//if we have no info about the person, let's import it
 	if (person.getRemotePerson() == null || person.getRemotePerson().getEmailForSendingEmails() == null) {
 	    LoginListner.importUserInformation(person.getUser().getUsername());
@@ -290,7 +284,7 @@ public class SiadapProcess extends SiadapProcess_Base {
     }
 
     //TODO change this so that the e-mail isn't hardcoded and there is a batch sent not for each error an e-mail
-    private void notifyAdmin(String subject, String message) {
+    private static void notifyAdmin(String subject, String message) {
 	ArrayList<String> toAddress = new ArrayList<String>();
 	toAddress.add("joao.antunes@tagus.ist.utl.pt");
 	final VirtualHost virtualHost = VirtualHost.getVirtualHostForThread();

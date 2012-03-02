@@ -169,7 +169,7 @@ public class SiadapUniverseWrapper implements Serializable {
 	    if (numberTotalRelevant != null)
 		this.numberTotalRelevantForQuotaPeopleInUniverse = numberTotalRelevant.intValue();
 	    else
-		this.numberTotalRelevantForQuotaPeopleInUniverse = 0;
+		this.numberTotalRelevantForQuotaPeopleInUniverse = relevantPeople;
 	}
 
 	this.numberRelevantPeopleInUniverse = relevantPeople;
@@ -347,6 +347,16 @@ public class SiadapUniverseWrapper implements Serializable {
      */
     public boolean isAboveQuotasHarmonization() {
 	return (currentHarmonizedExcellents > excellencyQuota.intValue() || currentHarmonizedRelevants > relevantQuota.intValue());
+    }
+
+    /**
+     * 
+     * @return true if it is above quotas, rounding the quota to the integer
+     *         value by rounding up, false otherwise
+     */
+    public boolean isAboveQuotasValidation() {
+	return (currentValidatedExcellents > excellencyQuota.setScale(0, BigDecimal.ROUND_UP).intValue() || currentValidatedRelevants > relevantQuota
+		.setScale(0, BigDecimal.ROUND_UP).intValue());
     }
 
     public String getCurrentHarmonizedRelevantsHTMLClass() {

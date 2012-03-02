@@ -459,7 +459,7 @@ public class Siadap extends Siadap_Base {
 	BigDecimal gradeToUse = null;
 	boolean excellencyAward = false;
 	//if we have a compelte validation assessment, we should use that
-	if (considerValidation && siadapEvaluationUniverseForSiadapUniverse.hasCompleteValidationAssessment()) {
+	if (considerValidation && siadapEvaluationUniverseForSiadapUniverse.hasValidationAssessment()) {
 	    gradeToUse = siadapEvaluationUniverseForSiadapUniverse.getCcaClassification();
 	    excellencyAward = siadapEvaluationUniverseForSiadapUniverse.getCcaClassificationExcellencyAward();
 	} else {

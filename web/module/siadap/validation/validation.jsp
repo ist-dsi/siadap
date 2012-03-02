@@ -15,6 +15,9 @@
 <%@ taglib uri="/WEB-INF/struts-logic.tld" prefix="logic"%>
 <%@ taglib uri="/WEB-INF/fenix-renderers.tld" prefix="fr"%>
 
+<script src="<%= request.getContextPath() + "/javaScript/jquery.alerts.js"%>" type="text/javascript"></script>
+<script src="<%= request.getContextPath() + "/javaScript/alertHandlers.js"%>" type="text/javascript"></script>
+
 <logic:notEmpty name="unit" property="unit">
 	<bean:define id="unitName" name="unit" property="unit.presentationName" />
 	
@@ -68,6 +71,16 @@ String unitIdJava = unitFromWrapper == null ? "" : unitFromWrapper.getExternalId
 		</html:messages>
 	</div>
 </logic:messagesPresent>
+
+<%-- Warning messages: --%>
+<logic:messagesPresent property="messageWarning" message="true">
+	<div class="highlightBox">
+		<html:messages id="warningMessage" property="messageWarning" message="true"> 
+			<p><b><bean:write name="warningMessage" /></b></p>
+		</html:messages>
+	</div>
+</logic:messagesPresent>
+
 <style>
 	.inline-list ul, .inline-list li {
 		display: inline;
@@ -104,10 +117,19 @@ color: darkRed;
 </style> 
 	<%-- Control links --%>
 	<logic:equal name="unit" property="siadapStructureTopUnit" value="true">
-		<%-- <html:link page="<%="/siadapManagement.do?method=terminateValidation&year="+year.toString()%>" >
-			<bean:message key="label.terminateValidation" bundle="SIADAP_RESOURCES"/>
-		</html:link> --%>
-		<bean:message key="label.terminateValidation" bundle="SIADAP_RESOURCES"/> (temporariamente desactivado)
+		<logic:equal name="unit" property="closedValidation" value="false">
+			<html:link styleId="terminateValidation" page="<%="/siadapManagement.do?method=terminateValidation&year="+year.toString()%>" >
+				<bean:message key="label.terminateValidation" bundle="SIADAP_RESOURCES"/>
+			</html:link>
+			<script type="text/javascript">
+				linkConfirmationHook('terminateValidation', '<bean:message key="label.validation.terminateValidation.confirmationMessage" bundle="SIADAP_RESOURCES"/>','<bean:message key="label.validation.terminateValidation" bundle="SIADAP_RESOURCES"/>');
+			</script>
+		</logic:equal>
+		<logic:equal name="unit" property="closedValidation" value="true">
+			<h4><bean:message bundle="SIADAP_RESOURCES" key="label.closedValidation"/></h4>
+			<br/>
+		</logic:equal>
+		<%-- <bean:message key="label.terminateValidation" bundle="SIADAP_RESOURCES"/> (temporariamente desactivado) --%>
 	</logic:equal>
 	<logic:notEmpty name="unit" property="unitAboveViaHarmRelation" >
 		<div class="infobox">
@@ -469,7 +491,7 @@ color: darkRed;
 							<fr:property name="readOnlyIfNot" value="siadap2AbleToBeValidated" />
 							<fr:property name="classes" value="inline-list"/>
 						</fr:slot>
-						<fr:slot name="validationClassificationForSIADAP2" key="label.validation.classification">
+						<fr:slot name="validationClassificationForSIADAP2" key="label.validation.classification" readOnly="<%=unitWrapper.isClosedValidation()%>">
 							<fr:property name="size" value="5"/>
 							<fr:property name="maxLength" value="5"/>
 						</fr:slot>
@@ -493,7 +515,7 @@ color: darkRed;
 							<fr:property name="classes" value="inline-list"/>
 						</fr:slot>
 						
-						<fr:slot name="validationClassificationForSIADAP3" key="label.validation.classification">
+						<fr:slot name="validationClassificationForSIADAP3" key="label.validation.classification" readOnly="<%=unitWrapper.isClosedValidation()%>">
 							<fr:property name="size" value="5"/>
 							<fr:property name="maxLength" value="5"/>
 						</fr:slot>
@@ -535,9 +557,13 @@ color: darkRed;
 				
 				
 	</logic:iterate>
-	<html:submit styleClass="inputbutton">
-		<bean:message key="label.save" bundle="SIADAP_RESOURCES" />
-	</html:submit>
+	
+	<logic:equal name="unit" property="closedValidation" value="false">
+		<html:submit styleClass="inputbutton">
+			<bean:message key="label.save" bundle="SIADAP_RESOURCES" />
+		</html:submit>
+	</logic:equal>
+	
 	</fr:form> 
 </logic:equal>
 <logic:equal name="noData" value="true">

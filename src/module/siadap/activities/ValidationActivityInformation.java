@@ -4,7 +4,10 @@
 package module.siadap.activities;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Collections;
 
+import module.organization.domain.Person;
 import module.siadap.domain.Siadap;
 import module.siadap.domain.SiadapEvaluationUniverse;
 import module.siadap.domain.SiadapProcess;
@@ -15,9 +18,14 @@ import module.siadap.domain.wrappers.PersonSiadapWrapper;
 import module.workflow.activities.ActivityInformation;
 import module.workflow.activities.WorkflowActivity;
 import module.workflow.domain.WorkflowProcess;
+import myorg.domain.VirtualHost;
 import myorg.util.BundleUtil;
 
+import org.apache.commons.lang.StringUtils;
 import org.joda.time.LocalDate;
+
+import pt.ist.emailNotifier.domain.Email;
+import pt.ist.fenixframework.plugins.remote.domain.exception.RemoteException;
 
 /**
  * @author João Antunes (joao.antunes@tagus.ist.utl.pt) - 17 de Fev de 2012
@@ -91,9 +99,9 @@ public class ValidationActivityInformation extends ActivityInformation<SiadapPro
 		BigDecimal gradeInEffect = null;
 		if (validationAssessment != null && validationAssessment) {
 		    //		    if (validationGrade != null)
-			//something went wrong in the interface, or someone fiddled with this!!
-			//TODO as soon as JS is implemented to always give null here, remove this comment
-			//			throw new SiadapException("error.validation.grade.inconsistent");
+		    //something went wrong in the interface, or someone fiddled with this!!
+		    //TODO as soon as JS is implemented to always give null here, remove this comment
+		    //			throw new SiadapException("error.validation.grade.inconsistent");
 		    gradeInEffect = harmonizationClassification;
 		    validationGrade = gradeInEffect;
 		} else {
@@ -108,7 +116,6 @@ public class ValidationActivityInformation extends ActivityInformation<SiadapPro
 		return gradeInEffect;
 
 	    }
-
 
 	    @Override
 	    public boolean hasAllneededInfo(PersonSiadapWrapper personWrapper, SiadapUniverse universe) {
@@ -154,6 +161,7 @@ public class ValidationActivityInformation extends ActivityInformation<SiadapPro
 		//let's always return true, and later throw an exception if we don't have all of the needed data
 		return true;
 	    }
+
 	};
 
 	public abstract void process(PersonSiadapWrapper personWrapper, SiadapUniverse siadapUniverse);
@@ -164,6 +172,36 @@ public class ValidationActivityInformation extends ActivityInformation<SiadapPro
 	}
 
 	public abstract boolean hasAllneededInfo(PersonSiadapWrapper personWrapper, SiadapUniverse universe);
+
+	public static void notifyEvaluatorOfFinishedValidation(Person evaluator, int year) throws SiadapException {
+	    try {
+		ArrayList<String> toAddress = new ArrayList<String>();
+		SiadapProcess.checkEmailExistenceImportAndWarnOnError(evaluator);
+		String emailEvaluator = evaluator.getRemotePerson().getEmailForSendingEmails();
+		if (StringUtils.isBlank(emailEvaluator))
+		    throw new SiadapException("error.could.not.notify.given.user", evaluator.getPresentationName());
+		if (!StringUtils.isBlank(emailEvaluator)) {
+		    toAddress.add(emailEvaluator);
+
+		    StringBuilder body = new StringBuilder("Os processos SIADAP do ano " + year
+			    + " estão validados, com a nota final atríbuida, e prontos a submeter para conhecimento do avaliado");
+		    body.append("\nPara mais informações consulte https://dot.ist.utl.pt\n");
+		    body.append("\n\n---\n");
+		    body.append("Esta mensagem foi enviada por meio das Aplicações Centrais do IST.\n");
+
+		    final VirtualHost virtualHost = VirtualHost.getVirtualHostForThread();
+		    new Email(virtualHost.getApplicationSubTitle().getContent(), virtualHost.getSystemEmailAddress(),
+			    new String[] {}, toAddress, Collections.EMPTY_LIST, Collections.EMPTY_LIST, "SIADAP - " + year
+				    + " - Avaliações validadas", body.toString());
+		}
+	    } catch (final RemoteException ex) {
+		System.out.println("Unable to lookup email address for: " + evaluator.getPresentationName() + " Error: "
+			+ ex.getMessage());
+		throw new SiadapException("error.could.not.notify.given.user", evaluator.getPresentationName());
+	    }
+
+	}
+
     }
 
     private final ValidationSubActivity subActivity;
