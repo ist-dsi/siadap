@@ -13,7 +13,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import module.contacts.domain.EmailAddress;
-import module.contacts.ist.domain.ContactsIstSystem;
 import module.organization.domain.Accountability;
 import module.organization.domain.AccountabilityType;
 import module.organization.domain.Person;
@@ -158,12 +157,7 @@ public class SiadapPersonnelManagement extends ContextBaseAction {
 	//checking for the existence of the e-mail addresses of the SiadapStructureManagementGroup users and let's warn if they don't exist
 	SiadapYearConfiguration configuration = SiadapYearConfiguration.getSiadapYearConfiguration(year);
 	for (Person structureMngmntMember : configuration.getStructureManagementGroupMembers()) {
-	    String emailAddress = null;
-	    try {
-		emailAddress = ContactsIstSystem.retrieveLatestEmailAddress(person);
-	    } catch (NullPointerException ex) {
-		ex.printStackTrace();
-	    }
+	    String emailAddress = person.getUser().getEmail();
 	    if (emailAddress == null || StringUtils.isBlank(emailAddress)) {
 		addMessage(request, "WARNING", "manage.siadapStructure.person.has.no.valid.emailaddress",
 			new String[] { structureMngmntMember.getName() });
