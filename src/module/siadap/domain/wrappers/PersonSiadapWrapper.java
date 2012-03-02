@@ -484,7 +484,7 @@ public class PersonSiadapWrapper extends PartyWrapper implements Serializable {
 	if (getSiadap().getEvaluator().getPerson().equals(currentUser.getPerson()))
 	    return true;
 	if (getSiadap().isDefaultEvaluationDone() && getSiadap().getEvaluated().equals(currentUser.getPerson())
-		&& getSiadap().getSubmittedForValidationEvaluationAcknowledgementDate() != null)
+		&& getSiadap().getRequestedAcknowledegeValidationDate() != null)
 	    return true;
 	if (getSiadap().isDefaultEvaluationDone() && isResponsibleForHarmonization(currentUser.getPerson()))
 	    return true;

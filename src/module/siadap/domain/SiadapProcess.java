@@ -9,6 +9,7 @@ import java.util.MissingResourceException;
 import module.organization.domain.Person;
 import module.organizationIst.domain.listner.LoginListner;
 import module.siadap.activities.AcknowledgeEvaluationObjectives;
+import module.siadap.activities.AcknowledgeEvaluationValidation;
 import module.siadap.activities.AutoEvaluation;
 import module.siadap.activities.ChangeCustomSchedule;
 import module.siadap.activities.ChangePersonnelSituation;
@@ -28,6 +29,7 @@ import module.siadap.activities.SealObjectivesAndCompetences;
 import module.siadap.activities.SubmitAutoEvaluation;
 import module.siadap.activities.SubmitEvaluation;
 import module.siadap.activities.SubmitForObjectivesAcknowledge;
+import module.siadap.activities.SubmitValidatedEvaluation;
 import module.siadap.activities.ValidateEvaluation;
 import module.siadap.activities.Validation;
 import module.siadap.domain.exceptions.SiadapException;
@@ -72,7 +74,9 @@ public class SiadapProcess extends SiadapProcess_Base {
 	activities.add(new SubmitEvaluation());
 	activities.add(new CurricularPonderationAttribution());
 	activities.add(new ValidateEvaluation());
-	//	activities.add(new AcknowledgeEvaluationValidation());
+
+	activities.add(new SubmitValidatedEvaluation());
+	activities.add(new AcknowledgeEvaluationValidation());
 	//	activities.add(new Homologate());
 	//	activities.add(new AcknowledgeHomologation());
 	activities.add(new EditObjectiveEvaluation());

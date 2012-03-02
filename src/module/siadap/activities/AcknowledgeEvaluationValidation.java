@@ -13,7 +13,7 @@ public class AcknowledgeEvaluationValidation extends WorkflowActivity<SiadapProc
     @Override
     public boolean isActive(SiadapProcess process, User user) {
 	Siadap siadap = process.getSiadap();
-	return siadap.getEvaluated().getUser() == user && siadap.getValidationDateOfDefaultEvaluation() != null
+	return siadap.getEvaluated().getUser() == user && siadap.getRequestedAcknowledegeValidationDate() != null
 		&& siadap.getAcknowledgeValidationDate() == null;
     }
 
@@ -29,6 +29,6 @@ public class AcknowledgeEvaluationValidation extends WorkflowActivity<SiadapProc
 
     @Override
     public String getUsedBundle() {
-	return "resources/SiadapResources";
+	return Siadap.SIADAP_BUNDLE_STRING;
     }
 }

@@ -96,16 +96,17 @@ class Siadap {
 	
 	LocalDate requestedAcknowledgeDate;
 	/*LocalDate harmonizationDate;*/
+	
+	/* a data em que foi submetida, após validação pelo CCA, ao avaliado para que este possa vê-la na
+	plataforma. (este passo intermédio é importante porque o avaliador deve comunicar antes deste a ter
+	disponível, a avaliação ao avaliado) */
+	LocalDate requestedAcknowledegeValidationDate;
 	LocalDate acknowledgeValidationDate;
 	LocalDate homologationDate;
 	LocalDate acknowledgeHomologationDate;
 	
 	
 	
-	/* a data em que foi submetida, após validação pelo CCA, ao avaliado para que este possa vê-la na
-	plataforma. (este passo intermédio é importante porque o avaliador deve comunicar antes deste a ter
-	disponível, a avaliação ao avaliado) */
-	LocalDate submittedForValidationEvaluationAcknowledgementDate;
 	
 	/* custom dates for exceptional reasons */
 	
@@ -151,8 +152,8 @@ class SiadapEvaluationUniverse
 	BigDecimal ccaClassification;
 	Boolean ccaClassificationExcellencyAward;
 	
-	LocalDate submittedForValidationAcknowledgementDate;
-	LocalDate validationAcknowledgedDate;
+	/*LocalDate submittedForValidationAcknowledgementDate;
+	LocalDate validationAcknowledgedDate;*/
 	
 
 }

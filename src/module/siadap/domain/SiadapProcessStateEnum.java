@@ -75,6 +75,12 @@ public enum SiadapProcessStateEnum implements IPresentableEnum {
 	    return "siadap.state.waiting.harmonization";
 	case WAITING_VALIDATION:
 	    return "siadap.state.waiting.validation";
+	case WAITING_SUBMITTAL_BY_EVALUATOR_AFTER_VALIDATION:
+	    return "siadap.state.waiting.evaluation.submittal.after.validation";
+	case WAITING_VALIDATION_ACKNOWLEDGMENT_BY_EVALUATED:
+	    return "siadap.state.waiting.evaluation.ack.after.validation";
+	case WAITING_HOMOLOGATION:
+	    return "siadap.state.waiting.homologation";
 	    //	case UNIMPLEMENTED_STATE:
 	    //	    return "siadap.state.unimplemented";
 	}
@@ -103,6 +109,12 @@ public enum SiadapProcessStateEnum implements IPresentableEnum {
 	    return WAITING_HARMONIZATION;
 	else if (siadap.getValidationDateOfDefaultEvaluation() == null)
 	    return WAITING_VALIDATION;
+	else if (siadap.getRequestedAcknowledegeValidationDate() == null)
+	    return WAITING_SUBMITTAL_BY_EVALUATOR_AFTER_VALIDATION;
+	else if (siadap.getAcknowledgeValidationDate() == null)
+	    return WAITING_VALIDATION_ACKNOWLEDGMENT_BY_EVALUATED;
+	else if (siadap.getHomologationDate() == null)
+	    return WAITING_HOMOLOGATION;
 	return UNIMPLEMENTED_STATE;
 
     }

@@ -25,6 +25,8 @@ public class SiadapEvaluationUniverse extends SiadapEvaluationUniverse_Base {
 	    boolean defaultUniverse) {
 	super();
 	setSiadap(siadap);
+	if (siadap.getValidationDateOfDefaultEvaluation() != null)
+	    throw new SiadapException("cant.assign.more.evaluations.to.this.siadap.proccess");
 	setSiadapUniverse(siadapUniverse);
 	setCurrentObjectiveVersion(0);
 	setCompetenceSlashCareerType(competenceType);
@@ -71,6 +73,10 @@ public class SiadapEvaluationUniverse extends SiadapEvaluationUniverse_Base {
 	    return SiadapGlobalEvaluation.getGlobalEvaluation(getCcaClassification(), getCcaClassificationExcellencyAward());
 	else
 	    return SiadapGlobalEvaluation.getGlobalEvaluation(getTotalEvaluationScoring(), hasExcellencyAwarded());
+    }
+
+    public SiadapGlobalEvaluation getSiadapGlobalEvaluationEnumAfterValidation() {
+	return getSiadapGlobalEvaluationEnum(true);
     }
 
     public SiadapGlobalEvaluation getSiadapGlobalEvaluationEnum() {

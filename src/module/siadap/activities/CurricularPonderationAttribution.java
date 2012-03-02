@@ -24,7 +24,8 @@ public class CurricularPonderationAttribution extends WorkflowActivity<SiadapPro
     public boolean isActive(SiadapProcess process, User user) {
 	Siadap siadap = process.getSiadap();
 	SiadapYearConfiguration siadapYearConfiguration = siadap.getSiadapYearConfiguration();
-	if (!siadap.hasAnAssociatedCurricularPonderationEval() && siadapYearConfiguration.isCurrentUserMemberOfCCA())
+	if (!siadapYearConfiguration.getClosedValidation() && !siadap.hasAnAssociatedCurricularPonderationEval()
+		&& siadapYearConfiguration.isCurrentUserMemberOfCCA())
 	    return true;
 	return false;
     }
