@@ -141,7 +141,7 @@ pre {
 				<logic:notEmpty name="siadap" property="siadapYearConfiguration.evaluationEnd" >
 					<td style="text-decoration: line-through"><fr:view name="siadap" property="siadapYearConfiguration.evaluationEnd" /></td>
 				</logic:notEmpty>
-				<td style="background: pink"><fr:view name="siadap" property="customEvaluationBegin"/></td>
+				<td style="background: pink"><fr:view name="siadap" property="customEvaluationEnd"/></td>
 				<td><wf:activityLink processName="process" activityName="RemoveCustomSchedule" scope="request" paramName0="siadapProcessSchedulesEnumToRemove" paramValue0="<%=SiadapProcessSchedulesEnum.EVALUATION_END_DATE.name()%>"><bean:message bundle="SIADAP_RESOURCES" key="activity.RemoveCustomSchedule" /></wf:activityLink></td>
 			</logic:notEmpty>
 		</tr>

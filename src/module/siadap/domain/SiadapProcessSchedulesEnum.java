@@ -83,7 +83,7 @@ public enum SiadapProcessSchedulesEnum implements IPresentableEnum {
     EVALUATION_END_DATE {
 	@Override
 	public void validateDate(LocalDate newDate, Siadap siadap) throws DomainException {
-	    if (siadap.getEvaluationBeginDate().isBefore(newDate))
+	    if (siadap.getEvaluationBeginDate().isAfter(newDate))
 		triggerInvalidDateException();
 	}
     };

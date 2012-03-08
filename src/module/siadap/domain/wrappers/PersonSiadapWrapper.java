@@ -904,10 +904,11 @@ public class PersonSiadapWrapper extends PartyWrapper implements Serializable {
 	if (retrieveDefaultHarmAccForGivenSiadapUniverse != null) {
 	    //if we had one, let's close it
 	    retrieveDefaultHarmAccForGivenSiadapUniverse.setEndDate(dateOfChange);
+
+	    //and now let's create a new one
+	    retrieveDefaultHarmAccForGivenSiadapUniverse.getParent().addChild(getPerson(),
+		    siadapUniverseToChangeTo.getHarmonizationRelation(getYear()), dateOfChange, null);
 	}
-	//and now let's create a new one
-	retrieveDefaultHarmAccForGivenSiadapUniverse.getParent().addChild(getPerson(),
-		siadapUniverseToChangeTo.getHarmonizationRelation(getYear()), dateOfChange, null);
 
 	getSiadap().setDefaultSiadapUniverse(siadapUniverseToChangeTo);
     }
@@ -920,6 +921,9 @@ public class PersonSiadapWrapper extends PartyWrapper implements Serializable {
      *         HarmUnit
      */
     private Accountability retrieveDefaultHarmAccForGivenSiadapUniverse(SiadapUniverse siadapUniverse) {
+	if (siadapUniverse == null) {
+	    return null;
+	}
 	AccountabilityType harmonizationRelation = siadapUniverse.getHarmonizationRelation(getConfiguration());
 
 	List<Accountability> parentAccountabilityTypes = getParentAccountabilityTypes(harmonizationRelation);

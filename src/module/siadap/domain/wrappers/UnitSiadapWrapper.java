@@ -929,10 +929,12 @@ public class UnitSiadapWrapper extends PartyWrapper implements Serializable {
     }
 
     public boolean isHarmonizationUnit(Unit unit) {
-	for (PartyType partyType : unit.getPartyTypes()) {
-	    if (partyType.getType().equalsIgnoreCase(SIADAP_HARMONIZATION_UNIT_TYPE)) {
-		//seen that we are in the top harmonization unit, we will show info about all of the persons on the sub units
-		return true;
+	if (unit != null) {
+	    for (PartyType partyType : unit.getPartyTypes()) {
+		if (partyType.getType().equalsIgnoreCase(SIADAP_HARMONIZATION_UNIT_TYPE)) {
+		    //seen that we are in the top harmonization unit, we will show info about all of the persons on the sub units
+		    return true;
+		}
 	    }
 	}
 	return false;

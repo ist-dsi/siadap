@@ -79,11 +79,13 @@ public abstract class PartyWrapper implements Serializable {
 
     protected List<Unit> getParentUnits(Party partyToConsider, Predicate predicate, AccountabilityType... types) {
 	List<Unit> units = new ArrayList<Unit>();
-	for (Accountability accountability : partyToConsider.getParentAccountabilities(types)) {
-	    if (predicate == null || predicate.evaluate(accountability)) {
-		Party parent = accountability.getParent();
-		if (parent.isUnit()) {
-		    units.add(((Unit) parent));
+	if (partyToConsider != null) {
+	    for (Accountability accountability : partyToConsider.getParentAccountabilities(types)) {
+		if (predicate == null || predicate.evaluate(accountability)) {
+		    Party parent = accountability.getParent();
+		    if (parent.isUnit()) {
+			units.add(((Unit) parent));
+		    }
 		}
 	    }
 	}
@@ -117,11 +119,13 @@ public abstract class PartyWrapper implements Serializable {
 
     protected List<Person> getChildPersons(Party partyToConsider, Predicate predicate, AccountabilityType... types) {
 	List<Person> people = new ArrayList<Person>();
-	for (Accountability accountability : partyToConsider.getChildrenAccountabilities(types)) {
-	    if (predicate == null || predicate.evaluate(accountability)) {
-		Party parent = accountability.getChild();
-		if (parent.isPerson()) {
-		    people.add(((Person) parent));
+	if (partyToConsider != null) {
+	    for (Accountability accountability : partyToConsider.getChildrenAccountabilities(types)) {
+		if (predicate == null || predicate.evaluate(accountability)) {
+		    Party parent = accountability.getChild();
+		    if (parent.isPerson()) {
+			people.add(((Person) parent));
+		    }
 		}
 	    }
 	}
