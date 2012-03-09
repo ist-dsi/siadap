@@ -89,7 +89,14 @@
 				<logic:equal name="siadapEvaluationUniverse" property="curriculumPonderation" value="true">
 					<p><i><b>Avaliação por ponderação curricular:</b></i></p>
 					<p>Nota sugerida pelo avaliador: <fr:view name="siadapEvaluationUniverse" property="totalEvaluationScoring"/></p>
-					<p><b>Nota final (após validação)</b> <fr:view name="siadapEvaluationUniverse" property="ccaClassification"/> (<fr:view name="siadapEvaluationUniverse" property="siadapGlobalEvaluationEnumAfterValidation"/>) </p> 
+					<p><b>Nota final (após validação)</b>
+					<logic:present name="siadapEvaluationUniverse" property="ccaClassification">
+						<fr:view name="siadapEvaluationUniverse" property="ccaClassification"/>
+					</logic:present>
+					<logic:notPresent name="siadapEvaluationUniverse" property="ccaClassification">
+						<fr:view name="siadapEvaluationUniverse" property="totalEvaluationScoring"/>
+					</logic:notPresent>
+					(<fr:view name="siadapEvaluationUniverse" property="siadapGlobalEvaluationEnumAfterValidation"/>) </p> 
 				</logic:equal>
 			
 	</logic:equal>
