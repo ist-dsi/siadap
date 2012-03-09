@@ -107,7 +107,8 @@ public class Siadap extends Siadap_Base {
 
     public SiadapEvaluationUniverse getDefaultSiadapEvaluationUniverse() {
 	for (SiadapEvaluationUniverse evaluationUniverse : getSiadapEvaluationUniverses()) {
-	    if (evaluationUniverse.getDefaultEvaluationUniverse().booleanValue())
+	    final Boolean defaultEvaluationUniverse = evaluationUniverse.getDefaultEvaluationUniverse();
+	    if (defaultEvaluationUniverse != null && defaultEvaluationUniverse.booleanValue())
 		return evaluationUniverse;
 	}
 	return null;
