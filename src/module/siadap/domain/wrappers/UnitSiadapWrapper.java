@@ -114,23 +114,19 @@ public class UnitSiadapWrapper extends PartyWrapper implements Serializable {
 	SiadapUniverseWrapper peopleWithQuotasSIADAP2 = new SiadapUniverseWrapper(
 		getSiadap2AndWorkingRelationWithQuotaUniverse(), "siadap2WithQuotas", SiadapUniverse.SIADAP2,
 		configuration.getQuotaExcellencySiadap2WithQuota(), configuration.getQuotaRelevantSiadap2WithQuota(),
-		UniverseDisplayMode.VALIDATION, null,
-		null);
+		UniverseDisplayMode.VALIDATION, null, null);
 	SiadapUniverseWrapper peopleWithQuotasSIADAP3 = new SiadapUniverseWrapper(
 		getSiadap3AndWorkingRelationWithQuotaUniverse(), "siadap3WithQuotas", SiadapUniverse.SIADAP3,
 		configuration.getQuotaExcellencySiadap3WithQuota(), configuration.getQuotaRelevantSiadap3WithQuota(),
-		UniverseDisplayMode.VALIDATION, null,
-		null);
+		UniverseDisplayMode.VALIDATION, null, null);
 	SiadapUniverseWrapper peopleWithoutQuotasSIADAP2 = new SiadapUniverseWrapper(
 		getSiadap2AndWorkingRelationWithoutQuotaUniverse(), "siadap2WithoutQuotas", SiadapUniverse.SIADAP2,
 		configuration.getQuotaExcellencySiadap2WithoutQuota(), configuration.getQuotaRelevantSiadap2WithoutQuota(),
-		UniverseDisplayMode.VALIDATION,
-		null, null);
+		UniverseDisplayMode.VALIDATION, null, null);
 	SiadapUniverseWrapper peopleWithoutQuotasSIADAP3 = new SiadapUniverseWrapper(
 		getSiadap3AndWorkingRelationWithoutQuotaUniverse(), "siadap3WithoutQuotas", SiadapUniverse.SIADAP3,
 		configuration.getQuotaExcellencySiadap3WithoutQuota(), configuration.getQuotaRelevantSiadap3WithoutQuota(),
-		UniverseDisplayMode.VALIDATION,
-		null, null);
+		UniverseDisplayMode.VALIDATION, null, null);
 
 	universeWrappers.add(peopleWithoutQuotasSIADAP3);
 	universeWrappers.add(peopleWithoutQuotasSIADAP2);
@@ -385,7 +381,7 @@ public class UnitSiadapWrapper extends PartyWrapper implements Serializable {
     @Service
     public ArrayList<SiadapException> executeValidation(Collection<SiadapUniverseWrapper> siadapUniverseWrappers,
 
-	    ValidationSubActivity validationSubActivity) throws DomainException, ActivityException {
+    ValidationSubActivity validationSubActivity) throws DomainException, ActivityException {
 
 	ArrayList<SiadapException> warningsToReturn = new ArrayList<SiadapException>();
 	HashSet<Person> evaluatorsToNotify = new HashSet<Person>();
@@ -401,9 +397,8 @@ public class UnitSiadapWrapper extends PartyWrapper implements Serializable {
 	    for (SiadapUniverseWrapper siadapUniverseWrapper : siadapUniverseWrappers) {
 		if (siadapUniverseWrapper.isAboveQuotasValidation()) {
 		    throw new ValidationTerminationException("error.validation.above.quotas", siadapUniverseWrapper
-			    .getSiadapUniverseEnum()
-			    .getLocalizedName(),
-			    siadapUniverseWrapper.getSiadapUniverse().iterator().next().isQuotaAware() ? "Sim" : "Não");
+			    .getSiadapUniverseEnum().getLocalizedName(), siadapUniverseWrapper.getSiadapUniverse().iterator()
+			    .next().isQuotaAware() ? "Sim" : "Não");
 		}
 
 	    }
@@ -496,6 +491,11 @@ public class UnitSiadapWrapper extends PartyWrapper implements Serializable {
     //	return new BigDecimal(totalRelevantEvaluationsForUnit).divide(new BigDecimal(totalPeopleWorkingForUnit),
     //		UnitSiadapWrapper.SCALE, RoundingMode.HALF_EVEN).multiply(new BigDecimal(100)).stripTrailingZeros();
     //    }
+
+    //TODO remove this joantune: temporary enabled to see an interface
+    public BigDecimal getRelevantEvaluationPercentage() {
+	return BigDecimal.ZERO;
+    }
 
     public Collection<Person> getEvaluationResponsibles() {
 	return getChildPersons(getConfiguration().getEvaluationRelation());
@@ -731,6 +731,11 @@ public class UnitSiadapWrapper extends PartyWrapper implements Serializable {
     //	return getTotalExcellencyEvaluationsForUnit(getUnit(), true);
     //    }
 
+    //TODO remove this joantune: temporary enabled to see an interface
+    public BigDecimal getExcellencyEvaluationPercentage() {
+	return BigDecimal.ZERO;
+    }
+
     //    public BigDecimal getExcellencyEvaluationPercentage() {
     //	int totalPeopleWorkingForUnit = getTotalPeopleWorkingInUnit(true);
     //	int totalExcellencyEvaluationsForUnit = getCurrentUsedExcellencyGradeQuota();
@@ -866,9 +871,16 @@ public class UnitSiadapWrapper extends PartyWrapper implements Serializable {
     public List<PersonSiadapWrapper> getUnitEmployees(boolean continueToSubUnits, Predicate predicate) {
 	List<PersonSiadapWrapper> employees = new ArrayList<PersonSiadapWrapper>();
 
-	getUnitAttachedPersons(getUnit(), employees, continueToSubUnits, predicate,
-		Collections.singleton(getConfiguration().getUnitRelations()), getConfiguration().getWorkingRelation(),
-		getConfiguration().getWorkingRelationWithNoQuota());
+	List<AccountabilityType> unitAccTypesToUse = new ArrayList<AccountabilityType>();
+	if (isHarmonizationUnit()) {
+	    //let's include the harm. relation as well
+	    unitAccTypesToUse.add(getConfiguration().getHarmonizationUnitRelations());
+	}
+	//let's iterate useing the unit relations at the very least
+	unitAccTypesToUse.add(getConfiguration().getUnitRelations());
+
+	getUnitAttachedPersons(getUnit(), employees, continueToSubUnits, predicate, unitAccTypesToUse, getConfiguration()
+		.getWorkingRelation(), getConfiguration().getWorkingRelationWithNoQuota());
 	return employees;
     }
 
@@ -883,8 +895,16 @@ public class UnitSiadapWrapper extends PartyWrapper implements Serializable {
     public List<PersonSiadapWrapper> getUnitEmployeesWithQuotas(boolean continueToSubUnits, Predicate predicate) {
 	List<PersonSiadapWrapper> employees = new ArrayList<PersonSiadapWrapper>();
 
-	getUnitAttachedPersons(getUnit(), employees, continueToSubUnits, predicate,
-		Collections.singleton(getConfiguration().getUnitRelations()), getConfiguration().getWorkingRelation());
+	List<AccountabilityType> unitAccTypesToUse = new ArrayList<AccountabilityType>();
+	if (isHarmonizationUnit()) {
+	    //let's include the harm. relation as well
+	    unitAccTypesToUse.add(getConfiguration().getHarmonizationUnitRelations());
+	}
+	//let's iterate useing the unit relations at the very least
+	unitAccTypesToUse.add(getConfiguration().getUnitRelations());
+
+	getUnitAttachedPersons(getUnit(), employees, continueToSubUnits, predicate, unitAccTypesToUse, getConfiguration()
+		.getWorkingRelation());
 	return employees;
     }
 
@@ -899,8 +919,16 @@ public class UnitSiadapWrapper extends PartyWrapper implements Serializable {
     public List<PersonSiadapWrapper> getUnitEmployeesWithoutQuotas(boolean continueToSubUnits, Predicate predicate) {
 	List<PersonSiadapWrapper> employees = new ArrayList<PersonSiadapWrapper>();
 
-	getUnitAttachedPersons(getUnit(), employees, continueToSubUnits, predicate,
-		Collections.singleton(getConfiguration().getUnitRelations()), getConfiguration().getWorkingRelationWithNoQuota());
+	List<AccountabilityType> unitAccTypesToUse = new ArrayList<AccountabilityType>();
+	if (isHarmonizationUnit()) {
+	    //let's include the harm. relation as well
+	    unitAccTypesToUse.add(getConfiguration().getHarmonizationUnitRelations());
+	}
+	//let's iterate useing the unit relations at the very least
+	unitAccTypesToUse.add(getConfiguration().getUnitRelations());
+
+	getUnitAttachedPersons(getUnit(), employees, continueToSubUnits, predicate, unitAccTypesToUse, getConfiguration()
+		.getWorkingRelationWithNoQuota());
 	return employees;
     }
 

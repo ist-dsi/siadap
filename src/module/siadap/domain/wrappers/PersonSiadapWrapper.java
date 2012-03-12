@@ -524,10 +524,10 @@ public class PersonSiadapWrapper extends PartyWrapper implements Serializable {
 	return false;
     }
 
-    //    public BigDecimal getTotalEvaluationScoring() {
-    //	Siadap siadap = getSiadap();
-    //	return siadap != null ? (siadap.isEvaluationDone() ? siadap.getTotalEvaluationScoring() : null) : null;
-    //    }
+    //TODO joantune: only here temporarily, probably should be removed
+    public BigDecimal getTotalEvaluationScoring() {
+	return getTotalEvaluationScoring(getSiadap().getDefaultSiadapUniverse());
+    }
 
     public BigDecimal getTotalEvaluationScoring(SiadapUniverse siadapUniverse) {
 	Siadap siadap = getSiadap();

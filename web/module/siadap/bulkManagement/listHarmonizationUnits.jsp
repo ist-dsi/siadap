@@ -11,7 +11,7 @@
 <bean:define id="mode" name="mode"/>
 
 <%-- The year chooser: --%>
-<fr:form action="/siadapManagement.do?method=manageHarmonizationUnitsForMode">
+<fr:form action="/siadapManagement.do?method=manageHarmonizationUnitsForMode&mode=homologationDone">
 	<fr:edit id="siadapYearWrapper" name="siadapYearWrapper" nested="true">
 		<fr:schema bundle="SIADAP" type="module.siadap.domain.wrappers.SiadapYearWrapper">
 			<fr:slot name="chosenYear" bundle="SIADAP_RESOURCES" layout="menu-select-postback" key="siadap.start.siadapYearChoice">
@@ -27,6 +27,7 @@
 		</fr:schema>
 	</fr:edit>
 </fr:form>  
+<bean:define id="year" name="siadapYearWrapper" property="chosenYear"/>
 
 <fr:view name="harmonizationUnits">
 	<fr:schema type="module.siadap.domain.wrappers.UnitSiadapWrapper" bundle="SIADAP_RESOURCES">
@@ -37,7 +38,7 @@
 	</fr:schema>
 	<fr:layout name="tabular">
 		<fr:property name="classes" value="tstyle2"/>
-		<fr:property name="link(view)" value="<%= "/siadapManagement.do?method=harmonizationData&mode=" + mode.toString()%>"/>
+		<fr:property name="link(view)" value="<%= "/siadapManagement.do?method=harmonizationData&mode=" + mode.toString() + "&year=" + year.toString() %>"/>
 		<fr:property name="bundle(view)" value="MYORG_RESOURCES"/>
 		<fr:property name="key(view)" value="link.view"/>
 		<fr:property name="param(view)" value="unit.externalId/unitId"/>
