@@ -50,6 +50,7 @@ import module.siadap.activities.RevertNoEvaluation;
 import module.siadap.activities.RevertState;
 import module.siadap.activities.RevertStateActivityInformation;
 import module.siadap.activities.SealObjectivesAndCompetences;
+import module.siadap.activities.SendToReviewCommission;
 import module.siadap.activities.SubmitAutoEvaluation;
 import module.siadap.activities.SubmitEvaluation;
 import module.siadap.activities.SubmitForObjectivesAcknowledge;
@@ -122,6 +123,8 @@ public class SiadapProcess extends SiadapProcess_Base {
 
 	//SiadapPersonnelManagement activities:
 	activities.add(new ChangePersonnelSituation());
+
+	activities.add(new SendToReviewCommission());
 
     }
 

@@ -81,6 +81,9 @@ class SiadapYearConfiguration {
 	
 	Boolean closedValidation;
 	
+	/* Waiting period after validation acknowledgment, before holomogation, in days */
+	Integer reviewCommissionWaitingPeriod;
+	
 }
 
 class Siadap {
@@ -104,6 +107,8 @@ class Siadap {
 	LocalDate acknowledgeValidationDate;
 	LocalDate homologationDate;
 	LocalDate acknowledgeHomologationDate;
+	
+	LocalDate assignedToReviewCommissionDate;
 	
 	
 	

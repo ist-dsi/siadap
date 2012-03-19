@@ -61,6 +61,10 @@ public enum SiadapProcessStateEnum implements IPresentableEnum {
 
     WAITING_VALIDATION_ACKNOWLEDGMENT_BY_EVALUATED,
 
+    VALIDATION_ACKNOWLEDGED,
+
+    WAITING_FOR_REVIEW_COMMISSION,
+
     WAITING_HOMOLOGATION,
 
     WAITING_ACKNOWLEDGEMENT_OF_HOMOLOGATION,
@@ -108,44 +112,25 @@ public enum SiadapProcessStateEnum implements IPresentableEnum {
 	    return "siadap.state.waiting.evaluation.submittal.after.validation";
 	case WAITING_VALIDATION_ACKNOWLEDGMENT_BY_EVALUATED:
 	    return "siadap.state.waiting.evaluation.ack.after.validation";
+	case VALIDATION_ACKNOWLEDGED:
+	    return "siadap.state.validation.acked";
+	case WAITING_FOR_REVIEW_COMMISSION:
+	    return "siadap.state.waiting.review.commission";
 	case WAITING_HOMOLOGATION:
 	    return "siadap.state.waiting.homologation";
 	    //	case UNIMPLEMENTED_STATE:
 	    //	    return "siadap.state.unimplemented";
 	}
 	return null;
-
     }
 
-    public static SiadapProcessStateEnum getState(Siadap siadap) {
-	if (siadap == null)
-	    return NOT_CREATED;
-	else if (siadap.isWithSkippedEvaluation())
-	    return EVALUATION_NOT_GOING_TO_BE_DONE;
-	else if (!siadap.isWithObjectivesFilled())
-	    return INCOMPLETE_OBJ_OR_COMP;
-	else if (!siadap.hasSealedObjectivesAndCompetences())
-	    return NOT_SEALED;
-	else if (siadap.getRequestedAcknowledgeDate() == null)
-	    return NOT_YET_SUBMITTED_FOR_ACK;
-	else if (!siadap.isEvaluatedWithKnowledgeOfObjectives())
-	    return WAITING_EVAL_OBJ_ACK;
-	else if (!siadap.isAutoEvaliationDone() && !siadap.isDefaultEvaluationDone())
-	    return WAITING_SELF_EVALUATION;
-	else if (!siadap.isDefaultEvaluationDone())
-	    return NOT_YET_EVALUATED;
-	else if (siadap.getHarmonizationDate() == null)
-	    return WAITING_HARMONIZATION;
-	else if (siadap.getValidationDateOfDefaultEvaluation() == null)
-	    return WAITING_VALIDATION;
-	else if (siadap.getRequestedAcknowledegeValidationDate() == null)
-	    return WAITING_SUBMITTAL_BY_EVALUATOR_AFTER_VALIDATION;
-	else if (siadap.getAcknowledgeValidationDate() == null)
-	    return WAITING_VALIDATION_ACKNOWLEDGMENT_BY_EVALUATED;
-	else if (siadap.getHomologationDate() == null)
-	    return WAITING_HOMOLOGATION;
-	return UNIMPLEMENTED_STATE;
 
+    public static SiadapProcessStateEnum getState(Siadap siadap) {
+	if (siadap == null) {
+	    return NOT_CREATED;
+	} else {
+	    return siadap.getState();
+	}
     }
 
     public static boolean isNotSubmittedForConfirmation(final Siadap siadap) {

@@ -87,7 +87,50 @@ public class Siadap extends Siadap_Base {
 	//	siadapEvaluationUniverse.add
     }
 
+    public SiadapProcessStateEnum getState() {
+	if (isWithSkippedEvaluation()) {
+	    return SiadapProcessStateEnum.EVALUATION_NOT_GOING_TO_BE_DONE;
+	} else if (!isWithObjectivesFilled()) {
+	    return SiadapProcessStateEnum.INCOMPLETE_OBJ_OR_COMP;
+	} else if (!hasSealedObjectivesAndCompetences()) {
+	    return SiadapProcessStateEnum.NOT_SEALED;
+	} else if (getRequestedAcknowledgeDate() == null) {
+	    return SiadapProcessStateEnum.NOT_YET_SUBMITTED_FOR_ACK;
+	} else if (!isEvaluatedWithKnowledgeOfObjectives()) {
+	    return SiadapProcessStateEnum.WAITING_EVAL_OBJ_ACK;
+	} else if (!isAutoEvaliationDone() && !isDefaultEvaluationDone()) {
+	    return SiadapProcessStateEnum.WAITING_SELF_EVALUATION;
+	} else if (!isDefaultEvaluationDone()) {
+	    return SiadapProcessStateEnum.NOT_YET_EVALUATED;
+	} else if (getHarmonizationDate() == null) {
+	    return SiadapProcessStateEnum.WAITING_HARMONIZATION;
+	} else if (getValidationDateOfDefaultEvaluation() == null) {
+	    return SiadapProcessStateEnum.WAITING_VALIDATION;
+	} else if (getRequestedAcknowledegeValidationDate() == null) {
+	    return SiadapProcessStateEnum.WAITING_SUBMITTAL_BY_EVALUATOR_AFTER_VALIDATION;
+	} else if (getAcknowledgeValidationDate() == null) {
+	    return SiadapProcessStateEnum.WAITING_VALIDATION_ACKNOWLEDGMENT_BY_EVALUATED;
+	} else if (getHomologationDate() == null) {
+	    if (isDuringReviewCommissionWaitingPeriod() && getAssignedToReviewCommissionDate() == null) {
+		return SiadapProcessStateEnum.VALIDATION_ACKNOWLEDGED;
+	    } else if (getAssignedToReviewCommissionDate() != null) {
+		return SiadapProcessStateEnum.WAITING_FOR_REVIEW_COMMISSION;
+	    } else {
+		return SiadapProcessStateEnum.WAITING_HOMOLOGATION;
+	    }
+	}
+	return SiadapProcessStateEnum.UNIMPLEMENTED_STATE;
+    }
 
+    private boolean isDuringReviewCommissionWaitingPeriod() {
+	if (getAcknowledgeValidationDate() == null) {
+	    return false;
+	}
+
+	LocalDate limitDate = getAcknowledgeValidationDate().plusDays(getSiadapYearConfiguration().getReviewCommissionWaitingPeriod());
+	LocalDate today = new LocalDate();
+	return !today.isAfter(limitDate);
+    }
 
     public SiadapUniverse getDefaultSiadapUniverse() {
 	SiadapEvaluationUniverse defaultSiadapEvaluationUniverse = getDefaultSiadapEvaluationUniverse();

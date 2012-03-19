@@ -152,6 +152,8 @@
 		<fr:slot name="quotaRelevantSiadap3WithoutQuota" key="label.config.quotaRelevantSiadap3WithoutQuota"/>
 		<fr:slot name="quotaRegularSiadap3WithoutQuota" key="label.config.quotaRegularSiadap3WithoutQuota"/>
 		
+		<fr:slot name="reviewCommissionWaitingPeriod" key="label.config.reviewCommissionWaitingPeriod"/>
+		
 		<fr:slot name="objectiveSpecificationBegin" layout="picker" key="label.config.objectiveSpecificationBegin"/>
 		<fr:slot name="objectiveSpecificationEnd" layout="picker" key="label.config.objectiveSpecificationEnd"/>
 		<fr:slot name="autoEvaluationBegin" layout="picker"/>

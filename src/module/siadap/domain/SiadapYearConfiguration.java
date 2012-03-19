@@ -51,6 +51,7 @@ public class SiadapYearConfiguration extends SiadapYearConfiguration_Base {
     public static final Integer DEFAULT_SIADAP2_COMPETENCES_PONDERATION = 25;
     public static final Integer DEFAULT_SIADAP3_OBJECTIVES_PONDERATION = 60;
     public static final Integer DEFAULT_SIADAP3_COMPETENCES_PONDERATION = 40;
+    public static final Integer DEFAULT_REVIEW_COMMISSION_WAITING_PERIOD = 21;
     //    public static final Double MAXIMUM_HIGH_GRADE_QUOTA = 25.0;
     //    public static final Double MAXIMUM_EXCELLENCY_GRADE_QUOTA = 5.0; // 1.25; //
 
@@ -137,7 +138,7 @@ public class SiadapYearConfiguration extends SiadapYearConfiguration_Base {
     // the 25%
 
     public SiadapYearConfiguration(Integer year, int siadap2ObjectivesPonderation, int siadap2CompetencesPonderation,
-	    int siadap3CompetencesPonderdation, int siadap3ObjectivesPonderation) {
+	    int siadap3CompetencesPonderdation, int siadap3ObjectivesPonderation, int reviewCommissionWaitingPeriod) {
 	super();
 	setYear(year);
 	setSiadap2CompetencesPonderation(siadap2CompetencesPonderation);
@@ -145,6 +146,8 @@ public class SiadapYearConfiguration extends SiadapYearConfiguration_Base {
 
 	setSiadap3CompetencesPonderation(siadap3CompetencesPonderdation);
 	setSiadap3ObjectivesPonderation(siadap3ObjectivesPonderation);
+	
+	setReviewCommissionWaitingPeriod(reviewCommissionWaitingPeriod);
 
 	setSiadapRootModule(SiadapRootModule.getInstance());
 	setLockHarmonizationOnQuota(Boolean.FALSE);
@@ -204,7 +207,8 @@ public class SiadapYearConfiguration extends SiadapYearConfiguration_Base {
 	    return configuration;
 	}
 	return new SiadapYearConfiguration(year, DEFAULT_SIADAP2_OBJECTIVES_PONDERATION, DEFAULT_SIADAP2_COMPETENCES_PONDERATION,
-		DEFAULT_SIADAP3_COMPETENCES_PONDERATION, DEFAULT_SIADAP3_OBJECTIVES_PONDERATION);
+		DEFAULT_SIADAP3_COMPETENCES_PONDERATION, DEFAULT_SIADAP3_OBJECTIVES_PONDERATION,
+		DEFAULT_REVIEW_COMMISSION_WAITING_PERIOD);
     }
 
     public Siadap getSiadapFor(Person person, Integer year) {
