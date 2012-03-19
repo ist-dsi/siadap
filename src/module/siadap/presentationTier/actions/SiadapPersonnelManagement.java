@@ -42,10 +42,12 @@ import module.organization.domain.AccountabilityType;
 import module.organization.domain.Person;
 import module.organization.domain.Unit;
 import module.siadap.activities.ChangePersonnelSituationActivityInformation;
+import module.siadap.domain.CompetenceEvaluation;
 import module.siadap.domain.CompetenceType;
 import module.siadap.domain.Siadap;
 import module.siadap.domain.SiadapEvaluationUniverse;
 import module.siadap.domain.SiadapProcess;
+import module.siadap.domain.SiadapProcessStateEnum;
 import module.siadap.domain.SiadapRootModule;
 import module.siadap.domain.SiadapUniverse;
 import module.siadap.domain.SiadapYearConfiguration;
@@ -733,9 +735,19 @@ public class SiadapPersonnelManagement extends ContextBaseAction {
 
 	@Override
 	public void execute(SiadapProcess process) throws SiadapException {
-	    if (process.getSiadap().getCompetences() != null && process.getSiadap().getCompetences().isEmpty() == false)
+	    if (process.getSiadap().getCompetences() != null
+		    && process.getSiadap().getCompetences().isEmpty() == false
+		    && SiadapProcessStateEnum.getState(process.getSiadap()).ordinal() > SiadapProcessStateEnum.NOT_YET_SUBMITTED_FOR_ACK
+			    .ordinal())
 		throw new SiadapException("error.changing.competence.type.cant.due.to.existing.competences.defined");
-	    process.getSiadap().getDefaultSiadapEvaluationUniverse().setCompetenceSlashCareerType(getCompetenceType());
+	    SiadapEvaluationUniverse defaultSiadapEvaluationUniverse = process.getSiadap().getDefaultSiadapEvaluationUniverse();
+	    defaultSiadapEvaluationUniverse.setCompetenceSlashCareerType(getCompetenceType());
+	    //we should also remove any existing competences (as long as they have no grades associated with them)
+	    for (CompetenceEvaluation competenceEvaluation : defaultSiadapEvaluationUniverse.getCompetenceEvaluations()) {
+		if (competenceEvaluation.getItemAutoEvaluation() != null || competenceEvaluation.getItemEvaluation() != null)
+		    throw new SiadapException("error.changing.competence.type.due.to.existing.evaluation");
+		competenceEvaluation.delete();
+	    }
 	}
 
 	@Override
