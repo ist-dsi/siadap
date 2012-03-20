@@ -86,7 +86,7 @@ public enum SiadapProcessStateEnum implements IPresentableEnum {
     }
 
 
-    private String getLabelPrefix() {
+    public String getLabelPrefix() {
 	switch (this) {
 	case NOT_CREATED:
 	    return "siadap.state.not.created";
