@@ -77,6 +77,7 @@
 		<a href="#" id="createSiadapLink">
 			<bean:message key="link.create" bundle="MYORG_RESOURCES"/>
 		</a>
+		
 	</logic:notPresent>
 </p>
 
@@ -110,6 +111,9 @@ request.setAttribute("isCCAMember", isCCAMember);
 
 	<%-- Part responsible for the changes on the SIADAP proccess (and the SIADAP user) --%>
 <logic:equal name="isAbleToChangeAnything" value="true">
+	<html:link styleId="removeSiadap"  page="<%="/siadapPersonnelManagement.do?method=removeSiadap&year="+year.toString()%>" paramName="person" paramProperty="person.externalId" paramId="personId">
+		<bean:message key="label.management.removeSiadap" bundle="SIADAP_RESOURCES"/>
+	</html:link>
 	<logic:present name="personWrapper" property="siadap">
 		<p><a href="#" id="changeUnit"> <bean:message key="label.changeWorkingUnit" bundle="SIADAP_RESOURCES"/> </a> | <a href="#" id="changeEvaluator"> <bean:message key="label.changeEvaluator" bundle="SIADAP_RESOURCES"/> </a>
 			<logic:equal name="person" property="customEvaluatorDefined" value="true">
@@ -119,9 +123,7 @@ request.setAttribute("isCCAMember", isCCAMember);
 			</logic:equal>
 			| <a href="#" id="changeSiadapUniverse"> <bean:message key="label.changeSiadapUniverse" bundle="SIADAP_RESOURCES"/> </a>
 			| <a href="#" id="changeCompetenceTypeLink"> <bean:message key="label.changeCompetenceType" bundle="SIADAP_RESOURCES"/> </a>
-		    | <html:link styleId="removeSiadap"  page="<%="/siadapPersonnelManagement.do?method=removeSiadap&year="+year.toString()%>" paramName="person" paramProperty="person.externalId" paramId="personId">
-				<bean:message key="label.management.removeSiadap" bundle="SIADAP_RESOURCES"/>
-		      </html:link>
+		   
 			  <script type="text/javascript">
 			   	linkConfirmationHook('removeSiadap', '<bean:message key="label.management.removeSiadap.confirmationMessage" bundle="SIADAP_RESOURCES"/>','<bean:message key="label.management.removeSiadap" bundle="SIADAP_RESOURCES"/>');
 			  </script>
@@ -138,7 +140,6 @@ request.setAttribute("isCCAMember", isCCAMember);
 	    |<bean:message key="label.changeEvaluator" bundle="SIADAP_RESOURCES"/>			
 		| <bean:message key="label.changeSiadapUniverse" bundle="SIADAP_RESOURCES"/> 
 		| <bean:message key="label.changeCompetenceType" bundle="SIADAP_RESOURCES"/>
-		| <bean:message key="label.management.removeSiadap" bundle="SIADAP_RESOURCES"/>
 		<logic:equal value="true" name="isCCAMember">
 		| <bean:message key="label.forceChangeSiadapUniverse" bundle="SIADAP_RESOURCES"/> 
 		</logic:equal>
