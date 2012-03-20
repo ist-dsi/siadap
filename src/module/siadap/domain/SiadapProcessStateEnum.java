@@ -67,7 +67,7 @@ public enum SiadapProcessStateEnum implements IPresentableEnum {
 
     WAITING_HOMOLOGATION,
 
-    WAITING_ACKNOWLEDGEMENT_OF_HOMOLOGATION,
+    HOMOLOGATED,
 
     FINAL_STATE,
 
@@ -118,6 +118,8 @@ public enum SiadapProcessStateEnum implements IPresentableEnum {
 	    return "siadap.state.waiting.review.commission";
 	case WAITING_HOMOLOGATION:
 	    return "siadap.state.waiting.homologation";
+	case HOMOLOGATED:
+	    return "siadap.state.homologated";
 	    //	case UNIMPLEMENTED_STATE:
 	    //	    return "siadap.state.unimplemented";
 	}
@@ -146,12 +148,14 @@ public enum SiadapProcessStateEnum implements IPresentableEnum {
      *         on the user, if he is an evaluator or an evaluated
      */
     public static String getNextStep(Siadap siadap, User currentUser) {
-	if (siadap.getEvaluator().getPerson().getUser().equals(currentUser))
+	if (siadap.getEvaluator().getPerson().getUser().equals(currentUser)) {
 	    return BundleUtil.getStringFromResourceBundle("resources/SiadapResources", getState(siadap).getLabelPrefix()
 		    + ".nextstep.evaluator");
-	else if (siadap.getEvaluated().getUser().equals(currentUser))
+	}
+	if (siadap.getEvaluated().getUser().equals(currentUser)) {
 	    return BundleUtil.getStringFromResourceBundle("resources/SiadapResources", getState(siadap).getLabelPrefix()
 		    + ".nextstep.evaluated");
+	}
 	return null;
     }
 

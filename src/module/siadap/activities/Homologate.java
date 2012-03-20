@@ -24,14 +24,14 @@
  */
 package module.siadap.activities;
 
-import org.joda.time.LocalDate;
-
 import module.siadap.domain.Siadap;
 import module.siadap.domain.SiadapProcess;
-import module.siadap.domain.SiadapYearConfiguration;
+import module.siadap.domain.SiadapProcessStateEnum;
 import module.workflow.activities.ActivityInformation;
 import module.workflow.activities.WorkflowActivity;
 import myorg.domain.User;
+
+import org.joda.time.LocalDate;
 
 /**
  * 
@@ -45,7 +45,8 @@ public class Homologate extends WorkflowActivity<SiadapProcess, ActivityInformat
 	Siadap siadap = process.getSiadap();
 
 	return siadap.getSiadapYearConfiguration().isPersonResponsibleForHomologation(user.getPerson())
-		&& siadap.getAcknowledgeValidationDate() != null && siadap.getHomologationDate() == null;
+		&& (siadap.getState().equals(SiadapProcessStateEnum.WAITING_FOR_REVIEW_COMMISSION) || siadap.getState().equals(
+			SiadapProcessStateEnum.WAITING_HOMOLOGATION));
     }
 
     @Override

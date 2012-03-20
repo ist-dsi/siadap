@@ -118,6 +118,8 @@ public class Siadap extends Siadap_Base {
 	    } else {
 		return SiadapProcessStateEnum.WAITING_HOMOLOGATION;
 	    }
+	} else if (getAcknowledgeHomologationDate() == null) {
+	    return SiadapProcessStateEnum.HOMOLOGATED;
 	}
 	return SiadapProcessStateEnum.UNIMPLEMENTED_STATE;
     }
