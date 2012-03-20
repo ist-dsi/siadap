@@ -111,7 +111,11 @@ public class SiadapProcessCountAction extends ContextBaseAction {
 	//let's always use the last day of the year
 	LocalDate dayToUse = SiadapMiscUtilClass.lastDayOfYearWhereAccsAreActive(configuration.getYear());
 
-	final Unit unit = configuration.getSiadapStructureTopUnit();
+	Unit unit = (Unit) getDomainObject(request, "unitId");
+	if (unit == null)
+ {
+	    unit = configuration.getSiadapStructureTopUnit();
+	}
 
 	final Collection<Party> parents = getParents(unit, configuration, dayToUse);
 	final Collection<Party> children = getChildren(unit, configuration, dayToUse);
