@@ -151,7 +151,7 @@ pre {
 </table>
 <%-- END: The table with the deadlines and custom deadlines if they are defined --%>
 <div class="highlightBox"> 
-	<p><strong><bean:message bundle="SIADAP_RESOURCES" key="<%= ((Siadap) siadap).getState().getLabelPrefix() %>" /> - <bean:write name="evaluatedPersonWrapper" property="nextStep"/></strong></p>
+	<p><strong><bean:message bundle="SIADAP_RESOURCES" key="label.state" />: <bean:message bundle="SIADAP_RESOURCES" key="<%= ((Siadap) siadap).getState().getLabelPrefix() %>" /> - <bean:write name="evaluatedPersonWrapper" property="nextStep"/></strong></p>
 </div>
 
 <p><b>Carreira, no âmbito do SIADAP (Universo SIADAP):</b>
