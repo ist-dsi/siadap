@@ -1213,6 +1213,63 @@ public class UnitSiadapWrapper extends PartyWrapper implements Serializable {
 
     }
 
+    public Collection<SiadapProcess> getAllSiadapProcesses() {
+	Set<SiadapProcess> allProcesses = new HashSet<SiadapProcess>();
+	for (PersonSiadapWrapper person : getSiadap3AndWorkingRelationWithoutQuotaUniverse()) {
+	    allProcesses.add(person.getSiadap().getProcess());
+	}
+	for (PersonSiadapWrapper person : getSiadap3AndWorkingRelationWithQuotaUniverse()) {
+	    allProcesses.add(person.getSiadap().getProcess());
+	}
+	for (PersonSiadapWrapper person : getSiadap2AndWorkingRelationWithoutQuotaUniverse()) {
+	    allProcesses.add(person.getSiadap().getProcess());
+	}
+	for (PersonSiadapWrapper person : getSiadap2AndWorkingRelationWithQuotaUniverse()) {
+	    allProcesses.add(person.getSiadap().getProcess());
+	}
+	return allProcesses;
+    }
+
+    public Collection<SiadapProcess> getSiadapProcessesOngoing() {
+	Set<SiadapProcess> processes = new HashSet<SiadapProcess>();
+	for (SiadapProcess process : getAllSiadapProcesses()) {
+	    if (process.getSiadap().isOngoing()) {
+		processes.add(process);
+	    }
+	}
+	return processes;
+    }
+
+    public Collection<SiadapProcess> getSiadapProcessesInReviewCommission() {
+	Set<SiadapProcess> processes = new HashSet<SiadapProcess>();
+	for (SiadapProcess process : getAllSiadapProcesses()) {
+	    if (process.getSiadap().isWaitingForReviewCommission()) {
+		processes.add(process);
+	    }
+	}
+	return processes;
+    }
+
+    public Collection<SiadapProcess> getSiadapProcessesPendingHomologation() {
+	Set<SiadapProcess> processes = new HashSet<SiadapProcess>();
+	for (SiadapProcess process : getAllSiadapProcesses()) {
+	    if (process.getSiadap().isWaitingHomologation()) {
+		processes.add(process);
+	    }
+	}
+	return processes;
+    }
+
+    public Collection<SiadapProcess> getSiadapProcessesHomologated() {
+	Set<SiadapProcess> processes = new HashSet<SiadapProcess>();
+	for (SiadapProcess process : getAllSiadapProcesses()) {
+	    if (process.getSiadap().isHomologated()) {
+		processes.add(process);
+	    }
+	}
+	return processes;
+    }
+
     /**
      * 
      * @return the next 'tier' of units that are connected tho this one by the

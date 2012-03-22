@@ -584,13 +584,27 @@ public class SiadapManagement extends ContextBaseAction {
 
 	request.setAttribute("siadapYearWrapper", siadapYearWrapper);
 	request.setAttribute("harmonizationUnits",
-		SiadapYearConfiguration.getAllHarmonizationUnitsFor(siadapYearWrapper.getChosenYear()));
+		SiadapYearConfiguration.getAllHarmonizationUnitsExceptSpecialUnit(siadapYearWrapper.getChosenYear()));
 	String mode = request.getParameter("mode");
 	request.setAttribute("mode", mode);
 	return forward(request, "/module/siadap/bulkManagement/listHarmonizationUnits.jsp");
     }
 
-    public final ActionForward harmonizationData(final ActionMapping mapping, final ActionForm form,
+    public final ActionForward viewPendingHomologationProcesses(final ActionMapping mapping, final ActionForm form,
+	    final HttpServletRequest request, final HttpServletResponse response) {
+
+	int year = Integer.parseInt(request.getParameter("year"));
+	Unit unit = getDomainObject(request, "unitId");
+	String mode = request.getParameter("mode");
+
+	UnitSiadapWrapper unitSiadapWrapper = new UnitSiadapWrapper(unit, year);
+	request.setAttribute("unit", unitSiadapWrapper);
+	request.setAttribute("employees", unitSiadapWrapper.getUnitEmployees(true));
+	request.setAttribute("mode", mode);
+	return forward(request, "/module/siadap/bulkManagement/operateOverHarmonizationUnits.jsp");
+    }
+
+    public final ActionForward viewReviewCommissionProcesses(final ActionMapping mapping, final ActionForm form,
 	    final HttpServletRequest request, final HttpServletResponse response) {
 
 	int year = Integer.parseInt(request.getParameter("year"));

@@ -29,22 +29,57 @@
 </fr:form>  
 <bean:define id="year" name="siadapYearWrapper" property="chosenYear"/>
 
-<fr:view name="harmonizationUnits">
-	<fr:schema type="module.siadap.domain.wrappers.UnitSiadapWrapper" bundle="SIADAP_RESOURCES">
-			<fr:slot name="unit.partyName"  key="label.unit" bundle="ORGANIZATION_RESOURCES" />
-			<fr:slot name="relevantEvaluationPercentage"/>
-			<fr:slot name="excellencyEvaluationPercentage"/>
-			<fr:slot name="harmonizationFinished" layout="boolean-icon"/>
-	</fr:schema>
-	<fr:layout name="tabular">
-		<fr:property name="classes" value="tstyle2"/>
-		<fr:property name="link(view)" value="<%= "/siadapManagement.do?method=harmonizationData&mode=" + mode.toString() + "&year=" + year.toString() %>"/>
-		<fr:property name="bundle(view)" value="MYORG_RESOURCES"/>
-		<fr:property name="key(view)" value="link.view"/>
-		<fr:property name="param(view)" value="unit.externalId/unitId"/>
-		<fr:property name="order(view)" value="1"/>
-	</fr:layout>	
-</fr:view>
+<table class="tstyle2">
+<tr>
+	<th><bean:message bundle="ORGANIZATION_RESOURCES" key="label.unit"/></th>
+	<th><bean:message bundle="SIADAP_RESOURCES" key="label.relevantEvaluationPercentage"/></th>
+	<th><bean:message bundle="SIADAP_RESOURCES" key="label.excellencyEvaluationPercentage"/></th>
+	<th><bean:message bundle="SIADAP_RESOURCES" key="label.ongoing"/></th>
+	<th><bean:message bundle="SIADAP_RESOURCES" key="label.pending.homologation"/></th>
+	<th><bean:message bundle="SIADAP_RESOURCES" key="label.in.reviewCommission"/></th>
+	<th><bean:message bundle="SIADAP_RESOURCES" key="label.homologated"/></th>
+</tr>
+<logic:iterate id="harmonizationUnit" name="harmonizationUnits" type="module.siadap.domain.wrappers.UnitSiadapWrapper">
+<tr>
+	<td>
+		<%= "<strong>" + harmonizationUnit.getUnit().getPartyName().getContent() + "</strong><br>(" + harmonizationUnit.getAllSiadapProcesses().size() %>
+		<bean:message bundle="SIADAP_RESOURCES" key="label.process.state.counts"/>)
+	</td>
+	<td><%= harmonizationUnit.getRelevantEvaluationPercentage() %> %</td>
+	<td><%= harmonizationUnit.getExcellencyEvaluationPercentage() %> %</td>
+	<td><%= harmonizationUnit.getSiadapProcessesOngoing().size() %></td>
+	<fr:form id="<%= "formHomologation" + harmonizationUnit.getUnit().getExternalId() %>" action="<%= "/siadapManagement.do?method=viewPendingHomologationProcesses&mode=" + mode.toString() + "&year=" + year.toString() + "&unitId=" + harmonizationUnit.getUnit().getExternalId() %>" >
+		<logic:notEmpty name="harmonizationUnit" property="siadapProcessesPendingHomologation">
+			<td style="cursor: pointer;" onclick="<%="document.getElementById('formHomologation" + harmonizationUnit.getUnit().getExternalId() + "').submit()"%>" >
+				<strong><%= harmonizationUnit.getSiadapProcessesPendingHomologation().size() %></strong>
+				<html:link action="<%= "/siadapManagement.do?method=viewPendingHomologationProcesses&mode=" + mode.toString() + "&year=" + year.toString() + "&unitId=" + harmonizationUnit.getUnit().getExternalId() %>" >
+					(<bean:message bundle="MYORG_RESOURCES" key="link.view"/>)
+				</html:link>
+			</td>
+		</logic:notEmpty>
+		<logic:empty name="harmonizationUnit" property="siadapProcessesPendingHomologation">
+			<td><%= harmonizationUnit.getSiadapProcessesPendingHomologation().size() %></td>
+		</logic:empty>
+	</fr:form>
+	
+	<fr:form id="<%= "formReviewCommission" + harmonizationUnit.getUnit().getExternalId() %>" action="<%= "/siadapManagement.do?method=viewReviewCommissionProcesses&mode=" + mode.toString() + "&year=" + year.toString() + "&unitId=" + harmonizationUnit.getUnit().getExternalId() %>" >
+		<logic:notEmpty name="harmonizationUnit" property="siadapProcessesInReviewCommission">
+			<td style="cursor: pointer;" onclick="<%="document.getElementById('formReviewCommission" + harmonizationUnit.getUnit().getExternalId() + "').submit()"%>" >
+				<strong><%= harmonizationUnit.getSiadapProcessesInReviewCommission().size() %></strong>
+				<html:link action="<%= "/siadapManagement.do?method=viewReviewCommissionProcesses&mode=" + mode.toString() + "&year=" + year.toString() + "&unitId=" + harmonizationUnit.getUnit().getExternalId() %>" >
+					(<bean:message bundle="MYORG_RESOURCES" key="link.view"/>)
+				</html:link>
+			</td>
+		</logic:notEmpty>
+		<logic:empty name="harmonizationUnit" property="siadapProcessesInReviewCommission">
+			<td><%= harmonizationUnit.getSiadapProcessesInReviewCommission().size() %></td>
+		</logic:empty>
+	</fr:form>
+	<td><%= harmonizationUnit.getSiadapProcessesHomologated().size() %></td>
+</tr>
+</logic:iterate>
+</table>
+
 <jsp:include page="/module/siadap/tracFeedBackSnip.jsp">	
    <jsp:param name="href" value="https://fenix-ashes.ist.utl.pt/trac/siadap/report/17" />	
 </jsp:include>
