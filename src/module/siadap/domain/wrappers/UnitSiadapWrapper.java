@@ -385,20 +385,22 @@ public class UnitSiadapWrapper extends PartyWrapper implements Serializable {
 
 	ArrayList<SiadapException> warningsToReturn = new ArrayList<SiadapException>();
 	HashSet<Person> evaluatorsToNotify = new HashSet<Person>();
-	//if we are closing down the validation, we should make sure that this is the top unit
+	// if we are closing down the validation, we should make sure that this
+	// is the top unit
 	if (validationSubActivity.equals(ValidationSubActivity.TERMINATE_VALIDATION)) {
 	    if (!getUnit().equals(getConfiguration().getSiadapStructureTopUnit())) {
 		throw new ValidationTerminationException("error.validation.must.be.closed.on.top.unit.only");
 	    }
-	    //let's check if it is already closed or not
+	    // let's check if it is already closed or not
 	    if (getConfiguration().getClosedValidation())
 		throw new SiadapException("error.validation.already.closed");
-	    //let's check the quotas
+	    // let's check the quotas
 	    for (SiadapUniverseWrapper siadapUniverseWrapper : siadapUniverseWrappers) {
 		if (siadapUniverseWrapper.isAboveQuotasValidation()) {
+		    String isQuotaAware = siadapUniverseWrapper.getSiadapUniverse().iterator().next().isQuotaAware() ? "Sim"
+			    : "Não";
 		    throw new ValidationTerminationException("error.validation.above.quotas", siadapUniverseWrapper
-			    .getSiadapUniverseEnum().getLocalizedName(), siadapUniverseWrapper.getSiadapUniverse().iterator()
-			    .next().isQuotaAware() ? "Sim" : "Não");
+			    .getSiadapUniverseEnum().getLocalizedName(), isQuotaAware);
 		}
 
 	    }
@@ -413,7 +415,8 @@ public class UnitSiadapWrapper extends PartyWrapper implements Serializable {
 		if (validationActivityInformation.hasAllneededInfo()) {
 		    activity.execute(validationActivityInformation);
 		    if (validationSubActivity.equals(ValidationSubActivity.TERMINATE_VALIDATION)) {
-			//let's add the evaluator to the list of evaluators to notify
+			// let's add the evaluator to the list of evaluators to
+			// notify
 			if (personSiadapWrapper.getEvaluator() != null)
 			    evaluatorsToNotify.add(personSiadapWrapper.getEvaluator().getPerson());
 		    }
@@ -421,10 +424,10 @@ public class UnitSiadapWrapper extends PartyWrapper implements Serializable {
 	    }
 	}
 
-	//mark as validated
+	// mark as validated
 	getConfiguration().setClosedValidation(Boolean.TRUE);
 
-	//notify whoever
+	// notify whoever
 	for (Person evaluator : evaluatorsToNotify) {
 	    try {
 		ValidationSubActivity.notifyEvaluatorOfFinishedValidation(evaluator, getYear());
@@ -440,59 +443,66 @@ public class UnitSiadapWrapper extends PartyWrapper implements Serializable {
 	return getConfiguration().getClosedValidation();
     }
 
-    //    public int getTotalRelevantEvaluationsForUnit() {
-    //	return getTotalRelevantEvaluationsForUnit(true);
-    //    }
+    // public int getTotalRelevantEvaluationsForUnit() {
+    // return getTotalRelevantEvaluationsForUnit(true);
+    // }
 
-    //    public int getTotalRelevantEvaluationsForUnit(boolean continueToSubUnits) {
-    //	return getTotalRelevantEvaluationsForUnit(getUnit(), continueToSubUnits);
-    //    }
+    // public int getTotalRelevantEvaluationsForUnit(boolean continueToSubUnits)
+    // {
+    // return getTotalRelevantEvaluationsForUnit(getUnit(), continueToSubUnits);
+    // }
 
-    //    private int getTotalRelevantEvaluationsForUnit(Unit unit, boolean continueToSubUnits) {
-    //	return getEvaluationsForUnit(unit, continueToSubUnits, new Predicate() {
+    // private int getTotalRelevantEvaluationsForUnit(Unit unit, boolean
+    // continueToSubUnits) {
+    // return getEvaluationsForUnit(unit, continueToSubUnits, new Predicate() {
     //
-    //	    @Override
-    //	    public boolean evaluate(Object arg0) {
-    //		Siadap siadap = (Siadap) arg0;
-    //		return siadap.hasRelevantEvaluation();
-    //	    }
+    // @Override
+    // public boolean evaluate(Object arg0) {
+    // Siadap siadap = (Siadap) arg0;
+    // return siadap.hasRelevantEvaluation();
+    // }
     //
-    //	});
-    //    }
+    // });
+    // }
 
-    //    public int getTotalExcellencyEvaluationsForUnit() {
-    //	return getTotalExcellencyEvaluationsForUnit(true);
-    //    }
+    // public int getTotalExcellencyEvaluationsForUnit() {
+    // return getTotalExcellencyEvaluationsForUnit(true);
+    // }
     //
-    //    public int getTotalExcellencyEvaluationsForUnit(boolean continueToSubUnits) {
-    //	return getTotalExcellencyEvaluationsForUnit(getUnit(), continueToSubUnits);
-    //    }
+    // public int getTotalExcellencyEvaluationsForUnit(boolean
+    // continueToSubUnits) {
+    // return getTotalExcellencyEvaluationsForUnit(getUnit(),
+    // continueToSubUnits);
+    // }
     //
-    //    private int getTotalExcellencyEvaluationsForUnit(Unit unit, boolean continueToSubUnits) {
-    //	return getEvaluationsForUnit(unit, continueToSubUnits, new Predicate() {
+    // private int getTotalExcellencyEvaluationsForUnit(Unit unit, boolean
+    // continueToSubUnits) {
+    // return getEvaluationsForUnit(unit, continueToSubUnits, new Predicate() {
     //
-    //	    @Override
-    //	    public boolean evaluate(Object arg0) {
-    //		Siadap siadap = (Siadap) arg0;
-    //		return siadap.hasExcellencyAward();
-    //	    }
+    // @Override
+    // public boolean evaluate(Object arg0) {
+    // Siadap siadap = (Siadap) arg0;
+    // return siadap.hasExcellencyAward();
+    // }
     //
-    //	});
-    //    }
+    // });
+    // }
 
-    //    public BigDecimal getRelevantEvaluationPercentage() {
-    //	int totalPeopleWorkingForUnit = getTotalPeopleWorkingInUnit(true);
-    //	int totalRelevantEvaluationsForUnit = getCurrentUsedHighGradeQuota();
+    // public BigDecimal getRelevantEvaluationPercentage() {
+    // int totalPeopleWorkingForUnit = getTotalPeopleWorkingInUnit(true);
+    // int totalRelevantEvaluationsForUnit = getCurrentUsedHighGradeQuota();
     //
-    //	if (totalRelevantEvaluationsForUnit == 0) {
-    //	    return BigDecimal.ZERO;
-    //	}
+    // if (totalRelevantEvaluationsForUnit == 0) {
+    // return BigDecimal.ZERO;
+    // }
     //
-    //	return new BigDecimal(totalRelevantEvaluationsForUnit).divide(new BigDecimal(totalPeopleWorkingForUnit),
-    //		UnitSiadapWrapper.SCALE, RoundingMode.HALF_EVEN).multiply(new BigDecimal(100)).stripTrailingZeros();
-    //    }
+    // return new BigDecimal(totalRelevantEvaluationsForUnit).divide(new
+    // BigDecimal(totalPeopleWorkingForUnit),
+    // UnitSiadapWrapper.SCALE, RoundingMode.HALF_EVEN).multiply(new
+    // BigDecimal(100)).stripTrailingZeros();
+    // }
 
-    //TODO remove this joantune: temporary enabled to see an interface
+    // TODO remove this joantune: temporary enabled to see an interface
     public BigDecimal getRelevantEvaluationPercentage() {
 	return BigDecimal.ZERO;
     }
@@ -505,7 +515,7 @@ public class UnitSiadapWrapper extends PartyWrapper implements Serializable {
 	return getChildPersons(getConfiguration().getHarmonizationResponsibleRelation());
     }
 
-    //Quotas SIADAP 2 with quota
+    // Quotas SIADAP 2 with quota
     public Integer getExcellencySiadap2WithQuotaQuota() {
 	Integer quotaExcellencySiadap2WithQuota = SiadapYearConfiguration.getSiadapYearConfiguration(getYear())
 		.getQuotaExcellencySiadap2WithQuota();
@@ -552,7 +562,7 @@ public class UnitSiadapWrapper extends PartyWrapper implements Serializable {
 	});
     }
 
-    //Quotas SIADAP 2 WITHOUT quota
+    // Quotas SIADAP 2 WITHOUT quota
     public Integer getExcellencySiadap2WithoutQuotaQuota() {
 	Integer quotaExcellencySiadap2WithoutQuota = SiadapYearConfiguration.getSiadapYearConfiguration(getYear())
 		.getQuotaExcellencySiadap2WithoutQuota();
@@ -596,7 +606,7 @@ public class UnitSiadapWrapper extends PartyWrapper implements Serializable {
 	});
     }
 
-    //Quotas SIADAP 3 WITH quota
+    // Quotas SIADAP 3 WITH quota
     public Integer getExcellencySiadap3WithQuotaQuota() {
 	Integer quotaExcellencySiadap3WithQuota = SiadapYearConfiguration.getSiadapYearConfiguration(getYear())
 		.getQuotaExcellencySiadap3WithQuota();
@@ -626,8 +636,10 @@ public class UnitSiadapWrapper extends PartyWrapper implements Serializable {
 	return calculateQuota(totalPeople, quotaRelevantSiadap3WithQuota);
     }
 
-    //TODO: joantune: these getNumberCurrent... could be done in a different way with a more generic predicate with a constructor, 
-    //buttttt it is done this way because there was a refactor on this and no time to change this
+    // TODO: joantune: these getNumberCurrent... could be done in a different
+    // way with a more generic predicate with a constructor,
+    // buttttt it is done this way because there was a refactor on this and no
+    // time to change this
     public Integer getNumberCurrentRelevantsSiadap3WithQuota() {
 	return getNrEvaluationsBasedOnPredicate(getSiadap3AndWorkingRelationWithQuotaUniverse(), new Predicate() {
 
@@ -642,7 +654,7 @@ public class UnitSiadapWrapper extends PartyWrapper implements Serializable {
 	});
     }
 
-    //Quotas SIADAP 3 WITHOUT quota
+    // Quotas SIADAP 3 WITHOUT quota
     public Integer getExcellencySiadap3WithoutQuotaQuota() {
 	Integer quotaExcellencySiadap3WithoutQuota = SiadapYearConfiguration.getSiadapYearConfiguration(getYear())
 		.getQuotaExcellencySiadap3WithoutQuota();
@@ -697,56 +709,64 @@ public class UnitSiadapWrapper extends PartyWrapper implements Serializable {
 	BigDecimal result = new BigDecimal(totalPeople).multiply(new BigDecimal(quota)).divide(new BigDecimal(100));
 
 	int value = result.intValue();
-	return value > 0 ? value : 1; //if the quota is 0 the the quota shifts to 1
+	return value > 0 ? value : 1; // if the quota is 0 the the quota shifts
+				      // to 1
 
     }
 
-    //    public Integer getHighGradeQuota() {
-    //	int totalPeople = getTotalPeopleWorkingInUnit();
+    // public Integer getHighGradeQuota() {
+    // int totalPeople = getTotalPeopleWorkingInUnit();
     //
-    //	BigDecimal result = new BigDecimal(totalPeople)
-    //		.multiply(new BigDecimal(SiadapYearConfiguration.MAXIMUM_HIGH_GRADE_QUOTA)).divide(new BigDecimal(100));
-    //	int value = result.intValue();
+    // BigDecimal result = new BigDecimal(totalPeople)
+    // .multiply(new
+    // BigDecimal(SiadapYearConfiguration.MAXIMUM_HIGH_GRADE_QUOTA)).divide(new
+    // BigDecimal(100));
+    // int value = result.intValue();
     //
-    //	return value > 0 ? value : 1; // if the quota is 0 then the quota shifts
-    //	// to 1
-    //    }
+    // return value > 0 ? value : 1; // if the quota is 0 then the quota shifts
+    // // to 1
+    // }
 
-    //    public Integer getCurrentUsedHighGradeQuota() {
-    //	return getTotalRelevantEvaluationsForUnit(getUnit(), true);
-    //    }
+    // public Integer getCurrentUsedHighGradeQuota() {
+    // return getTotalRelevantEvaluationsForUnit(getUnit(), true);
+    // }
 
-    //    public Integer getExcellencyGradeQuota() {
-    //	int totalPeople = getTotalPeopleWorkingInUnit();
+    // public Integer getExcellencyGradeQuota() {
+    // int totalPeople = getTotalPeopleWorkingInUnit();
     //
-    //	BigDecimal result = new BigDecimal(totalPeople).multiply(
-    //		new BigDecimal(SiadapYearConfiguration.MAXIMUM_EXCELLENCY_GRADE_QUOTA)).divide(new BigDecimal(100));
-    //	int value = result.intValue();
+    // BigDecimal result = new BigDecimal(totalPeople).multiply(
+    // new
+    // BigDecimal(SiadapYearConfiguration.MAXIMUM_EXCELLENCY_GRADE_QUOTA)).divide(new
+    // BigDecimal(100));
+    // int value = result.intValue();
     //
-    //	return value > 0 ? value : 1; // if the quota is 0 then the quota shifts
-    //	// to 1
-    //    }
+    // return value > 0 ? value : 1; // if the quota is 0 then the quota shifts
+    // // to 1
+    // }
 
-    //    public Integer getCurrentUsedExcellencyGradeQuota() {
-    //	return getTotalExcellencyEvaluationsForUnit(getUnit(), true);
-    //    }
+    // public Integer getCurrentUsedExcellencyGradeQuota() {
+    // return getTotalExcellencyEvaluationsForUnit(getUnit(), true);
+    // }
 
-    //TODO remove this joantune: temporary enabled to see an interface
+    // TODO remove this joantune: temporary enabled to see an interface
     public BigDecimal getExcellencyEvaluationPercentage() {
 	return BigDecimal.ZERO;
     }
 
-    //    public BigDecimal getExcellencyEvaluationPercentage() {
-    //	int totalPeopleWorkingForUnit = getTotalPeopleWorkingInUnit(true);
-    //	int totalExcellencyEvaluationsForUnit = getCurrentUsedExcellencyGradeQuota();
+    // public BigDecimal getExcellencyEvaluationPercentage() {
+    // int totalPeopleWorkingForUnit = getTotalPeopleWorkingInUnit(true);
+    // int totalExcellencyEvaluationsForUnit =
+    // getCurrentUsedExcellencyGradeQuota();
     //
-    //	if (totalExcellencyEvaluationsForUnit == 0) {
-    //	    return BigDecimal.ZERO;
-    //	}
+    // if (totalExcellencyEvaluationsForUnit == 0) {
+    // return BigDecimal.ZERO;
+    // }
     //
-    //	return new BigDecimal(totalExcellencyEvaluationsForUnit).divide(new BigDecimal(totalPeopleWorkingForUnit),
-    //		UnitSiadapWrapper.SCALE, RoundingMode.HALF_EVEN).multiply(new BigDecimal(100)).stripTrailingZeros();
-    //    }
+    // return new BigDecimal(totalExcellencyEvaluationsForUnit).divide(new
+    // BigDecimal(totalPeopleWorkingForUnit),
+    // UnitSiadapWrapper.SCALE, RoundingMode.HALF_EVEN).multiply(new
+    // BigDecimal(100)).stripTrailingZeros();
+    // }
 
     public Unit getHarmonizationUnit() {
 	return getHarmonizationUnit(getUnit());
@@ -811,7 +831,7 @@ public class UnitSiadapWrapper extends PartyWrapper implements Serializable {
 	if (!childrenAccountabilities.isEmpty()) {
 	    for (Accountability accountability : childrenAccountabilities) {
 		if (accountability.isActive(end)) {
-		    //if we already have that person there, let's just return
+		    // if we already have that person there, let's just return
 		    if (accountability.getChild().equals(person))
 			return;
 		} else if (!accountability.getChild().equals(person)) {
@@ -873,10 +893,10 @@ public class UnitSiadapWrapper extends PartyWrapper implements Serializable {
 
 	List<AccountabilityType> unitAccTypesToUse = new ArrayList<AccountabilityType>();
 	if (isHarmonizationUnit()) {
-	    //let's include the harm. relation as well
+	    // let's include the harm. relation as well
 	    unitAccTypesToUse.add(getConfiguration().getHarmonizationUnitRelations());
 	}
-	//let's iterate useing the unit relations at the very least
+	// let's iterate useing the unit relations at the very least
 	unitAccTypesToUse.add(getConfiguration().getUnitRelations());
 
 	getUnitAttachedPersons(getUnit(), employees, continueToSubUnits, predicate, unitAccTypesToUse, getConfiguration()
@@ -897,10 +917,10 @@ public class UnitSiadapWrapper extends PartyWrapper implements Serializable {
 
 	List<AccountabilityType> unitAccTypesToUse = new ArrayList<AccountabilityType>();
 	if (isHarmonizationUnit()) {
-	    //let's include the harm. relation as well
+	    // let's include the harm. relation as well
 	    unitAccTypesToUse.add(getConfiguration().getHarmonizationUnitRelations());
 	}
-	//let's iterate useing the unit relations at the very least
+	// let's iterate useing the unit relations at the very least
 	unitAccTypesToUse.add(getConfiguration().getUnitRelations());
 
 	getUnitAttachedPersons(getUnit(), employees, continueToSubUnits, predicate, unitAccTypesToUse, getConfiguration()
@@ -921,10 +941,10 @@ public class UnitSiadapWrapper extends PartyWrapper implements Serializable {
 
 	List<AccountabilityType> unitAccTypesToUse = new ArrayList<AccountabilityType>();
 	if (isHarmonizationUnit()) {
-	    //let's include the harm. relation as well
+	    // let's include the harm. relation as well
 	    unitAccTypesToUse.add(getConfiguration().getHarmonizationUnitRelations());
 	}
-	//let's iterate useing the unit relations at the very least
+	// let's iterate useing the unit relations at the very least
 	unitAccTypesToUse.add(getConfiguration().getUnitRelations());
 
 	getUnitAttachedPersons(getUnit(), employees, continueToSubUnits, predicate, unitAccTypesToUse, getConfiguration()
@@ -960,7 +980,8 @@ public class UnitSiadapWrapper extends PartyWrapper implements Serializable {
 	if (unit != null) {
 	    for (PartyType partyType : unit.getPartyTypes()) {
 		if (partyType.getType().equalsIgnoreCase(SIADAP_HARMONIZATION_UNIT_TYPE)) {
-		    //seen that we are in the top harmonization unit, we will show info about all of the persons on the sub units
+		    // seen that we are in the top harmonization unit, we will
+		    // show info about all of the persons on the sub units
 		    return true;
 		}
 	    }
@@ -1033,7 +1054,8 @@ public class UnitSiadapWrapper extends PartyWrapper implements Serializable {
 	 */
 	private boolean checkOnHarmonizationAssessment(PersonSiadapWrapper personWrapper) {
 	    if (includePositivelyHarmonizedOnly != null) {
-		//WTF?!?! the greatest boolean riddle... probably should be broken down... but where's the fun in that :P
+		// WTF?!?! the greatest boolean riddle... probably should be
+		// broken down... but where's the fun in that :P
 		switch (siadapUniverse) {
 		case SIADAP2:
 		    return ((includePositivelyHarmonizedOnly && ((personWrapper.getHarmonizationCurrentAssessmentForSIADAP2() != null && personWrapper
@@ -1198,28 +1220,33 @@ public class UnitSiadapWrapper extends PartyWrapper implements Serializable {
      */
     public List<UnitSiadapWrapper> getSubHarmonizationUnits() {
 	List<UnitSiadapWrapper> unitWrappers = new ArrayList<UnitSiadapWrapper>();
-	//	fillSubHarmonizationUnits(this, getConfiguration(), unitWrappers);
+	// fillSubHarmonizationUnits(this, getConfiguration(), unitWrappers);
 	for (Unit unit : this.getChildUnits(getConfiguration().getHarmonizationUnitRelations())) {
 	    unitWrappers.add(new UnitSiadapWrapper(unit, getYear()));
 	}
 	return unitWrappers;
     }
 
-    //    private void fillSubHarmonizationUnits(UnitSiadapWrapper wrapper, SiadapYearConfiguration configuration,
-    //	    List<UnitSiadapWrapper> wrappers) {
-    //	AccountabilityType unitHarmonizationRelation = configuration.getHarmonizationUnitRelations();
-    //	AccountabilityType harmonizationResponsibleRelation = configuration.getHarmonizationResponsibleRelation();
-    //	int year = configuration.getYear();
+    // private void fillSubHarmonizationUnits(UnitSiadapWrapper wrapper,
+    // SiadapYearConfiguration configuration,
+    // List<UnitSiadapWrapper> wrappers) {
+    // AccountabilityType unitHarmonizationRelation =
+    // configuration.getHarmonizationUnitRelations();
+    // AccountabilityType harmonizationResponsibleRelation =
+    // configuration.getHarmonizationResponsibleRelation();
+    // int year = configuration.getYear();
     //
-    //	for (Unit unit : wrapper.getChildUnits(unitHarmonizationRelation)) {
-    //	    UnitSiadapWrapper unitSiadapWrapper = new UnitSiadapWrapper(unit, year);
-    //	    if (!unitSiadapWrapper.getChildPersons(harmonizationResponsibleRelation).isEmpty()) {
-    //		wrappers.add(unitSiadapWrapper);
-    //	    }
-    //	    fillSubHarmonizationUnits(unitSiadapWrapper, configuration, wrappers);
-    //	}
+    // for (Unit unit : wrapper.getChildUnits(unitHarmonizationRelation)) {
+    // UnitSiadapWrapper unitSiadapWrapper = new UnitSiadapWrapper(unit, year);
+    // if
+    // (!unitSiadapWrapper.getChildPersons(harmonizationResponsibleRelation).isEmpty())
+    // {
+    // wrappers.add(unitSiadapWrapper);
+    // }
+    // fillSubHarmonizationUnits(unitSiadapWrapper, configuration, wrappers);
+    // }
     //
-    //    }
+    // }
 
     public List<UnitSiadapWrapper> getAllChildUnits(AccountabilityType accTypeToUse) {
 	List<UnitSiadapWrapper> unitWrappers = new ArrayList<UnitSiadapWrapper>();
@@ -1329,15 +1356,17 @@ public class UnitSiadapWrapper extends PartyWrapper implements Serializable {
     }
 
     public boolean isHarmonizationActive() {
-	//	SiadapYearConfiguration configuration = getConfiguration();
-	//	LocalDate harmonizationBegin = configuration.getFirstLevelHarmonizationBegin();
-	//	LocalDate harmonizationEnd = configuration.getFirstLevelHarmonizationEnd();
-	//	if (!isHarmonizationUnit())
-	//	    return false;
+	// SiadapYearConfiguration configuration = getConfiguration();
+	// LocalDate harmonizationBegin =
+	// configuration.getFirstLevelHarmonizationBegin();
+	// LocalDate harmonizationEnd =
+	// configuration.getFirstLevelHarmonizationEnd();
+	// if (!isHarmonizationUnit())
+	// return false;
 
 	if (!isSpecialHarmonizationUnit()) {
-	    //the special harmonization unit has no date constraints,
-	    //the others have!
+	    // the special harmonization unit has no date constraints,
+	    // the others have!
 	    return isHarmonizationPeriodOpen();
 	}
 	return true;
@@ -1360,29 +1389,37 @@ public class UnitSiadapWrapper extends PartyWrapper implements Serializable {
 	    throw new SiadapException("error.harmonization.unit.is.not.harmonized.outside.quotas.universes");
 	}
 
-	//let's make sure we harmonize everybody now
+	// let's make sure we harmonize everybody now
 
 	finishHarmonizationFor(SiadapUniverse.SIADAP2, currentDate);
 	finishHarmonizationFor(SiadapUniverse.SIADAP3, currentDate);
 	getConfiguration().addHarmonizationClosedUnits(getUnit());
 
-	//	if (configuration.getLockHarmonizationOnQuota() && isAboveQuotas()) {
-	//	    throw new DomainException("error.canOnlyCloseHarmonizationWhenQuotasDoNotExceedValues", DomainException
-	//		    .getResourceFor("resources/SiadapResources"));
-	//	}
+	// if (configuration.getLockHarmonizationOnQuota() && isAboveQuotas()) {
+	// throw new
+	// DomainException("error.canOnlyCloseHarmonizationWhenQuotasDoNotExceedValues",
+	// DomainException
+	// .getResourceFor("resources/SiadapResources"));
+	// }
 
-	//	for (UnitSiadapWrapper wrapper : getSubHarmonizationUnits()) {
-	//	    if (!wrapper.isHarmonizationFinished()) {
-	//		throw new DomainException("error.tryingToFinishHarmonizationWithSubHarmonizationOpen", DomainException
-	//			.getResourceFor("resources/SiadapResources"), getName().getContent(), wrapper.getName().getContent());
-	//	    }
-	//	}
-	//	for (UnitSiadapWrapper wrapper : getAllChildUnits()) {
-	//	    if (!wrapper.isWithAllSiadapsFilled(false)) {
-	//		throw new DomainException("error.tryingToFinishHarmonizationWithSiadapProcessYetToBeEvaluated", DomainException
-	//			.getResourceFor("resources/SiadapResources"), getName().getContent(), wrapper.getName().getContent());
-	//	    }
-	//	}
+	// for (UnitSiadapWrapper wrapper : getSubHarmonizationUnits()) {
+	// if (!wrapper.isHarmonizationFinished()) {
+	// throw new
+	// DomainException("error.tryingToFinishHarmonizationWithSubHarmonizationOpen",
+	// DomainException
+	// .getResourceFor("resources/SiadapResources"), getName().getContent(),
+	// wrapper.getName().getContent());
+	// }
+	// }
+	// for (UnitSiadapWrapper wrapper : getAllChildUnits()) {
+	// if (!wrapper.isWithAllSiadapsFilled(false)) {
+	// throw new
+	// DomainException("error.tryingToFinishHarmonizationWithSiadapProcessYetToBeEvaluated",
+	// DomainException
+	// .getResourceFor("resources/SiadapResources"), getName().getContent(),
+	// wrapper.getName().getContent());
+	// }
+	// }
     }
 
     public void finishHarmonizationFor(SiadapUniverse siadapUniverse, LocalDate currentDate) {
@@ -1430,12 +1467,15 @@ public class UnitSiadapWrapper extends PartyWrapper implements Serializable {
 	reOpenHarmonizationFor(SiadapUniverse.SIADAP2);
 	reOpenHarmonizationFor(SiadapUniverse.SIADAP3);
 
-	//	UnitSiadapWrapper topHarmonization = getTopHarmonizationUnit();
-	//	if (topHarmonization != null && topHarmonization.isHarmonizationFinished()) {
-	//	    throw new DomainException("error.unableToReopenTopUnitHasAlreadyFinishedHarmonization",
-	//		    DomainException.getResourceFor("resources/SiadapResources"), getName().getContent(), topHarmonization
-	//			    .getName().getContent());
-	//	}
+	// UnitSiadapWrapper topHarmonization = getTopHarmonizationUnit();
+	// if (topHarmonization != null &&
+	// topHarmonization.isHarmonizationFinished()) {
+	// throw new
+	// DomainException("error.unableToReopenTopUnitHasAlreadyFinishedHarmonization",
+	// DomainException.getResourceFor("resources/SiadapResources"),
+	// getName().getContent(), topHarmonization
+	// .getName().getContent());
+	// }
 	getConfiguration().removeHarmonizationClosedUnits(getUnit());
     }
 
@@ -1473,45 +1513,58 @@ public class UnitSiadapWrapper extends PartyWrapper implements Serializable {
 	return siadapStructureTopUnit.equals(getUnit());
     }
 
-    //    public List<ExcedingQuotaProposal> getExcedingQuotaProposalSuggestions() {
-    //	return getExcedingQuotaProposalSuggestions(null);
-    //    }
+    // public List<ExcedingQuotaProposal> getExcedingQuotaProposalSuggestions()
+    // {
+    // return getExcedingQuotaProposalSuggestions(null);
+    // }
     //
-    //    public List<ExcedingQuotaProposal> getExcedingQuotaProposalSuggestions(ExceddingQuotaSuggestionType type) {
-    //	int year = getYear();
-    //	List<ExcedingQuotaProposal> list = new ArrayList<ExcedingQuotaProposal>();
-    //	for (ExcedingQuotaProposal suggestion : getUnit().getExcedingQuotasProposals()) {
-    //	    if (suggestion.getYear() == year && (type == null || suggestion.getSuggestionType() == type)) {
-    //		list.add(suggestion);
-    //	    }
-    //	}
-    //	return list;
-    //    }
+    // public List<ExcedingQuotaProposal>
+    // getExcedingQuotaProposalSuggestions(ExceddingQuotaSuggestionType type) {
+    // int year = getYear();
+    // List<ExcedingQuotaProposal> list = new
+    // ArrayList<ExcedingQuotaProposal>();
+    // for (ExcedingQuotaProposal suggestion :
+    // getUnit().getExcedingQuotasProposals()) {
+    // if (suggestion.getYear() == year && (type == null ||
+    // suggestion.getSuggestionType() == type)) {
+    // list.add(suggestion);
+    // }
+    // }
+    // return list;
+    // }
 
-    //    public void addExcedingQuotaProposalSuggestion(Person person, ExceddingQuotaSuggestionType type) {
-    //	new ExcedingQuotaProposal(getConfiguration(), person, getUnit(), type);
-    //    }
+    // public void addExcedingQuotaProposalSuggestion(Person person,
+    // ExceddingQuotaSuggestionType type) {
+    // new ExcedingQuotaProposal(getConfiguration(), person, getUnit(), type);
+    // }
     //
-    //    public List<ExcedingQuotaProposal> getOrderedExcedingQuotaProposalSuggestionsForHighEvaluation() {
-    //	return getOrderedExcedingQuotaProposalSuggestions(ExceddingQuotaSuggestionType.HIGH_SUGGESTION);
-    //    }
+    // public List<ExcedingQuotaProposal>
+    // getOrderedExcedingQuotaProposalSuggestionsForHighEvaluation() {
+    // return
+    // getOrderedExcedingQuotaProposalSuggestions(ExceddingQuotaSuggestionType.HIGH_SUGGESTION);
+    // }
     //
-    //    public List<ExcedingQuotaProposal> getOrderedExcedingQuotaProposalSuggestionsForExcellencyAward() {
-    //	return getOrderedExcedingQuotaProposalSuggestions(ExceddingQuotaSuggestionType.EXCELLENCY_SUGGESTION);
-    //    }
+    // public List<ExcedingQuotaProposal>
+    // getOrderedExcedingQuotaProposalSuggestionsForExcellencyAward() {
+    // return
+    // getOrderedExcedingQuotaProposalSuggestions(ExceddingQuotaSuggestionType.EXCELLENCY_SUGGESTION);
+    // }
     //
-    //    public List<ExcedingQuotaProposal> getOrderedExcedingQuotaProposalSuggestions(ExceddingQuotaSuggestionType type) {
+    // public List<ExcedingQuotaProposal>
+    // getOrderedExcedingQuotaProposalSuggestions(ExceddingQuotaSuggestionType
+    // type) {
     //
-    //	List<ExcedingQuotaProposal> list = getExcedingQuotaProposalSuggestions(type);
-    //	Collections.sort(list, new Comparator<ExcedingQuotaProposal>() {
+    // List<ExcedingQuotaProposal> list =
+    // getExcedingQuotaProposalSuggestions(type);
+    // Collections.sort(list, new Comparator<ExcedingQuotaProposal>() {
     //
-    //	    @Override
-    //	    public int compare(ExcedingQuotaProposal o1, ExcedingQuotaProposal o2) {
-    //		return o1.getProposalOrder().compareTo(o2.getProposalOrder());
-    //	    }
+    // @Override
+    // public int compare(ExcedingQuotaProposal o1, ExcedingQuotaProposal o2) {
+    // return o1.getProposalOrder().compareTo(o2.getProposalOrder());
+    // }
     //
-    //	});
-    //	return list;
-    //    }
+    // });
+    // return list;
+    // }
 
 }
