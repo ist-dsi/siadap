@@ -51,9 +51,8 @@
 	<fr:form id="<%= "formHomologation" + harmonizationUnit.getUnit().getExternalId() %>" action="<%= "/siadapManagement.do?method=viewPendingHomologationProcesses&mode=" + mode.toString() + "&year=" + year.toString() + "&unitId=" + harmonizationUnit.getUnit().getExternalId() %>" >
 		<logic:notEmpty name="harmonizationUnit" property="siadapProcessesPendingHomologation">
 			<td style="cursor: pointer;" onclick="<%="document.getElementById('formHomologation" + harmonizationUnit.getUnit().getExternalId() + "').submit()"%>" >
-				<strong><%= harmonizationUnit.getSiadapProcessesPendingHomologation().size() %></strong>
 				<html:link action="<%= "/siadapManagement.do?method=viewPendingHomologationProcesses&mode=" + mode.toString() + "&year=" + year.toString() + "&unitId=" + harmonizationUnit.getUnit().getExternalId() %>" >
-					(<bean:message bundle="MYORG_RESOURCES" key="link.view"/>)
+					<strong><%= harmonizationUnit.getSiadapProcessesPendingHomologation().size() %></strong>
 				</html:link>
 			</td>
 		</logic:notEmpty>
@@ -65,9 +64,8 @@
 	<fr:form id="<%= "formReviewCommission" + harmonizationUnit.getUnit().getExternalId() %>" action="<%= "/siadapManagement.do?method=viewReviewCommissionProcesses&mode=" + mode.toString() + "&year=" + year.toString() + "&unitId=" + harmonizationUnit.getUnit().getExternalId() %>" >
 		<logic:notEmpty name="harmonizationUnit" property="siadapProcessesInReviewCommission">
 			<td style="cursor: pointer;" onclick="<%="document.getElementById('formReviewCommission" + harmonizationUnit.getUnit().getExternalId() + "').submit()"%>" >
-				<strong><%= harmonizationUnit.getSiadapProcessesInReviewCommission().size() %></strong>
 				<html:link action="<%= "/siadapManagement.do?method=viewReviewCommissionProcesses&mode=" + mode.toString() + "&year=" + year.toString() + "&unitId=" + harmonizationUnit.getUnit().getExternalId() %>" >
-					(<bean:message bundle="MYORG_RESOURCES" key="link.view"/>)
+					<strong><%= harmonizationUnit.getSiadapProcessesInReviewCommission().size() %></strong>
 				</html:link>
 			</td>
 		</logic:notEmpty>

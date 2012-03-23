@@ -390,7 +390,7 @@ pre {
 	<%-- End of condition if the objectives and competences should show or not --%>
 </logic:equal>
 <logic:equal name="evaluatedPersonWrapper" property="currentUserAbleToSeeDetails" value="false">
- - Detalhes do processo confidenciais, se acha que deveria ter acesso, por favor contacte o suporte -
+ - Detalhes do processo confidenciais, se deveria ter acesso, por favor contacte o suporte -
 </logic:equal>
 <logic:notEqual name="showObjectivesAndCompetences" value="true">
 <p><bean:message bundle="SIADAP_RESOURCES" key="label.objectivesAndCompetencesNotSealedYet"/></p>

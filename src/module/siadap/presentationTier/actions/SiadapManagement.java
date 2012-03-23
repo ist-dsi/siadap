@@ -595,13 +595,11 @@ public class SiadapManagement extends ContextBaseAction {
 
 	int year = Integer.parseInt(request.getParameter("year"));
 	Unit unit = getDomainObject(request, "unitId");
-	String mode = request.getParameter("mode");
 
 	UnitSiadapWrapper unitSiadapWrapper = new UnitSiadapWrapper(unit, year);
 	request.setAttribute("unit", unitSiadapWrapper);
-	request.setAttribute("employees", unitSiadapWrapper.getUnitEmployees(true));
-	request.setAttribute("mode", mode);
-	return forward(request, "/module/siadap/bulkManagement/operateOverHarmonizationUnits.jsp");
+	request.setAttribute("employees", unitSiadapWrapper.getUnitEmployeesWithProcessesPendingHomologation());
+	return forward(request, "/module/siadap/bulkManagement/viewPendingHomologationProcesses.jsp");
     }
 
     public final ActionForward viewReviewCommissionProcesses(final ActionMapping mapping, final ActionForm form,
@@ -609,13 +607,11 @@ public class SiadapManagement extends ContextBaseAction {
 
 	int year = Integer.parseInt(request.getParameter("year"));
 	Unit unit = getDomainObject(request, "unitId");
-	String mode = request.getParameter("mode");
 
 	UnitSiadapWrapper unitSiadapWrapper = new UnitSiadapWrapper(unit, year);
 	request.setAttribute("unit", unitSiadapWrapper);
-	request.setAttribute("employees", unitSiadapWrapper.getUnitEmployees(true));
-	request.setAttribute("mode", mode);
-	return forward(request, "/module/siadap/bulkManagement/operateOverHarmonizationUnits.jsp");
+	request.setAttribute("employees", unitSiadapWrapper.getUnitEmployeesWithProcessesInReviewCommission());
+	return forward(request, "/module/siadap/bulkManagement/viewReviewCommissionProcesses.jsp");
     }
 
     // NOTE: Interface with the sequential numbers thing

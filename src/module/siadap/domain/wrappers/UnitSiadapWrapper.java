@@ -876,6 +876,32 @@ public class UnitSiadapWrapper extends PartyWrapper implements Serializable {
 	return parentUnits.isEmpty() ? null : parentUnits.iterator().next();
     }
 
+    public List<PersonSiadapWrapper> getUnitEmployeesWithProcessesInReviewCommission() {
+	return getUnitEmployees(true, new Predicate() {
+	    @Override
+	    public boolean evaluate(Object personObject) {
+		PersonSiadapWrapper personWrapper = (PersonSiadapWrapper) personObject;
+		if (personWrapper.getSiadap().isWaitingForReviewCommission()) {
+		    return true;
+		}
+		return false;
+	    }
+	});
+    }
+
+    public List<PersonSiadapWrapper> getUnitEmployeesWithProcessesPendingHomologation() {
+	return getUnitEmployees(true, new Predicate() {
+	    @Override
+	    public boolean evaluate(Object personObject) {
+		PersonSiadapWrapper personWrapper = (PersonSiadapWrapper) personObject;
+		if (personWrapper.getSiadap().isWaitingHomologation()) {
+		    return true;
+		}
+		return false;
+	    }
+	});
+    }
+
     public List<PersonSiadapWrapper> getUnitEmployees() {
 	return getUnitEmployees(null);
     }
@@ -895,9 +921,10 @@ public class UnitSiadapWrapper extends PartyWrapper implements Serializable {
 	if (isHarmonizationUnit()) {
 	    // let's include the harm. relation as well
 	    unitAccTypesToUse.add(getConfiguration().getHarmonizationUnitRelations());
+	} else {
+	    // let's iterate useing the unit relations at the very least
+	    unitAccTypesToUse.add(getConfiguration().getUnitRelations());
 	}
-	// let's iterate useing the unit relations at the very least
-	unitAccTypesToUse.add(getConfiguration().getUnitRelations());
 
 	getUnitAttachedPersons(getUnit(), employees, continueToSubUnits, predicate, unitAccTypesToUse, getConfiguration()
 		.getWorkingRelation(), getConfiguration().getWorkingRelationWithNoQuota());

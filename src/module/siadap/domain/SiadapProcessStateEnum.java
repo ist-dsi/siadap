@@ -63,9 +63,9 @@ public enum SiadapProcessStateEnum implements IPresentableEnum {
 
     VALIDATION_ACKNOWLEDGED,
 
-    WAITING_FOR_REVIEW_COMMISSION,
-
     WAITING_HOMOLOGATION,
+
+    WAITING_FOR_REVIEW_COMMISSION,
 
     HOMOLOGATED,
 
@@ -114,16 +114,20 @@ public enum SiadapProcessStateEnum implements IPresentableEnum {
 	    return "siadap.state.waiting.evaluation.ack.after.validation";
 	case VALIDATION_ACKNOWLEDGED:
 	    return "siadap.state.validation.acked";
-	case WAITING_FOR_REVIEW_COMMISSION:
-	    return "siadap.state.waiting.review.commission";
 	case WAITING_HOMOLOGATION:
 	    return "siadap.state.waiting.homologation";
+	case WAITING_FOR_REVIEW_COMMISSION:
+	    return "siadap.state.waiting.review.commission";
 	case HOMOLOGATED:
 	    return "siadap.state.homologated";
 	    //	case UNIMPLEMENTED_STATE:
 	    //	    return "siadap.state.unimplemented";
 	}
 	return null;
+    }
+
+    public String getDescription() {
+	return BundleUtil.getStringFromResourceBundle("resources/SiadapResources", getLabelPrefix());
     }
 
 

@@ -104,6 +104,9 @@ public class PersonSiadapWrapper extends PartyWrapper implements Serializable {
     private BigDecimal validationClassificationForSIADAP3;
     private BigDecimal validationClassificationForSIADAP2;
 
+    private BigDecimal evaluatorClassificationForSIADAP3;
+    private BigDecimal evaluatorClassificationForSIADAP2;
+
     public PersonSiadapWrapper(Person person, int year) {
 	super(year);
 	this.person = person;
@@ -133,11 +136,13 @@ public class PersonSiadapWrapper extends PartyWrapper implements Serializable {
 		setValidationCurrentAssessmentForSIADAP2(null);
 		setValidationCurrentAssessmentForExcellencyAwardForSIADAP2(null);
 		setValidationClassificationForSIADAP2(null);
+		setEvaluatorClassificationForSIADAP2(null);
 	    } else {
 		setValidationCurrentAssessmentForSIADAP2(siadapEvaluationUniverseForSIADAP2.getCcaAssessment());
 		setValidationCurrentAssessmentForExcellencyAwardForSIADAP2(siadapEvaluationUniverseForSIADAP2
 			.getCcaClassificationExcellencyAward());
 		setValidationClassificationForSIADAP2(siadapEvaluationUniverseForSIADAP2.getCcaClassification());
+		setEvaluatorClassificationForSIADAP2(siadapEvaluationUniverseForSIADAP2.getEvaluatorClassification());
 		this.harmonizationCurrentAssessmentForSIADAP2 = siadapEvaluationUniverseForSIADAP2.getHarmonizationAssessment();
 		this.harmonizationCurrentAssessmentForExcellencyAwardForSIADAP2 = siadapEvaluationUniverseForSIADAP2
 			.getHarmonizationAssessmentForExcellencyAward();
@@ -148,11 +153,13 @@ public class PersonSiadapWrapper extends PartyWrapper implements Serializable {
 		setValidationCurrentAssessmentForSIADAP3(null);
 		setValidationCurrentAssessmentForExcellencyAwardForSIADAP3(null);
 		setValidationClassificationForSIADAP3(null);
+		setEvaluatorClassificationForSIADAP3(null);
 	    } else {
 		setValidationCurrentAssessmentForSIADAP3(siadapEvaluationUniverseForSIADAP3.getCcaAssessment());
 		setValidationCurrentAssessmentForExcellencyAwardForSIADAP3(siadapEvaluationUniverseForSIADAP3
 			.getCcaClassificationExcellencyAward());
 		setValidationClassificationForSIADAP3(siadapEvaluationUniverseForSIADAP3.getCcaClassification());
+		setEvaluatorClassificationForSIADAP3(siadapEvaluationUniverseForSIADAP3.getEvaluatorClassification());
 		this.harmonizationCurrentAssessmentForSIADAP3 = siadapEvaluationUniverseForSIADAP3.getHarmonizationAssessment();
 		this.harmonizationCurrentAssessmentForExcellencyAwardForSIADAP3 = siadapEvaluationUniverseForSIADAP3
 			.getHarmonizationAssessmentForExcellencyAward();
@@ -208,6 +215,20 @@ public class PersonSiadapWrapper extends PartyWrapper implements Serializable {
 
     public void setValidationClassificationForSIADAP2(BigDecimal validationClassificationForSIADAP2) {
 	this.validationClassificationForSIADAP2 = validationClassificationForSIADAP2;
+    }
+
+    public BigDecimal getFinalClassificationForSIADAP2() {
+	if (getValidationClassificationForSIADAP2() != null) {
+	    return getValidationClassificationForSIADAP2();
+	}
+	return getEvaluatorClassificationForSIADAP2();
+    }
+
+    public BigDecimal getFinalClassificationForSIADAP3() {
+	if (getValidationClassificationForSIADAP3() != null) {
+	    return getValidationClassificationForSIADAP3();
+	}
+	return getEvaluatorClassificationForSIADAP3();
     }
 
     public Person getPerson() {
@@ -1085,5 +1106,21 @@ public class PersonSiadapWrapper extends PartyWrapper implements Serializable {
 		}
 	    }
 	}
+    }
+
+    public BigDecimal getEvaluatorClassificationForSIADAP2() {
+	return evaluatorClassificationForSIADAP2;
+    }
+
+    public void setEvaluatorClassificationForSIADAP2(BigDecimal evaluatorClassificationForSIADAP2) {
+	this.evaluatorClassificationForSIADAP2 = evaluatorClassificationForSIADAP2;
+    }
+
+    public BigDecimal getEvaluatorClassificationForSIADAP3() {
+	return evaluatorClassificationForSIADAP3;
+    }
+
+    public void setEvaluatorClassificationForSIADAP3(BigDecimal evaluatorClassificationForSIADAP3) {
+	this.evaluatorClassificationForSIADAP3 = evaluatorClassificationForSIADAP3;
     }
 }
