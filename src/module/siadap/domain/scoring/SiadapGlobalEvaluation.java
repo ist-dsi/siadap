@@ -86,6 +86,9 @@ public enum SiadapGlobalEvaluation implements IPresentableEnum, IScoring {
 	    } else
 		return false;
 	}
+	if (totalEvaluationScoring == null) {
+	    return false;
+	}
 	return lowerBound.compareTo(totalEvaluationScoring) <= 0 && upperBound.compareTo(totalEvaluationScoring) >= 0
 		&& ((excellencyAwarded && this.equals(EXCELLENCY)) || (!excellencyAwarded && !this.equals(EXCELLENCY)));
     }

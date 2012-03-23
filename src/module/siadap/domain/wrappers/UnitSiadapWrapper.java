@@ -26,6 +26,8 @@ package module.siadap.domain.wrappers;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.math.MathContext;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -443,68 +445,54 @@ public class UnitSiadapWrapper extends PartyWrapper implements Serializable {
 	return getConfiguration().getClosedValidation();
     }
 
-    // public int getTotalRelevantEvaluationsForUnit() {
-    // return getTotalRelevantEvaluationsForUnit(true);
-    // }
+    public BigDecimal getExcellencyEvaluationPercentage() {
+	int totalPeopleWorkingForUnit = getUnitEmployees(true).size();
+	Collection<PersonSiadapWrapper> excellentEvaluationPersons = getUnitEmployees(true, new Predicate() {
 
-    // public int getTotalRelevantEvaluationsForUnit(boolean continueToSubUnits)
-    // {
-    // return getTotalRelevantEvaluationsForUnit(getUnit(), continueToSubUnits);
-    // }
+	    @Override
+	    public boolean evaluate(Object personObject) {
+		PersonSiadapWrapper personWrapper = (PersonSiadapWrapper) personObject;
+		if (personWrapper.getSiadap() == null || personWrapper.getSiadap().getDefaultSiadapEvaluationUniverse() == null) {
+		    return false;
+		}
+		return personWrapper.getSiadap().getDefaultSiadapEvaluationUniverse().hasExcellencyAwarded();
+	    }
 
-    // private int getTotalRelevantEvaluationsForUnit(Unit unit, boolean
-    // continueToSubUnits) {
-    // return getEvaluationsForUnit(unit, continueToSubUnits, new Predicate() {
-    //
-    // @Override
-    // public boolean evaluate(Object arg0) {
-    // Siadap siadap = (Siadap) arg0;
-    // return siadap.hasRelevantEvaluation();
-    // }
-    //
-    // });
-    // }
+	});
+	int excellentCount = excellentEvaluationPersons.size();
 
-    // public int getTotalExcellencyEvaluationsForUnit() {
-    // return getTotalExcellencyEvaluationsForUnit(true);
-    // }
-    //
-    // public int getTotalExcellencyEvaluationsForUnit(boolean
-    // continueToSubUnits) {
-    // return getTotalExcellencyEvaluationsForUnit(getUnit(),
-    // continueToSubUnits);
-    // }
-    //
-    // private int getTotalExcellencyEvaluationsForUnit(Unit unit, boolean
-    // continueToSubUnits) {
-    // return getEvaluationsForUnit(unit, continueToSubUnits, new Predicate() {
-    //
-    // @Override
-    // public boolean evaluate(Object arg0) {
-    // Siadap siadap = (Siadap) arg0;
-    // return siadap.hasExcellencyAward();
-    // }
-    //
-    // });
-    // }
+	if (excellentCount == 0) {
+	    return BigDecimal.ZERO;
+	}
 
-    // public BigDecimal getRelevantEvaluationPercentage() {
-    // int totalPeopleWorkingForUnit = getTotalPeopleWorkingInUnit(true);
-    // int totalRelevantEvaluationsForUnit = getCurrentUsedHighGradeQuota();
-    //
-    // if (totalRelevantEvaluationsForUnit == 0) {
-    // return BigDecimal.ZERO;
-    // }
-    //
-    // return new BigDecimal(totalRelevantEvaluationsForUnit).divide(new
-    // BigDecimal(totalPeopleWorkingForUnit),
-    // UnitSiadapWrapper.SCALE, RoundingMode.HALF_EVEN).multiply(new
-    // BigDecimal(100)).stripTrailingZeros();
-    // }
+	return new BigDecimal(excellentCount)
+		.divide(new BigDecimal(totalPeopleWorkingForUnit), UnitSiadapWrapper.SCALE, RoundingMode.HALF_EVEN)
+		.multiply(new BigDecimal(100)).stripTrailingZeros().round(new MathContext(4));
+    }
 
-    // TODO remove this joantune: temporary enabled to see an interface
     public BigDecimal getRelevantEvaluationPercentage() {
-	return BigDecimal.ZERO;
+	int totalPeopleWorkingForUnit = getUnitEmployees(true).size();
+	Collection<PersonSiadapWrapper> relevantEvaluationPersons = getUnitEmployees(true, new Predicate() {
+
+	    @Override
+	    public boolean evaluate(Object personObject) {
+		PersonSiadapWrapper personWrapper = (PersonSiadapWrapper) personObject;
+		if (personWrapper.getSiadap() == null || personWrapper.getSiadap().getDefaultSiadapEvaluationUniverse() == null) {
+		    return false;
+		}
+		return personWrapper.getSiadap().getDefaultSiadapEvaluationUniverse().hasRelevantEvaluation();
+	    }
+
+	});
+	int relevantCount = relevantEvaluationPersons.size();
+
+	if (relevantCount == 0) {
+	    return BigDecimal.ZERO;
+	}
+
+	return new BigDecimal(relevantCount)
+		.divide(new BigDecimal(totalPeopleWorkingForUnit), UnitSiadapWrapper.SCALE, RoundingMode.HALF_EVEN)
+		.multiply(new BigDecimal(100)).stripTrailingZeros().round(new MathContext(4));
     }
 
     public Collection<Person> getEvaluationResponsibles() {
@@ -727,10 +715,6 @@ public class UnitSiadapWrapper extends PartyWrapper implements Serializable {
     // // to 1
     // }
 
-    // public Integer getCurrentUsedHighGradeQuota() {
-    // return getTotalRelevantEvaluationsForUnit(getUnit(), true);
-    // }
-
     // public Integer getExcellencyGradeQuota() {
     // int totalPeople = getTotalPeopleWorkingInUnit();
     //
@@ -742,30 +726,6 @@ public class UnitSiadapWrapper extends PartyWrapper implements Serializable {
     //
     // return value > 0 ? value : 1; // if the quota is 0 then the quota shifts
     // // to 1
-    // }
-
-    // public Integer getCurrentUsedExcellencyGradeQuota() {
-    // return getTotalExcellencyEvaluationsForUnit(getUnit(), true);
-    // }
-
-    // TODO remove this joantune: temporary enabled to see an interface
-    public BigDecimal getExcellencyEvaluationPercentage() {
-	return BigDecimal.ZERO;
-    }
-
-    // public BigDecimal getExcellencyEvaluationPercentage() {
-    // int totalPeopleWorkingForUnit = getTotalPeopleWorkingInUnit(true);
-    // int totalExcellencyEvaluationsForUnit =
-    // getCurrentUsedExcellencyGradeQuota();
-    //
-    // if (totalExcellencyEvaluationsForUnit == 0) {
-    // return BigDecimal.ZERO;
-    // }
-    //
-    // return new BigDecimal(totalExcellencyEvaluationsForUnit).divide(new
-    // BigDecimal(totalPeopleWorkingForUnit),
-    // UnitSiadapWrapper.SCALE, RoundingMode.HALF_EVEN).multiply(new
-    // BigDecimal(100)).stripTrailingZeros();
     // }
 
     public Unit getHarmonizationUnit() {
