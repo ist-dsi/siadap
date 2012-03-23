@@ -1,3 +1,5 @@
+<%@page import="module.siadap.domain.SiadapProcess"%>
+<%@page import="java.util.Collection"%>
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html"%>
 <%@ taglib uri="/WEB-INF/struts-bean.tld" prefix="bean"%>
@@ -39,6 +41,10 @@
 	<th><bean:message bundle="SIADAP_RESOURCES" key="label.in.reviewCommission"/></th>
 	<th><bean:message bundle="SIADAP_RESOURCES" key="label.homologated"/></th>
 </tr>
+
+<%
+	Collection<SiadapProcess> processes = null;
+%>
 <logic:iterate id="harmonizationUnit" name="harmonizationUnits" type="module.siadap.domain.wrappers.UnitSiadapWrapper">
 <tr>
 	<td>
@@ -49,29 +55,44 @@
 	<td><%= harmonizationUnit.getExcellencyEvaluationPercentage() %> %</td>
 	<td><%= harmonizationUnit.getSiadapProcessesOngoing().size() %></td>
 	<fr:form id="<%= "formHomologation" + harmonizationUnit.getUnit().getExternalId() %>" action="<%= "/siadapManagement.do?method=viewPendingHomologationProcesses&mode=" + mode.toString() + "&year=" + year.toString() + "&unitId=" + harmonizationUnit.getUnit().getExternalId() %>" >
-		<logic:notEmpty name="harmonizationUnit" property="siadapProcessesPendingHomologation">
-			<td style="cursor: pointer;" onclick="<%="document.getElementById('formHomologation" + harmonizationUnit.getUnit().getExternalId() + "').submit()"%>" >
-				<html:link action="<%= "/siadapManagement.do?method=viewPendingHomologationProcesses&mode=" + mode.toString() + "&year=" + year.toString() + "&unitId=" + harmonizationUnit.getUnit().getExternalId() %>" >
-					<strong><%= harmonizationUnit.getSiadapProcessesPendingHomologation().size() %></strong>
-				</html:link>
-			</td>
-		</logic:notEmpty>
-		<logic:empty name="harmonizationUnit" property="siadapProcessesPendingHomologation">
-			<td><%= harmonizationUnit.getSiadapProcessesPendingHomologation().size() %></td>
-		</logic:empty>
+		<%
+			processes = harmonizationUnit.getSiadapProcessesPendingHomologation();
+		
+			if (!processes.isEmpty()) {
+		%>
+				<td style="cursor: pointer;" onclick="<%="document.getElementById('formHomologation" + harmonizationUnit.getUnit().getExternalId() + "').submit()"%>" >
+					<html:link action="<%= "/siadapManagement.do?method=viewPendingHomologationProcesses&mode=" + mode.toString() + "&year=" + year.toString() + "&unitId=" + harmonizationUnit.getUnit().getExternalId() %>" >
+						<strong><%= processes.size() %></strong>
+					</html:link>
+				</td>
+			
+		<%
+			} else {
+		%>
+				<td><%= processes.size() %></td>
+		<%
+			}
+		%>
 	</fr:form>
 	
 	<fr:form id="<%= "formReviewCommission" + harmonizationUnit.getUnit().getExternalId() %>" action="<%= "/siadapManagement.do?method=viewReviewCommissionProcesses&mode=" + mode.toString() + "&year=" + year.toString() + "&unitId=" + harmonizationUnit.getUnit().getExternalId() %>" >
-		<logic:notEmpty name="harmonizationUnit" property="siadapProcessesInReviewCommission">
-			<td style="cursor: pointer;" onclick="<%="document.getElementById('formReviewCommission" + harmonizationUnit.getUnit().getExternalId() + "').submit()"%>" >
-				<html:link action="<%= "/siadapManagement.do?method=viewReviewCommissionProcesses&mode=" + mode.toString() + "&year=" + year.toString() + "&unitId=" + harmonizationUnit.getUnit().getExternalId() %>" >
-					<strong><%= harmonizationUnit.getSiadapProcessesInReviewCommission().size() %></strong>
-				</html:link>
-			</td>
-		</logic:notEmpty>
-		<logic:empty name="harmonizationUnit" property="siadapProcessesInReviewCommission">
-			<td><%= harmonizationUnit.getSiadapProcessesInReviewCommission().size() %></td>
-		</logic:empty>
+		<%
+			processes = harmonizationUnit.getSiadapProcessesInReviewCommission();
+		
+			if (!processes.isEmpty()) {
+		%>
+				<td style="cursor: pointer;" onclick="<%="document.getElementById('formReviewCommission" + harmonizationUnit.getUnit().getExternalId() + "').submit()"%>" >
+					<html:link action="<%= "/siadapManagement.do?method=viewReviewCommissionProcesses&mode=" + mode.toString() + "&year=" + year.toString() + "&unitId=" + harmonizationUnit.getUnit().getExternalId() %>" >
+						<strong><%= processes.size() %></strong>
+					</html:link>
+				</td>
+		<%
+			} else {
+		%>
+				<td><%= processes.size() %></td>
+		<%
+			}
+		%>
 	</fr:form>
 	<td><%= harmonizationUnit.getSiadapProcessesHomologated().size() %></td>
 </tr>
