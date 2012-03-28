@@ -154,13 +154,11 @@ SiadapYearWrapper siadapYearWrapper = (SiadapYearWrapper) request.getAttribute("
 					</fr:schema>
 					<fr:layout name="tabular">
 						<fr:property name="classes" value="tstyle2"/>
-						<logic:equal value="true" name="person" property="harmonizationPeriodOpen">
 							<fr:property name="link(view)" value="<%="/siadapManagement.do?method=viewUnitHarmonizationData&year=" + year.toString() %>"/>
 							<fr:property name="bundle(view)" value="MYORG_RESOURCES"/>
 							<fr:property name="key(view)" value="link.view"/>
 							<fr:property name="param(view)" value="unit.externalId/unitId"/>
 							<fr:property name="order(view)" value="1"/>
-						</logic:equal>
 					</fr:layout>	
 				</fr:view>
 			</div>
