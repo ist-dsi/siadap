@@ -75,17 +75,24 @@ public class SiadapProcessCountAction extends ContextBaseAction {
 	return forward;
     }
 
-    public ActionForward showUnit(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-	    HttpServletResponse response) throws Exception {
+    public ActionForward showUnit(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response)
+	    throws Exception {
 
 	SiadapYearWrapper siadapYearWrapper = (SiadapYearWrapper) getRenderedObject("siadapYearWrapper");
 	if (siadapYearWrapper == null) {
-	    ArrayList<Integer> yearsWithConfigs = SiadapYearsFromExistingSiadapConfigurations.getYearsWithExistingConfigs();
-	    if (yearsWithConfigs.contains(new Integer(new LocalDate().getYear()))) {
-		int year = new LocalDate().getYear();
-		siadapYearWrapper = new SiadapYearWrapper(year);
+	    //let's try to get the year through the parameter
+	    String yearString = getAttribute(request, "year");
+	    if (yearString == null) {
+		ArrayList<Integer> yearsWithConfigs = SiadapYearsFromExistingSiadapConfigurations.getYearsWithExistingConfigs();
+		if (yearsWithConfigs.contains(new Integer(new LocalDate().getYear()))) {
+		    int year = new LocalDate().getYear();
+		    siadapYearWrapper = new SiadapYearWrapper(year);
+		} else {
+		    siadapYearWrapper = new SiadapYearWrapper(yearsWithConfigs.get(yearsWithConfigs.size() - 1));
+		}
+
 	    } else {
-		siadapYearWrapper = new SiadapYearWrapper(yearsWithConfigs.get(yearsWithConfigs.size() - 1));
+		siadapYearWrapper = new SiadapYearWrapper(Integer.parseInt(yearString));
 	    }
 	}
 	request.setAttribute("siadapYearWrapper", siadapYearWrapper);
@@ -112,8 +119,7 @@ public class SiadapProcessCountAction extends ContextBaseAction {
 	LocalDate dayToUse = SiadapMiscUtilClass.lastDayOfYearWhereAccsAreActive(configuration.getYear());
 
 	Unit unit = (Unit) getDomainObject(request, "unitId");
-	if (unit == null)
- {
+	if (unit == null) {
 	    unit = configuration.getSiadapStructureTopUnit();
 	}
 
@@ -150,8 +156,8 @@ public class SiadapProcessCountAction extends ContextBaseAction {
 
     }
 
-    private Person findUnitChild(final Unit unit, final LocalDate dayToUse,
-	    final AccountabilityType accountabilityType, final AccountabilityType unitAccountabilityType) {
+    private Person findUnitChild(final Unit unit, final LocalDate dayToUse, final AccountabilityType accountabilityType,
+	    final AccountabilityType unitAccountabilityType) {
 	for (final Accountability accountability : unit.getChildAccountabilitiesSet()) {
 	    if (isActive(accountability, dayToUse, accountabilityType)) {
 		return (Person) accountability.getChild();

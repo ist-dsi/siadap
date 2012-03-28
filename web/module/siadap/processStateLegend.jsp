@@ -15,4 +15,11 @@
   <li><bean:message bundle="SIADAP_RESOURCES" key="siadap.state.waiting.self.evaluation"/> - <bean:message bundle="SIADAP_RESOURCES" key="siadap.state.waiting.self.evaluation.explanation"/>;</li>
   <li><bean:message bundle="SIADAP_RESOURCES" key="siadap.state.not.evaluted.yet"/> - <bean:message bundle="SIADAP_RESOURCES" key="siadap.state.not.evaluted.yet.explanation"/>;</li>
   <li><bean:message bundle="SIADAP_RESOURCES" key="siadap.state.waiting.harmonization"/> - <bean:message bundle="SIADAP_RESOURCES" key="siadap.state.waiting.harmonization.explanation"/>;</li>
+  <li><bean:message bundle="SIADAP_RESOURCES" key="siadap.state.waiting.validation"/> - <bean:message bundle="SIADAP_RESOURCES" key="siadap.state.waiting.validation.explanation"/>;</li>
+  <li><bean:message bundle="SIADAP_RESOURCES" key="siadap.state.waiting.evaluation.submittal.after.validation"/> - <bean:message bundle="SIADAP_RESOURCES" key="siadap.state.waiting.evaluation.submittal.after.validation.explanation"/>;</li>
+  <li><bean:message bundle="SIADAP_RESOURCES" key="siadap.state.waiting.evaluation.ack.after.validation"/> - <bean:message bundle="SIADAP_RESOURCES" key="siadap.state.waiting.evaluation.ack.after.validation.explanation"/>;</li>
+  <li><bean:message bundle="SIADAP_RESOURCES" key="siadap.state.validation.acked"/> - <bean:message bundle="SIADAP_RESOURCES" key="siadap.state.validation.acked.explanation"/>;</li>
+  <li><bean:message bundle="SIADAP_RESOURCES" key="siadap.state.waiting.homologation"/> - <bean:message bundle="SIADAP_RESOURCES" key="siadap.state.waiting.homologation.explanation"/>;</li>
+  <li><bean:message bundle="SIADAP_RESOURCES" key="siadap.state.waiting.review.commission"/> - <bean:message bundle="SIADAP_RESOURCES" key="siadap.state.waiting.review.commission.explanation"/>;</li>
+  <li><bean:message bundle="SIADAP_RESOURCES" key="siadap.state.homologated"/> - <bean:message bundle="SIADAP_RESOURCES" key="siadap.state.homologated.explanation"/>;</li>
 </ul>

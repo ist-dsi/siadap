@@ -128,28 +128,20 @@
 	</table>
 </div>
 
-<table class="tstyle3" align="center" style="width: 100%; text-align: center;">
-	<tr>
+<table class="tstyle3">
 <%
 	final SiadapProcessCounter counter = new SiadapProcessCounter(unit, false, configuration);
 	for (int i = 0 ; i < counter.getCounts().length && i < SiadapStateToShowInCount.getMaximumStateToShowInCount().ordinal(); i++) {
+	    final int count = counter.getCounts()[i];
 	    final SiadapProcessStateEnum state = SiadapProcessStateEnum.values()[i];
 %>
+	<tr>
 		<th>
 			<strong>
 				<%= state.getLocalizedName() %>
 			</strong>
 		</th>
-<%
-	}
-%>
-	</tr>
-	<tr>
-<%
-	for (int i = 0 ;  i < counter.getCounts().length && i < SiadapStateToShowInCount.getMaximumStateToShowInCount().ordinal(); i++) {
-	    final int count = counter.getCounts()[i];
-	    final SiadapProcessStateEnum state = SiadapProcessStateEnum.values()[i];
-%>
+		
 		<td>
 			<%
 				if (count == 0 || state.ordinal() < ((SiadapProcessStateEnum) siadapProcessStateEnumToFilter).ordinal()  ) {
@@ -165,10 +157,10 @@
 				}
 			%>
 		</td>
+	</tr>
 <%
 	}
 %>
-	</tr>
 </table>
 
 <table align="center" style="width: 100%; text-align: center;">
