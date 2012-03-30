@@ -80,6 +80,7 @@
 		<%
 			}
 		%>
+
 	</fr:form>
 	
 	<fr:form id="<%= "formReviewCommission" + harmonizationUnit.getUnit().getExternalId() %>" action="<%= "/siadapManagement.do?method=viewReviewCommissionProcesses&mode=" + mode.toString() + "&year=" + year.toString() + "&unitId=" + harmonizationUnit.getUnit().getExternalId() %>" >

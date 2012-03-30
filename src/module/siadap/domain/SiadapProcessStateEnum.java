@@ -29,8 +29,6 @@ import myorg.util.BundleUtil;
 
 import org.apache.commons.lang.StringUtils;
 
-import pt.ist.fenixWebFramework.rendererExtensions.util.IPresentableEnum;
-
 /**
  * 
  * @author João Antunes
@@ -65,11 +63,8 @@ public enum SiadapProcessStateEnum implements IPresentableEnum {
 
     WAITING_HOMOLOGATION,
 
-<<<<<<< OURS
     WAITING_FOR_REVIEW_COMMISSION,
 
-=======
->>>>>>> THEIRS
     HOMOLOGATED,
 
     FINAL_STATE,
@@ -119,11 +114,8 @@ public enum SiadapProcessStateEnum implements IPresentableEnum {
 	    return "siadap.state.validation.acked";
 	case WAITING_HOMOLOGATION:
 	    return "siadap.state.waiting.homologation";
-<<<<<<< OURS
 	case WAITING_FOR_REVIEW_COMMISSION:
 	    return "siadap.state.waiting.review.commission";
-=======
->>>>>>> THEIRS
 	case HOMOLOGATED:
 	    return "siadap.state.homologated";
 	    //	case UNIMPLEMENTED_STATE:

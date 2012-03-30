@@ -859,6 +859,19 @@ public class UnitSiadapWrapper extends PartyWrapper implements Serializable {
 	return unitEmployees;
     }
 
+    public List<PersonSiadapWrapper> getUnitEmployeesWithProcessesPendingHomologation() {
+	return getUnitEmployees(true, new Predicate() {
+	    @Override
+	    public boolean evaluate(Object personObject) {
+		PersonSiadapWrapper personWrapper = (PersonSiadapWrapper) personObject;
+		if (personWrapper.getSiadap().isWaitingHomologation()) {
+		    return true;
+		}
+		return false;
+	    }
+	});
+    }
+
     public List<PersonSiadapWrapper> getUnitEmployees() {
 	return getUnitEmployees(null);
     }
