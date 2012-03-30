@@ -164,6 +164,7 @@
 						width="60"
 						height="44"
 						key="textField-1"
+						stretchType="RelativeToTallestObject"
 						positionType="Float"/>
 					<box>					<pen lineWidth="0.0" lineStyle="Solid"/>
 					<topPen lineWidth="1.0" lineStyle="Solid"/>
@@ -176,7 +177,7 @@
 					</textElement>
 				<textFieldExpression   class="java.lang.String"><![CDATA[$F{competence}.getNumber().toString()]]></textFieldExpression>
 				</textField>
-				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+				<textField isStretchWithOverflow="true" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						mode="Opaque"
 						x="60"
@@ -184,6 +185,7 @@
 						width="195"
 						height="44"
 						key="textField-2"
+						stretchType="RelativeToTallestObject"
 						positionType="Float"/>
 					<box>					<pen lineWidth="0.0" lineStyle="Solid"/>
 					<topPen lineWidth="1.0" lineStyle="Solid"/>
@@ -194,7 +196,7 @@
 					<textElement textAlignment="Left" verticalAlignment="Middle">
 						<font/>
 					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[$F{competence}.getDescription()]]></textFieldExpression>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{competence}.getName()]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
@@ -204,6 +206,7 @@
 						width="140"
 						height="44"
 						key="textField-3"
+						stretchType="RelativeToTallestObject"
 						positionType="Float"/>
 					<box>					<pen lineWidth="0.0" lineStyle="Solid"/>
 					<topPen lineWidth="1.0" lineStyle="Solid"/>
@@ -224,6 +227,7 @@
 						width="140"
 						height="44"
 						key="textField-4"
+						stretchType="RelativeToTallestObject"
 						positionType="Float"/>
 					<box>					<pen lineWidth="0.0" lineStyle="Solid"/>
 					<topPen lineWidth="1.0" lineStyle="Solid"/>

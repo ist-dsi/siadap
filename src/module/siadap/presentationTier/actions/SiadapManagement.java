@@ -893,8 +893,9 @@ public class SiadapManagement extends ContextBaseAction {
 	paramMap.put("process", process);
 	//joantune: NOTE: the PersonSiadapWrapper can be very handy because of some methods, but it will most likely decrease performance on the
 	//generation of the document
-	paramMap.put("personSiadapWrapper", new PersonSiadapWrapper(process.getSiadap().getEvaluated(), process.getSiadap()
-		.getYear()));
+	PersonSiadapWrapper personSiadapWrapper = new PersonSiadapWrapper(process.getSiadap().getEvaluated(), process.getSiadap()
+		.getYear());
+	paramMap.put("personSiadapWrapper", personSiadapWrapper);
 	paramMap.put("documentGeneratedDate", new DateTime());
 	paramMap.put("generationMotive",
 		BundleUtil.getStringFromResourceBundle(Siadap.SIADAP_BUNDLE_STRING, "SiadapProcessDocument.motive.userOrder"));
@@ -905,7 +906,8 @@ public class SiadapManagement extends ContextBaseAction {
 	paramMap.put("logoFilename", "Logo_" + VirtualHost.getVirtualHostForThread().getHostname() + ".png");
 
 	try {
-	    byte[] byteArray = ReportUtils.exportToPdfFileAsByteArray("siadapProcessDocument", paramMap, resourceBundle, null);
+	    byte[] byteArray = ReportUtils.exportToPdfFileAsByteArray("siadapProcessDocument", paramMap, resourceBundle,
+		    personSiadapWrapper.getAllObjEvaluationWrapperBeansOfDefaultEval());
 	    return download(response, "SIADAP_" + process.getProcessNumber() + ".pdf", byteArray, "application/pdf");
 	} catch (JRException e) {
 	    e.printStackTrace();

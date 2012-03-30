@@ -29,8 +29,10 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -41,6 +43,8 @@ import module.organization.domain.Person;
 import module.organization.domain.Unit;
 import module.siadap.domain.CompetenceType;
 import module.siadap.domain.ExceedingQuotaProposal;
+import module.siadap.domain.ObjectiveEvaluation;
+import module.siadap.domain.ObjectiveEvaluationIndicator;
 import module.siadap.domain.Siadap;
 import module.siadap.domain.SiadapEvaluationUniverse;
 import module.siadap.domain.SiadapProcess;
@@ -51,6 +55,7 @@ import module.siadap.domain.SiadapYearConfiguration;
 import module.siadap.domain.exceptions.SiadapException;
 import module.siadap.domain.scoring.SiadapGlobalEvaluation;
 import module.siadap.domain.util.SiadapMiscUtilClass;
+import module.siadap.presentationTier.actions.SiadapManagement;
 import myorg.applicationTier.Authenticate.UserView;
 import myorg.domain.User;
 import myorg.domain.exceptions.DomainException;
@@ -540,6 +545,202 @@ public class PersonSiadapWrapper extends PartyWrapper implements Serializable {
 	if (getSiadap().isAutoEvaliationDone())
 	    return true;
 	return false;
+    }
+
+    public static class ObjectiveEvaluationWrapperBean implements Serializable {
+
+	private final static int MEASUREMENT_INDICATOR_MAX_NR_CHARS = 10;
+	private final static int SUPERATION_CRITERIA_MAX_NR_CHARS = 25;
+
+	/**
+	 * 1st version
+	 */
+	private static final long serialVersionUID = 1L;
+
+	private String aggregatedMeasurementIndicator;
+
+	private String aggregatedSuperationCriteria;
+
+	private String aggregatedAutoEvaluation;
+
+	private String aggregatedEvaluation;
+
+	private String aggregatedPonderationFactor;
+
+	private ObjectiveEvaluation objectiveEvaluation;
+
+	public ObjectiveEvaluationWrapperBean(ObjectiveEvaluation objectiveEvaluation) {
+	    this.objectiveEvaluation = objectiveEvaluation;
+
+	    Map<String, Integer> linesPerString;
+	    StringBuilder stringBuilderMeasurementIndicator = new StringBuilder();
+	    StringBuilder stringBuilderSuperationCriteria = new StringBuilder();
+	    StringBuilder stringBuilderAutoEvaluation = new StringBuilder();
+	    StringBuilder stringBuilderEvaluation = new StringBuilder();
+	    StringBuilder stringBuilderPonderationFactor = new StringBuilder();
+
+	    for (ObjectiveEvaluationIndicator objectiveEvaluationIndicator : objectiveEvaluation.getIndicators()) {
+		int maxNrLines = 0;
+		linesPerString = new HashMap<String, Integer>();
+		//asserting the string that has the max. number of lines
+		linesPerString.put(objectiveEvaluationIndicator.getMeasurementIndicator(),
+			countNrLines(objectiveEvaluationIndicator.getMeasurementIndicator(), MEASUREMENT_INDICATOR_MAX_NR_CHARS));
+		linesPerString.put(objectiveEvaluationIndicator.getSuperationCriteria(),
+			countNrLines(objectiveEvaluationIndicator.getSuperationCriteria(), SUPERATION_CRITERIA_MAX_NR_CHARS));
+
+		for (Integer nrLines : linesPerString.values()) {
+		    if (maxNrLines < nrLines.intValue()) {
+			maxNrLines = nrLines;
+		    }
+		}
+		//		StringUtils.countMatches(objectiveEvaluationIndicator.get
+
+		appendLineAndNrLines(stringBuilderSuperationCriteria,
+			linesPerString.get(objectiveEvaluationIndicator.getSuperationCriteria()),
+			objectiveEvaluationIndicator.getSuperationCriteria(), maxNrLines);
+		appendLineAndNrLines(stringBuilderMeasurementIndicator,
+			linesPerString.get(objectiveEvaluationIndicator.getMeasurementIndicator()),
+			objectiveEvaluationIndicator.getMeasurementIndicator(), maxNrLines);
+
+		if (objectiveEvaluationIndicator.getAutoEvaluation() != null) {
+		    appendLineAndNrLines(stringBuilderAutoEvaluation, 1, objectiveEvaluationIndicator.getAutoEvaluation()
+			    .getLocalizedName(), maxNrLines);
+		} else {
+		    appendLineAndNrLines(stringBuilderAutoEvaluation, 1, "", maxNrLines);
+		}
+
+		if (objectiveEvaluationIndicator.getEvaluation() != null) {
+		    appendLineAndNrLines(stringBuilderEvaluation, 1, objectiveEvaluationIndicator.getEvaluation()
+			    .getLocalizedName(), maxNrLines);
+		} else {
+		    appendLineAndNrLines(stringBuilderEvaluation, 1, "", maxNrLines);
+		}
+
+		appendLineAndNrLines(stringBuilderPonderationFactor, 1, objectiveEvaluationIndicator.getPonderationFactor()
+			.movePointRight(2).toString()
+			+ "%", maxNrLines);
+
+	    }
+	    aggregatedMeasurementIndicator = stringBuilderMeasurementIndicator.toString().trim();
+	    aggregatedSuperationCriteria = stringBuilderSuperationCriteria.toString().trim();
+	    aggregatedAutoEvaluation = stringBuilderAutoEvaluation.toString().trim();
+	    aggregatedEvaluation = stringBuilderEvaluation.toString().trim();
+	    aggregatedPonderationFactor = stringBuilderPonderationFactor.toString().trim();
+	}
+
+	private void appendLineAndNrLines(StringBuilder stringBuilderToAffect, int nrLinesOccupiedByString, String string,
+		int maxNrLines) {
+	    //let's add the excedent nr of lines
+	    stringBuilderToAffect.append(string);
+	    for (int i = nrLinesOccupiedByString; i < maxNrLines; i++) {
+		stringBuilderToAffect.append('\n');
+	    }
+	    stringBuilderToAffect.append('\n');
+	    stringBuilderToAffect.append('\n');
+	}
+
+	/**
+	 * 
+	 * @param string
+	 * @param maxCharsPerLine
+	 * @return the nr of lines that it occupies, with a trimmed string and
+	 *         counting the nr of \n as a line and also of max consecutive
+	 *         non \n chars
+	 */
+	private int countNrLines(String string, int maxCharsPerLine) {
+	    String trimmedString = string.trim();
+	    int nrLines = 1;
+	    int aux = 1;
+	    for (int i = 0; i < trimmedString.length(); i++) {
+		if (trimmedString.charAt(i) == '\n' || maxCharsPerLine == aux) {
+		    aux = 1;
+		    nrLines++;
+		} else {
+		    aux++;
+		}
+	    }
+	    return nrLines;
+
+	}
+
+	public String getAggregatedMeasurementIndicator() {
+	    return aggregatedMeasurementIndicator;
+	}
+
+	public String getAggregatedSuperationCriteria() {
+	    return aggregatedSuperationCriteria;
+	}
+
+	public String getAggregatedAutoEvaluation() {
+	    return aggregatedAutoEvaluation;
+	}
+
+	public String getAggregatedEvaluation() {
+	    return aggregatedEvaluation;
+	}
+
+	public String getAggregatedPonderationFactor() {
+	    return aggregatedPonderationFactor;
+	}
+
+	public ObjectiveEvaluation getObjectiveEvaluation() {
+	    return objectiveEvaluation;
+	}
+
+	public void setAggregatedMeasurementIndicator(String aggregatedMeasurementIndicator) {
+	    this.aggregatedMeasurementIndicator = aggregatedMeasurementIndicator;
+	}
+
+	public void setAggregatedSuperationCriteria(String aggregatedSuperationCriteria) {
+	    this.aggregatedSuperationCriteria = aggregatedSuperationCriteria;
+	}
+
+	public void setAggregatedAutoEvaluation(String aggregatedAutoEvaluation) {
+	    this.aggregatedAutoEvaluation = aggregatedAutoEvaluation;
+	}
+
+	public void setAggregatedEvaluation(String aggregatedEvaluation) {
+	    this.aggregatedEvaluation = aggregatedEvaluation;
+	}
+
+	public void setAggregatedPonderationFactor(String aggregatedPonderationFactor) {
+	    this.aggregatedPonderationFactor = aggregatedPonderationFactor;
+	}
+
+	public void setObjectiveEvaluation(ObjectiveEvaluation objectiveEvaluation) {
+	    this.objectiveEvaluation = objectiveEvaluation;
+	}
+
+    }
+
+    public List<ObjectiveEvaluationWrapperBean> getAllObjEvaluationWrapperBeansOfDefaultEval() {
+	ArrayList<ObjectiveEvaluationWrapperBean> objBeans = new ArrayList<PersonSiadapWrapper.ObjectiveEvaluationWrapperBean>();
+
+	for (ObjectiveEvaluation objectiveEvaluation : getSiadap().getDefaultSiadapEvaluationUniverse().getObjectiveEvaluations()) {
+	    objBeans.add(new ObjectiveEvaluationWrapperBean(objectiveEvaluation));
+	}
+
+	return objBeans;
+    }
+
+    /**
+     * 
+     * @return A list with all {@link ObjectiveEvaluationIndicator} objects
+     *         belonging to the default {@link SiadapEvaluationUniverse}. Method
+     *         used by the Jasper Reports framework to generate the Siadap
+     *         proccess document
+     *         {@link SiadapManagement#downloadAndGenerateSiadapDocument(org.apache.struts.action.ActionMapping, org.apache.struts.action.ActionForm, javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)}
+     */
+    public List<ObjectiveEvaluationIndicator> getAllObjEvalIndicatorsOfDefaultEval() {
+	ArrayList<ObjectiveEvaluationIndicator> listToReturn = new ArrayList<ObjectiveEvaluationIndicator>();
+	if (getSiadap() == null || getSiadap().getDefaultSiadapEvaluationUniverse() == null
+		|| getSiadap().getDefaultSiadapEvaluationUniverse().getObjectiveEvaluations() == null)
+	    return listToReturn;
+	for (ObjectiveEvaluation objectiveEvaluation : getSiadap().getDefaultSiadapEvaluationUniverse().getObjectiveEvaluations()) {
+	    listToReturn.addAll(objectiveEvaluation.getIndicators());
+	}
+	return listToReturn;
+
     }
 
     public boolean isCurrentUserAbleToSeeEvaluationDetails() {

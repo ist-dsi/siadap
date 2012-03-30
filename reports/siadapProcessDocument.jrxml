@@ -37,18 +37,957 @@
 		<defaultValueExpression ><![CDATA["./"]]></defaultValueExpression>
 	</parameter>
 
+	<field name="aggregatedMeasurementIndicator" class="java.lang.String"/>
+	<field name="aggregatedSuperationCriteria" class="java.lang.String"/>
+	<field name="aggregatedAutoEvaluation" class="java.lang.String"/>
+	<field name="aggregatedEvaluation" class="java.lang.String"/>
+	<field name="aggregatedPonderationFactor" class="java.lang.String"/>
+	<field name="objectiveEvaluation" class="module.siadap.domain.ObjectiveEvaluation"/>
+
 	<variable name="group_COUNT" class="java.lang.Integer" resetType="Report" incrementType="Group" incrementGroup="dummy" calculation="Count">
 		<variableExpression><![CDATA[new Integer($V{group_COUNT}.intValue() + 1)]]></variableExpression>
 	</variable>
 
-		<group  name="dummy" >
+		<group  name="dummy" isStartNewPage="true" >
 			<groupExpression><![CDATA[]]></groupExpression>
 			<groupHeader>
-			<band height="0"  isSplitAllowed="true" >
+			<band height="200"  isSplitAllowed="true" >
+				<staticText>
+					<reportElement
+						x="103"
+						y="68"
+						width="164"
+						height="15"
+						key="staticText-1"
+						positionType="Float"/>
+					<box></box>
+					<textElement verticalAlignment="Middle">
+						<font pdfFontName="Helvetica-BoldOblique" isBold="true" isItalic="true"/>
+					</textElement>
+				<text><![CDATA[Estado do processo:]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="267"
+						y="67"
+						width="132"
+						height="15"
+						key="textField-1"
+						positionType="Float"
+						isPrintRepeatedValues="false"/>
+					<box></box>
+					<textElement verticalAlignment="Middle">
+						<font/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$P{siadap}.getState().getLocalizedName()]]></textFieldExpression>
+				</textField>
+				<image  vAlign="Top" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						mode="Transparent"
+						x="3"
+						y="32"
+						width="100"
+						height="100"
+						key="image-1"
+						positionType="Float"
+						isPrintRepeatedValues="false"/>
+					<box>					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+</box>
+					<graphicElement stretchType="NoStretch"/>
+					<imageExpression class="java.lang.String"><![CDATA["images/" + $P{logoFilename}]]></imageExpression>
+				</image>
+				<staticText>
+					<reportElement
+						x="379"
+						y="101"
+						width="0"
+						height="0"
+						key="staticText-25"
+						positionType="Float"/>
+					<box></box>
+					<textElement>
+						<font/>
+					</textElement>
+				<text><![CDATA[Static Text]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						x="103"
+						y="84"
+						width="164"
+						height="15"
+						key="staticText-30"
+						positionType="Float"/>
+					<box></box>
+					<textElement verticalAlignment="Middle">
+						<font pdfFontName="Helvetica-BoldOblique" isBold="true" isItalic="true"/>
+					</textElement>
+				<text><![CDATA[Carreira, no âmbito do SIADAP:]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="267"
+						y="84"
+						width="132"
+						height="15"
+						key="textField-29"
+						positionType="Float"/>
+					<box></box>
+					<textElement verticalAlignment="Middle">
+						<font/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$P{personSiadapWrapper}.getCareerName() != null ? 
+$P{personSiadapWrapper}.getCareerName() : $R{competenceType.notDefined}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="3"
+						y="0"
+						width="517"
+						height="32"
+						key="textField-100"
+						positionType="Float"/>
+					<box></box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font pdfFontName="Helvetica-Bold" size="12" isBold="true"/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA["SIADAP - " + $P{siadap}.getYear() + " - " + $P{siadap}.getEvaluated().getFirstAndLastName() + "(" + $P{process}.getProcessNumber() + ")"]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement
+						x="103"
+						y="32"
+						width="136"
+						height="15"
+						key="staticText-100"
+						positionType="Float"/>
+					<box></box>
+					<textElement verticalAlignment="Middle">
+						<font pdfFontName="Helvetica-BoldOblique" isBold="true" isItalic="true"/>
+					</textElement>
+				<text><![CDATA[Documento gerado em: ]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="239"
+						y="32"
+						width="281"
+						height="36"
+						key="textField-101"
+						positionType="Float"/>
+					<box></box>
+					<textElement verticalAlignment="Middle">
+						<font/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$P{documentGeneratedDate}.toString("dd/MM/yyyy HH:mm:ss") + " - " + $P{generationMotive} + " - " + myorg.applicationTier.Authenticate.UserView.getCurrentUser().getPerson().getPresentationName()]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement
+						x="103"
+						y="101"
+						width="164"
+						height="15"
+						key="staticText-102"
+						positionType="Float"/>
+					<box></box>
+					<textElement verticalAlignment="Middle">
+						<font pdfFontName="Helvetica-BoldOblique" isBold="true" isItalic="true"/>
+					</textElement>
+				<text><![CDATA[Universo SIADAP:]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="267"
+						y="101"
+						width="132"
+						height="15"
+						key="textField-103"
+						positionType="Float"/>
+					<box></box>
+					<textElement verticalAlignment="Middle">
+						<font/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$P{siadap}.getDefaultSiadapUniverse() != null ? $P{siadap}.getDefaultSiadapUniverse().name()  : $R{label.undefinedUniverse}]]></textFieldExpression>
+				</textField>
+				<line direction="TopDown">
+					<reportElement
+						x="0"
+						y="192"
+						width="535"
+						height="0"
+						key="line-2"
+						positionType="Float"/>
+					<graphicElement stretchType="NoStretch"/>
+				</line>
+				<staticText>
+					<reportElement
+						x="0"
+						y="144"
+						width="204"
+						height="24"
+						key="staticText-103"
+						positionType="Float"/>
+					<box></box>
+					<textElement>
+						<font size="18"/>
+					</textElement>
+				<text><![CDATA[Itens da avaliação:]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						x="-1"
+						y="174"
+						width="204"
+						height="18"
+						key="staticText-104"
+						positionType="Float"/>
+					<box></box>
+					<textElement>
+						<font size="14"/>
+					</textElement>
+				<text><![CDATA[Objectivos:]]></text>
+				</staticText>
 			</band>
 			</groupHeader>
 			<groupFooter>
-			<band height="0"  isSplitAllowed="false" >
+			<band height="1300"  isSplitAllowed="true" >
+				<staticText>
+					<reportElement
+						x="0"
+						y="0"
+						width="535"
+						height="15"
+						key="staticText-108"
+						positionType="Float">
+							<printWhenExpression><![CDATA[new Boolean($P{personSiadapWrapper}.isCurrentUserAbleToSeeAutoEvaluationDetails() && $P{siadap}.getAutoEvaluationData2() != null && $P{siadap}.getAutoEvaluationData2().getObjectivesJustification() != null)]]></printWhenExpression>
+						</reportElement>
+					<box></box>
+					<textElement>
+						<font pdfFontName="Helvetica-Bold" isBold="true"/>
+					</textElement>
+				<text><![CDATA[(Auto-avaliação) Breve fundamentação relativa à realização dos objectivos:]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						mode="Opaque"
+						x="0"
+						y="20"
+						width="534"
+						height="28"
+						backcolor="#E0DADA"
+						key="textField-135"
+						positionType="Float">
+							<printWhenExpression><![CDATA[new Boolean($P{personSiadapWrapper}.isCurrentUserAbleToSeeAutoEvaluationDetails() && $P{siadap}.getAutoEvaluationData2() != null && $P{siadap}.getAutoEvaluationData2().getObjectivesJustification() != null)]]></printWhenExpression>
+						</reportElement>
+					<box></box>
+					<textElement>
+						<font/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$P{siadap}.getAutoEvaluationData2().getObjectivesJustification()]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement
+						x="0"
+						y="53"
+						width="533"
+						height="12"
+						key="staticText-109"
+						positionType="Float">
+							<printWhenExpression><![CDATA[$P{siadap}.getEvaluatedOnlyByCompetences()]]></printWhenExpression>
+						</reportElement>
+					<box></box>
+					<textElement>
+						<font/>
+					</textElement>
+				<text><![CDATA[Avaliado apenas por competências]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						x="0"
+						y="170"
+						width="535"
+						height="15"
+						key="staticText-110"
+						positionType="Float">
+							<printWhenExpression><![CDATA[new Boolean($P{personSiadapWrapper}.isCurrentUserAbleToSeeAutoEvaluationDetails() && $P{siadap}.getAutoEvaluationData2() != null && $P{siadap}.getAutoEvaluationData2().getCompetencesJustification() != null)]]></printWhenExpression>
+						</reportElement>
+					<box></box>
+					<textElement>
+						<font pdfFontName="Helvetica-Bold" isBold="true"/>
+					</textElement>
+				<text><![CDATA[(Auto-avaliação) Breve fundamentação relativa à realização das competências]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						mode="Opaque"
+						x="0"
+						y="190"
+						width="534"
+						height="28"
+						backcolor="#E0DADA"
+						key="textField-136"
+						positionType="Float">
+							<printWhenExpression><![CDATA[new Boolean($P{personSiadapWrapper}.isCurrentUserAbleToSeeAutoEvaluationDetails() && $P{siadap}.getAutoEvaluationData2() != null && $P{siadap}.getAutoEvaluationData2().getCompetencesJustification() != null)]]></printWhenExpression>
+						</reportElement>
+					<box></box>
+					<textElement>
+						<font/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$P{siadap}.getAutoEvaluationData2().getCompetencesJustification()]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement
+						x="0"
+						y="225"
+						width="535"
+						height="15"
+						key="staticText-111"
+						positionType="Float">
+							<printWhenExpression><![CDATA[new Boolean($P{personSiadapWrapper}.isCurrentUserAbleToSeeAutoEvaluationDetails() && $P{siadap}.getAutoEvaluationData2() != null && $P{siadap}.getAutoEvaluationData2().getFactorOneClassification() != null)]]></printWhenExpression>
+						</reportElement>
+					<box></box>
+					<textElement>
+						<font pdfFontName="Helvetica-Bold" isBold="true"/>
+					</textElement>
+				<text><![CDATA[(Auto-avaliação) Factores mais influentes no desempenho]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						x="0"
+						y="248"
+						width="535"
+						height="34"
+						key="staticText-112"
+						positionType="Float">
+							<printWhenExpression><![CDATA[new Boolean($P{personSiadapWrapper}.isCurrentUserAbleToSeeAutoEvaluationDetails() && $P{siadap}.getAutoEvaluationData2() != null && $P{siadap}.getAutoEvaluationData2().getFactorOneClassification() != null)]]></printWhenExpression>
+						</reportElement>
+					<box></box>
+					<textElement>
+						<font pdfFontName="Helvetica" isBold="false"/>
+					</textElement>
+				<text><![CDATA[Classificação de cada um dos factores quanto ao grau de influência no seu desempenho global do avaliado (1 representa o de menor impacto e 6 o de maior impacto).]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						mode="Opaque"
+						x="0"
+						y="281"
+						width="431"
+						height="16"
+						backcolor="#CCCCCC"
+						key="staticText-113"
+						positionType="Float">
+							<printWhenExpression><![CDATA[new Boolean($P{personSiadapWrapper}.isCurrentUserAbleToSeeAutoEvaluationDetails() && $P{siadap}.getAutoEvaluationData2() != null && $P{siadap}.getAutoEvaluationData2().getFactorOneClassification() != null)]]></printWhenExpression>
+						</reportElement>
+					<box>					<topPen lineWidth="1.0" lineStyle="Solid"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid"/>
+</box>
+					<textElement>
+						<font size="10"/>
+					</textElement>
+				<text><![CDATA[Os objectivos/competências a concretizar ao longo do ano foram fixados com clareza:]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="431"
+						y="281"
+						width="20"
+						height="16"
+						key="textField-137"
+						positionType="Float">
+							<printWhenExpression><![CDATA[new Boolean($P{personSiadapWrapper}.isCurrentUserAbleToSeeAutoEvaluationDetails() && $P{siadap}.getAutoEvaluationData2() != null && $P{siadap}.getAutoEvaluationData2().getFactorOneClassification() != null)]]></printWhenExpression>
+						</reportElement>
+					<box>					<topPen lineWidth="1.0" lineStyle="Solid"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid"/>
+</box>
+					<textElement>
+						<font/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$P{siadap}.getAutoEvaluationData2().getFactorOneClassification().toString()]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="431"
+						y="297"
+						width="20"
+						height="16"
+						key="textField-138"
+						positionType="Float">
+							<printWhenExpression><![CDATA[new Boolean($P{personSiadapWrapper}.isCurrentUserAbleToSeeAutoEvaluationDetails() && $P{siadap}.getAutoEvaluationData2() != null && $P{siadap}.getAutoEvaluationData2().getFactorOneClassification() != null)]]></printWhenExpression>
+						</reportElement>
+					<box>					<topPen lineWidth="1.0" lineStyle="Solid"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid"/>
+</box>
+					<textElement>
+						<font/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$P{siadap}.getAutoEvaluationData2().getFactorTwoClassification().toString()]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement
+						mode="Opaque"
+						x="1"
+						y="297"
+						width="430"
+						height="16"
+						backcolor="#CCCCCC"
+						key="staticText-114"
+						positionType="Float">
+							<printWhenExpression><![CDATA[new Boolean($P{personSiadapWrapper}.isCurrentUserAbleToSeeAutoEvaluationDetails() && $P{siadap}.getAutoEvaluationData2() != null && $P{siadap}.getAutoEvaluationData2().getFactorOneClassification() != null)]]></printWhenExpression>
+						</reportElement>
+					<box>					<topPen lineWidth="1.0" lineStyle="Solid"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid"/>
+</box>
+					<textElement>
+						<font size="10"/>
+					</textElement>
+				<text><![CDATA[Os processos e procedimentos de trabalho são os adequados:]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="431"
+						y="313"
+						width="20"
+						height="16"
+						key="textField-139"
+						positionType="Float">
+							<printWhenExpression><![CDATA[new Boolean($P{personSiadapWrapper}.isCurrentUserAbleToSeeAutoEvaluationDetails() && $P{siadap}.getAutoEvaluationData2() != null && $P{siadap}.getAutoEvaluationData2().getFactorOneClassification() != null)]]></printWhenExpression>
+						</reportElement>
+					<box>					<topPen lineWidth="1.0" lineStyle="Solid"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid"/>
+</box>
+					<textElement>
+						<font/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$P{siadap}.getAutoEvaluationData2().getFactorThreeClassification().toString()]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement
+						mode="Opaque"
+						x="1"
+						y="313"
+						width="430"
+						height="16"
+						backcolor="#CCCCCC"
+						key="staticText-115"
+						positionType="Float">
+							<printWhenExpression><![CDATA[new Boolean($P{personSiadapWrapper}.isCurrentUserAbleToSeeAutoEvaluationDetails() && $P{siadap}.getAutoEvaluationData2() != null && $P{siadap}.getAutoEvaluationData2().getFactorOneClassification() != null)]]></printWhenExpression>
+						</reportElement>
+					<box>					<topPen lineWidth="1.0" lineStyle="Solid"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid"/>
+</box>
+					<textElement>
+						<font size="10"/>
+					</textElement>
+				<text><![CDATA[O equipamento e condições instrumentais e tecnológicas existentes são os adequados:]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="431"
+						y="329"
+						width="20"
+						height="16"
+						key="textField-140"
+						positionType="Float">
+							<printWhenExpression><![CDATA[new Boolean($P{personSiadapWrapper}.isCurrentUserAbleToSeeAutoEvaluationDetails() && $P{siadap}.getAutoEvaluationData2() != null && $P{siadap}.getAutoEvaluationData2().getFactorOneClassification() != null)]]></printWhenExpression>
+						</reportElement>
+					<box>					<topPen lineWidth="1.0" lineStyle="Solid"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid"/>
+</box>
+					<textElement>
+						<font/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$P{siadap}.getAutoEvaluationData2().getFactorFourClassification().toString()]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement
+						mode="Opaque"
+						x="1"
+						y="329"
+						width="430"
+						height="16"
+						backcolor="#CCCCCC"
+						key="staticText-116"
+						positionType="Float">
+							<printWhenExpression><![CDATA[new Boolean($P{personSiadapWrapper}.isCurrentUserAbleToSeeAutoEvaluationDetails() && $P{siadap}.getAutoEvaluationData2() != null && $P{siadap}.getAutoEvaluationData2().getFactorOneClassification() != null)]]></printWhenExpression>
+						</reportElement>
+					<box>					<topPen lineWidth="1.0" lineStyle="Solid"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid"/>
+</box>
+					<textElement>
+						<font size="10"/>
+					</textElement>
+				<text><![CDATA[O ambiente de trabalho existente:]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="431"
+						y="345"
+						width="20"
+						height="16"
+						key="textField-141"
+						positionType="Float">
+							<printWhenExpression><![CDATA[new Boolean($P{personSiadapWrapper}.isCurrentUserAbleToSeeAutoEvaluationDetails() && $P{siadap}.getAutoEvaluationData2() != null && $P{siadap}.getAutoEvaluationData2().getFactorOneClassification() != null)]]></printWhenExpression>
+						</reportElement>
+					<box>					<topPen lineWidth="1.0" lineStyle="Solid"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid"/>
+</box>
+					<textElement>
+						<font/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$P{siadap}.getAutoEvaluationData2().getFactorFiveClassification().toString()]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement
+						mode="Opaque"
+						x="1"
+						y="345"
+						width="430"
+						height="16"
+						backcolor="#CCCCCC"
+						key="staticText-117"
+						positionType="Float">
+							<printWhenExpression><![CDATA[new Boolean($P{personSiadapWrapper}.isCurrentUserAbleToSeeAutoEvaluationDetails() && $P{siadap}.getAutoEvaluationData2() != null && $P{siadap}.getAutoEvaluationData2().getFactorOneClassification() != null)]]></printWhenExpression>
+						</reportElement>
+					<box>					<topPen lineWidth="1.0" lineStyle="Solid"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid"/>
+</box>
+					<textElement>
+						<font size="10"/>
+					</textElement>
+				<text><![CDATA[O esforço ou investimento individual feitos:]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="431"
+						y="361"
+						width="20"
+						height="16"
+						key="textField-142"
+						positionType="Float">
+							<printWhenExpression><![CDATA[new Boolean($P{personSiadapWrapper}.isCurrentUserAbleToSeeAutoEvaluationDetails() && $P{siadap}.getAutoEvaluationData2() != null && $P{siadap}.getAutoEvaluationData2().getFactorSixClassification() != null)]]></printWhenExpression>
+						</reportElement>
+					<box>					<topPen lineWidth="1.0" lineStyle="Solid"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid"/>
+</box>
+					<textElement>
+						<font/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$P{siadap}.getAutoEvaluationData2().getFactorSixClassification().toString()]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement
+						mode="Opaque"
+						x="1"
+						y="361"
+						width="430"
+						height="16"
+						backcolor="#CCCCCC"
+						key="staticText-118"
+						positionType="Float"/>
+					<box>					<topPen lineWidth="1.0" lineStyle="Solid"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid"/>
+</box>
+					<textElement>
+						<font size="10"/>
+					</textElement>
+				<text><![CDATA[Outros factores:]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						mode="Opaque"
+						x="0"
+						y="407"
+						width="534"
+						height="28"
+						backcolor="#E0DADA"
+						key="textField-143"
+						positionType="Float">
+							<printWhenExpression><![CDATA[new Boolean($P{personSiadapWrapper}.isCurrentUserAbleToSeeAutoEvaluationDetails() && $P{siadap}.getAutoEvaluationData2() != null && !org.apache.commons.lang.StringUtils.isBlank($P{siadap}.getAutoEvaluationData2().getOtherFactorsJustification()))]]></printWhenExpression>
+						</reportElement>
+					<box></box>
+					<textElement>
+						<font/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$P{siadap}.getAutoEvaluationData2().getOtherFactorsJustification()]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement
+						x="0"
+						y="387"
+						width="535"
+						height="15"
+						key="staticText-119"
+						positionType="Float">
+							<printWhenExpression><![CDATA[new Boolean($P{personSiadapWrapper}.isCurrentUserAbleToSeeAutoEvaluationDetails() && $P{siadap}.getAutoEvaluationData2() != null && !org.apache.commons.lang.StringUtils.isBlank($P{siadap}.getAutoEvaluationData2().getOtherFactorsJustification()))]]></printWhenExpression>
+						</reportElement>
+					<box></box>
+					<textElement>
+						<font pdfFontName="Helvetica-Bold" isBold="true"/>
+					</textElement>
+				<text><![CDATA[(Auto-avaliação) Outros factores que o avaliado achou importantes para o seu desempenho]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						mode="Opaque"
+						x="0"
+						y="461"
+						width="534"
+						height="28"
+						backcolor="#E0DADA"
+						key="textField-144"
+						positionType="Float">
+							<printWhenExpression><![CDATA[new Boolean($P{personSiadapWrapper}.isCurrentUserAbleToSeeAutoEvaluationDetails() && $P{siadap}.getAutoEvaluationData2() != null && !org.apache.commons.lang.StringUtils.isBlank($P{siadap}.getAutoEvaluationData2().getExtremesJustification()))]]></printWhenExpression>
+						</reportElement>
+					<box></box>
+					<textElement>
+						<font/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$P{siadap}.getAutoEvaluationData2().getExtremesJustification()]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement
+						x="0"
+						y="441"
+						width="535"
+						height="15"
+						key="staticText-120"
+						positionType="Float">
+							<printWhenExpression><![CDATA[new Boolean($P{personSiadapWrapper}.isCurrentUserAbleToSeeAutoEvaluationDetails() && $P{siadap}.getAutoEvaluationData2() != null && !org.apache.commons.lang.StringUtils.isBlank($P{siadap}.getAutoEvaluationData2().getExtremesJustification()))]]></printWhenExpression>
+						</reportElement>
+					<box></box>
+					<textElement>
+						<font pdfFontName="Helvetica-Bold" isBold="true"/>
+					</textElement>
+				<text><![CDATA[(Auto-avaliação) Justificação do peso atribuido aos diversos factores]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						mode="Opaque"
+						x="0"
+						y="517"
+						width="534"
+						height="28"
+						backcolor="#E0DADA"
+						key="textField-145"
+						positionType="Float">
+							<printWhenExpression><![CDATA[new Boolean($P{personSiadapWrapper}.isCurrentUserAbleToSeeAutoEvaluationDetails() && $P{siadap}.getAutoEvaluationData2() != null && !org.apache.commons.lang.StringUtils.isBlank($P{siadap}.getAutoEvaluationData2().getCommentsAndProposals()))]]></printWhenExpression>
+						</reportElement>
+					<box></box>
+					<textElement>
+						<font/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$P{siadap}.getAutoEvaluationData2().getCommentsAndProposals()]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement
+						x="0"
+						y="497"
+						width="535"
+						height="15"
+						key="staticText-121"
+						positionType="Float">
+							<printWhenExpression><![CDATA[new Boolean($P{personSiadapWrapper}.isCurrentUserAbleToSeeAutoEvaluationDetails() && $P{siadap}.getAutoEvaluationData2() != null && !org.apache.commons.lang.StringUtils.isBlank($P{siadap}.getAutoEvaluationData2().getCommentsAndProposals()))]]></printWhenExpression>
+						</reportElement>
+					<box></box>
+					<textElement>
+						<font pdfFontName="Helvetica-Bold" isBold="true"/>
+					</textElement>
+				<text><![CDATA[(Auto-avaliação) Sugestões e propostas do avaliado]]></text>
+				</staticText>
+				<subreport  isUsingCache="true">
+					<reportElement
+						mode="Opaque"
+						x="0"
+						y="561"
+						width="535"
+						height="39"
+						key="subreport-4"
+						positionType="Float">
+							<printWhenExpression><![CDATA[new Boolean(!$P{siadap}.isWithSkippedEvaluation() && $P{personSiadapWrapper}.isCurrentUserAbleToSeeEvaluationDetails())]]></printWhenExpression>
+						</reportElement>
+					<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource(((Collection)$P{siadap}.getSiadapEvaluationUniverses()))]]></dataSourceExpression>
+					<subreportExpression  class="java.lang.String"><![CDATA["reports/siadapEvaluationGradesSubReport.jasper"]]></subreportExpression>
+				</subreport>
+				<staticText>
+					<reportElement
+						x="0"
+						y="609"
+						width="535"
+						height="15"
+						key="staticText-122"
+						positionType="Float">
+							<printWhenExpression><![CDATA[new Boolean($P{personSiadapWrapper}.isCurrentUserAbleToSeeEvaluationDetails() && $P{siadap}.getEvaluationData2() != null && !org.apache.commons.lang.StringUtils.isBlank($P{siadap}.getEvaluationData2().getEvaluationJustification()))]]></printWhenExpression>
+						</reportElement>
+					<box></box>
+					<textElement>
+						<font pdfFontName="Helvetica-Bold" isBold="true"/>
+					</textElement>
+				<text><![CDATA[(Avaliação) Fundamentação do avaliador da menção qualitativa atribuída]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						mode="Opaque"
+						x="1"
+						y="630"
+						width="534"
+						height="28"
+						backcolor="#E0DADA"
+						key="textField-146"
+						positionType="Float">
+							<printWhenExpression><![CDATA[new Boolean($P{personSiadapWrapper}.isCurrentUserAbleToSeeEvaluationDetails() && $P{siadap}.getEvaluationData2() != null && !org.apache.commons.lang.StringUtils.isBlank($P{siadap}.getEvaluationData2().getEvaluationJustification()))]]></printWhenExpression>
+						</reportElement>
+					<box></box>
+					<textElement>
+						<font/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$P{siadap}.getEvaluationData2().getEvaluationJustification()]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						mode="Opaque"
+						x="0"
+						y="687"
+						width="534"
+						height="28"
+						backcolor="#E0DADA"
+						key="textField-147"
+						positionType="Float">
+							<printWhenExpression><![CDATA[new Boolean($P{personSiadapWrapper}.isCurrentUserAbleToSeeEvaluationDetails() && $P{siadap}.getEvaluationData2() != null && !org.apache.commons.lang.StringUtils.isBlank($P{siadap}.getEvaluationData2().getExcellencyAwardJustification()))]]></printWhenExpression>
+						</reportElement>
+					<box></box>
+					<textElement>
+						<font/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$P{siadap}.getEvaluationData2().getExcellencyAwardJustification()]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement
+						x="0"
+						y="667"
+						width="535"
+						height="15"
+						key="staticText-123"
+						positionType="Float">
+							<printWhenExpression><![CDATA[new Boolean($P{personSiadapWrapper}.isCurrentUserAbleToSeeEvaluationDetails() && $P{siadap}.getEvaluationData2() != null && !org.apache.commons.lang.StringUtils.isBlank($P{siadap}.getEvaluationData2().getExcellencyAwardJustification()))]]></printWhenExpression>
+						</reportElement>
+					<box></box>
+					<textElement>
+						<font pdfFontName="Helvetica-Bold" isBold="true"/>
+					</textElement>
+				<text><![CDATA[(Avaliação) Fundamentação do avaliador do desempenho excelente atríbuido]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						x="0"
+						y="721"
+						width="535"
+						height="26"
+						key="staticText-124"
+						positionType="Float">
+							<printWhenExpression><![CDATA[new Boolean($P{personSiadapWrapper}.isCurrentUserAbleToSeeEvaluationDetails() && $P{siadap}.getEvaluationData2() != null && !org.apache.commons.lang.StringUtils.isBlank($P{siadap}.getEvaluationData2().getPersonalDevelopment()))]]></printWhenExpression>
+						</reportElement>
+					<box></box>
+					<textElement>
+						<font pdfFontName="Helvetica-Bold" isBold="true"/>
+					</textElement>
+				<text><![CDATA[(Avaliação) Expectativas, condições e/ou requisitos de desenvolvimento pessoal e profissional dadas pelo avaliador]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						mode="Opaque"
+						x="1"
+						y="751"
+						width="534"
+						height="28"
+						backcolor="#E0DADA"
+						key="textField-148"
+						positionType="Float">
+							<printWhenExpression><![CDATA[new Boolean($P{personSiadapWrapper}.isCurrentUserAbleToSeeEvaluationDetails() && $P{siadap}.getEvaluationData2() != null && !org.apache.commons.lang.StringUtils.isBlank($P{siadap}.getEvaluationData2().getPersonalDevelopment()))]]></printWhenExpression>
+						</reportElement>
+					<box></box>
+					<textElement>
+						<font/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$P{siadap}.getEvaluationData2().getPersonalDevelopment()]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement
+						x="1"
+						y="784"
+						width="534"
+						height="15"
+						key="staticText-125"
+						positionType="Float">
+							<printWhenExpression><![CDATA[new Boolean($P{personSiadapWrapper}.isCurrentUserAbleToSeeEvaluationDetails() && $P{siadap}.getEvaluationData2() != null && !org.apache.commons.lang.StringUtils.isBlank($P{siadap}.getEvaluationData2().getTrainningNeeds()))]]></printWhenExpression>
+						</reportElement>
+					<box></box>
+					<textElement>
+						<font pdfFontName="Helvetica-Bold" isBold="true"/>
+					</textElement>
+				<text><![CDATA[(Avaliação) Diagnóstico de necessidades de formação apontadas pelo avaliado]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						mode="Opaque"
+						x="1"
+						y="804"
+						width="534"
+						height="28"
+						backcolor="#E0DADA"
+						key="textField-149"
+						positionType="Float">
+							<printWhenExpression><![CDATA[new Boolean($P{personSiadapWrapper}.isCurrentUserAbleToSeeEvaluationDetails() && $P{siadap}.getEvaluationData2() != null && !org.apache.commons.lang.StringUtils.isBlank($P{siadap}.getEvaluationData2().getTrainningNeeds()))]]></printWhenExpression>
+						</reportElement>
+					<box></box>
+					<textElement>
+						<font/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$P{siadap}.getEvaluationData2().getTrainningNeeds()]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement
+						x="0"
+						y="555"
+						width="535"
+						height="15"
+						key="staticText-126"
+						positionType="Float">
+							<printWhenExpression><![CDATA[new Boolean($P{personSiadapWrapper}.isCurrentUserAbleToSeeEvaluationDetails() && $P{siadap}.getEvaluationData2() != null && $P{siadap}.isWithSkippedEvaluation())]]></printWhenExpression>
+						</reportElement>
+					<box></box>
+					<textElement>
+						<font pdfFontName="Helvetica-Bold" isBold="true"/>
+					</textElement>
+				<text><![CDATA[(Avaliação) Justificação de não avaliação]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						mode="Opaque"
+						x="0"
+						y="575"
+						width="534"
+						height="28"
+						backcolor="#E0DADA"
+						key="textField-150"
+						positionType="Float">
+							<printWhenExpression><![CDATA[new Boolean( $P{siadap}.getEvaluationData2() != null && $P{siadap}.isWithSkippedEvaluation())]]></printWhenExpression>
+						</reportElement>
+					<box></box>
+					<textElement>
+						<font/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$P{siadap}.getEvaluationData2().getNoEvaluationJustification()]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement
+						x="0"
+						y="844"
+						width="204"
+						height="24"
+						key="staticText-129"
+						positionType="Float"/>
+					<box></box>
+					<textElement>
+						<font size="18"/>
+					</textElement>
+				<text><![CDATA[Registos:]]></text>
+				</staticText>
+				<subreport  isUsingCache="true">
+					<reportElement
+						mode="Opaque"
+						x="-2"
+						y="868"
+						width="533"
+						height="101"
+						key="subreport-5"
+						positionType="Float"/>
+					<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource(((Collection)$P{logs}))]]></dataSourceExpression>
+					<subreportExpression  class="java.lang.String"><![CDATA["reports/logSubReport.jasper"]]></subreportExpression>
+				</subreport>
+				<line direction="TopDown">
+					<reportElement
+						x="-2"
+						y="868"
+						width="535"
+						height="0"
+						key="line-3"
+						positionType="Float"/>
+					<graphicElement stretchType="NoStretch"/>
+				</line>
+				<staticText>
+					<reportElement
+						x="0"
+						y="976"
+						width="204"
+						height="18"
+						key="staticText-130"
+						positionType="Float"/>
+					<box></box>
+					<textElement>
+						<font size="14"/>
+					</textElement>
+				<text><![CDATA[Competências:]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						x="0"
+						y="994"
+						width="535"
+						height="16"
+						key="staticText-131"
+						positionType="Float">
+							<printWhenExpression><![CDATA[Boolean.valueOf(!$P{personSiadapWrapper}.getShouldShowObjectivesAndCompetences())]]></printWhenExpression>
+						</reportElement>
+					<box></box>
+					<textElement>
+						<font pdfFontName="Helvetica-Oblique" isItalic="true"/>
+					</textElement>
+				<text><![CDATA[Objectivos e/ou competências ainda não disponibilizados pelo avaliador.]]></text>
+				</staticText>
+				<subreport  isUsingCache="true">
+					<reportElement
+						x="0"
+						y="994"
+						width="533"
+						height="87"
+						key="subreport-6"
+						positionType="Float">
+							<printWhenExpression><![CDATA[new Boolean($P{personSiadapWrapper}.getShouldShowObjectivesAndCompetences())]]></printWhenExpression>
+						</reportElement>
+					<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource(((Collection)$P{siadap}.getCompetenceEvaluations()))]]></dataSourceExpression>
+					<subreportExpression  class="java.lang.String"><![CDATA["reports/siadapCompetencesSubReport.jasper"]]></subreportExpression>
+				</subreport>
+				<subreport  isUsingCache="true">
+					<reportElement
+						x="0"
+						y="1106"
+						width="533"
+						height="87"
+						key="subreport-7"
+						positionType="Float">
+							<printWhenExpression><![CDATA[new Boolean($P{personSiadapWrapper}.getShouldShowObjectivesAndCompetences())]]></printWhenExpression>
+						</reportElement>
+					<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource(((Collection)$P{process}.getComments()))]]></dataSourceExpression>
+					<subreportExpression  class="java.lang.String"><![CDATA["reports/commentsSubReport.jasper"]]></subreportExpression>
+				</subreport>
+				<staticText>
+					<reportElement
+						x="0"
+						y="1088"
+						width="204"
+						height="18"
+						key="staticText-132"
+						positionType="Float"/>
+					<box></box>
+					<textElement>
+						<font size="14"/>
+					</textElement>
+				<text><![CDATA[Comentários:]]></text>
+				</staticText>
 			</band>
 			</groupFooter>
 		</group>
@@ -69,290 +1008,11 @@
 			</band>
 		</columnHeader>
 		<detail>
-			<band height="1800"  isSplitAllowed="true" >
-				<staticText>
-					<reportElement
-						x="103"
-						y="67"
-						width="164"
-						height="15"
-						key="staticText-1"
-						positionType="Float"/>
-					<box></box>
-					<textElement verticalAlignment="Middle">
-						<font pdfFontName="Helvetica-BoldOblique" isBold="true" isItalic="true"/>
-					</textElement>
-				<text><![CDATA[Estado do processo:]]></text>
-				</staticText>
-				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
-					<reportElement
-						x="267"
-						y="66"
-						width="132"
-						height="15"
-						key="textField-1"
-						positionType="Float"
-						isPrintRepeatedValues="false"/>
-					<box></box>
-					<textElement verticalAlignment="Middle">
-						<font/>
-					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[$P{siadap}.getState().getLocalizedName()]]></textFieldExpression>
-				</textField>
-				<image  vAlign="Top" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
-					<reportElement
-						mode="Transparent"
-						x="3"
-						y="31"
-						width="100"
-						height="100"
-						key="image-1"
-						positionType="Float"
-						isPrintRepeatedValues="false"/>
-					<box>					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<bottomPen lineWidth="0.0" lineColor="#000000"/>
-					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-</box>
-					<graphicElement stretchType="NoStretch"/>
-					<imageExpression class="java.lang.String"><![CDATA["images/" + $P{logoFilename}]]></imageExpression>
-				</image>
-				<staticText>
-					<reportElement
-						x="379"
-						y="100"
-						width="0"
-						height="0"
-						key="staticText-25"
-						positionType="Float"/>
-					<box></box>
-					<textElement>
-						<font/>
-					</textElement>
-				<text><![CDATA[Static Text]]></text>
-				</staticText>
-				<staticText>
-					<reportElement
-						x="103"
-						y="83"
-						width="164"
-						height="15"
-						key="staticText-30"
-						positionType="Float"/>
-					<box></box>
-					<textElement verticalAlignment="Middle">
-						<font pdfFontName="Helvetica-BoldOblique" isBold="true" isItalic="true"/>
-					</textElement>
-				<text><![CDATA[Carreira, no âmbito do SIADAP:]]></text>
-				</staticText>
-				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
-					<reportElement
-						x="267"
-						y="83"
-						width="132"
-						height="15"
-						key="textField-29"
-						positionType="Float"/>
-					<box></box>
-					<textElement verticalAlignment="Middle">
-						<font/>
-					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[$P{personSiadapWrapper}.getCareerName() != null ? 
-$P{personSiadapWrapper}.getCareerName() : $R{competenceType.notDefined}]]></textFieldExpression>
-				</textField>
-				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
-					<reportElement
-						x="3"
-						y="-1"
-						width="517"
-						height="32"
-						key="textField-100"
-						positionType="Float"/>
-					<box></box>
-					<textElement textAlignment="Center" verticalAlignment="Middle">
-						<font pdfFontName="Helvetica-Bold" size="12" isBold="true"/>
-					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA["SIADAP - " + $P{siadap}.getYear() + " - " + $P{siadap}.getEvaluated().getFirstAndLastName() + "(" + $P{process}.getProcessNumber() + ")"]]></textFieldExpression>
-				</textField>
-				<staticText>
-					<reportElement
-						x="103"
-						y="31"
-						width="136"
-						height="15"
-						key="staticText-100"
-						positionType="Float"/>
-					<box></box>
-					<textElement verticalAlignment="Middle">
-						<font pdfFontName="Helvetica-BoldOblique" isBold="true" isItalic="true"/>
-					</textElement>
-				<text><![CDATA[Documento gerado em: ]]></text>
-				</staticText>
-				<textField isStretchWithOverflow="true" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
-					<reportElement
-						x="239"
-						y="31"
-						width="281"
-						height="36"
-						key="textField-101"
-						positionType="Float"/>
-					<box></box>
-					<textElement verticalAlignment="Middle">
-						<font/>
-					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[$P{documentGeneratedDate}.toString("dd/MM/yyyy HH:mm:ss") + " - " + $P{generationMotive} + " - " + myorg.applicationTier.Authenticate.UserView.getCurrentUser().getPerson().getPresentationName()]]></textFieldExpression>
-				</textField>
-				<staticText>
-					<reportElement
-						x="103"
-						y="100"
-						width="164"
-						height="15"
-						key="staticText-102"
-						positionType="Float"/>
-					<box></box>
-					<textElement verticalAlignment="Middle">
-						<font pdfFontName="Helvetica-BoldOblique" isBold="true" isItalic="true"/>
-					</textElement>
-				<text><![CDATA[Universo SIADAP:]]></text>
-				</staticText>
-				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
-					<reportElement
-						x="267"
-						y="100"
-						width="132"
-						height="15"
-						key="textField-103"
-						positionType="Float"/>
-					<box></box>
-					<textElement verticalAlignment="Middle">
-						<font/>
-					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[$P{siadap}.getDefaultSiadapUniverse() != null ? $P{siadap}.getDefaultSiadapUniverse().name()  : $R{label.undefinedUniverse}]]></textFieldExpression>
-				</textField>
-				<subreport  isUsingCache="true">
-					<reportElement
-						mode="Opaque"
-						x="0"
-						y="1267"
-						width="533"
-						height="101"
-						key="subreport-2"
-						positionType="Float"/>
-					<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource(((Collection)$P{logs}))]]></dataSourceExpression>
-					<subreportExpression  class="java.lang.String"><![CDATA["reports/logSubReport.jasper"]]></subreportExpression>
-				</subreport>
-				<staticText>
-					<reportElement
-						x="2"
-						y="1243"
-						width="204"
-						height="24"
-						key="staticText-99"
-						positionType="Float"/>
-					<box></box>
-					<textElement>
-						<font size="18"/>
-					</textElement>
-				<text><![CDATA[Registos:]]></text>
-				</staticText>
-				<line direction="TopDown">
-					<reportElement
-						x="0"
-						y="1267"
-						width="535"
-						height="0"
-						key="line-1"
-						positionType="Float"/>
-					<graphicElement stretchType="NoStretch"/>
-				</line>
-				<line direction="TopDown">
-					<reportElement
-						x="0"
-						y="308"
-						width="535"
-						height="0"
-						key="line-2"
-						positionType="Float"/>
-					<graphicElement stretchType="NoStretch"/>
-				</line>
-				<subreport  isUsingCache="true">
-					<reportElement
-						mode="Opaque"
-						x="-1"
-						y="191"
-						width="533"
-						height="87"
-						key="subreport-3"
-						stretchType="RelativeToTallestObject"
-						positionType="Float">
-							<printWhenExpression><![CDATA[new Boolean($P{personSiadapWrapper}.getShouldShowObjectivesAndCompetences())]]></printWhenExpression>
-						</reportElement>
-					<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource(((Collection)$P{siadap}.getObjectiveEvaluations()))]]></dataSourceExpression>
-					<subreportExpression  class="java.lang.String"><![CDATA["reports/siadapObjectivesSubReport.jasper"]]></subreportExpression>
-				</subreport>
+			<band height="105"  isSplitAllowed="true" >
 				<staticText>
 					<reportElement
 						x="0"
-						y="143"
-						width="204"
-						height="24"
-						key="staticText-103"
-						positionType="Float"/>
-					<box></box>
-					<textElement>
-						<font size="18"/>
-					</textElement>
-				<text><![CDATA[Itens da avaliação:]]></text>
-				</staticText>
-				<staticText>
-					<reportElement
-						x="-1"
-						y="173"
-						width="204"
-						height="18"
-						key="staticText-104"
-						positionType="Float"/>
-					<box></box>
-					<textElement>
-						<font size="14"/>
-					</textElement>
-				<text><![CDATA[Objectivos:]]></text>
-				</staticText>
-				<staticText>
-					<reportElement
-						x="-1"
-						y="367"
-						width="204"
-						height="18"
-						key="staticText-105"
-						positionType="Float"/>
-					<box></box>
-					<textElement>
-						<font size="14"/>
-					</textElement>
-				<text><![CDATA[Competências:]]></text>
-				</staticText>
-				<staticText>
-					<reportElement
-						x="-1"
-						y="385"
-						width="535"
-						height="16"
-						key="staticText-106"
-						positionType="Float">
-							<printWhenExpression><![CDATA[Boolean.valueOf(!$P{personSiadapWrapper}.getShouldShowObjectivesAndCompetences())]]></printWhenExpression>
-						</reportElement>
-					<box></box>
-					<textElement>
-						<font pdfFontName="Helvetica-Oblique" isItalic="true"/>
-					</textElement>
-				<text><![CDATA[Objectivos e/ou competências ainda não disponibilizados pelo avaliador.]]></text>
-				</staticText>
-				<staticText>
-					<reportElement
-						x="-1"
-						y="190"
+						y="0"
 						width="535"
 						height="16"
 						key="staticText-107"
@@ -365,646 +1025,223 @@ $P{personSiadapWrapper}.getCareerName() : $R{competenceType.notDefined}]]></text
 					</textElement>
 				<text><![CDATA[Objectivos e/ou competências ainda não disponibilizados pelo avaliador.]]></text>
 				</staticText>
-				<staticText>
+				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
-						x="-1"
-						y="285"
+						mode="Opaque"
+						x="0"
+						y="0"
 						width="535"
-						height="15"
-						key="staticText-108"
-						positionType="Float">
-							<printWhenExpression><![CDATA[new Boolean($P{personSiadapWrapper}.isCurrentUserAbleToSeeAutoEvaluationDetails() && $P{siadap}.getAutoEvaluationData2() != null && $P{siadap}.getAutoEvaluationData2().getObjectivesJustification() != null)]]></printWhenExpression>
-						</reportElement>
-					<box></box>
-					<textElement>
-						<font pdfFontName="Helvetica-Bold" isBold="true"/>
-					</textElement>
-				<text><![CDATA[(Auto-avaliação) Breve fundamentação relativa à realização dos objectivos:]]></text>
-				</staticText>
-				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
-					<reportElement
-						mode="Opaque"
-						x="-1"
-						y="305"
-						width="534"
-						height="28"
-						backcolor="#E0DADA"
-						key="textField-104"
-						positionType="Float">
-							<printWhenExpression><![CDATA[new Boolean($P{personSiadapWrapper}.isCurrentUserAbleToSeeAutoEvaluationDetails() && $P{siadap}.getAutoEvaluationData2() != null && $P{siadap}.getAutoEvaluationData2().getObjectivesJustification() != null)]]></printWhenExpression>
-						</reportElement>
-					<box></box>
-					<textElement>
-						<font/>
-					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[$P{siadap}.getAutoEvaluationData2().getObjectivesJustification()]]></textFieldExpression>
-				</textField>
-				<staticText>
-					<reportElement
-						x="-1"
-						y="355"
-						width="533"
-						height="12"
-						key="staticText-109"
-						positionType="Float">
-							<printWhenExpression><![CDATA[$P{siadap}.getEvaluatedOnlyByCompetences()]]></printWhenExpression>
-						</reportElement>
-					<box></box>
-					<textElement>
-						<font/>
-					</textElement>
-				<text><![CDATA[Avaliado apenas por competências]]></text>
-				</staticText>
-				<subreport  isUsingCache="true">
-					<reportElement
-						x="-1"
-						y="385"
-						width="533"
-						height="87"
-						key="subreport-4"
-						positionType="Float">
-							<printWhenExpression><![CDATA[new Boolean($P{personSiadapWrapper}.getShouldShowObjectivesAndCompetences())]]></printWhenExpression>
-						</reportElement>
-					<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource(((Collection)$P{siadap}.getCompetenceEvaluations()))]]></dataSourceExpression>
-					<subreportExpression  class="java.lang.String"><![CDATA["reports/siadapCompetencesSubReport.jasper"]]></subreportExpression>
-				</subreport>
-				<staticText>
-					<reportElement
-						x="-1"
-						y="472"
-						width="535"
-						height="15"
-						key="staticText-110"
-						positionType="Float">
-							<printWhenExpression><![CDATA[new Boolean($P{personSiadapWrapper}.isCurrentUserAbleToSeeAutoEvaluationDetails() && $P{siadap}.getAutoEvaluationData2() != null && $P{siadap}.getAutoEvaluationData2().getCompetencesJustification() != null)]]></printWhenExpression>
-						</reportElement>
-					<box></box>
-					<textElement>
-						<font pdfFontName="Helvetica-Bold" isBold="true"/>
-					</textElement>
-				<text><![CDATA[(Auto-avaliação) Breve fundamentação relativa à realização das competências]]></text>
-				</staticText>
-				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
-					<reportElement
-						mode="Opaque"
-						x="-1"
-						y="492"
-						width="534"
-						height="28"
-						backcolor="#E0DADA"
-						key="textField-105"
-						positionType="Float">
-							<printWhenExpression><![CDATA[new Boolean($P{personSiadapWrapper}.isCurrentUserAbleToSeeAutoEvaluationDetails() && $P{siadap}.getAutoEvaluationData2() != null && $P{siadap}.getAutoEvaluationData2().getCompetencesJustification() != null)]]></printWhenExpression>
-						</reportElement>
-					<box></box>
-					<textElement>
-						<font/>
-					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[$P{siadap}.getAutoEvaluationData2().getCompetencesJustification()]]></textFieldExpression>
-				</textField>
-				<staticText>
-					<reportElement
-						x="-1"
-						y="527"
-						width="535"
-						height="15"
-						key="staticText-111"
-						positionType="Float">
-							<printWhenExpression><![CDATA[new Boolean($P{personSiadapWrapper}.isCurrentUserAbleToSeeAutoEvaluationDetails() && $P{siadap}.getAutoEvaluationData2() != null && $P{siadap}.getAutoEvaluationData2().getFactorOneClassification() != null)]]></printWhenExpression>
-						</reportElement>
-					<box></box>
-					<textElement>
-						<font pdfFontName="Helvetica-Bold" isBold="true"/>
-					</textElement>
-				<text><![CDATA[(Auto-avaliação) Factores mais influentes no desempenho]]></text>
-				</staticText>
-				<staticText>
-					<reportElement
-						x="-1"
-						y="550"
-						width="535"
-						height="34"
-						key="staticText-112"
-						positionType="Float">
-							<printWhenExpression><![CDATA[new Boolean($P{personSiadapWrapper}.isCurrentUserAbleToSeeAutoEvaluationDetails() && $P{siadap}.getAutoEvaluationData2() != null && $P{siadap}.getAutoEvaluationData2().getFactorOneClassification() != null)]]></printWhenExpression>
-						</reportElement>
-					<box></box>
-					<textElement>
-						<font pdfFontName="Helvetica" isBold="false"/>
-					</textElement>
-				<text><![CDATA[Classificação de cada um dos factores quanto ao grau de influência no seu desempenho global do avaliado (1 representa o de menor impacto e 6 o de maior impacto).]]></text>
-				</staticText>
-				<staticText>
-					<reportElement
-						mode="Opaque"
-						x="-1"
-						y="583"
-						width="431"
-						height="16"
-						backcolor="#CCCCCC"
-						key="staticText-113"
-						positionType="Float">
-							<printWhenExpression><![CDATA[new Boolean($P{personSiadapWrapper}.isCurrentUserAbleToSeeAutoEvaluationDetails() && $P{siadap}.getAutoEvaluationData2() != null && $P{siadap}.getAutoEvaluationData2().getFactorOneClassification() != null)]]></printWhenExpression>
-						</reportElement>
-					<box>					<topPen lineWidth="1.0" lineStyle="Solid"/>
-					<bottomPen lineWidth="1.0" lineStyle="Solid"/>
-</box>
-					<textElement>
-						<font size="10"/>
-					</textElement>
-				<text><![CDATA[Os objectivos/competências a concretizar ao longo do ano foram fixados com clareza:]]></text>
-				</staticText>
-				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
-					<reportElement
-						x="430"
-						y="583"
-						width="20"
-						height="16"
-						key="textField-106"
-						positionType="Float">
-							<printWhenExpression><![CDATA[new Boolean($P{personSiadapWrapper}.isCurrentUserAbleToSeeAutoEvaluationDetails() && $P{siadap}.getAutoEvaluationData2() != null && $P{siadap}.getAutoEvaluationData2().getFactorOneClassification() != null)]]></printWhenExpression>
-						</reportElement>
-					<box>					<topPen lineWidth="1.0" lineStyle="Solid"/>
-					<bottomPen lineWidth="1.0" lineStyle="Solid"/>
-</box>
-					<textElement>
-						<font/>
-					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[$P{siadap}.getAutoEvaluationData2().getFactorOneClassification().toString()]]></textFieldExpression>
-				</textField>
-				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
-					<reportElement
-						x="430"
-						y="599"
-						width="20"
-						height="16"
-						key="textField-107"
-						positionType="Float">
-							<printWhenExpression><![CDATA[new Boolean($P{personSiadapWrapper}.isCurrentUserAbleToSeeAutoEvaluationDetails() && $P{siadap}.getAutoEvaluationData2() != null && $P{siadap}.getAutoEvaluationData2().getFactorOneClassification() != null)]]></printWhenExpression>
-						</reportElement>
-					<box>					<topPen lineWidth="1.0" lineStyle="Solid"/>
-					<bottomPen lineWidth="1.0" lineStyle="Solid"/>
-</box>
-					<textElement>
-						<font/>
-					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[$P{siadap}.getAutoEvaluationData2().getFactorTwoClassification().toString()]]></textFieldExpression>
-				</textField>
-				<staticText>
-					<reportElement
-						mode="Opaque"
-						x="0"
-						y="599"
-						width="430"
-						height="16"
-						backcolor="#CCCCCC"
-						key="staticText-114"
-						positionType="Float">
-							<printWhenExpression><![CDATA[new Boolean($P{personSiadapWrapper}.isCurrentUserAbleToSeeAutoEvaluationDetails() && $P{siadap}.getAutoEvaluationData2() != null && $P{siadap}.getAutoEvaluationData2().getFactorOneClassification() != null)]]></printWhenExpression>
-						</reportElement>
-					<box>					<topPen lineWidth="1.0" lineStyle="Solid"/>
-					<bottomPen lineWidth="1.0" lineStyle="Solid"/>
-</box>
-					<textElement>
-						<font size="10"/>
-					</textElement>
-				<text><![CDATA[Os processos e procedimentos de trabalho são os adequados:]]></text>
-				</staticText>
-				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
-					<reportElement
-						x="430"
-						y="615"
-						width="20"
-						height="16"
-						key="textField-108"
-						positionType="Float">
-							<printWhenExpression><![CDATA[new Boolean($P{personSiadapWrapper}.isCurrentUserAbleToSeeAutoEvaluationDetails() && $P{siadap}.getAutoEvaluationData2() != null && $P{siadap}.getAutoEvaluationData2().getFactorOneClassification() != null)]]></printWhenExpression>
-						</reportElement>
-					<box>					<topPen lineWidth="1.0" lineStyle="Solid"/>
-					<bottomPen lineWidth="1.0" lineStyle="Solid"/>
-</box>
-					<textElement>
-						<font/>
-					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[$P{siadap}.getAutoEvaluationData2().getFactorThreeClassification().toString()]]></textFieldExpression>
-				</textField>
-				<staticText>
-					<reportElement
-						mode="Opaque"
-						x="0"
-						y="615"
-						width="430"
-						height="16"
-						backcolor="#CCCCCC"
-						key="staticText-115"
-						positionType="Float">
-							<printWhenExpression><![CDATA[new Boolean($P{personSiadapWrapper}.isCurrentUserAbleToSeeAutoEvaluationDetails() && $P{siadap}.getAutoEvaluationData2() != null && $P{siadap}.getAutoEvaluationData2().getFactorOneClassification() != null)]]></printWhenExpression>
-						</reportElement>
-					<box>					<topPen lineWidth="1.0" lineStyle="Solid"/>
-					<bottomPen lineWidth="1.0" lineStyle="Solid"/>
-</box>
-					<textElement>
-						<font size="10"/>
-					</textElement>
-				<text><![CDATA[O equipamento e condições instrumentais e tecnológicas existentes são os adequados:]]></text>
-				</staticText>
-				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
-					<reportElement
-						x="430"
-						y="631"
-						width="20"
-						height="16"
-						key="textField-109"
-						positionType="Float">
-							<printWhenExpression><![CDATA[new Boolean($P{personSiadapWrapper}.isCurrentUserAbleToSeeAutoEvaluationDetails() && $P{siadap}.getAutoEvaluationData2() != null && $P{siadap}.getAutoEvaluationData2().getFactorOneClassification() != null)]]></printWhenExpression>
-						</reportElement>
-					<box>					<topPen lineWidth="1.0" lineStyle="Solid"/>
-					<bottomPen lineWidth="1.0" lineStyle="Solid"/>
-</box>
-					<textElement>
-						<font/>
-					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[$P{siadap}.getAutoEvaluationData2().getFactorFourClassification().toString()]]></textFieldExpression>
-				</textField>
-				<staticText>
-					<reportElement
-						mode="Opaque"
-						x="0"
-						y="631"
-						width="430"
-						height="16"
-						backcolor="#CCCCCC"
-						key="staticText-116"
-						positionType="Float">
-							<printWhenExpression><![CDATA[new Boolean($P{personSiadapWrapper}.isCurrentUserAbleToSeeAutoEvaluationDetails() && $P{siadap}.getAutoEvaluationData2() != null && $P{siadap}.getAutoEvaluationData2().getFactorOneClassification() != null)]]></printWhenExpression>
-						</reportElement>
-					<box>					<topPen lineWidth="1.0" lineStyle="Solid"/>
-					<bottomPen lineWidth="1.0" lineStyle="Solid"/>
-</box>
-					<textElement>
-						<font size="10"/>
-					</textElement>
-				<text><![CDATA[O ambiente de trabalho existente:]]></text>
-				</staticText>
-				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
-					<reportElement
-						x="430"
-						y="647"
-						width="20"
-						height="16"
-						key="textField-110"
-						positionType="Float">
-							<printWhenExpression><![CDATA[new Boolean($P{personSiadapWrapper}.isCurrentUserAbleToSeeAutoEvaluationDetails() && $P{siadap}.getAutoEvaluationData2() != null && $P{siadap}.getAutoEvaluationData2().getFactorOneClassification() != null)]]></printWhenExpression>
-						</reportElement>
-					<box>					<topPen lineWidth="1.0" lineStyle="Solid"/>
-					<bottomPen lineWidth="1.0" lineStyle="Solid"/>
-</box>
-					<textElement>
-						<font/>
-					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[$P{siadap}.getAutoEvaluationData2().getFactorFiveClassification().toString()]]></textFieldExpression>
-				</textField>
-				<staticText>
-					<reportElement
-						mode="Opaque"
-						x="0"
-						y="647"
-						width="430"
-						height="16"
-						backcolor="#CCCCCC"
-						key="staticText-117"
-						positionType="Float">
-							<printWhenExpression><![CDATA[new Boolean($P{personSiadapWrapper}.isCurrentUserAbleToSeeAutoEvaluationDetails() && $P{siadap}.getAutoEvaluationData2() != null && $P{siadap}.getAutoEvaluationData2().getFactorOneClassification() != null)]]></printWhenExpression>
-						</reportElement>
-					<box>					<topPen lineWidth="1.0" lineStyle="Solid"/>
-					<bottomPen lineWidth="1.0" lineStyle="Solid"/>
-</box>
-					<textElement>
-						<font size="10"/>
-					</textElement>
-				<text><![CDATA[O esforço ou investimento individual feitos:]]></text>
-				</staticText>
-				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
-					<reportElement
-						x="430"
-						y="663"
-						width="20"
-						height="16"
-						key="textField-111"
-						positionType="Float">
-							<printWhenExpression><![CDATA[new Boolean($P{personSiadapWrapper}.isCurrentUserAbleToSeeAutoEvaluationDetails() && $P{siadap}.getAutoEvaluationData2() != null && $P{siadap}.getAutoEvaluationData2().getFactorSixClassification() != null)]]></printWhenExpression>
-						</reportElement>
-					<box>					<topPen lineWidth="1.0" lineStyle="Solid"/>
-					<bottomPen lineWidth="1.0" lineStyle="Solid"/>
-</box>
-					<textElement>
-						<font/>
-					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[$P{siadap}.getAutoEvaluationData2().getFactorSixClassification().toString()]]></textFieldExpression>
-				</textField>
-				<staticText>
-					<reportElement
-						mode="Opaque"
-						x="0"
-						y="663"
-						width="430"
-						height="16"
-						backcolor="#CCCCCC"
-						key="staticText-118"
+						height="17"
+						key="textField-122"
 						positionType="Float"/>
 					<box>					<topPen lineWidth="1.0" lineStyle="Solid"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid"/>
 					<bottomPen lineWidth="1.0" lineStyle="Solid"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid"/>
 </box>
+					<textElement textAlignment="Left">
+						<font pdfFontName="Helvetica-Oblique" isBold="false" isItalic="true"/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA["Tipo: " + $F{objectiveEvaluation}.getType().getLocalizedName()]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						mode="Opaque"
+						x="25"
+						y="40"
+						width="84"
+						height="25"
+						backcolor="#CCCCCC"
+						key="textField-123"
+						positionType="Float"/>
+					<box>					<topPen lineWidth="1.0" lineStyle="Solid"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA["Indicador(es) de medida"]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="107"
+						y="18"
+						width="426"
+						height="22"
+						key="textField-124"
+						positionType="Float"/>
+					<box></box>
+					<textElement verticalAlignment="Middle">
+						<font/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{objectiveEvaluation}.getObjective()]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						mode="Opaque"
+						x="109"
+						y="40"
+						width="172"
+						height="25"
+						backcolor="#CCCCCC"
+						key="textField-125"
+						positionType="Float"/>
+					<box>					<topPen lineWidth="1.0" lineStyle="Solid"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid"/>
+</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA["Critérios de superação"]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						mode="Opaque"
+						x="281"
+						y="40"
+						width="98"
+						height="25"
+						backcolor="#CCCCCC"
+						key="textField-126"
+						positionType="Float"/>
+					<box>					<topPen lineWidth="1.0" lineStyle="Solid"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid"/>
+</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font pdfFontName="Helvetica-Bold" size="8" isBold="true"/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA["Auto-Avaliação"]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						mode="Opaque"
+						x="379"
+						y="40"
+						width="97"
+						height="25"
+						backcolor="#CCCCCC"
+						key="textField-127"
+						positionType="Float"/>
+					<box>					<topPen lineWidth="1.0" lineStyle="Solid"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid"/>
+</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font pdfFontName="Helvetica-Bold" size="8" isBold="true"/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA["Avaliação"]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						mode="Opaque"
+						x="475"
+						y="40"
+						width="60"
+						height="25"
+						backcolor="#CCCCCC"
+						key="textField-128"
+						positionType="Float"/>
+					<box>					<topPen lineWidth="1.0" lineStyle="Solid"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid"/>
+</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font pdfFontName="Helvetica-Bold" size="9" isBold="true"/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA["Factor de ponderação"]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						mode="Opaque"
+						x="25"
+						y="18"
+						width="82"
+						height="22"
+						key="textField-129"
+						positionType="Float"/>
+					<box></box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font pdfFontName="Helvetica-Bold" isBold="true"/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA["Objectivo:"]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="25"
+						y="65"
+						width="84"
+						height="39"
+						key="textField-130"
+						positionType="Float"/>
+					<box></box>
 					<textElement>
+						<font/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{aggregatedMeasurementIndicator}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="109"
+						y="65"
+						width="172"
+						height="39"
+						key="textField-131"
+						positionType="Float"/>
+					<box></box>
+					<textElement>
+						<font/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{aggregatedSuperationCriteria}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="281"
+						y="65"
+						width="98"
+						height="39"
+						key="textField-132"
+						positionType="Float"/>
+					<box></box>
+					<textElement>
+						<font/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{aggregatedAutoEvaluation}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="379"
+						y="65"
+						width="97"
+						height="39"
+						key="textField-133"
+						positionType="Float"/>
+					<box></box>
+					<textElement>
+						<font/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{aggregatedEvaluation}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="475"
+						y="65"
+						width="60"
+						height="39"
+						key="textField-134"
+						positionType="Float"/>
+					<box></box>
+					<textElement textAlignment="Center">
 						<font size="10"/>
 					</textElement>
-				<text><![CDATA[Outros factores:]]></text>
-				</staticText>
-				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
-					<reportElement
-						mode="Opaque"
-						x="-1"
-						y="709"
-						width="534"
-						height="28"
-						backcolor="#E0DADA"
-						key="textField-112"
-						positionType="Float">
-							<printWhenExpression><![CDATA[new Boolean($P{personSiadapWrapper}.isCurrentUserAbleToSeeAutoEvaluationDetails() && $P{siadap}.getAutoEvaluationData2() != null && !org.apache.commons.lang.StringUtils.isBlank($P{siadap}.getAutoEvaluationData2().getOtherFactorsJustification()))]]></printWhenExpression>
-						</reportElement>
-					<box></box>
-					<textElement>
-						<font/>
-					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[$P{siadap}.getAutoEvaluationData2().getOtherFactorsJustification()]]></textFieldExpression>
-				</textField>
-				<staticText>
-					<reportElement
-						x="-1"
-						y="689"
-						width="535"
-						height="15"
-						key="staticText-119"
-						positionType="Float">
-							<printWhenExpression><![CDATA[new Boolean($P{personSiadapWrapper}.isCurrentUserAbleToSeeAutoEvaluationDetails() && $P{siadap}.getAutoEvaluationData2() != null && !org.apache.commons.lang.StringUtils.isBlank($P{siadap}.getAutoEvaluationData2().getOtherFactorsJustification()))]]></printWhenExpression>
-						</reportElement>
-					<box></box>
-					<textElement>
-						<font pdfFontName="Helvetica-Bold" isBold="true"/>
-					</textElement>
-				<text><![CDATA[(Auto-avaliação) Outros factores que o avaliado achou importantes para o seu desempenho]]></text>
-				</staticText>
-				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
-					<reportElement
-						mode="Opaque"
-						x="-1"
-						y="763"
-						width="534"
-						height="28"
-						backcolor="#E0DADA"
-						key="textField-113"
-						positionType="Float">
-							<printWhenExpression><![CDATA[new Boolean($P{personSiadapWrapper}.isCurrentUserAbleToSeeAutoEvaluationDetails() && $P{siadap}.getAutoEvaluationData2() != null && !org.apache.commons.lang.StringUtils.isBlank($P{siadap}.getAutoEvaluationData2().getExtremesJustification()))]]></printWhenExpression>
-						</reportElement>
-					<box></box>
-					<textElement>
-						<font/>
-					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[$P{siadap}.getAutoEvaluationData2().getExtremesJustification()]]></textFieldExpression>
-				</textField>
-				<staticText>
-					<reportElement
-						x="-1"
-						y="743"
-						width="535"
-						height="15"
-						key="staticText-120"
-						positionType="Float">
-							<printWhenExpression><![CDATA[new Boolean($P{personSiadapWrapper}.isCurrentUserAbleToSeeAutoEvaluationDetails() && $P{siadap}.getAutoEvaluationData2() != null && !org.apache.commons.lang.StringUtils.isBlank($P{siadap}.getAutoEvaluationData2().getExtremesJustification()))]]></printWhenExpression>
-						</reportElement>
-					<box></box>
-					<textElement>
-						<font pdfFontName="Helvetica-Bold" isBold="true"/>
-					</textElement>
-				<text><![CDATA[(Auto-avaliação) Justificação do peso atribuido aos diversos factores]]></text>
-				</staticText>
-				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
-					<reportElement
-						mode="Opaque"
-						x="-1"
-						y="819"
-						width="534"
-						height="28"
-						backcolor="#E0DADA"
-						key="textField-114"
-						positionType="Float">
-							<printWhenExpression><![CDATA[new Boolean($P{personSiadapWrapper}.isCurrentUserAbleToSeeAutoEvaluationDetails() && $P{siadap}.getAutoEvaluationData2() != null && !org.apache.commons.lang.StringUtils.isBlank($P{siadap}.getAutoEvaluationData2().getCommentsAndProposals()))]]></printWhenExpression>
-						</reportElement>
-					<box></box>
-					<textElement>
-						<font/>
-					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[$P{siadap}.getAutoEvaluationData2().getCommentsAndProposals()]]></textFieldExpression>
-				</textField>
-				<staticText>
-					<reportElement
-						x="-1"
-						y="799"
-						width="535"
-						height="15"
-						key="staticText-121"
-						positionType="Float">
-							<printWhenExpression><![CDATA[new Boolean($P{personSiadapWrapper}.isCurrentUserAbleToSeeAutoEvaluationDetails() && $P{siadap}.getAutoEvaluationData2() != null && !org.apache.commons.lang.StringUtils.isBlank($P{siadap}.getAutoEvaluationData2().getCommentsAndProposals()))]]></printWhenExpression>
-						</reportElement>
-					<box></box>
-					<textElement>
-						<font pdfFontName="Helvetica-Bold" isBold="true"/>
-					</textElement>
-				<text><![CDATA[(Auto-avaliação) Sugestões e propostas do avaliado]]></text>
-				</staticText>
-				<subreport  isUsingCache="true">
-					<reportElement
-						mode="Opaque"
-						x="-1"
-						y="863"
-						width="535"
-						height="39"
-						key="subreport-5"
-						positionType="Float">
-							<printWhenExpression><![CDATA[new Boolean(!$P{siadap}.isWithSkippedEvaluation() && $P{personSiadapWrapper}.isCurrentUserAbleToSeeEvaluationDetails())]]></printWhenExpression>
-						</reportElement>
-					<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource(((Collection)$P{siadap}.getSiadapEvaluationUniverses()))]]></dataSourceExpression>
-					<subreportExpression  class="java.lang.String"><![CDATA["reports/siadapEvaluationGradesSubReport.jasper"]]></subreportExpression>
-				</subreport>
-				<staticText>
-					<reportElement
-						x="0"
-						y="912"
-						width="535"
-						height="15"
-						key="staticText-122"
-						positionType="Float">
-							<printWhenExpression><![CDATA[new Boolean($P{personSiadapWrapper}.isCurrentUserAbleToSeeEvaluationDetails() && $P{siadap}.getEvaluationData2() != null && !org.apache.commons.lang.StringUtils.isBlank($P{siadap}.getEvaluationData2().getEvaluationJustification()))]]></printWhenExpression>
-						</reportElement>
-					<box></box>
-					<textElement>
-						<font pdfFontName="Helvetica-Bold" isBold="true"/>
-					</textElement>
-				<text><![CDATA[(Avaliação) Fundamentação do avaliador da menção qualitativa atribuída]]></text>
-				</staticText>
-				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
-					<reportElement
-						mode="Opaque"
-						x="0"
-						y="932"
-						width="534"
-						height="28"
-						backcolor="#E0DADA"
-						key="textField-117"
-						positionType="Float">
-							<printWhenExpression><![CDATA[new Boolean($P{personSiadapWrapper}.isCurrentUserAbleToSeeEvaluationDetails() && $P{siadap}.getEvaluationData2() != null && !org.apache.commons.lang.StringUtils.isBlank($P{siadap}.getEvaluationData2().getEvaluationJustification()))]]></printWhenExpression>
-						</reportElement>
-					<box></box>
-					<textElement>
-						<font/>
-					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[$P{siadap}.getEvaluationData2().getEvaluationJustification()]]></textFieldExpression>
-				</textField>
-				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
-					<reportElement
-						mode="Opaque"
-						x="-1"
-						y="989"
-						width="534"
-						height="28"
-						backcolor="#E0DADA"
-						key="textField-118"
-						positionType="Float">
-							<printWhenExpression><![CDATA[new Boolean($P{personSiadapWrapper}.isCurrentUserAbleToSeeEvaluationDetails() && $P{siadap}.getEvaluationData2() != null && !org.apache.commons.lang.StringUtils.isBlank($P{siadap}.getEvaluationData2().getExcellencyAwardJustification()))]]></printWhenExpression>
-						</reportElement>
-					<box></box>
-					<textElement>
-						<font/>
-					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[$P{siadap}.getEvaluationData2().getExcellencyAwardJustification()]]></textFieldExpression>
-				</textField>
-				<staticText>
-					<reportElement
-						x="-1"
-						y="969"
-						width="535"
-						height="15"
-						key="staticText-123"
-						positionType="Float">
-							<printWhenExpression><![CDATA[new Boolean($P{personSiadapWrapper}.isCurrentUserAbleToSeeEvaluationDetails() && $P{siadap}.getEvaluationData2() != null && !org.apache.commons.lang.StringUtils.isBlank($P{siadap}.getEvaluationData2().getExcellencyAwardJustification()))]]></printWhenExpression>
-						</reportElement>
-					<box></box>
-					<textElement>
-						<font pdfFontName="Helvetica-Bold" isBold="true"/>
-					</textElement>
-				<text><![CDATA[(Avaliação) Fundamentação do avaliador do desempenho excelente atríbuido]]></text>
-				</staticText>
-				<staticText>
-					<reportElement
-						x="0"
-						y="1023"
-						width="535"
-						height="26"
-						key="staticText-124"
-						positionType="Float">
-							<printWhenExpression><![CDATA[new Boolean($P{personSiadapWrapper}.isCurrentUserAbleToSeeEvaluationDetails() && $P{siadap}.getEvaluationData2() != null && !org.apache.commons.lang.StringUtils.isBlank($P{siadap}.getEvaluationData2().getPersonalDevelopment()))]]></printWhenExpression>
-						</reportElement>
-					<box></box>
-					<textElement>
-						<font pdfFontName="Helvetica-Bold" isBold="true"/>
-					</textElement>
-				<text><![CDATA[(Avaliação) Expectativas, condições e/ou requisitos de desenvolvimento pessoal e profissional dadas pelo avaliador]]></text>
-				</staticText>
-				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
-					<reportElement
-						mode="Opaque"
-						x="0"
-						y="1053"
-						width="534"
-						height="28"
-						backcolor="#E0DADA"
-						key="textField-119"
-						positionType="Float">
-							<printWhenExpression><![CDATA[new Boolean($P{personSiadapWrapper}.isCurrentUserAbleToSeeEvaluationDetails() && $P{siadap}.getEvaluationData2() != null && !org.apache.commons.lang.StringUtils.isBlank($P{siadap}.getEvaluationData2().getPersonalDevelopment()))]]></printWhenExpression>
-						</reportElement>
-					<box></box>
-					<textElement>
-						<font/>
-					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[$P{siadap}.getEvaluationData2().getPersonalDevelopment()]]></textFieldExpression>
-				</textField>
-				<staticText>
-					<reportElement
-						x="0"
-						y="1086"
-						width="535"
-						height="15"
-						key="staticText-125"
-						positionType="Float">
-							<printWhenExpression><![CDATA[new Boolean($P{personSiadapWrapper}.isCurrentUserAbleToSeeEvaluationDetails() && $P{siadap}.getEvaluationData2() != null && !org.apache.commons.lang.StringUtils.isBlank($P{siadap}.getEvaluationData2().getTrainningNeeds()))]]></printWhenExpression>
-						</reportElement>
-					<box></box>
-					<textElement>
-						<font pdfFontName="Helvetica-Bold" isBold="true"/>
-					</textElement>
-				<text><![CDATA[(Avaliação) Diagnóstico de necessidades de formação apontadas pelo avaliado]]></text>
-				</staticText>
-				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
-					<reportElement
-						mode="Opaque"
-						x="0"
-						y="1106"
-						width="534"
-						height="28"
-						backcolor="#E0DADA"
-						key="textField-120"
-						positionType="Float">
-							<printWhenExpression><![CDATA[new Boolean($P{personSiadapWrapper}.isCurrentUserAbleToSeeEvaluationDetails() && $P{siadap}.getEvaluationData2() != null && !org.apache.commons.lang.StringUtils.isBlank($P{siadap}.getEvaluationData2().getTrainningNeeds()))]]></printWhenExpression>
-						</reportElement>
-					<box></box>
-					<textElement>
-						<font/>
-					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[$P{siadap}.getEvaluationData2().getTrainningNeeds()]]></textFieldExpression>
-				</textField>
-				<staticText>
-					<reportElement
-						x="-1"
-						y="857"
-						width="535"
-						height="15"
-						key="staticText-126"
-						positionType="Float">
-							<printWhenExpression><![CDATA[new Boolean($P{personSiadapWrapper}.isCurrentUserAbleToSeeEvaluationDetails() && $P{siadap}.getEvaluationData2() != null && $P{siadap}.isWithSkippedEvaluation())]]></printWhenExpression>
-						</reportElement>
-					<box></box>
-					<textElement>
-						<font pdfFontName="Helvetica-Bold" isBold="true"/>
-					</textElement>
-				<text><![CDATA[(Avaliação) Justificação de não avaliação]]></text>
-				</staticText>
-				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
-					<reportElement
-						mode="Opaque"
-						x="-1"
-						y="877"
-						width="534"
-						height="28"
-						backcolor="#E0DADA"
-						key="textField-121"
-						positionType="Float">
-							<printWhenExpression><![CDATA[new Boolean( $P{siadap}.getEvaluationData2() != null && $P{siadap}.isWithSkippedEvaluation())]]></printWhenExpression>
-						</reportElement>
-					<box></box>
-					<textElement>
-						<font/>
-					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[$P{siadap}.getEvaluationData2().getNoEvaluationJustification()]]></textFieldExpression>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{aggregatedPonderationFactor}]]></textFieldExpression>
 				</textField>
 			</band>
 		</detail>
