@@ -852,6 +852,25 @@ public class SiadapManagement extends ContextBaseAction {
 		siadapUniverseWrapperList);
 
     }
+      public final ActionForward downloadAndGenerateSiadapDocument(final ActionMapping mapping, final ActionForm form,
+	    final HttpServletRequest request, final HttpServletResponse response) throws Exception {
+
+	SiadapProcess process = getDomainObject(request, "processId");
+	final Map<String, Object> paramMap = new HashMap<String, Object>();
+
+	paramMap.put("logs", process.getExecutionLogs());
+	paramMap.put("logoFilename", "Logo_" + VirtualHost.getVirtualHostForThread().getHostname() + ".png");
+
+	final ResourceBundle resourceBundle = ResourceBundle.getBundle(Siadap.SIADAP_BUNDLE_STRING);
+	try {
+	    byte[] byteArray = ReportUtils.exportToPdfFileAsByteArray("siadapProcessDocument", paramMap, resourceBundle, null);
+	    return download(response, "SIADAP_" + process.getProcessNumber() + ".pdf", byteArray, "application/pdf");
+	} catch (JRException e) {
+	    e.printStackTrace();
+	    throw new DomainException("acquisitionRequestDocument.message.exception.failedCreation");
+	}
+
+    }
 
     //
     //    public final ActionForward removeExcedingQuotaSuggestion(final ActionMapping mapping, final ActionForm form,

@@ -170,6 +170,9 @@ pre {
 </p>
 
 <logic:equal name="evaluatedPersonWrapper" property="currentUserAbleToSeeDetails" value="true">
+	<html:link action="/siadapManagement.do?method=downloadAndGenerateSiadapDocument" paramId="processId" paramName="process" paramProperty="externalId">
+		<p>Versão imprimível do processo</p>
+	</html:link>
 	<logic:equal name="showObjectivesAndCompetences" value="true">
 		<logic:equal name="process" property="siadap.evaluatedWithKnowledgeOfObjectives" value="false">
 			<logic:equal name="objectivesVisibleToEvaluated" value="true">
