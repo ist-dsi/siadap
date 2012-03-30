@@ -157,6 +157,29 @@ public class Siadap extends Siadap_Base {
 	return getState().equals(SiadapProcessStateEnum.WAITING_HOMOLOGATION);
     }
 
+    public boolean isOngoing() {
+	return getState().equals(SiadapProcessStateEnum.EVALUATION_NOT_GOING_TO_BE_DONE)
+		|| getState().equals(SiadapProcessStateEnum.INCOMPLETE_OBJ_OR_COMP)
+		|| getState().equals(SiadapProcessStateEnum.NOT_SEALED)
+		|| getState().equals(SiadapProcessStateEnum.NOT_YET_SUBMITTED_FOR_ACK)
+		|| getState().equals(SiadapProcessStateEnum.WAITING_EVAL_OBJ_ACK)
+		|| getState().equals(SiadapProcessStateEnum.WAITING_SELF_EVALUATION)
+		|| getState().equals(SiadapProcessStateEnum.NOT_YET_EVALUATED)
+		|| getState().equals(SiadapProcessStateEnum.WAITING_HARMONIZATION)
+		|| getState().equals(SiadapProcessStateEnum.WAITING_VALIDATION)
+		|| getState().equals(SiadapProcessStateEnum.WAITING_SUBMITTAL_BY_EVALUATOR_AFTER_VALIDATION)
+		|| getState().equals(SiadapProcessStateEnum.WAITING_VALIDATION_ACKNOWLEDGMENT_BY_EVALUATED)
+		|| getState().equals(SiadapProcessStateEnum.VALIDATION_ACKNOWLEDGED);
+    }
+
+    public boolean isWaitingForReviewCommission() {
+	return getState().equals(SiadapProcessStateEnum.WAITING_FOR_REVIEW_COMMISSION);
+    }
+
+    public boolean isWaitingHomologation() {
+	return getState().equals(SiadapProcessStateEnum.WAITING_HOMOLOGATION);
+    }
+
     public SiadapUniverse getDefaultSiadapUniverse() {
 	SiadapEvaluationUniverse defaultSiadapEvaluationUniverse = getDefaultSiadapEvaluationUniverse();
 	if (defaultSiadapEvaluationUniverse == null)

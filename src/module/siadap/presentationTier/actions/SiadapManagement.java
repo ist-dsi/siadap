@@ -26,6 +26,7 @@ package module.siadap.presentationTier.actions;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -40,6 +41,7 @@ import module.siadap.activities.Homologate;
 import module.siadap.activities.ValidationActivityInformation.ValidationSubActivity;
 import module.siadap.domain.ExceedingQuotaProposal;
 import module.siadap.domain.ExceedingQuotaSuggestionType;
+import module.siadap.domain.Siadap;
 import module.siadap.domain.SiadapProcess;
 import module.siadap.domain.SiadapUniverse;
 import module.siadap.domain.SiadapYearConfiguration;
@@ -54,20 +56,20 @@ import module.siadap.domain.wrappers.UnitSiadapWrapper;
 import module.siadap.presentationTier.renderers.providers.SiadapYearsFromExistingSiadapConfigurations;
 import module.workflow.activities.ActivityException;
 import module.workflow.activities.ActivityInformation;
+import module.workflow.domain.WorkflowLog;
 import module.workflow.domain.WorkflowProcess;
 import myorg.applicationTier.Authenticate.UserView;
 import myorg.domain.exceptions.DomainException;
 import myorg.presentationTier.actions.ContextBaseAction;
 import myorg.util.BundleUtil;
 import myorg.util.VariantBean;
+import net.sf.jasperreports.engine.JRException;
 
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
+import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
-
-import pt.ist.fenixWebFramework.renderers.utils.RenderUtils;
-import pt.ist.fenixWebFramework.struts.annotations.Mapping;
 
 @Mapping(path = "/siadapManagement")
 /**
