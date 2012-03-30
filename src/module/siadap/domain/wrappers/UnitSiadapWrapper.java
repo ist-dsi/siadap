@@ -461,13 +461,12 @@ public class UnitSiadapWrapper extends PartyWrapper implements Serializable {
 	});
 	int excellentCount = excellentEvaluationPersons.size();
 
-	if (excellentCount == 0) {
+	if ((excellentCount == 0) || (totalPeopleWorkingForUnit == 0)) {
 	    return BigDecimal.ZERO;
 	}
 
-	return new BigDecimal(excellentCount)
-		.divide(new BigDecimal(totalPeopleWorkingForUnit), UnitSiadapWrapper.SCALE, RoundingMode.HALF_EVEN)
-		.multiply(new BigDecimal(100)).stripTrailingZeros().round(new MathContext(4));
+	return new BigDecimal(excellentCount).divide(new BigDecimal(totalPeopleWorkingForUnit), UnitSiadapWrapper.SCALE,
+		RoundingMode.HALF_EVEN).multiply(new BigDecimal(100), new MathContext(UnitSiadapWrapper.SCALE));
     }
 
     public BigDecimal getRelevantEvaluationPercentage() {
@@ -486,13 +485,12 @@ public class UnitSiadapWrapper extends PartyWrapper implements Serializable {
 	});
 	int relevantCount = relevantEvaluationPersons.size();
 
-	if (relevantCount == 0) {
+	if ((relevantCount == 0) || (totalPeopleWorkingForUnit == 0)) {
 	    return BigDecimal.ZERO;
 	}
 
-	return new BigDecimal(relevantCount)
-		.divide(new BigDecimal(totalPeopleWorkingForUnit), UnitSiadapWrapper.SCALE, RoundingMode.HALF_EVEN)
-		.multiply(new BigDecimal(100)).stripTrailingZeros().round(new MathContext(4));
+	return new BigDecimal(relevantCount).divide(new BigDecimal(totalPeopleWorkingForUnit), UnitSiadapWrapper.SCALE,
+		RoundingMode.HALF_EVEN).multiply(new BigDecimal(100), new MathContext(UnitSiadapWrapper.SCALE));
     }
 
     public Collection<Person> getEvaluationResponsibles() {
