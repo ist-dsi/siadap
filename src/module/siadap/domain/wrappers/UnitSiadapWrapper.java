@@ -465,6 +465,7 @@ public class UnitSiadapWrapper extends PartyWrapper implements Serializable {
 	return new BigDecimal(excellentCount).divide(new BigDecimal(totalPeopleWorkingForUnit), UnitSiadapWrapper.SCALE,
 		RoundingMode.HALF_EVEN).multiply(new BigDecimal(100), new MathContext(UnitSiadapWrapper.SCALE));
     }
+
     public BigDecimal getRelevantEvaluationPercentage() {
 	int totalPeopleWorkingForUnit = getUnitEmployees(true).size();
 	Collection<PersonSiadapWrapper> relevantEvaluationPersons = getUnitEmployees(true, new Predicate() {
@@ -697,29 +698,8 @@ public class UnitSiadapWrapper extends PartyWrapper implements Serializable {
     }
 
 
-    // public Integer getCurrentUsedExcellencyGradeQuota() {
-    // return getTotalExcellencyEvaluationsForUnit(getUnit(), true);
-    // }
 
-    // TODO remove this joantune: temporary enabled to see an interface
-    public BigDecimal getExcellencyEvaluationPercentage() {
-	return BigDecimal.ZERO;
-    }
 
-    // public BigDecimal getExcellencyEvaluationPercentage() {
-    // int totalPeopleWorkingForUnit = getTotalPeopleWorkingInUnit(true);
-    // int totalExcellencyEvaluationsForUnit =
-    // getCurrentUsedExcellencyGradeQuota();
-    //
-    // if (totalExcellencyEvaluationsForUnit == 0) {
-    // return BigDecimal.ZERO;
-    // }
-    //
-    // return new BigDecimal(totalExcellencyEvaluationsForUnit).divide(new
-    // BigDecimal(totalPeopleWorkingForUnit),
-    // UnitSiadapWrapper.SCALE, RoundingMode.HALF_EVEN).multiply(new
-    // BigDecimal(100)).stripTrailingZeros();
-    // }
 
     public Unit getHarmonizationUnit() {
 	return getHarmonizationUnit(getUnit());
