@@ -107,6 +107,74 @@
 </logic:iterate>
 </table>
 
+<table class="tstyle2">
+<tr>
+	<th><bean:message bundle="ORGANIZATION_RESOURCES" key="label.unit"/></th>
+	<th><bean:message bundle="SIADAP_RESOURCES" key="label.relevantEvaluationPercentage"/></th>
+	<th><bean:message bundle="SIADAP_RESOURCES" key="label.excellencyEvaluationPercentage"/></th>
+	<th><bean:message bundle="SIADAP_RESOURCES" key="label.ongoing"/></th>
+	<th><bean:message bundle="SIADAP_RESOURCES" key="label.pending.homologation"/></th>
+	<th><bean:message bundle="SIADAP_RESOURCES" key="label.in.reviewCommission"/></th>
+	<th><bean:message bundle="SIADAP_RESOURCES" key="label.homologated"/></th>
+</tr>
+
+<%
+	Collection<SiadapProcess> processes = null;
+%>
+<logic:iterate id="harmonizationUnit" name="harmonizationUnits" type="module.siadap.domain.wrappers.UnitSiadapWrapper">
+<tr>
+	<td>
+		<%= "<strong>" + harmonizationUnit.getUnit().getPartyName().getContent() + "</strong><br>(" + harmonizationUnit.getAllSiadapProcesses().size() %>
+		<bean:message bundle="SIADAP_RESOURCES" key="label.process.state.counts"/>)
+	</td>
+	<td><%= harmonizationUnit.getRelevantEvaluationPercentage() %> %</td>
+	<td><%= harmonizationUnit.getExcellencyEvaluationPercentage() %> %</td>
+	<td><%= harmonizationUnit.getSiadapProcessesOngoing().size() %></td>
+	<fr:form id="<%= "formHomologation" + harmonizationUnit.getUnit().getExternalId() %>" action="<%= "/siadapManagement.do?method=viewPendingHomologationProcesses&mode=" + mode.toString() + "&year=" + year.toString() + "&unitId=" + harmonizationUnit.getUnit().getExternalId() %>" >
+		<%
+			processes = harmonizationUnit.getSiadapProcessesPendingHomologation();
+		
+			if (!processes.isEmpty()) {
+		%>
+				<td style="cursor: pointer;" onclick="<%="document.getElementById('formHomologation" + harmonizationUnit.getUnit().getExternalId() + "').submit()"%>" >
+					<html:link action="<%= "/siadapManagement.do?method=viewPendingHomologationProcesses&mode=" + mode.toString() + "&year=" + year.toString() + "&unitId=" + harmonizationUnit.getUnit().getExternalId() %>" >
+						<strong><%= processes.size() %></strong>
+					</html:link>
+				</td>
+			
+		<%
+			} else {
+		%>
+				<td><%= processes.size() %></td>
+		<%
+			}
+		%>
+	</fr:form>
+	
+	<fr:form id="<%= "formReviewCommission" + harmonizationUnit.getUnit().getExternalId() %>" action="<%= "/siadapManagement.do?method=viewReviewCommissionProcesses&mode=" + mode.toString() + "&year=" + year.toString() + "&unitId=" + harmonizationUnit.getUnit().getExternalId() %>" >
+		<%
+			processes = harmonizationUnit.getSiadapProcessesInReviewCommission();
+		
+			if (!processes.isEmpty()) {
+		%>
+				<td style="cursor: pointer;" onclick="<%="document.getElementById('formReviewCommission" + harmonizationUnit.getUnit().getExternalId() + "').submit()"%>" >
+					<html:link action="<%= "/siadapManagement.do?method=viewReviewCommissionProcesses&mode=" + mode.toString() + "&year=" + year.toString() + "&unitId=" + harmonizationUnit.getUnit().getExternalId() %>" >
+						<strong><%= processes.size() %></strong>
+					</html:link>
+				</td>
+		<%
+			} else {
+		%>
+				<td><%= processes.size() %></td>
+		<%
+			}
+		%>
+	</fr:form>
+	<td><%= harmonizationUnit.getSiadapProcessesHomologated().size() %></td>
+</tr>
+</logic:iterate>
+</table>
+
 <jsp:include page="/module/siadap/tracFeedBackSnip.jsp">	
    <jsp:param name="href" value="https://fenix-ashes.ist.utl.pt/trac/siadap/report/17" />	
 </jsp:include>
