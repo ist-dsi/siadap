@@ -70,7 +70,6 @@ import org.jfree.data.time.Month;
 import org.joda.time.Interval;
 import org.joda.time.LocalDate;
 
-import pt.ist.fenixWebFramework.services.Service;
 import pt.utl.ist.fenix.tools.util.i18n.MultiLanguageString;
 
 /**
@@ -457,10 +456,8 @@ public class UnitSiadapWrapper extends PartyWrapper implements Serializable {
 		}
 		return personWrapper.getSiadap().getDefaultSiadapEvaluationUniverse().hasExcellencyAwarded();
 	    }
-
 	});
 	int excellentCount = excellentEvaluationPersons.size();
-
 	if ((excellentCount == 0) || (totalPeopleWorkingForUnit == 0)) {
 	    return BigDecimal.ZERO;
 	}
@@ -468,7 +465,6 @@ public class UnitSiadapWrapper extends PartyWrapper implements Serializable {
 	return new BigDecimal(excellentCount).divide(new BigDecimal(totalPeopleWorkingForUnit), UnitSiadapWrapper.SCALE,
 		RoundingMode.HALF_EVEN).multiply(new BigDecimal(100), new MathContext(UnitSiadapWrapper.SCALE));
     }
-
     public BigDecimal getRelevantEvaluationPercentage() {
 	int totalPeopleWorkingForUnit = getUnitEmployees(true).size();
 	Collection<PersonSiadapWrapper> relevantEvaluationPersons = getUnitEmployees(true, new Predicate() {
@@ -700,30 +696,29 @@ public class UnitSiadapWrapper extends PartyWrapper implements Serializable {
 
     }
 
-    // public Integer getHighGradeQuota() {
-    // int totalPeople = getTotalPeopleWorkingInUnit();
-    //
-    // BigDecimal result = new BigDecimal(totalPeople)
-    // .multiply(new
-    // BigDecimal(SiadapYearConfiguration.MAXIMUM_HIGH_GRADE_QUOTA)).divide(new
-    // BigDecimal(100));
-    // int value = result.intValue();
-    //
-    // return value > 0 ? value : 1; // if the quota is 0 then the quota shifts
-    // // to 1
+
+    // public Integer getCurrentUsedExcellencyGradeQuota() {
+    // return getTotalExcellencyEvaluationsForUnit(getUnit(), true);
     // }
 
-    // public Integer getExcellencyGradeQuota() {
-    // int totalPeople = getTotalPeopleWorkingInUnit();
+    // TODO remove this joantune: temporary enabled to see an interface
+    public BigDecimal getExcellencyEvaluationPercentage() {
+	return BigDecimal.ZERO;
+    }
+
+    // public BigDecimal getExcellencyEvaluationPercentage() {
+    // int totalPeopleWorkingForUnit = getTotalPeopleWorkingInUnit(true);
+    // int totalExcellencyEvaluationsForUnit =
+    // getCurrentUsedExcellencyGradeQuota();
     //
-    // BigDecimal result = new BigDecimal(totalPeople).multiply(
-    // new
-    // BigDecimal(SiadapYearConfiguration.MAXIMUM_EXCELLENCY_GRADE_QUOTA)).divide(new
-    // BigDecimal(100));
-    // int value = result.intValue();
+    // if (totalExcellencyEvaluationsForUnit == 0) {
+    // return BigDecimal.ZERO;
+    // }
     //
-    // return value > 0 ? value : 1; // if the quota is 0 then the quota shifts
-    // // to 1
+    // return new BigDecimal(totalExcellencyEvaluationsForUnit).divide(new
+    // BigDecimal(totalPeopleWorkingForUnit),
+    // UnitSiadapWrapper.SCALE, RoundingMode.HALF_EVEN).multiply(new
+    // BigDecimal(100)).stripTrailingZeros();
     // }
 
     public Unit getHarmonizationUnit() {
@@ -887,7 +882,6 @@ public class UnitSiadapWrapper extends PartyWrapper implements Serializable {
 	    // let's iterate useing the unit relations at the very least
 	    unitAccTypesToUse.add(getConfiguration().getUnitRelations());
 	}
-
 	getUnitAttachedPersons(getUnit(), employees, continueToSubUnits, predicate, unitAccTypesToUse, getConfiguration()
 		.getWorkingRelation(), getConfiguration().getWorkingRelationWithNoQuota());
 	return employees;
