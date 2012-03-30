@@ -55,6 +55,11 @@ public class Homologate extends WorkflowActivity<SiadapProcess, ActivityInformat
     }
 
     @Override
+    public boolean isConfirmationNeeded(SiadapProcess process) {
+	return true;
+    }
+
+    @Override
     public String getUsedBundle() {
 	return "resources/SiadapResources";
     }

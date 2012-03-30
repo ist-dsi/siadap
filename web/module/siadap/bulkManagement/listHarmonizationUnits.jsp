@@ -10,6 +10,13 @@
 	<bean:message key="label.harmonizationUnits" bundle="SIADAP_RESOURCES"/>
 </h2>
 
+<html:messages id="messageSuccess" message="true" bundle="SIADAP_RESOURCES">
+	<p class="mtop15">
+		<span style="margin: 1em 0; padding: 0.2em 0.5em 0.2em 0.5em; background-color: #e2f5e2; color: #146e14;"><bean:write name="messageSuccess" /></span>
+	<p />
+	<br />
+</html:messages>
+
 <bean:define id="mode" name="mode"/>
 
 <%-- The year chooser: --%>

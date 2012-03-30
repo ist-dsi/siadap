@@ -101,6 +101,8 @@ public class PersonSiadapWrapper extends PartyWrapper implements Serializable {
     private Boolean validationCurrentAssessmentForExcellencyAwardForSIADAP2;
     private Boolean validationCurrentAssessmentForExcellencyAwardForSIADAP3;
 
+    private Boolean selectedForHomologation;
+
     private BigDecimal validationClassificationForSIADAP3;
     private BigDecimal validationClassificationForSIADAP2;
 
@@ -148,6 +150,7 @@ public class PersonSiadapWrapper extends PartyWrapper implements Serializable {
 			.getHarmonizationAssessmentForExcellencyAward();
 	    }
 
+	    setSelectedForHomologation(false);
 	    if (siadapEvaluationUniverseForSIADAP3 == null) {
 		this.harmonizationCurrentAssessmentForSIADAP3 = null;
 		setValidationCurrentAssessmentForSIADAP3(null);
@@ -1122,5 +1125,17 @@ public class PersonSiadapWrapper extends PartyWrapper implements Serializable {
 
     public void setEvaluatorClassificationForSIADAP3(BigDecimal evaluatorClassificationForSIADAP3) {
 	this.evaluatorClassificationForSIADAP3 = evaluatorClassificationForSIADAP3;
+    }
+
+    public Boolean getSelectedForHomologation() {
+	return selectedForHomologation;
+    }
+
+    public Boolean isSelectedForHomologation() {
+	return getSelectedForHomologation();
+    }
+
+    public void setSelectedForHomologation(Boolean selectedForHomologation) {
+	this.selectedForHomologation = selectedForHomologation;
     }
 }

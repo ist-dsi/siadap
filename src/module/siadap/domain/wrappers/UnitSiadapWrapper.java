@@ -837,7 +837,7 @@ public class UnitSiadapWrapper extends PartyWrapper implements Serializable {
     }
 
     public List<PersonSiadapWrapper> getUnitEmployeesWithProcessesInReviewCommission() {
-	return getUnitEmployees(true, new Predicate() {
+	List<PersonSiadapWrapper> unitEmployees = getUnitEmployees(true, new Predicate() {
 	    @Override
 	    public boolean evaluate(Object personObject) {
 		PersonSiadapWrapper personWrapper = (PersonSiadapWrapper) personObject;
@@ -847,19 +847,23 @@ public class UnitSiadapWrapper extends PartyWrapper implements Serializable {
 		return false;
 	    }
 	});
+	Collections.sort(unitEmployees, PersonSiadapWrapper.PERSON_COMPARATOR_BY_NAME_FALLBACK_YEAR_THEN_PERSON_OID);
+	return unitEmployees;
     }
 
     public List<PersonSiadapWrapper> getUnitEmployeesWithProcessesPendingHomologation() {
-	return getUnitEmployees(true, new Predicate() {
+	List<PersonSiadapWrapper> unitEmployees = getUnitEmployees(true, new Predicate() {
 	    @Override
 	    public boolean evaluate(Object personObject) {
 		PersonSiadapWrapper personWrapper = (PersonSiadapWrapper) personObject;
-		if (personWrapper.getSiadap().isWaitingHomologation()) {
+		if ((personWrapper.getSiadap() != null) && (personWrapper.getSiadap().isWaitingHomologation())) {
 		    return true;
 		}
 		return false;
 	    }
 	});
+	Collections.sort(unitEmployees, PersonSiadapWrapper.PERSON_COMPARATOR_BY_NAME_FALLBACK_YEAR_THEN_PERSON_OID);
+	return unitEmployees;
     }
 
     public List<PersonSiadapWrapper> getUnitEmployees() {

@@ -35,6 +35,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import module.organization.domain.Person;
 import module.organization.domain.Unit;
+import module.siadap.activities.Homologate;
 import module.siadap.activities.ValidationActivityInformation.ValidationSubActivity;
 import module.siadap.domain.ExceedingQuotaProposal;
 import module.siadap.domain.ExceedingQuotaSuggestionType;
@@ -51,10 +52,12 @@ import module.siadap.domain.wrappers.SiadapYearWrapper;
 import module.siadap.domain.wrappers.UnitSiadapWrapper;
 import module.siadap.presentationTier.renderers.providers.SiadapYearsFromExistingSiadapConfigurations;
 import module.workflow.activities.ActivityException;
+import module.workflow.activities.ActivityInformation;
 import module.workflow.domain.WorkflowProcess;
 import myorg.applicationTier.Authenticate.UserView;
 import myorg.domain.exceptions.DomainException;
 import myorg.presentationTier.actions.ContextBaseAction;
+import myorg.util.BundleUtil;
 import myorg.util.VariantBean;
 
 import org.apache.struts.action.ActionForm;
@@ -573,11 +576,16 @@ public class SiadapManagement extends ContextBaseAction {
 	SiadapYearWrapper siadapYearWrapper = (SiadapYearWrapper) getRenderedObject("siadapYearWrapper");
 	if (siadapYearWrapper == null) {
 	    ArrayList<Integer> yearsWithConfigs = SiadapYearsFromExistingSiadapConfigurations.getYearsWithExistingConfigs();
-	    if (yearsWithConfigs.contains(new Integer(new LocalDate().getYear()))) {
-		int year = new LocalDate().getYear();
+	    if (yearsWithConfigs.contains(new Integer(new LocalDate().getYear() - 1))) {
+		int year = new LocalDate().getYear() - 1;
 		siadapYearWrapper = new SiadapYearWrapper(year);
 	    } else {
-		siadapYearWrapper = new SiadapYearWrapper(yearsWithConfigs.get(yearsWithConfigs.size() - 1));
+		if (yearsWithConfigs.contains(new Integer(new LocalDate().getYear()))) {
+		    int year = new LocalDate().getYear();
+		    siadapYearWrapper = new SiadapYearWrapper(year);
+		} else {
+		    siadapYearWrapper = new SiadapYearWrapper(yearsWithConfigs.get(yearsWithConfigs.size() - 1));
+		}
 	    }
 	}
 	RenderUtils.invalidateViewState();
@@ -586,8 +594,40 @@ public class SiadapManagement extends ContextBaseAction {
 	request.setAttribute("harmonizationUnits",
 		SiadapYearConfiguration.getAllHarmonizationUnitsExceptSpecialUnit(siadapYearWrapper.getChosenYear()));
 	String mode = request.getParameter("mode");
+	if (mode == null) {
+	    mode = (String) request.getAttribute("mode");
+	}
 	request.setAttribute("mode", mode);
 	return forward(request, "/module/siadap/bulkManagement/listHarmonizationUnits.jsp");
+    }
+
+    public final ActionForward batchHomologation(final ActionMapping mapping, final ActionForm form,
+	    final HttpServletRequest request, final HttpServletResponse response) {
+	
+	List<PersonSiadapWrapper> employees = getRenderedObject("employees");
+
+	Homologate homologateActivity = new Homologate();
+	ActivityInformation<SiadapProcess> homologateInfo = null;
+	int homologationCount = 0;
+	for (PersonSiadapWrapper personWrapper : employees) {
+	    if (personWrapper.isSelectedForHomologation()) {
+		if (!homologateActivity.isActive(personWrapper.getSiadap().getProcess())) {
+		    throw new DomainException("Cannot execute batch homologation for process: "
+			    + personWrapper.getSiadap().getProcess().getProcessNumber());
+		}
+		homologateInfo = new ActivityInformation<SiadapProcess>(personWrapper.getSiadap().getProcess(),
+			    homologateActivity);
+		homologateActivity.execute(homologateInfo);
+		homologationCount++;
+	    }
+	}
+
+	addLocalizedSuccessMessage(
+		request,
+		BundleUtil.getFormattedStringFromResourceBundle("resources/SiadapResources", "label.homologation.success",
+			String.valueOf(homologationCount)));
+	request.setAttribute("mode", "homologationDone");
+	return manageHarmonizationUnitsForMode(mapping, form, request, response);
     }
 
     public final ActionForward viewPendingHomologationProcesses(final ActionMapping mapping, final ActionForm form,

@@ -43,6 +43,7 @@ import module.siadap.activities.CurricularPonderationAttribution;
 import module.siadap.activities.EditCompetenceEvaluation;
 import module.siadap.activities.EditObjectiveEvaluation;
 import module.siadap.activities.Evaluation;
+import module.siadap.activities.Homologate;
 import module.siadap.activities.NoEvaluation;
 import module.siadap.activities.RemoveCustomSchedule;
 import module.siadap.activities.RemoveObjectiveEvaluation;
@@ -109,7 +110,7 @@ public class SiadapProcess extends SiadapProcess_Base {
 
 	activities.add(new SubmitValidatedEvaluation());
 	activities.add(new AcknowledgeEvaluationValidation());
-	//	activities.add(new Homologate());
+	activities.add(new Homologate());
 	//	activities.add(new AcknowledgeHomologation());
 	activities.add(new EditObjectiveEvaluation());
 	activities.add(new SubmitForObjectivesAcknowledge());
