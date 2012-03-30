@@ -41,7 +41,7 @@
 					</tr>
 					<tr>
 						<td>
-							<bean:message key="label.results" bundle="SIADAP_RESOURCES"/>
+							<bean:message key="label.objectives" bundle="SIADAP_RESOURCES"/>
 						</td>
 						<td>
 							<fr:view name="siadapEvaluationUniverse" property="objectivesScoring"/>

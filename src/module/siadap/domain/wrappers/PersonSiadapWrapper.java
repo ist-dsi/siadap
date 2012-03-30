@@ -382,6 +382,16 @@ public class PersonSiadapWrapper extends PartyWrapper implements Serializable {
 	return getSiadap().getDefaultSiadapUniverse();
     }
 
+    /**
+     * 
+     * @return false if the process is not sealed and the current user is not
+     *         the evaluator, true otherwise
+     */
+    public boolean getShouldShowObjectivesAndCompetences() {
+	return getSiadap().getObjectivesAndCompetencesSealedDate() != null
+		|| getSiadap().getEvaluator().getPerson().getUser().equals(UserView.getCurrentUser());
+    }
+
     public PersonSiadapWrapper getEvaluator() {
 	Person evaluator = null;
 

@@ -29,6 +29,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.ResourceBundle;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -882,4 +883,34 @@ public class SiadapManagement extends ContextBaseAction {
     //	return viewUnitHarmonizationData(mapping, form, request, response);
     //    }
 
+    public final ActionForward downloadAndGenerateSiadapDocument(final ActionMapping mapping, final ActionForm form,
+	    final HttpServletRequest request, final HttpServletResponse response) throws Exception {
+
+	SiadapProcess process = getDomainObject(request, "processId");
+	final Map<String, Object> paramMap = new HashMap<String, Object>();
+
+	final ResourceBundle resourceBundle = ResourceBundle.getBundle(Siadap.SIADAP_BUNDLE_STRING);
+	paramMap.put("process", process);
+	//joantune: NOTE: the PersonSiadapWrapper can be very handy because of some methods, but it will most likely decrease performance on the
+	//generation of the document
+	paramMap.put("personSiadapWrapper", new PersonSiadapWrapper(process.getSiadap().getEvaluated(), process.getSiadap()
+		.getYear()));
+	paramMap.put("documentGeneratedDate", new DateTime());
+	paramMap.put("generationMotive",
+		BundleUtil.getStringFromResourceBundle(Siadap.SIADAP_BUNDLE_STRING, "SiadapProcessDocument.motive.userOrder"));
+	paramMap.put("siadap", process.getSiadap());
+	ArrayList<WorkflowLog> orderedExecutionLogs = new ArrayList<WorkflowLog>(process.getExecutionLogs());
+	Collections.sort(orderedExecutionLogs, WorkflowLog.COMPARATOR_BY_WHEN);
+	paramMap.put("logs", orderedExecutionLogs);
+	paramMap.put("logoFilename", "Logo_" + VirtualHost.getVirtualHostForThread().getHostname() + ".png");
+
+	try {
+	    byte[] byteArray = ReportUtils.exportToPdfFileAsByteArray("siadapProcessDocument", paramMap, resourceBundle, null);
+	    return download(response, "SIADAP_" + process.getProcessNumber() + ".pdf", byteArray, "application/pdf");
+	} catch (JRException e) {
+	    e.printStackTrace();
+	    throw new DomainException("acquisitionRequestDocument.message.exception.failedCreation");
+	}
+
+    }
 }

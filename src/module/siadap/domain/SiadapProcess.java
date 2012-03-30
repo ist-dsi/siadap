@@ -168,6 +168,11 @@ public class SiadapProcess extends SiadapProcess_Base {
 	return warningMessages;
     }
 
+    @Override
+    public boolean isCreatedByAvailable() {
+	return false;
+    }
+
     public List<String> getWarningMessages() {
 	User currentUser = UserView.getCurrentUser();
 	ArrayList<String> warningMessagesToReturn = new ArrayList<String>();

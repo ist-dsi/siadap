@@ -16,9 +16,7 @@
 <bean:define id="user" name="USER_SESSION_ATTRIBUTE" property="user"/>
 <bean:define id="siadap" name="process" property="siadap"/>
 <% SiadapProcess siadapProcess = (SiadapProcess) request.getAttribute("process");
-boolean showObjectivesAndCompetences = siadapProcess.getSiadap().getObjectivesAndCompetencesSealedDate() != null || siadapProcess.getSiadap().getEvaluator().getPerson().getUser().equals(user);
 boolean objectivesVisibileToEvaluated = siadapProcess.getSiadap().getObjectivesAndCompetencesSealedDate() != null;
-request.setAttribute("showObjectivesAndCompetences", showObjectivesAndCompetences);
 request.setAttribute("objectivesVisibleToEvaluated", objectivesVisibileToEvaluated);
 %>
 <style type="text/css">
@@ -173,7 +171,7 @@ pre {
 	<html:link action="/siadapManagement.do?method=downloadAndGenerateSiadapDocument" paramId="processId" paramName="process" paramProperty="externalId">
 		<p>Versão imprimível do processo</p>
 	</html:link>
-	<logic:equal name="showObjectivesAndCompetences" value="true">
+	<logic:equal name="evaluatedPersonWrapper" property="shouldShowObjectivesAndCompetences" value="true">
 		<logic:equal name="process" property="siadap.evaluatedWithKnowledgeOfObjectives" value="false">
 			<logic:equal name="objectivesVisibleToEvaluated" value="true">
 			<div class="highlightBox mtop05 mbottom15">
@@ -205,7 +203,7 @@ pre {
 			</logic:equal>
 		</logic:equal>
 		
-		<h3><bean:message key="label.results"
+		<h3><bean:message key="label.evaluationItems"
 			bundle="SIADAP_RESOURCES" />:</h3>
 		
 		<h4><bean:message key="label.objectives" bundle="SIADAP_RESOURCES" />:</h4>
@@ -395,7 +393,7 @@ pre {
 <logic:equal name="evaluatedPersonWrapper" property="currentUserAbleToSeeDetails" value="false">
  - Detalhes do processo confidenciais, se deveria ter acesso, por favor contacte o suporte -
 </logic:equal>
-<logic:notEqual name="showObjectivesAndCompetences" value="true">
+<logic:notEqual name="evaluatedPersonWrapper" property="shouldShowObjectivesAndCompetences" value="true">
 <p><bean:message bundle="SIADAP_RESOURCES" key="label.objectivesAndCompetencesNotSealedYet"/></p>
 </logic:notEqual>
 <jsp:include page="/module/siadap/tracFeedBackSnip.jsp">	
