@@ -29,6 +29,8 @@ import myorg.util.BundleUtil;
 
 import org.apache.commons.lang.StringUtils;
 
+import pt.ist.fenixWebFramework.rendererExtensions.util.IPresentableEnum;
+
 /**
  * 
  * @author João Antunes

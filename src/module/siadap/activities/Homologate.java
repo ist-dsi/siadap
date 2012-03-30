@@ -26,7 +26,6 @@ package module.siadap.activities;
 
 import module.siadap.domain.Siadap;
 import module.siadap.domain.SiadapProcess;
-import module.siadap.domain.SiadapProcessStateEnum;
 import module.workflow.activities.ActivityInformation;
 import module.workflow.activities.WorkflowActivity;
 import myorg.domain.User;
@@ -44,9 +43,10 @@ public class Homologate extends WorkflowActivity<SiadapProcess, ActivityInformat
     public boolean isActive(SiadapProcess process, User user) {
 	Siadap siadap = process.getSiadap();
 
-	return siadap.getSiadapYearConfiguration().isPersonResponsibleForHomologation(user.getPerson())
-		&& (siadap.getState().equals(SiadapProcessStateEnum.WAITING_FOR_REVIEW_COMMISSION) || siadap.getState().equals(
-			SiadapProcessStateEnum.WAITING_HOMOLOGATION));
+	//	return siadap.getSiadapYearConfiguration().isPersonResponsibleForHomologation(user.getPerson())
+	//		&& (siadap.getState().equals(SiadapProcessStateEnum.WAITING_FOR_REVIEW_COMMISSION) || siadap.getState().equals(
+	//			SiadapProcessStateEnum.WAITING_HOMOLOGATION));
+	return false;
     }
 
     @Override

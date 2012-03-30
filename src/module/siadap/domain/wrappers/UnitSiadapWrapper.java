@@ -70,6 +70,7 @@ import org.jfree.data.time.Month;
 import org.joda.time.Interval;
 import org.joda.time.LocalDate;
 
+import pt.ist.fenixWebFramework.services.Service;
 import pt.utl.ist.fenix.tools.util.i18n.MultiLanguageString;
 
 /**
@@ -839,18 +840,6 @@ public class UnitSiadapWrapper extends PartyWrapper implements Serializable {
 	return unitEmployees;
     }
 
-    public List<PersonSiadapWrapper> getUnitEmployeesWithProcessesPendingHomologation() {
-	return getUnitEmployees(true, new Predicate() {
-	    @Override
-	    public boolean evaluate(Object personObject) {
-		PersonSiadapWrapper personWrapper = (PersonSiadapWrapper) personObject;
-		if (personWrapper.getSiadap().isWaitingHomologation()) {
-		    return true;
-		}
-		return false;
-	    }
-	});
-    }
 
     public List<PersonSiadapWrapper> getUnitEmployees() {
 	return getUnitEmployees(null);

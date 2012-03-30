@@ -63,6 +63,7 @@ import myorg.domain.exceptions.DomainException;
 import org.apache.commons.collections.Predicate;
 import org.joda.time.LocalDate;
 
+import pt.ist.fenixWebFramework.services.Service;
 import pt.ist.fenixframework.plugins.remote.domain.exception.RemoteException;
 
 /**
@@ -109,9 +110,6 @@ public class PersonSiadapWrapper extends PartyWrapper implements Serializable {
 
     private BigDecimal validationClassificationForSIADAP3;
     private BigDecimal validationClassificationForSIADAP2;
-
-    private BigDecimal evaluatorClassificationForSIADAP3;
-    private BigDecimal evaluatorClassificationForSIADAP2;
 
     private BigDecimal evaluatorClassificationForSIADAP3;
     private BigDecimal evaluatorClassificationForSIADAP2;
