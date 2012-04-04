@@ -37,6 +37,7 @@
 	<field name="totalEvaluationScoring" class="java.math.BigDecimal"/>
 	<field name="ccaClassification" class="java.math.BigDecimal"/>
 	<field name="siadapGlobalEvaluationEnumAfterValidation" class="module.siadap.domain.scoring.SiadapGlobalEvaluation"/>
+	<field name="siadapEvaluation" class="module.siadap.domain.SiadapEvaluation"/>
 
 
 		<group  name="notDummy" >
@@ -430,7 +431,7 @@
 						mode="Opaque"
 						x="172"
 						y="76"
-						width="143"
+						width="274"
 						height="13"
 						forecolor="#000000"
 						key="textField-9"/>
@@ -469,6 +470,21 @@
 						<font/>
 					</textElement>
 				<textFieldExpression   class="java.lang.String"><![CDATA[$F{totalEvaluationScoring}.toString()]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						mode="Opaque"
+						x="240"
+						y="0"
+						width="295"
+						height="16"
+						key="textField-11"
+						positionType="Float"/>
+					<box></box>
+					<textElement textAlignment="Left" verticalAlignment="Middle">
+						<font pdfFontName="Helvetica-Oblique" isBold="false" isItalic="true"/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[($F{defaultEvaluationUniverse}.booleanValue() && $F{siadapEvaluation}.getExcellencyAward().booleanValue()) ? "Foi sugerido desempenho excelente" : ""]]></textFieldExpression>
 				</textField>
 			</band>
 		</detail>

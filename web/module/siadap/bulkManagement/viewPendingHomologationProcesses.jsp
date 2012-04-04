@@ -5,13 +5,33 @@
 <%@ taglib uri="/WEB-INF/struts-logic.tld" prefix="logic"%>
 <%@ taglib uri="/WEB-INF/fenix-renderers.tld" prefix="fr"%>
 
+<script src="<%= request.getContextPath() + "/javaScript/jquery.alerts.js"%>" type="text/javascript"></script>
+<script src="<%= request.getContextPath() + "/javaScript/alertHandlers.js"%>" type="text/javascript"></script>
+<script src="<%= request.getContextPath() + "/javaScript/spin.js"%>" type="text/javascript"></script>
+<script src="<%= request.getContextPath() + "/javaScript/jquery.blockUI.js"%>" type="text/javascript"></script>
+
+
 <script type="text/javascript">
-function homologationConfirmation() {
-	var answer = confirm("<%= BundleUtil.getFormattedStringFromResourceBundle("resources/SiadapResources", "label.confirm.batch.homologation") %>")
-	if (answer){
-		document.getElementById("selectionForm").submit()
-	}
-}
+$(document).ready(function() {
+	//linkConfirmationHookForm('selectionForm', '<bean:message key="label.confirm.batch.homologation" bundle="SIADAP_RESOURCES"/>','<bean:message key="label.batch.homologation.label" bundle="SIADAP_RESOURCES"/>');
+	
+	 $('#selectionForm :submit').click(function() { 
+         $.blockUI({ message: $('#confirmationQuestion'), css: { width: '350px' } }); 
+         return false;
+     }); 
+	 
+	 $('#yes').click(function() { 
+         // update the block message 
+         displayLoadingScreen();
+         $('#selectionForm').submit();
+     	});
+
+     $('#no').click(function() { 
+         $.unblockUI(); 
+         return false; 
+     }); 
+
+});
 
 function toggleAll() {
 	if (document.getElementById("selectAll").checked) {
@@ -27,6 +47,37 @@ function checkAll() {
 	});
 }
 
+function requestConfirmation(){
+	
+}
+
+function displayLoadingScreen() {
+	var opts = {
+			  lines: 13, // The number of lines to draw
+			  length: 7, // The length of each line
+			  width: 4, // The line thickness
+			  radius: 10, // The radius of the inner circle
+			  rotate: 0, // The rotation offset
+			  color: '#000', // #rgb or #rrggbb
+			  speed: 1, // Rounds per second
+			  trail: 60, // Afterglow percentage
+			  shadow: false, // Whether to render a shadow
+			  hwaccel: false, // Whether to use hardware acceleration
+			  className: 'spinner', // The CSS class to assign to the spinner
+			  zIndex: 2e9, // The z-index (defaults to 2000000000)
+			  //top: 'auto', // Top position relative to parent in px
+			  //left: 'auto' // Left position relative to parent in px
+			};
+	$.blockUI({ message: $('#pleaseWait'),
+				//TODO comment the timeout
+				//timeout: 2000
+				fadeIn: 1000,
+				css: { top: '20%' }
+				}); 
+	var target = document.getElementById('pleaseWait');
+	var spinner = new Spinner(opts).spin(target);
+}
+
 function uncheckAll() {
 	$(':checkbox').each(function () {
 		this.checked = false;
@@ -38,12 +89,31 @@ function uncheckAll() {
 <bean:define id="employees" name="employees" type="java.util.List"/>
 <bean:define id="year" name="unit" property="year"/>
 
+<div id="confirmationQuestion" style="display:none; cursor: default"> 
+        <h3><bean:message key="label.confirm.batch.homologation" bundle="SIADAP_RESOURCES"/></h3> 
+        <input type="button" id="yes" value="Sim" /> 
+        <input type="button" id="no" value="Não" /> 
+</div> 
+
+<a href="#" id="testLink">Testar</a>
+<div id="pleaseWait" style="display:none; height: 100px;"> 
+    <p><b>A processar... por favor aguarde</b></p> 
+</div> 
+
 <h2><fr:view name="unit" property="name" /></h2>
 
 <h3><%= employees.size() %> <bean:message key="title.siadap.processes.pendingHomologation" bundle="SIADAP_RESOURCES" /><%= " (SIADAP - " + year + ")" %></h3>
 
-<p>
-<fr:form id="selectionForm" action="<%= "/siadapManagement.do?method=batchHomologation&unitID=" + unitId + "&year=" + year %>">
+<%-- Warning messages:
+<logic:messagesPresent property="messageWarning" message="true">
+	<div class="highlightBox">
+		<html:messages id="warningMessage" property="messageWarning" message="true"> 
+			<p><b><bean:write name="warningMessage" /></b></p>
+		</html:messages>
+	</div>
+</logic:messagesPresent>
+ --%>
+<fr:form id="selectionForm" action="<%= "/siadapManagement.do?method=batchHomologation&unitID=" + unitId + "&year=" + year %>" >
 <table class="tstyle2">
 	<fr:edit visible="false" id="employees" name="employees"/>
 <tr>
@@ -92,7 +162,7 @@ function uncheckAll() {
 </logic:iterate>
 </table>
 
-<html:submit onclick="homologationConfirmation()"><bean:message bundle="SIADAP_RESOURCES" key="button.homologate.selected"/></html:submit>
+<html:submit styleClass="inputbutton"><bean:message bundle="SIADAP_RESOURCES" key="button.homologate.selected"/></html:submit>
 
 </fr:form>
 

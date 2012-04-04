@@ -214,10 +214,10 @@
 					<bottomPen lineWidth="1.0" lineStyle="Solid"/>
 					<rightPen lineWidth="1.0" lineStyle="Solid"/>
 </box>
-					<textElement textAlignment="Left" verticalAlignment="Middle">
+					<textElement textAlignment="Center" verticalAlignment="Middle">
 						<font/>
 					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[$F{evaluation}.getLocalizedName()]]></textFieldExpression>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{evaluation} == null ? "-" : $F{evaluation}.getLocalizedName()]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
@@ -235,10 +235,10 @@
 					<bottomPen lineWidth="1.0" lineStyle="Solid"/>
 					<rightPen lineWidth="1.0" lineStyle="Solid"/>
 </box>
-					<textElement textAlignment="Left" verticalAlignment="Middle">
+					<textElement textAlignment="Center" verticalAlignment="Middle">
 						<font/>
 					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[$F{autoEvaluation}.getLocalizedName()]]></textFieldExpression>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{autoEvaluation} == null ? "-" : $F{autoEvaluation}.getLocalizedName()]]></textFieldExpression>
 				</textField>
 			</band>
 		</detail>

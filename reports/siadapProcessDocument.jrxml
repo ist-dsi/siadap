@@ -219,7 +219,9 @@ $P{personSiadapWrapper}.getCareerName() : $R{competenceType.notDefined}]]></text
 						width="535"
 						height="0"
 						key="line-2"
-						positionType="Float"/>
+						positionType="Float">
+							<printWhenExpression><![CDATA[new Boolean(!$P{siadap}.getEvaluatedOnlyByCompetences().booleanValue() && Boolean.valueOf($P{personSiadapWrapper}.getShouldShowObjectivesAndCompetences()).booleanValue()) ]]></printWhenExpression>
+						</reportElement>
 					<graphicElement stretchType="NoStretch"/>
 				</line>
 				<staticText>
@@ -243,7 +245,9 @@ $P{personSiadapWrapper}.getCareerName() : $R{competenceType.notDefined}]]></text
 						width="204"
 						height="18"
 						key="staticText-104"
-						positionType="Float"/>
+						positionType="Float">
+							<printWhenExpression><![CDATA[new Boolean(!$P{siadap}.getEvaluatedOnlyByCompetences().booleanValue() && Boolean.valueOf($P{personSiadapWrapper}.getShouldShowObjectivesAndCompetences()).booleanValue()) ]]></printWhenExpression>
+						</reportElement>
 					<box></box>
 					<textElement>
 						<font size="14"/>
@@ -587,7 +591,9 @@ $P{personSiadapWrapper}.getCareerName() : $R{competenceType.notDefined}]]></text
 						height="16"
 						backcolor="#CCCCCC"
 						key="staticText-118"
-						positionType="Float"/>
+						positionType="Float">
+							<printWhenExpression><![CDATA[new Boolean($P{personSiadapWrapper}.isCurrentUserAbleToSeeAutoEvaluationDetails() && $P{siadap}.getAutoEvaluationData2() != null && $P{siadap}.getAutoEvaluationData2().getFactorSixClassification() != null)]]></printWhenExpression>
+						</reportElement>
 					<box>					<topPen lineWidth="1.0" lineStyle="Solid"/>
 					<bottomPen lineWidth="1.0" lineStyle="Solid"/>
 </box>
@@ -969,7 +975,7 @@ $P{personSiadapWrapper}.getCareerName() : $R{competenceType.notDefined}]]></text
 						height="87"
 						key="subreport-7"
 						positionType="Float">
-							<printWhenExpression><![CDATA[new Boolean($P{personSiadapWrapper}.getShouldShowObjectivesAndCompetences())]]></printWhenExpression>
+							<printWhenExpression><![CDATA[Boolean.valueOf(((Collection)$P{process}.getComments()).size() > 0)]]></printWhenExpression>
 						</reportElement>
 					<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource(((Collection)$P{process}.getComments()))]]></dataSourceExpression>
 					<subreportExpression  class="java.lang.String"><![CDATA["reports/commentsSubReport.jasper"]]></subreportExpression>
@@ -981,7 +987,9 @@ $P{personSiadapWrapper}.getCareerName() : $R{competenceType.notDefined}]]></text
 						width="204"
 						height="18"
 						key="staticText-132"
-						positionType="Float"/>
+						positionType="Float">
+							<printWhenExpression><![CDATA[Boolean.valueOf(((Collection)$P{process}.getComments()).size() > 0)]]></printWhenExpression>
+						</reportElement>
 					<box></box>
 					<textElement>
 						<font size="14"/>
@@ -1009,6 +1017,7 @@ $P{personSiadapWrapper}.getCareerName() : $R{competenceType.notDefined}]]></text
 		</columnHeader>
 		<detail>
 			<band height="105"  isSplitAllowed="true" >
+				<printWhenExpression><![CDATA[new Boolean(!$P{siadap}.getEvaluatedOnlyByCompetences().booleanValue() && Boolean.valueOf($P{personSiadapWrapper}.getShouldShowObjectivesAndCompetences()).booleanValue()) ]]></printWhenExpression>
 				<staticText>
 					<reportElement
 						x="0"
@@ -1017,7 +1026,7 @@ $P{personSiadapWrapper}.getCareerName() : $R{competenceType.notDefined}]]></text
 						height="16"
 						key="staticText-107"
 						positionType="Float">
-							<printWhenExpression><![CDATA[Boolean.valueOf(!$P{personSiadapWrapper}.getShouldShowObjectivesAndCompetences())]]></printWhenExpression>
+							<printWhenExpression><![CDATA[new Boolean(!$P{siadap}.getEvaluatedOnlyByCompetences().booleanValue() && Boolean.valueOf($P{personSiadapWrapper}.getShouldShowObjectivesAndCompetences()).booleanValue()) ]]></printWhenExpression>
 						</reportElement>
 					<box></box>
 					<textElement>
@@ -1033,7 +1042,9 @@ $P{personSiadapWrapper}.getCareerName() : $R{competenceType.notDefined}]]></text
 						width="535"
 						height="17"
 						key="textField-122"
-						positionType="Float"/>
+						positionType="Float">
+							<printWhenExpression><![CDATA[new Boolean(!$P{siadap}.getEvaluatedOnlyByCompetences().booleanValue() && Boolean.valueOf($P{personSiadapWrapper}.getShouldShowObjectivesAndCompetences()).booleanValue()) ]]></printWhenExpression>
+						</reportElement>
 					<box>					<topPen lineWidth="1.0" lineStyle="Solid"/>
 					<leftPen lineWidth="1.0" lineStyle="Solid"/>
 					<bottomPen lineWidth="1.0" lineStyle="Solid"/>
@@ -1053,7 +1064,9 @@ $P{personSiadapWrapper}.getCareerName() : $R{competenceType.notDefined}]]></text
 						height="25"
 						backcolor="#CCCCCC"
 						key="textField-123"
-						positionType="Float"/>
+						positionType="Float">
+							<printWhenExpression><![CDATA[new Boolean(!$P{siadap}.getEvaluatedOnlyByCompetences().booleanValue() && Boolean.valueOf($P{personSiadapWrapper}.getShouldShowObjectivesAndCompetences()).booleanValue()) ]]></printWhenExpression>
+						</reportElement>
 					<box>					<topPen lineWidth="1.0" lineStyle="Solid"/>
 					<leftPen lineWidth="1.0"/>
 					<bottomPen lineWidth="1.0"/>
@@ -1071,7 +1084,9 @@ $P{personSiadapWrapper}.getCareerName() : $R{competenceType.notDefined}]]></text
 						width="426"
 						height="22"
 						key="textField-124"
-						positionType="Float"/>
+						positionType="Float">
+							<printWhenExpression><![CDATA[new Boolean(!$P{siadap}.getEvaluatedOnlyByCompetences().booleanValue() && Boolean.valueOf($P{personSiadapWrapper}.getShouldShowObjectivesAndCompetences()).booleanValue()) ]]></printWhenExpression>
+						</reportElement>
 					<box></box>
 					<textElement verticalAlignment="Middle">
 						<font/>
@@ -1087,7 +1102,9 @@ $P{personSiadapWrapper}.getCareerName() : $R{competenceType.notDefined}]]></text
 						height="25"
 						backcolor="#CCCCCC"
 						key="textField-125"
-						positionType="Float"/>
+						positionType="Float">
+							<printWhenExpression><![CDATA[new Boolean(!$P{siadap}.getEvaluatedOnlyByCompetences().booleanValue() && Boolean.valueOf($P{personSiadapWrapper}.getShouldShowObjectivesAndCompetences()).booleanValue()) ]]></printWhenExpression>
+						</reportElement>
 					<box>					<topPen lineWidth="1.0" lineStyle="Solid"/>
 					<leftPen lineWidth="1.0" lineStyle="Solid"/>
 					<bottomPen lineWidth="1.0" lineStyle="Solid"/>
@@ -1107,7 +1124,9 @@ $P{personSiadapWrapper}.getCareerName() : $R{competenceType.notDefined}]]></text
 						height="25"
 						backcolor="#CCCCCC"
 						key="textField-126"
-						positionType="Float"/>
+						positionType="Float">
+							<printWhenExpression><![CDATA[new Boolean(!$P{siadap}.getEvaluatedOnlyByCompetences().booleanValue() && Boolean.valueOf($P{personSiadapWrapper}.getShouldShowObjectivesAndCompetences()).booleanValue()) ]]></printWhenExpression>
+						</reportElement>
 					<box>					<topPen lineWidth="1.0" lineStyle="Solid"/>
 					<leftPen lineWidth="1.0" lineStyle="Solid"/>
 					<bottomPen lineWidth="1.0" lineStyle="Solid"/>
@@ -1127,7 +1146,9 @@ $P{personSiadapWrapper}.getCareerName() : $R{competenceType.notDefined}]]></text
 						height="25"
 						backcolor="#CCCCCC"
 						key="textField-127"
-						positionType="Float"/>
+						positionType="Float">
+							<printWhenExpression><![CDATA[new Boolean(!$P{siadap}.getEvaluatedOnlyByCompetences().booleanValue() && Boolean.valueOf($P{personSiadapWrapper}.getShouldShowObjectivesAndCompetences()).booleanValue()) ]]></printWhenExpression>
+						</reportElement>
 					<box>					<topPen lineWidth="1.0" lineStyle="Solid"/>
 					<leftPen lineWidth="1.0" lineStyle="Solid"/>
 					<bottomPen lineWidth="1.0" lineStyle="Solid"/>
@@ -1147,7 +1168,9 @@ $P{personSiadapWrapper}.getCareerName() : $R{competenceType.notDefined}]]></text
 						height="25"
 						backcolor="#CCCCCC"
 						key="textField-128"
-						positionType="Float"/>
+						positionType="Float">
+							<printWhenExpression><![CDATA[new Boolean(!$P{siadap}.getEvaluatedOnlyByCompetences().booleanValue() && Boolean.valueOf($P{personSiadapWrapper}.getShouldShowObjectivesAndCompetences()).booleanValue()) ]]></printWhenExpression>
+						</reportElement>
 					<box>					<topPen lineWidth="1.0" lineStyle="Solid"/>
 					<leftPen lineWidth="1.0" lineStyle="Solid"/>
 					<bottomPen lineWidth="1.0" lineStyle="Solid"/>
@@ -1166,7 +1189,9 @@ $P{personSiadapWrapper}.getCareerName() : $R{competenceType.notDefined}]]></text
 						width="82"
 						height="22"
 						key="textField-129"
-						positionType="Float"/>
+						positionType="Float">
+							<printWhenExpression><![CDATA[new Boolean(!$P{siadap}.getEvaluatedOnlyByCompetences().booleanValue() && Boolean.valueOf($P{personSiadapWrapper}.getShouldShowObjectivesAndCompetences()).booleanValue()) ]]></printWhenExpression>
+						</reportElement>
 					<box></box>
 					<textElement textAlignment="Center" verticalAlignment="Middle">
 						<font pdfFontName="Helvetica-Bold" isBold="true"/>
@@ -1180,7 +1205,9 @@ $P{personSiadapWrapper}.getCareerName() : $R{competenceType.notDefined}]]></text
 						width="84"
 						height="39"
 						key="textField-130"
-						positionType="Float"/>
+						positionType="Float">
+							<printWhenExpression><![CDATA[new Boolean(!$P{siadap}.getEvaluatedOnlyByCompetences().booleanValue() && Boolean.valueOf($P{personSiadapWrapper}.getShouldShowObjectivesAndCompetences()).booleanValue()) ]]></printWhenExpression>
+						</reportElement>
 					<box></box>
 					<textElement>
 						<font/>
@@ -1194,7 +1221,9 @@ $P{personSiadapWrapper}.getCareerName() : $R{competenceType.notDefined}]]></text
 						width="172"
 						height="39"
 						key="textField-131"
-						positionType="Float"/>
+						positionType="Float">
+							<printWhenExpression><![CDATA[new Boolean(!$P{siadap}.getEvaluatedOnlyByCompetences().booleanValue() && Boolean.valueOf($P{personSiadapWrapper}.getShouldShowObjectivesAndCompetences()).booleanValue()) ]]></printWhenExpression>
+						</reportElement>
 					<box></box>
 					<textElement>
 						<font/>
@@ -1208,7 +1237,9 @@ $P{personSiadapWrapper}.getCareerName() : $R{competenceType.notDefined}]]></text
 						width="98"
 						height="39"
 						key="textField-132"
-						positionType="Float"/>
+						positionType="Float">
+							<printWhenExpression><![CDATA[new Boolean(!$P{siadap}.getEvaluatedOnlyByCompetences().booleanValue() && Boolean.valueOf($P{personSiadapWrapper}.getShouldShowObjectivesAndCompetences()).booleanValue()) ]]></printWhenExpression>
+						</reportElement>
 					<box></box>
 					<textElement>
 						<font/>
@@ -1222,7 +1253,9 @@ $P{personSiadapWrapper}.getCareerName() : $R{competenceType.notDefined}]]></text
 						width="97"
 						height="39"
 						key="textField-133"
-						positionType="Float"/>
+						positionType="Float">
+							<printWhenExpression><![CDATA[new Boolean(!$P{siadap}.getEvaluatedOnlyByCompetences().booleanValue() && Boolean.valueOf($P{personSiadapWrapper}.getShouldShowObjectivesAndCompetences()).booleanValue()) ]]></printWhenExpression>
+						</reportElement>
 					<box></box>
 					<textElement>
 						<font/>
@@ -1236,7 +1269,9 @@ $P{personSiadapWrapper}.getCareerName() : $R{competenceType.notDefined}]]></text
 						width="60"
 						height="39"
 						key="textField-134"
-						positionType="Float"/>
+						positionType="Float">
+							<printWhenExpression><![CDATA[new Boolean(!$P{siadap}.getEvaluatedOnlyByCompetences().booleanValue() && Boolean.valueOf($P{personSiadapWrapper}.getShouldShowObjectivesAndCompetences()).booleanValue()) ]]></printWhenExpression>
+						</reportElement>
 					<box></box>
 					<textElement textAlignment="Center">
 						<font size="10"/>

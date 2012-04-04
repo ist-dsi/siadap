@@ -570,6 +570,10 @@ public class PersonSiadapWrapper extends PartyWrapper implements Serializable {
 	private ObjectiveEvaluation objectiveEvaluation;
 
 	public ObjectiveEvaluationWrapperBean(ObjectiveEvaluation objectiveEvaluation) {
+	    if (objectiveEvaluation == null) {
+		//do nothing
+	    } else {
+
 	    this.objectiveEvaluation = objectiveEvaluation;
 
 	    Map<String, Integer> linesPerString;
@@ -626,6 +630,7 @@ public class PersonSiadapWrapper extends PartyWrapper implements Serializable {
 	    aggregatedAutoEvaluation = stringBuilderAutoEvaluation.toString().trim();
 	    aggregatedEvaluation = stringBuilderEvaluation.toString().trim();
 	    aggregatedPonderationFactor = stringBuilderPonderationFactor.toString().trim();
+	    }
 	}
 
 	private void appendLineAndNrLines(StringBuilder stringBuilderToAffect, int nrLinesOccupiedByString, String string,
@@ -718,6 +723,9 @@ public class PersonSiadapWrapper extends PartyWrapper implements Serializable {
 
 	for (ObjectiveEvaluation objectiveEvaluation : getSiadap().getDefaultSiadapEvaluationUniverse().getObjectiveEvaluations()) {
 	    objBeans.add(new ObjectiveEvaluationWrapperBean(objectiveEvaluation));
+	}
+	if (objBeans.size() == 0) {
+	    objBeans.add(new ObjectiveEvaluationWrapperBean(null));
 	}
 
 	return objBeans;

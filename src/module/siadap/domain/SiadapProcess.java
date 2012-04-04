@@ -63,6 +63,7 @@ import module.siadap.domain.wrappers.PersonSiadapWrapper;
 import module.workflow.activities.ActivityInformation;
 import module.workflow.activities.WorkflowActivity;
 import module.workflow.domain.LabelLog;
+import module.workflow.domain.ProcessFile;
 import module.workflow.domain.WorkflowLog;
 import module.workflow.domain.WorkflowProcess;
 import myorg.applicationTier.Authenticate.UserView;
@@ -350,6 +351,14 @@ public class SiadapProcess extends SiadapProcess_Base {
 	if (userWarningsKey == null)
 	    userWarningsKey = new HashMap<User, ArrayList<String>>();
 	return userWarningsKey;
+    }
+
+    @Override
+    public List<Class<? extends ProcessFile>> getDisplayableFileTypes() {
+	List<Class<? extends ProcessFile>> availableClasses = new ArrayList<Class<? extends ProcessFile>>();
+	availableClasses.add(ProcessFile.class);
+	availableClasses.add(HomologationDocumentFile.class);
+	return availableClasses;
     }
 
     /**

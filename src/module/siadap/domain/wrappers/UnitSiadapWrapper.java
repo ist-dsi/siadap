@@ -31,6 +31,7 @@ import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -81,6 +82,15 @@ import pt.utl.ist.fenix.tools.util.i18n.MultiLanguageString;
  */
 public class UnitSiadapWrapper extends PartyWrapper implements Serializable {
 
+
+    public static final Comparator<UnitSiadapWrapper> COMPARATOR_BY_UNIT_NAME = new Comparator<UnitSiadapWrapper>() {
+
+	@Override
+	public int compare(UnitSiadapWrapper o1, UnitSiadapWrapper o2) {
+	    return o1.getName().compareTo(o2.getName()) != 0 ? o1.getName().compareTo(o2.getName()) : o1.getUnit()
+		    .getExternalId().compareTo(o2.getUnit().getExternalId());
+	}
+    };
     private static final int SCALE = 4;
 
     public static final String SIADAP_HARMONIZATION_UNIT_TYPE = "module.siadap.harmonization.unit";

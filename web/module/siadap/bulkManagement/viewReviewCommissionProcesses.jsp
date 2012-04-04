@@ -4,13 +4,17 @@
 <%@ taglib uri="/WEB-INF/struts-logic.tld" prefix="logic"%>
 <%@ taglib uri="/WEB-INF/fenix-renderers.tld" prefix="fr"%>
 
+<bean:define id="unitId" name="unit" property="unit.externalId"/> 
+<bean:define id="employees" name="employees" type="java.util.List"/> 
 <bean:define id="unitId" name="unit" property="unit.externalId" />
 
 <bean:define id="year" name="unit" property="year"/>
 
 <h2><fr:view name="unit" property="name" /></h2>
 
-<p><fr:view name="employees">
+<h3><%= employees.size() %> <bean:message key="title.siadap.processes.in.reviewCommission" bundle="SIADAP_RESOURCES" /><%= " (SIADAP - " + year + ")" %></h3> 
+
+<fr:view name="employees">
 	<fr:schema type="module.siadap.domain.wrappers.PersonSiadapWrapper" bundle="SIADAP_RESOURCES">
 		<fr:slot name="person.partyName" layout="format" key="label.evaluated">
 			<fr:property name="useParent" value="true" />
@@ -22,7 +26,7 @@
 		<fr:slot name="finalClassificationForSIADAP3" layout="null-as-label" key="label.validation.classification.SIADAP3"/>
 		<fr:slot name="siadap.siadap3EvaluationAfterValidation" layout="null-as-label" key="label.validation.evaluation.SIADAP3"/>
 	</fr:schema>
-	<fr:layout name="tabular-sortable">
+	<fr:layout name="tabular">
 		<fr:property name="classes" value="tstyle2" />
 		<fr:property name="link(viewProcess)" value="/workflowProcessManagement.do?method=viewProcess" />
 		<fr:property name="bundle(viewProcess)" value="MYORG_RESOURCES" />
@@ -38,7 +42,7 @@
 			value="<%=request.getParameter("sortBy") == null ? "person.partyName=asc" : request
 			    .getParameter("sortBy")%>" />
 	</fr:layout>
-</fr:view></p>
+</fr:view>
 <jsp:include page="/module/siadap/tracFeedBackSnip.jsp">	
    <jsp:param name="href" value="https://fenix-ashes.ist.utl.pt/trac/siadap/report/18" />	
 </jsp:include>

@@ -26,11 +26,9 @@ package module.siadap.presentationTier.actions;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.ResourceBundle;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -41,6 +39,7 @@ import module.siadap.activities.Homologate;
 import module.siadap.activities.ValidationActivityInformation.ValidationSubActivity;
 import module.siadap.domain.ExceedingQuotaProposal;
 import module.siadap.domain.ExceedingQuotaSuggestionType;
+import module.siadap.domain.HomologationDocumentFile;
 import module.siadap.domain.Siadap;
 import module.siadap.domain.SiadapProcess;
 import module.siadap.domain.SiadapUniverse;
@@ -56,21 +55,16 @@ import module.siadap.domain.wrappers.UnitSiadapWrapper;
 import module.siadap.presentationTier.renderers.providers.SiadapYearsFromExistingSiadapConfigurations;
 import module.workflow.activities.ActivityException;
 import module.workflow.activities.ActivityInformation;
-import module.workflow.domain.WorkflowLog;
 import module.workflow.domain.WorkflowProcess;
 import myorg.applicationTier.Authenticate.UserView;
-import myorg.domain.VirtualHost;
 import myorg.domain.exceptions.DomainException;
 import myorg.presentationTier.actions.ContextBaseAction;
 import myorg.util.BundleUtil;
-import myorg.util.ReportUtils;
 import myorg.util.VariantBean;
-import net.sf.jasperreports.engine.JRException;
 
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
-import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 
 import pt.ist.fenixWebFramework.renderers.utils.RenderUtils;
@@ -611,29 +605,45 @@ public class SiadapManagement extends ContextBaseAction {
 
     public final ActionForward batchHomologation(final ActionMapping mapping, final ActionForm form,
 	    final HttpServletRequest request, final HttpServletResponse response) {
-	
+
 	List<PersonSiadapWrapper> employees = getRenderedObject("employees");
 
-	Homologate homologateActivity = new Homologate();
+	Homologate homologateActivity = (Homologate) SiadapProcess.getActivityStaticly(Homologate.class.getSimpleName());
 	ActivityInformation<SiadapProcess> homologateInfo = null;
 	int homologationCount = 0;
-	for (PersonSiadapWrapper personWrapper : employees) {
-	    if (personWrapper.isSelectedForHomologation()) {
-		if (!homologateActivity.isActive(personWrapper.getSiadap().getProcess())) {
-		    throw new DomainException("Cannot execute batch homologation for process: "
-			    + personWrapper.getSiadap().getProcess().getProcessNumber());
+
+	ArrayList<SiadapException> warningMessages = new ArrayList<SiadapException>();
+
+	try {
+
+	    for (PersonSiadapWrapper personWrapper : employees) {
+		if (personWrapper.isSelectedForHomologation()) {
+		    if (!homologateActivity.isActive(personWrapper.getSiadap().getProcess())) {
+			warningMessages.add(new SiadapException("error.couldnt.batch.homologate.for.proccess", personWrapper
+				.getSiadap().getProcess().getProcessNumber()));
+		    } else {
+			homologateInfo = new ActivityInformation<SiadapProcess>(personWrapper.getSiadap().getProcess(),
+				homologateActivity);
+			homologateActivity.execute(homologateInfo);
+			homologationCount++;
+		    }
 		}
-		homologateInfo = new ActivityInformation<SiadapProcess>(personWrapper.getSiadap().getProcess(),
-			    homologateActivity);
-		homologateActivity.execute(homologateInfo);
-		homologationCount++;
 	    }
+	} catch (DomainException ex) {
+	    addLocalizedMessage(request, ex.getLocalizedMessage());
+	} catch (ActivityException ex) {
+	    addLocalizedMessage(request, ex.getMessage());
 	}
 
-	addLocalizedSuccessMessage(
-		request,
-		BundleUtil.getFormattedStringFromResourceBundle("resources/SiadapResources", "label.homologation.success",
-			String.valueOf(homologationCount)));
+	for (SiadapException warningMessage : warningMessages) {
+	    addLocalizedWarningMessage(request, warningMessage.getLocalizedMessage());
+	}
+
+	if (homologationCount != 0) {
+	    addLocalizedSuccessMessage(request, BundleUtil.getFormattedStringFromResourceBundle(Siadap.SIADAP_BUNDLE_STRING,
+		    "label.homologation.success", String.valueOf(homologationCount)));
+
+	}
 	request.setAttribute("mode", "homologationDone");
 	return manageHarmonizationUnitsForMode(mapping, form, request, response);
     }
@@ -860,6 +870,7 @@ public class SiadapManagement extends ContextBaseAction {
 		siadapUniverseWrapperList);
 
     }
+
     //
     //    public final ActionForward removeExcedingQuotaSuggestion(final ActionMapping mapping, final ActionForm form,
     //	    final HttpServletRequest request, final HttpServletResponse response) {
@@ -874,32 +885,13 @@ public class SiadapManagement extends ContextBaseAction {
 	    final HttpServletRequest request, final HttpServletResponse response) throws Exception {
 
 	SiadapProcess process = getDomainObject(request, "processId");
-	final Map<String, Object> paramMap = new HashMap<String, Object>();
 
-	final ResourceBundle resourceBundle = ResourceBundle.getBundle(Siadap.SIADAP_BUNDLE_STRING);
-	paramMap.put("process", process);
-	//joantune: NOTE: the PersonSiadapWrapper can be very handy because of some methods, but it will most likely decrease performance on the
-	//generation of the document
 	PersonSiadapWrapper personSiadapWrapper = new PersonSiadapWrapper(process.getSiadap().getEvaluated(), process.getSiadap()
 		.getYear());
-	paramMap.put("personSiadapWrapper", personSiadapWrapper);
-	paramMap.put("documentGeneratedDate", new DateTime());
-	paramMap.put("generationMotive",
-		BundleUtil.getStringFromResourceBundle(Siadap.SIADAP_BUNDLE_STRING, "SiadapProcessDocument.motive.userOrder"));
-	paramMap.put("siadap", process.getSiadap());
-	ArrayList<WorkflowLog> orderedExecutionLogs = new ArrayList<WorkflowLog>(process.getExecutionLogs());
-	Collections.sort(orderedExecutionLogs, WorkflowLog.COMPARATOR_BY_WHEN);
-	paramMap.put("logs", orderedExecutionLogs);
-	paramMap.put("logoFilename", "Logo_" + VirtualHost.getVirtualHostForThread().getHostname() + ".png");
 
-	try {
-	    byte[] byteArray = ReportUtils.exportToPdfFileAsByteArray("siadapProcessDocument", paramMap, resourceBundle,
-		    personSiadapWrapper.getAllObjEvaluationWrapperBeansOfDefaultEval());
-	    return download(response, "SIADAP_" + process.getProcessNumber() + ".pdf", byteArray, "application/pdf");
-	} catch (JRException e) {
-	    e.printStackTrace();
-	    throw new DomainException("acquisitionRequestDocument.message.exception.failedCreation");
-	}
+	byte[] byteArray = HomologationDocumentFile.generateHomologationDocument(personSiadapWrapper,
+		BundleUtil.getStringFromResourceBundle(Siadap.SIADAP_BUNDLE_STRING, "SiadapProcessDocument.motive.userOrder"));
+	return download(response, "SIADAP_" + process.getProcessNumber() + ".pdf", byteArray, "application/pdf");
 
     }
 }

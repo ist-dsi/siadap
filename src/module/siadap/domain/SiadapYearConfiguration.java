@@ -24,9 +24,9 @@
  */
 package module.siadap.domain;
 
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.TreeSet;
 
 import jvstm.cps.ConsistencyPredicate;
 import module.organization.domain.Person;
@@ -285,7 +285,7 @@ public class SiadapYearConfiguration extends SiadapYearConfiguration_Base {
     }
 
     public static Set<UnitSiadapWrapper> getAllHarmonizationUnitsExceptSpecialUnit(Integer year) {
-	Set<UnitSiadapWrapper> harmonizationUnits = new HashSet<UnitSiadapWrapper>();
+	Set<UnitSiadapWrapper> harmonizationUnits = new TreeSet<UnitSiadapWrapper>(UnitSiadapWrapper.COMPARATOR_BY_UNIT_NAME);
 	for (UnitSiadapWrapper unitWrapper : getAllHarmonizationUnitsFor(year)) {
 	    if (!unitWrapper.getUnit().equals(getSiadapYearConfiguration(year).getSiadapSpecialHarmonizationUnit())) {
 		harmonizationUnits.add(unitWrapper);

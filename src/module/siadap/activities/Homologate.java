@@ -24,8 +24,9 @@
  */
 package module.siadap.activities;
 
-import module.siadap.domain.Siadap;
+import module.siadap.domain.HomologationDocumentFile;
 import module.siadap.domain.SiadapProcess;
+import module.siadap.domain.wrappers.PersonSiadapWrapper;
 import module.workflow.activities.ActivityInformation;
 import module.workflow.activities.WorkflowActivity;
 import myorg.domain.User;
@@ -34,24 +35,25 @@ import org.joda.time.LocalDate;
 
 /**
  * 
- * @author Paulo Abrantes
  * 
  */
 public class Homologate extends WorkflowActivity<SiadapProcess, ActivityInformation<SiadapProcess>> {
 
     @Override
     public boolean isActive(SiadapProcess process, User user) {
-	Siadap siadap = process.getSiadap();
-
+	//	Siadap siadap = process.getSiadap();
 	//	return siadap.getSiadapYearConfiguration().isPersonResponsibleForHomologation(user.getPerson())
 	//		&& (siadap.getState().equals(SiadapProcessStateEnum.WAITING_FOR_REVIEW_COMMISSION) || siadap.getState().equals(
 	//			SiadapProcessStateEnum.WAITING_HOMOLOGATION));
-	return false;
+	return true;
     }
 
     @Override
     protected void process(ActivityInformation<SiadapProcess> activityInformation) {
+	//let's generate the document
 	activityInformation.getProcess().getSiadap().setHomologationDate(new LocalDate());
+	new HomologationDocumentFile(new PersonSiadapWrapper(activityInformation.getProcess().getSiadap().getEvaluated(),
+		activityInformation.getProcess().getSiadap().getYear()));
     }
 
     @Override
