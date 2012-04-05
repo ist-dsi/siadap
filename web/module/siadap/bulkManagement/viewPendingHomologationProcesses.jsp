@@ -95,7 +95,6 @@ function uncheckAll() {
         <input type="button" id="no" value="Não" /> 
 </div> 
 
-<a href="#" id="testLink">Testar</a>
 <div id="pleaseWait" style="display:none; height: 100px;"> 
     <p><b>A processar... por favor aguarde</b></p> 
 </div> 

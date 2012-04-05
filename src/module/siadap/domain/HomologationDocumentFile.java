@@ -9,6 +9,7 @@ import java.util.ResourceBundle;
 import module.siadap.domain.exceptions.SiadapException;
 import module.siadap.domain.wrappers.PersonSiadapWrapper;
 import module.workflow.domain.WorkflowLog;
+import module.workflow.domain.WorkflowProcess;
 import myorg.domain.VirtualHost;
 import myorg.util.BundleUtil;
 import myorg.util.ClassNameBundle;
@@ -29,6 +30,13 @@ public class HomologationDocumentFile extends HomologationDocumentFile_Base {
 	super();
 	this.setDisplayName(filename);
 	init(displayName, filename, content);
+    }
+
+    @Override
+    public void validateUpload(WorkflowProcess workflowProcess) {
+	if (!(workflowProcess instanceof SiadapProcess)) {
+	    throw new SiadapException("must.only.be.used.with.siadap.processes");
+	}
     }
 
     public HomologationDocumentFile(PersonSiadapWrapper personSiadapWrapper) {
@@ -67,6 +75,11 @@ public class HomologationDocumentFile extends HomologationDocumentFile_Base {
 	    e.printStackTrace();
 	    throw new SiadapException("SiadapProcessDocument.error.creating.document", e);
 	}
+    }
+
+    @Override
+    public boolean shouldFileContentAccessBeLogged() {
+	return true;
     }
 
     @Override
