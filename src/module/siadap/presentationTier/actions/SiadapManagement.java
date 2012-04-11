@@ -629,12 +629,13 @@ public class SiadapManagement extends ContextBaseAction {
 		    }
 		}
 	    }
+	} catch (SiadapException ex) {
+	    warningMessages.add(ex);
 	} catch (DomainException ex) {
 	    addLocalizedMessage(request, ex.getLocalizedMessage());
 	} catch (ActivityException ex) {
 	    addLocalizedMessage(request, ex.getMessage());
 	}
-
 	for (SiadapException warningMessage : warningMessages) {
 	    addLocalizedWarningMessage(request, warningMessage.getLocalizedMessage());
 	}
