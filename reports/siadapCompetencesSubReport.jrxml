@@ -26,6 +26,8 @@
 	<parameter name="SUBREPORT_DIR" isForPrompting="true" class="java.lang.String">
 		<defaultValueExpression ><![CDATA["./"]]></defaultValueExpression>
 	</parameter>
+	<parameter name="isCurrentUserAbleToSeeEvaluationDetails" isForPrompting="false" class="java.lang.Boolean"/>
+	<parameter name="isCurrentUserAbleToSeeAutoEvaluationDetails" isForPrompting="false" class="java.lang.Boolean"/>
 
 	<field name="competence" class="module.siadap.domain.Competence"/>
 	<field name="autoEvaluation" class="module.siadap.domain.scoring.SiadapCompetencesEvaluation"/>
@@ -217,7 +219,7 @@
 					<textElement textAlignment="Center" verticalAlignment="Middle">
 						<font/>
 					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[$F{evaluation} == null ? "-" : $F{evaluation}.getLocalizedName()]]></textFieldExpression>
+				<textFieldExpression   class="java.lang.String"><![CDATA[new Boolean($F{evaluation} == null || !$P{isCurrentUserAbleToSeeEvaluationDetails}.booleanValue()).booleanValue() ? "-" : $F{evaluation}.getLocalizedName()]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
@@ -238,7 +240,7 @@
 					<textElement textAlignment="Center" verticalAlignment="Middle">
 						<font/>
 					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[$F{autoEvaluation} == null ? "-" : $F{autoEvaluation}.getLocalizedName()]]></textFieldExpression>
+				<textFieldExpression   class="java.lang.String"><![CDATA[new Boolean($F{autoEvaluation} == null || !$P{isCurrentUserAbleToSeeAutoEvaluationDetails}.booleanValue()).booleanValue() ? "-" : $F{autoEvaluation}.getLocalizedName()]]></textFieldExpression>
 				</textField>
 			</band>
 		</detail>

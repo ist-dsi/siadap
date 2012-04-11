@@ -1,3 +1,4 @@
+<%@page import="module.siadap.domain.wrappers.PersonSiadapWrapper"%>
 <%@page import="module.siadap.domain.Siadap"%>
 <%@page import="module.siadap.domain.SiadapProcessSchedulesEnum"%>
 <%@page import="module.siadap.domain.SiadapProcess"%>
@@ -168,9 +169,11 @@ pre {
 </p>
 
 <logic:equal name="evaluatedPersonWrapper" property="currentUserAbleToSeeDetails" value="true">
-	<%-- <html:link action="/siadapManagement.do?method=downloadAndGenerateSiadapDocument" paramId="processId" paramName="process" paramProperty="externalId">
-		<p>Versão imprimível do processo</p>
-	</html:link> --%>
+	<%-- Link to download the printed version of the document --%>
+	<html:link action="/siadapManagement.do?method=downloadAndGenerateSiadapDocument" paramId="processId" paramName="process" paramProperty="externalId">
+		<p><bean:message key="link.printSiadapDocument" bundle="SIADAP_RESOURCES"/></p>
+	</html:link> 
+
 	<logic:equal name="evaluatedPersonWrapper" property="shouldShowObjectivesAndCompetences" value="true">
 		<logic:equal name="process" property="siadap.evaluatedWithKnowledgeOfObjectives" value="false">
 			<logic:equal name="objectivesVisibleToEvaluated" value="true">

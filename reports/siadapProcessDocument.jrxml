@@ -282,6 +282,22 @@ $P{personSiadapWrapper}.getCareerName() : $R{competenceType.notDefined}]]></text
 					</textElement>
 				<textFieldExpression   class="java.lang.String"><![CDATA[$P{siadap}.getEvaluated().getPresentationName()]]></textFieldExpression>
 				</textField>
+				<staticText>
+					<reportElement
+						x="0"
+						y="174"
+						width="535"
+						height="16"
+						key="staticText-134"
+						positionType="Float">
+							<printWhenExpression><![CDATA[Boolean.valueOf(!$P{personSiadapWrapper}.getShouldShowObjectivesAndCompetences())]]></printWhenExpression>
+						</reportElement>
+					<box></box>
+					<textElement>
+						<font pdfFontName="Helvetica-Oblique" isItalic="true"/>
+					</textElement>
+				<text><![CDATA[Objectivos e/ou competências ainda não disponibilizados pelo avaliador.]]></text>
+				</staticText>
 			</band>
 			</groupHeader>
 			<groupFooter>
@@ -908,7 +924,7 @@ $P{personSiadapWrapper}.getCareerName() : $R{competenceType.notDefined}]]></text
 						backcolor="#E0DADA"
 						key="textField-150"
 						positionType="Float">
-							<printWhenExpression><![CDATA[new Boolean( $P{siadap}.getEvaluationData2() != null && $P{siadap}.isWithSkippedEvaluation())]]></printWhenExpression>
+							<printWhenExpression><![CDATA[new Boolean($P{personSiadapWrapper}.isCurrentUserAbleToSeeEvaluationDetails() && $P{siadap}.getEvaluationData2() != null && $P{siadap}.isWithSkippedEvaluation())]]></printWhenExpression>
 						</reportElement>
 					<box></box>
 					<textElement>
@@ -992,6 +1008,12 @@ $P{personSiadapWrapper}.getCareerName() : $R{competenceType.notDefined}]]></text
 						positionType="Float">
 							<printWhenExpression><![CDATA[new Boolean($P{personSiadapWrapper}.getShouldShowObjectivesAndCompetences())]]></printWhenExpression>
 						</reportElement>
+					<subreportParameter  name="isCurrentUserAbleToSeeEvaluationDetails">
+						<subreportParameterExpression><![CDATA[new Boolean($P{personSiadapWrapper}.isCurrentUserAbleToSeeEvaluationDetails())]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter  name="isCurrentUserAbleToSeeAutoEvaluationDetails">
+						<subreportParameterExpression><![CDATA[new Boolean($P{personSiadapWrapper}.isCurrentUserAbleToSeeAutoEvaluationDetails())]]></subreportParameterExpression>
+					</subreportParameter>
 					<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource(((Collection)$P{siadap}.getCompetenceEvaluations()))]]></dataSourceExpression>
 					<subreportExpression  class="java.lang.String"><![CDATA["reports/siadapCompetencesSubReport.jasper"]]></subreportExpression>
 				</subreport>
@@ -1266,7 +1288,7 @@ $P{personSiadapWrapper}.getCareerName() : $R{competenceType.notDefined}]]></text
 						height="39"
 						key="textField-132"
 						positionType="Float">
-							<printWhenExpression><![CDATA[new Boolean(!$P{siadap}.getEvaluatedOnlyByCompetences().booleanValue() && Boolean.valueOf($P{personSiadapWrapper}.getShouldShowObjectivesAndCompetences()).booleanValue())]]></printWhenExpression>
+							<printWhenExpression><![CDATA[new Boolean(!$P{siadap}.getEvaluatedOnlyByCompetences().booleanValue() && Boolean.valueOf($P{personSiadapWrapper}.getShouldShowObjectivesAndCompetences() && $P{personSiadapWrapper}.isCurrentUserAbleToSeeAutoEvaluationDetails()).booleanValue())]]></printWhenExpression>
 						</reportElement>
 					<box></box>
 					<textElement>
@@ -1282,7 +1304,7 @@ $P{personSiadapWrapper}.getCareerName() : $R{competenceType.notDefined}]]></text
 						height="39"
 						key="textField-133"
 						positionType="Float">
-							<printWhenExpression><![CDATA[new Boolean(!$P{siadap}.getEvaluatedOnlyByCompetences().booleanValue() && Boolean.valueOf($P{personSiadapWrapper}.getShouldShowObjectivesAndCompetences()).booleanValue())]]></printWhenExpression>
+							<printWhenExpression><![CDATA[new Boolean(!$P{siadap}.getEvaluatedOnlyByCompetences().booleanValue() && Boolean.valueOf($P{personSiadapWrapper}.getShouldShowObjectivesAndCompetences() && $P{personSiadapWrapper}.isCurrentUserAbleToSeeEvaluationDetails()).booleanValue())]]></printWhenExpression>
 						</reportElement>
 					<box></box>
 					<textElement>
