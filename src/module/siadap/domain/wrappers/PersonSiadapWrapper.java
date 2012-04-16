@@ -225,18 +225,37 @@ public class PersonSiadapWrapper extends PartyWrapper implements Serializable {
 	this.validationClassificationForSIADAP2 = validationClassificationForSIADAP2;
     }
 
-    public BigDecimal getFinalClassificationForSIADAP2() {
-	if (getValidationClassificationForSIADAP2() != null) {
-	    return getValidationClassificationForSIADAP2();
-	}
-	return getEvaluatorClassificationForSIADAP2();
+    public BigDecimal getLatestClassificationForSIADAP2() {
+	return getLatestClassification(SiadapUniverse.SIADAP2);
     }
 
-    public BigDecimal getFinalClassificationForSIADAP3() {
-	if (getValidationClassificationForSIADAP3() != null) {
-	    return getValidationClassificationForSIADAP3();
-	}
-	return getEvaluatorClassificationForSIADAP3();
+    public BigDecimal getLatestClassificationForSIADAP3() {
+	return getLatestClassification(SiadapUniverse.SIADAP3);
+    }
+
+    public BigDecimal getLatestClassification(SiadapUniverse siadapUniverse) {
+	SiadapEvaluationUniverse siadapEvaluationUniverse = getSiadap().getSiadapEvaluationUniverseForSiadapUniverse(
+		siadapUniverse);
+	if (siadapEvaluationUniverse == null)
+	    return null;
+	return siadapEvaluationUniverse.getCurrentGrade();
+
+    }
+
+    public SiadapGlobalEvaluation getLatestSiadapGlobalEvaluationForSIADAP2() {
+	return getLatestSiadapGlobalEvaluation(SiadapUniverse.SIADAP2);
+    }
+
+    public SiadapGlobalEvaluation getLatestSiadapGlobalEvaluationForSIADAP3() {
+	return getLatestSiadapGlobalEvaluation(SiadapUniverse.SIADAP3);
+    }
+    public SiadapGlobalEvaluation getLatestSiadapGlobalEvaluation(SiadapUniverse siadapUniverse) {
+	SiadapEvaluationUniverse siadapEvaluationUniverse = getSiadap().getSiadapEvaluationUniverseForSiadapUniverse(
+		siadapUniverse);
+	if (siadapEvaluationUniverse == null)
+	    return null;
+	return siadapEvaluationUniverse.getLatestSiadapGlobalEvaluationEnum();
+
     }
 
     public Person getPerson() {

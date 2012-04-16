@@ -38,6 +38,7 @@
 	
 	<bean:define id="unitId" value="" />
 </logic:empty>
+<h3><i><bean:message bundle="SIADAP_RESOURCES" key="note.on.grades.not.being.the.latest"/></i></h3>
 
 <%
 Unit unitFromWrapper = ((module.siadap.domain.wrappers.UnitSiadapWrapper)request.getAttribute("unit")).getUnit();

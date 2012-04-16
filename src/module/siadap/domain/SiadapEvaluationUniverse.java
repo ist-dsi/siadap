@@ -98,19 +98,61 @@ public class SiadapEvaluationUniverse extends SiadapEvaluationUniverse_Base {
 		|| SiadapGlobalEvaluation.ZERO.accepts(getTotalEvaluationScoring(), hasExcellencyAwarded());
     }
 
-    public SiadapGlobalEvaluation getSiadapGlobalEvaluationEnum(boolean considerValidation) {
+    /**
+     * 
+     * @param considerValidation
+     *            if true, it considers the validation grade when returning the
+     *            appropriate enum
+     * @param getLatestGrade
+     *            if true, it ignores #considerValidation and get the latest
+     *            grade
+     * @return {@link SiadapGlobalEvaluation} enum according with the grade
+     */
+    public SiadapGlobalEvaluation getSiadapGlobalEvaluationEnum(boolean considerValidation, boolean getLatestGrade) {
+	if (getLatestGrade)
+	    return SiadapGlobalEvaluation.getGlobalEvaluation(getCurrentGrade(), getCurrentExcellencyAward());
 	if (considerValidation && hasValidationAssessment())
 	    return SiadapGlobalEvaluation.getGlobalEvaluation(getCcaClassification(), getCcaClassificationExcellencyAward());
 	else
 	    return SiadapGlobalEvaluation.getGlobalEvaluation(getTotalEvaluationScoring(), hasExcellencyAwarded());
     }
 
+    public boolean getCurrentExcellencyAward() {
+	if (hasCcaAfterValidationAssignedGrade())
+	    return getCcaAfterValidationExcellencyAward().booleanValue();
+	if (hasValidationAssessment())
+	    return getCcaClassificationExcellencyAward().booleanValue();
+	return hasExcellencyAwarded();
+
+    }
+
+    public BigDecimal getCurrentGrade() {
+	if (hasCcaAfterValidationAssignedGrade())
+	    return getCcaAfterValidationGrade();
+	if (hasValidationAssessment())
+	    return getCcaClassification();
+	return getTotalEvaluationScoring();
+	
+    }
+
+    private boolean hasCcaAfterValidationAssignedGrade() {
+	if (getCcaAfterValidationGrade() == null || getCcaAfterValidationExcellencyAward() == null)
+	    return false;
+	return true;
+    }
+
+
     public SiadapGlobalEvaluation getSiadapGlobalEvaluationEnumAfterValidation() {
-	return getSiadapGlobalEvaluationEnum(true);
+	return getSiadapGlobalEvaluationEnum(true, false);
     }
 
     public SiadapGlobalEvaluation getSiadapGlobalEvaluationEnum() {
-	return getSiadapGlobalEvaluationEnum(false);
+	return getSiadapGlobalEvaluationEnum(false, false);
+
+    }
+
+    public SiadapGlobalEvaluation getLatestSiadapGlobalEvaluationEnum() {
+	return getSiadapGlobalEvaluationEnum(false, true);
 
     }
 

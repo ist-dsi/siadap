@@ -36,6 +36,7 @@ import module.siadap.activities.AcknowledgeEvaluationObjectives;
 import module.siadap.activities.AcknowledgeEvaluationValidation;
 import module.siadap.activities.AutoEvaluation;
 import module.siadap.activities.ChangeCustomSchedule;
+import module.siadap.activities.ChangeGradeAnytimeAfterValidationByCCA;
 import module.siadap.activities.ChangePersonnelSituation;
 import module.siadap.activities.CreateCompetenceEvaluation;
 import module.siadap.activities.CreateObjectiveEvaluation;
@@ -127,6 +128,8 @@ public class SiadapProcess extends SiadapProcess_Base {
 	activities.add(new ChangePersonnelSituation());
 
 	activities.add(new SendToReviewCommission());
+
+	activities.add(new ChangeGradeAnytimeAfterValidationByCCA());
 
     }
 

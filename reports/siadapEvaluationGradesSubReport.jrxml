@@ -35,8 +35,8 @@
 	<field name="competencesPonderation" class="java.lang.Integer"/>
 	<field name="ponderatedCompetencesScoring" class="java.math.BigDecimal"/>
 	<field name="totalEvaluationScoring" class="java.math.BigDecimal"/>
-	<field name="ccaClassification" class="java.math.BigDecimal"/>
-	<field name="siadapGlobalEvaluationEnumAfterValidation" class="module.siadap.domain.scoring.SiadapGlobalEvaluation"/>
+	<field name="currentGrade" class="java.math.BigDecimal"/>
+	<field name="latestSiadapGlobalEvaluationEnum" class="module.siadap.domain.scoring.SiadapGlobalEvaluation"/>
 	<field name="siadapEvaluation" class="module.siadap.domain.SiadapEvaluation"/>
 
 
@@ -377,14 +377,14 @@
 					<reportElement
 						x="0"
 						y="76"
-						width="167"
+						width="143"
 						height="13"
 						key="staticText-8"/>
 					<box></box>
 					<textElement textAlignment="Left" verticalAlignment="Middle">
 						<font pdfFontName="Helvetica-Bold" isBold="true"/>
 					</textElement>
-				<text><![CDATA[Nota final (após validação):]]></text>
+				<text><![CDATA[Nota final:]]></text>
 				</staticText>
 				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
@@ -429,9 +429,9 @@
 				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						mode="Opaque"
-						x="172"
+						x="143"
 						y="76"
-						width="274"
+						width="386"
 						height="13"
 						forecolor="#000000"
 						key="textField-9"/>
@@ -439,7 +439,7 @@
 					<textElement textAlignment="Left" verticalAlignment="Middle">
 						<font/>
 					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[($F{ccaClassification} != null ? $F{ccaClassification}.toString() : $F{totalEvaluationScoring}.toString()) + " (" +$F{siadapGlobalEvaluationEnumAfterValidation}.getLocalizedName() +")"]]></textFieldExpression>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{currentGrade}.toString() + " (" +$F{latestSiadapGlobalEvaluationEnum}.getLocalizedName() +")"]]></textFieldExpression>
 				</textField>
 				<staticText>
 					<reportElement

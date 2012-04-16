@@ -52,6 +52,7 @@
 	</logic:equal>
 	</p>
 </logic:present>
+<h3><i><bean:message bundle="SIADAP_RESOURCES" key="note.on.grades.not.being.the.latest"/></i></h3>
 
 <%-- The global Info box is not needed ATM
 <div class="infobox">

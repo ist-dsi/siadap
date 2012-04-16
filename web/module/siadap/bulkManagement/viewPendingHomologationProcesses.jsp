@@ -137,16 +137,16 @@ function uncheckAll() {
 		<%= personWrapper.getSiadap().getState().getDescription() %>
 	</td>
 	<td>
-		<%= (personWrapper.getFinalClassificationForSIADAP2() == null) ? "-" : personWrapper.getFinalClassificationForSIADAP2() %>
+		<%= (personWrapper.getLatestClassificationForSIADAP2() == null) ? "-" : personWrapper.getLatestClassificationForSIADAP2() %>
 	</td>
 	<td>
-		<%= (personWrapper.getSiadap().getSiadap2EvaluationAfterValidation() == null) ? "-" : personWrapper.getSiadap().getSiadap2EvaluationAfterValidation().getLocalizedName() %>
+		<%= (personWrapper.getLatestSiadapGlobalEvaluationForSIADAP2() == null) ? "-" : personWrapper.getLatestSiadapGlobalEvaluationForSIADAP2().getLocalizedName() %>
 	</td>
 	<td>
-		<%= (personWrapper.getFinalClassificationForSIADAP3() == null) ? "-" : personWrapper.getFinalClassificationForSIADAP3() %>
+		<%= (personWrapper.getLatestClassificationForSIADAP3() == null) ? "-" : personWrapper.getLatestClassificationForSIADAP3() %>
 	</td>
 	<td>
-		<%= (personWrapper.getSiadap().getSiadap3EvaluationAfterValidation() == null) ? "-" : personWrapper.getSiadap().getSiadap3EvaluationAfterValidation().getLocalizedName() %>
+		<%= (personWrapper.getLatestSiadapGlobalEvaluationForSIADAP3() == null) ? "-" : personWrapper.getLatestSiadapGlobalEvaluationForSIADAP3().getLocalizedName() %>
 	</td>
 	<td>
 		<%

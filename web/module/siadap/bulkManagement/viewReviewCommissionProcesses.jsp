@@ -21,10 +21,10 @@
 			<fr:property name="format" value="${person.partyName} (${person.user.username})"/>
 		</fr:slot>
 		<fr:slot name="siadap.state.description" key="label.process.state"/>
-		<fr:slot name="finalClassificationForSIADAP2" layout="null-as-label" key="label.validation.classification.SIADAP2"/>
-		<fr:slot name="siadap.siadap2EvaluationAfterValidation" layout="null-as-label" key="label.validation.evaluation.SIADAP2"/>
-		<fr:slot name="finalClassificationForSIADAP3" layout="null-as-label" key="label.validation.classification.SIADAP3"/>
-		<fr:slot name="siadap.siadap3EvaluationAfterValidation" layout="null-as-label" key="label.validation.evaluation.SIADAP3"/>
+		<fr:slot name="latestClassificationForSIADAP2" layout="null-as-label" key="label.validation.classification.SIADAP2"/>
+		<fr:slot name="latestSiadapGlobalEvaluationForSIADAP2" layout="null-as-label" key="label.validation.evaluation.SIADAP2"/>
+		<fr:slot name="latestClassificationForSIADAP3" layout="null-as-label" key="label.validation.classification.SIADAP3"/>
+		<fr:slot name="latestSiadapGlobalEvaluationForSIADAP3" layout="null-as-label" key="label.validation.evaluation.SIADAP3"/>
 	</fr:schema>
 	<fr:layout name="tabular">
 		<fr:property name="classes" value="tstyle2" />
