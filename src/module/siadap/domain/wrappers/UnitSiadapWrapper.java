@@ -835,6 +835,21 @@ public class UnitSiadapWrapper extends PartyWrapper implements Serializable {
 	return unitEmployees;
     }
 
+    public List<PersonSiadapWrapper> getUnitEmployeesWithProcessesHomologated() {
+	List<PersonSiadapWrapper> unitEmployees = getUnitEmployees(true, new Predicate() {
+	    @Override
+	    public boolean evaluate(Object personObject) {
+		PersonSiadapWrapper personWrapper = (PersonSiadapWrapper) personObject;
+		if (personWrapper.getSiadap().isHomologated()) {
+		    return true;
+		}
+		return false;
+	    }
+	});
+	Collections.sort(unitEmployees, PersonSiadapWrapper.PERSON_COMPARATOR_BY_NAME_FALLBACK_YEAR_THEN_PERSON_OID);
+	return unitEmployees;
+    }
+
     public List<PersonSiadapWrapper> getUnitEmployeesWithProcessesPendingHomologation() {
 	List<PersonSiadapWrapper> unitEmployees = getUnitEmployees(true, new Predicate() {
 	    @Override

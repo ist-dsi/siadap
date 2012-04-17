@@ -26,7 +26,6 @@
 	<br />
 </html:messages>
 
-<bean:define id="mode" name="mode"/>
 
 <%-- The year chooser: --%>
 <fr:form action="/siadapManagement.do?method=manageHarmonizationUnitsForMode&mode=homologationDone">
@@ -70,14 +69,14 @@
 	<td><%= harmonizationUnit.getRelevantEvaluationPercentage() %> %</td>
 	<td><%= harmonizationUnit.getExcellencyEvaluationPercentage() %> %</td>
 	<td><%= harmonizationUnit.getSiadapProcessesOngoing().size() %></td>
-	<fr:form id="<%= "formHomologation" + harmonizationUnit.getUnit().getExternalId() %>" action="<%= "/siadapManagement.do?method=viewPendingHomologationProcesses&mode=" + mode.toString() + "&year=" + year.toString() + "&unitId=" + harmonizationUnit.getUnit().getExternalId() %>" >
+	<fr:form id="<%= "formHomologation" + harmonizationUnit.getUnit().getExternalId() %>" action="<%= "/siadapManagement.do?method=viewPendingHomologationProcesses&year=" + year.toString() + "&unitId=" + harmonizationUnit.getUnit().getExternalId() %>" >
 		<%
 			processes = harmonizationUnit.getSiadapProcessesPendingHomologation();
 		
 			if (!processes.isEmpty()) {
 		%>
 				<td style="cursor: pointer;" onclick="<%="document.getElementById('formHomologation" + harmonizationUnit.getUnit().getExternalId() + "').submit()"%>" >
-					<html:link action="<%= "/siadapManagement.do?method=viewPendingHomologationProcesses&mode=" + mode.toString() + "&year=" + year.toString() + "&unitId=" + harmonizationUnit.getUnit().getExternalId() %>" >
+					<html:link action="<%= "/siadapManagement.do?method=viewPendingHomologationProcesses&year=" + year.toString() + "&unitId=" + harmonizationUnit.getUnit().getExternalId() %>" >
 						<strong><%= processes.size() %></strong>
 					</html:link>
 				</td>
@@ -91,14 +90,14 @@
 		%>
 	</fr:form>
 	
-	<fr:form id="<%= "formReviewCommission" + harmonizationUnit.getUnit().getExternalId() %>" action="<%= "/siadapManagement.do?method=viewReviewCommissionProcesses&mode=" + mode.toString() + "&year=" + year.toString() + "&unitId=" + harmonizationUnit.getUnit().getExternalId() %>" >
+	<fr:form id="<%= "formReviewCommission" + harmonizationUnit.getUnit().getExternalId() %>" action="<%= "/siadapManagement.do?method=viewOnlyProcesses&mode=viewReviewCommission&year=" + year.toString() + "&unitId=" + harmonizationUnit.getUnit().getExternalId() %>" >
 		<%
 			processes = harmonizationUnit.getSiadapProcessesInReviewCommission();
 		
 			if (!processes.isEmpty()) {
 		%>
 				<td style="cursor: pointer;" onclick="<%="document.getElementById('formReviewCommission" + harmonizationUnit.getUnit().getExternalId() + "').submit()"%>" >
-					<html:link action="<%= "/siadapManagement.do?method=viewReviewCommissionProcesses&mode=" + mode.toString() + "&year=" + year.toString() + "&unitId=" + harmonizationUnit.getUnit().getExternalId() %>" >
+					<html:link action="<%= "/siadapManagement.do?method=viewOnlyProcesses&mode=viewReviewCommission&year=" + year.toString() + "&unitId=" + harmonizationUnit.getUnit().getExternalId() %>" >
 						<strong><%= processes.size() %></strong>
 					</html:link>
 				</td>
@@ -110,7 +109,25 @@
 			}
 		%>
 	</fr:form>
-	<td><%= harmonizationUnit.getSiadapProcessesHomologated().size() %></td>
+	<fr:form id="<%= "viewHomologatedProcesses" + harmonizationUnit.getUnit().getExternalId() %>" action="<%= "/siadapManagement.do?method=viewOnlyProcesses&mode=viewHomologatedProcesses&year=" + year.toString() + "&unitId=" + harmonizationUnit.getUnit().getExternalId() %>" >
+		<%
+			processes = harmonizationUnit.getSiadapProcessesHomologated();
+		
+			if (!processes.isEmpty()) {
+		%>
+				<td style="cursor: pointer;" onclick="<%="document.getElementById('viewHomologatedProcesses" + harmonizationUnit.getUnit().getExternalId() + "').submit()"%>" >
+					<html:link action="<%= "/siadapManagement.do?method=viewOnlyProcesses&mode=viewHomologatedProcesses&year=" + year.toString() + "&unitId=" + harmonizationUnit.getUnit().getExternalId() %>" >
+						<strong><%= processes.size() %></strong>
+					</html:link>
+				</td>
+		<%
+			} else {
+		%>
+				<td><%= processes.size() %></td>
+		<%
+			}
+		%>
+	</fr:form>
 </tr>
 </logic:iterate>
 </table>

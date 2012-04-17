@@ -8,11 +8,18 @@
 <bean:define id="employees" name="employees" type="java.util.List"/> 
 <bean:define id="unitId" name="unit" property="unit.externalId" />
 
+<bean:define id="mode" name="mode"/>
+
 <bean:define id="year" name="unit" property="year"/>
 
 <h2><fr:view name="unit" property="name" /></h2>
 
-<h3><%= employees.size() %> <bean:message key="title.siadap.processes.in.reviewCommission" bundle="SIADAP_RESOURCES" /><%= " (SIADAP - " + year + ")" %></h3> 
+<logic:equal name="mode" value="viewHomologatedProcesses">
+	<h3><%= employees.size() %> <bean:message key="title.siadap.processes.homologated" bundle="SIADAP_RESOURCES" /><%= " (SIADAP - " + year + ")" %></h3> 
+</logic:equal>
+<logic:equal name="mode" value="viewReviewCommission">
+	<h3><%= employees.size() %> <bean:message key="title.siadap.processes.in.reviewCommission" bundle="SIADAP_RESOURCES" /><%= " (SIADAP - " + year + ")" %></h3> 
+</logic:equal>
 
 <fr:view name="employees">
 	<fr:schema type="module.siadap.domain.wrappers.PersonSiadapWrapper" bundle="SIADAP_RESOURCES">
@@ -37,7 +44,7 @@
 
 		<fr:property name="sortParameter" value="sortBy" />
 		<fr:property name="sortUrl"
-			value="<%="/siadapManagement.do?method=viewReviewCommissionProcesses&unitId=" + unitId + "&year=" + year.toString()%>" />
+			value="<%="/siadapManagement.do?method=viewOnlyProcesses&mode="+ mode.toString() + "&unitId=" + unitId + "&year=" + year.toString()%>" />
 		<fr:property name="sortBy"
 			value="<%=request.getParameter("sortBy") == null ? "person.partyName=asc" : request
 			    .getParameter("sortBy")%>" />

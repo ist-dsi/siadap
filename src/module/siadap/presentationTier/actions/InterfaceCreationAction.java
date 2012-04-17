@@ -35,6 +35,7 @@ import myorg.domain.contents.ActionNode;
 import myorg.domain.contents.Node;
 import myorg.domain.groups.PersistentGroup;
 import myorg.domain.groups.Role;
+import myorg.domain.groups.UnionGroup;
 import myorg.domain.groups.UserGroup;
 import myorg.presentationTier.actions.BaseAction;
 
@@ -84,10 +85,11 @@ public class InterfaceCreationAction extends BaseAction {
 	ActionNode.createActionNode(virtualHost, homeNode, "/siadapManagement", "validate", "resources.SiadapResources",
 		"link.siadap.validationProcedure", SiadapYearConfiguration.getCcaMembersGroup());
 
-	//use the static group TODO alter this	
 	ActionNode.createActionNode(virtualHost, homeNode, "/siadapManagement",
 		"manageHarmonizationUnitsForMode&mode=homologationDone", "resources.SiadapResources",
-		"link.siadap.homologationProcedure", SiadapYearConfiguration.getHomologationMembersGroup());
+		"link.siadap.homologationProcedure",
+		UnionGroup.getOrCreateUnionGroup(SiadapYearConfiguration.getHomologationMembersGroup(),
+			SiadapYearConfiguration.getCcaMembersGroup()));
 
 	//the help link
 	//	ActionNode.createActionNode(virtualHost, homeNode, "/vaadinContext", "forwardToVaadin#PageView-322122548202",

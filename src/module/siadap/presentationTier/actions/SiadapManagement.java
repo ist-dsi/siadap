@@ -62,6 +62,7 @@ import myorg.presentationTier.actions.ContextBaseAction;
 import myorg.util.BundleUtil;
 import myorg.util.VariantBean;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
@@ -595,27 +596,29 @@ public class SiadapManagement extends ContextBaseAction {
 	request.setAttribute("siadapYearWrapper", siadapYearWrapper);
 	request.setAttribute("harmonizationUnits",
 		SiadapYearConfiguration.getAllHarmonizationUnitsExceptSpecialUnit(siadapYearWrapper.getChosenYear()));
-	String mode = request.getParameter("mode");
-	if (mode == null) {
-	    mode = (String) request.getAttribute("mode");
-	}
-	request.setAttribute("mode", mode);
+	//	String mode = request.getParameter("mode");
+	//	if (mode == null) {
+	//	    mode = (String) request.getAttribute("mode");
+	//	}
+	//	request.setAttribute("mode", mode);
 	return forward(request, "/module/siadap/bulkManagement/listHarmonizationUnits.jsp");
     }
 
     public final ActionForward batchHomologation(final ActionMapping mapping, final ActionForm form,
 	    final HttpServletRequest request, final HttpServletResponse response) {
 
-	List<PersonSiadapWrapper> employees = getRenderedObject("employees");
-
-	Homologate homologateActivity = (Homologate) SiadapProcess.getActivityStaticly(Homologate.class.getSimpleName());
 	HomologationActivityInformation homologateInfo = null;
 	int homologationCount = 0;
 
 	ArrayList<SiadapException> warningMessages = new ArrayList<SiadapException>();
 
 	try {
+	    if (!SiadapYearConfiguration.getHomologationMembersGroup().isMember(UserView.getCurrentUser())) {
+		throw new SiadapException("error.onlyCCA.can.homologate");
+	    }
 
+	    Homologate homologateActivity = (Homologate) SiadapProcess.getActivityStaticly(Homologate.class.getSimpleName());
+	    List<PersonSiadapWrapper> employees = getRenderedObject("employees");
 	    for (PersonSiadapWrapper personWrapper : employees) {
 		if (personWrapper.isSelectedForHomologation()) {
 		    if (!homologateActivity.isActive(personWrapper.getSiadap().getProcess())) {
@@ -662,16 +665,24 @@ public class SiadapManagement extends ContextBaseAction {
 	return forward(request, "/module/siadap/bulkManagement/viewPendingHomologationProcesses.jsp");
     }
 
-    public final ActionForward viewReviewCommissionProcesses(final ActionMapping mapping, final ActionForm form,
+    public final ActionForward viewOnlyProcesses(final ActionMapping mapping, final ActionForm form,
 	    final HttpServletRequest request, final HttpServletResponse response) {
 
 	int year = Integer.parseInt(request.getParameter("year"));
+	String mode = request.getParameter("mode");
 	Unit unit = getDomainObject(request, "unitId");
 
 	UnitSiadapWrapper unitSiadapWrapper = new UnitSiadapWrapper(unit, year);
 	request.setAttribute("unit", unitSiadapWrapper);
-	request.setAttribute("employees", unitSiadapWrapper.getUnitEmployeesWithProcessesInReviewCommission());
-	return forward(request, "/module/siadap/bulkManagement/viewReviewCommissionProcesses.jsp");
+	if (StringUtils.equals(mode, "viewHomologatedProcesses")) {
+	    request.setAttribute("employees", unitSiadapWrapper.getUnitEmployeesWithProcessesHomologated());
+
+	} else if (StringUtils.equals(mode, "viewReviewCommission")) {
+	    request.setAttribute("employees", unitSiadapWrapper.getUnitEmployeesWithProcessesInReviewCommission());
+
+	}
+	request.setAttribute("mode", mode);
+	return forward(request, "/module/siadap/bulkManagement/viewOnlyProcesses.jsp");
     }
 
     // NOTE: Interface with the sequential numbers thing

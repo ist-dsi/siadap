@@ -1,3 +1,4 @@
+<%@page import="module.siadap.domain.SiadapYearConfiguration"%>
 <%@page import="myorg.util.BundleUtil"%>
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html"%>
@@ -112,11 +113,28 @@ function uncheckAll() {
 	</div>
 </logic:messagesPresent>
  --%>
+ 
+ <%
+ //asserting if we can change anything or not at all
+ boolean canWrite;
+ if (((SiadapYearConfiguration)SiadapYearConfiguration.getSiadapYearConfiguration((Integer)year)).isCurrentUserResponsibleForHomologation())
+ {
+     request.setAttribute("canWrite", true);
+     canWrite=true;
+ }
+ else {
+     request.setAttribute("canWrite", false);
+     canWrite=false;
+ }
+ %>
+ 
 <fr:form id="selectionForm" action="<%= "/siadapManagement.do?method=batchHomologation&unitID=" + unitId + "&year=" + year %>" >
 <table class="tstyle2">
-	<fr:edit visible="false" id="employees" name="employees"/>
+	<logic:equal value="true" name="canWrite">
+		<fr:edit visible="false" id="employees" name="employees"/>
+	</logic:equal>
 <tr>
-	<th><input id="selectAll" type="checkbox" onclick="toggleAll()"/></th>
+	<th><logic:equal value="true" name="canWrite"><input id="selectAll" type="checkbox" onclick="toggleAll()"/></logic:equal></th>
 	<th><bean:message bundle="SIADAP_RESOURCES" key="label.evaluated"/></th>
 	<th><bean:message bundle="SIADAP_RESOURCES" key="label.process.state"/></th>
 	<th><bean:message bundle="SIADAP_RESOURCES" key="label.validation.classification.SIADAP2"/></th>
@@ -127,9 +145,11 @@ function uncheckAll() {
 </tr>
 <logic:iterate id="personWrapper" name="employees" type="module.siadap.domain.wrappers.PersonSiadapWrapper">
 <tr>
-	<td>
-		<fr:edit id="<%= "person" + personWrapper.getPerson().getExternalId() %>" name="personWrapper" slot="selectedForHomologation" layout="option-select"/>
-	</td>
+	<logic:equal value="true" name="canWrite">
+		<td>
+			<fr:edit id="<%= "person" + personWrapper.getPerson().getExternalId() %>" name="personWrapper" slot="selectedForHomologation" layout="option-select"/>
+		</td>
+	</logic:equal>
 	<td>
 		<%= "<strong>" + personWrapper.getPerson().getPartyName().getContent() + "</strong><br>(" + personWrapper.getPerson().getUser().getUsername() + ")" %>
 	</td>
@@ -161,7 +181,9 @@ function uncheckAll() {
 </logic:iterate>
 </table>
 
+<% if (canWrite) { %>
 <html:submit styleClass="inputbutton"><bean:message bundle="SIADAP_RESOURCES" key="button.homologate.selected"/></html:submit>
+<%} %>
 
 </fr:form>
 
