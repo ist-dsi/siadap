@@ -36,6 +36,7 @@ import javax.servlet.http.HttpServletResponse;
 import module.organization.domain.Person;
 import module.organization.domain.Unit;
 import module.siadap.activities.Homologate;
+import module.siadap.activities.HomologationActivityInformation;
 import module.siadap.activities.ValidationActivityInformation.ValidationSubActivity;
 import module.siadap.domain.ExceedingQuotaProposal;
 import module.siadap.domain.ExceedingQuotaSuggestionType;
@@ -54,7 +55,6 @@ import module.siadap.domain.wrappers.SiadapYearWrapper;
 import module.siadap.domain.wrappers.UnitSiadapWrapper;
 import module.siadap.presentationTier.renderers.providers.SiadapYearsFromExistingSiadapConfigurations;
 import module.workflow.activities.ActivityException;
-import module.workflow.activities.ActivityInformation;
 import module.workflow.domain.WorkflowProcess;
 import myorg.applicationTier.Authenticate.UserView;
 import myorg.domain.exceptions.DomainException;
@@ -609,7 +609,7 @@ public class SiadapManagement extends ContextBaseAction {
 	List<PersonSiadapWrapper> employees = getRenderedObject("employees");
 
 	Homologate homologateActivity = (Homologate) SiadapProcess.getActivityStaticly(Homologate.class.getSimpleName());
-	ActivityInformation<SiadapProcess> homologateInfo = null;
+	HomologationActivityInformation homologateInfo = null;
 	int homologationCount = 0;
 
 	ArrayList<SiadapException> warningMessages = new ArrayList<SiadapException>();
@@ -622,8 +622,9 @@ public class SiadapManagement extends ContextBaseAction {
 			warningMessages.add(new SiadapException("error.couldnt.batch.homologate.for.proccess", personWrapper
 				.getSiadap().getProcess().getProcessNumber()));
 		    } else {
-			homologateInfo = new ActivityInformation<SiadapProcess>(personWrapper.getSiadap().getProcess(),
+			homologateInfo = new HomologationActivityInformation(personWrapper.getSiadap().getProcess(),
 				homologateActivity);
+			homologateInfo.setShouldShowChangeGradeInterface(false);
 			homologateActivity.execute(homologateInfo);
 			homologationCount++;
 		    }

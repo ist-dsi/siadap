@@ -89,22 +89,7 @@ public class ChangeGradeAnytimeActivityInformation extends ActivityInformation<S
      */
     @Override
     public boolean hasAllneededInfo() {
-	if (isForwardedFromInput())
-	    return true;
-	return false;
-	//	boolean foundAValidGrade = false;
-	//	for (GradePerUniverseBean gradePerUniverseBean : siadapEvaluationUniversesBeans) {
-	//	    BigDecimal gradeToChangeTo = gradePerUniverseBean.getGradeToChangeTo();
-	//	    boolean assignExcellency = gradePerUniverseBean.isAssignExcellency();
-	//	    if (gradeToChangeTo != null) {
-	//		if (!SiadapGlobalEvaluation.isValidGrade(gradePerUniverseBean.getGradeToChangeTo(), assignExcellency))
-	//		    return false;
-	//		else if (!StringUtils.isBlank(gradePerUniverseBean.getJustification()))
-	//		    foundAValidGrade = true;
-	//	    }
-	//	}
-	//	return foundAValidGrade;
-
+	return isForwardedFromInput();
     }
 
 

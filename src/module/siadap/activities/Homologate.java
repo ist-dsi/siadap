@@ -24,22 +24,26 @@
  */
 package module.siadap.activities;
 
+import module.siadap.activities.ChangeGradeAnytimeActivityInformation.GradePerUniverseBean;
 import module.siadap.domain.HomologationDocumentFile;
 import module.siadap.domain.Siadap;
 import module.siadap.domain.SiadapProcess;
 import module.siadap.domain.SiadapProcessStateEnum;
+import module.siadap.domain.exceptions.SiadapException;
+import module.siadap.domain.scoring.SiadapGlobalEvaluation;
 import module.siadap.domain.wrappers.PersonSiadapWrapper;
 import module.workflow.activities.ActivityInformation;
 import module.workflow.activities.WorkflowActivity;
 import myorg.domain.User;
 
+import org.apache.commons.lang.StringUtils;
 import org.joda.time.LocalDate;
 
 /**
  * 
  * 
  */
-public class Homologate extends WorkflowActivity<SiadapProcess, ActivityInformation<SiadapProcess>> {
+public class Homologate extends WorkflowActivity<SiadapProcess, HomologationActivityInformation> {
 
     @Override
     public boolean isActive(SiadapProcess process, User user) {
@@ -50,7 +54,34 @@ public class Homologate extends WorkflowActivity<SiadapProcess, ActivityInformat
     }
 
     @Override
-    protected void process(ActivityInformation<SiadapProcess> activityInformation) {
+    protected void process(HomologationActivityInformation activityInformation) {
+	//let's check if we should process the ChangeGrade as well
+	if (activityInformation.isShouldShowChangeGradeInterface()) {
+	    //let's check to see what is there. if we have any field filled, we should have a valid grade
+	    boolean shouldExecuteChangeGradeActivity = false;
+	    for (GradePerUniverseBean gradePerUniverseBean : activityInformation.getChangeGradeAnytimeActivityInformation()
+		    .getSiadapEvaluationUniversesBeans()) {
+		if (gradePerUniverseBean.getGradeToChangeTo() != null
+			|| !StringUtils.isBlank(gradePerUniverseBean.getJustification())
+			|| gradePerUniverseBean.isAssignExcellency()) {
+		    if (!SiadapGlobalEvaluation.isValidGrade(gradePerUniverseBean.getGradeToChangeTo(),
+			    gradePerUniverseBean.isAssignExcellency()))
+			throw new SiadapException("error.ChangeGradeAnytimeAfterValidationByCCA.invalid.valid.grade.found");
+		    else if (StringUtils.isBlank(gradePerUniverseBean.getJustification())) {
+			throw new SiadapException("error.ChangeGradeAnytimeAfterValidationByCCA.no.justification.given");
+		    } else {
+			shouldExecuteChangeGradeActivity = true;
+		    }
+		}
+	    }
+
+	    if (shouldExecuteChangeGradeActivity) {
+		ChangeGradeAnytimeAfterValidationByCCA changeGradeAnytimeAfterValidationByCCA = (ChangeGradeAnytimeAfterValidationByCCA) SiadapProcess
+			.getActivityStaticly(ChangeGradeAnytimeAfterValidationByCCA.class.getSimpleName());
+		changeGradeAnytimeAfterValidationByCCA.execute(activityInformation.getChangeGradeAnytimeActivityInformation());
+	    }
+
+	}
 	//let's generate the document
 	activityInformation.getProcess().getSiadap().setHomologationDate(new LocalDate());
 	new HomologationDocumentFile(new PersonSiadapWrapper(activityInformation.getProcess().getSiadap().getEvaluated(),
@@ -58,12 +89,22 @@ public class Homologate extends WorkflowActivity<SiadapProcess, ActivityInformat
     }
 
     @Override
+    public boolean isDefaultInputInterfaceUsed() {
+	return false;
+    }
+    @Override
     public boolean isConfirmationNeeded(SiadapProcess process) {
-	return true;
+	return false;
+    }
+
+    @Override
+    public ActivityInformation<SiadapProcess> getActivityInformation(SiadapProcess process) {
+	return new HomologationActivityInformation(process, this);
     }
 
     @Override
     public String getUsedBundle() {
 	return "resources/SiadapResources";
     }
+
 }
