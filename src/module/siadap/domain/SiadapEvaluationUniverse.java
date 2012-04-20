@@ -431,6 +431,11 @@ public class SiadapEvaluationUniverse extends SiadapEvaluationUniverse_Base {
      * SiadapAutoEvaluation or SiadapEvaluation
      */
     public void delete() {
+
+	for (SiadapEvaluationItem siadapEvaluationItems : getSiadapEvaluationItems()) {
+	    removeSiadapEvaluationItems(siadapEvaluationItems);
+	    siadapEvaluationItems.delete();
+	}
 	removeCompetenceSlashCareerType();
 	removeSiadap();
 	deleteDomainObject();

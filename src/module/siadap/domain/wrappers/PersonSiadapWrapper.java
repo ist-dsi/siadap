@@ -1328,7 +1328,7 @@ public class PersonSiadapWrapper extends PartyWrapper implements Serializable {
 
 	if (getSiadap() != null) {
 	    //check to see if we can remove the proccess
-	    if (getSiadap().hasAnySiadapEvaluationItemsInAnyUniverse() || !getSiadap().getProcess().getComments().isEmpty())
+	    if (getSiadap().getState().ordinal() > SiadapProcessStateEnum.NOT_SEALED.ordinal())
 		throw new SiadapException("error.has.items.in.it");
 	    //ok, so now let's remove that and the relations
 	    getSiadap().delete();
