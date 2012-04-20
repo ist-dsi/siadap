@@ -47,14 +47,18 @@ import pt.ist.fenixWebFramework.security.UserView;
 
 /**
  * 
- *         Script used to extend the SIADAP accountabilities from a given year
- *         {@link #YEAR_TO_EXTEND} to another {@link #YEAR_TO_EXTEND_TO} which
- *         must have a SiadapYearConfiguration already configured with the
- *         accountability types configured
+ * Script used to extend the SIADAP accountabilities from a given year
+ * {@link #YEAR_TO_EXTEND} to another {@link #YEAR_TO_EXTEND_TO} which must have
+ * a SiadapYearConfiguration already configured with the accountability types
+ * configured
  * 
  * @author João Antunes
  * 
+ *         TODO WARNING: Note, this script created Persons with both types of
+ *         working and working with no quota accountabilities @see
+ *         {@link CorrectSiadapAccsForEmployees}
  */
+@Deprecated
 public class ExtendSiadapStructure extends WriteCustomTask {
 
     class SiadapBean {

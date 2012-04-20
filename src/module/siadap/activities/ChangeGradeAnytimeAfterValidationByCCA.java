@@ -120,4 +120,9 @@ public class ChangeGradeAnytimeAfterValidationByCCA extends
 	return Siadap.SIADAP_BUNDLE_STRING;
     }
 
+    @Override
+    public boolean isUserAwarenessNeeded(SiadapProcess process) {
+	return false;
+    }
+
 }
