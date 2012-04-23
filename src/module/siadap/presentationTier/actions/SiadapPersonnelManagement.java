@@ -39,6 +39,7 @@ import javax.servlet.http.HttpServletResponse;
 import module.contacts.domain.EmailAddress;
 import module.organization.domain.Accountability;
 import module.organization.domain.AccountabilityType;
+import module.organization.domain.Party;
 import module.organization.domain.Person;
 import module.organization.domain.Unit;
 import module.siadap.activities.ChangePersonnelSituationActivityInformation;
@@ -132,6 +133,17 @@ public class SiadapPersonnelManagement extends ContextBaseAction {
 	}
 
 	return viewPerson(mapping, form, request, response);
+
+    }
+
+    public static boolean isValidSIADAPUnit(Person person, Unit unit, int year) {
+	AccountabilityType unitRelations = SiadapYearConfiguration.getSiadapYearConfiguration(year).getUnitRelations();
+	//let's get the unit and check to see if it has a unit relationship with some other unit or not 
+	Collection<Party> children = unit.getChildren(unitRelations);
+	Collection<Party> parents = unit.getParents(unitRelations);
+	if (children.size() == 0 && parents.size() == 0)
+	    return false;
+	return true;
 
     }
 

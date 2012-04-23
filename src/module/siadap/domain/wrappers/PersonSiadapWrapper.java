@@ -56,6 +56,7 @@ import module.siadap.domain.exceptions.SiadapException;
 import module.siadap.domain.scoring.SiadapGlobalEvaluation;
 import module.siadap.domain.util.SiadapMiscUtilClass;
 import module.siadap.presentationTier.actions.SiadapManagement;
+import module.siadap.presentationTier.actions.SiadapPersonnelManagement;
 import myorg.applicationTier.Authenticate.UserView;
 import myorg.domain.User;
 import myorg.domain.exceptions.DomainException;
@@ -539,6 +540,15 @@ public class PersonSiadapWrapper extends PartyWrapper implements Serializable {
 	}
     }
 
+    public boolean isPersonWorkingInValidSIADAPUnit() {
+	UnitSiadapWrapper workingUnit = getWorkingUnit();
+	if (workingUnit == null)
+	    return false;
+
+	return SiadapPersonnelManagement.isValidSIADAPUnit(person, workingUnit.getUnit(), getYear());
+    }
+
+
     public boolean isAccessibleToCurrentUser() {
 	Siadap siadap = getSiadap();
 	if (siadap == null) {
@@ -913,6 +923,11 @@ public class PersonSiadapWrapper extends PartyWrapper implements Serializable {
 	if (getSiadap().getRequestedAcknowledgeDate() != null)
 	    throw new SiadapException("error.changing.working.unit.already.submitted.for.acknowledgement");
 	SiadapYearConfiguration configuration = getConfiguration();
+
+	if (!SiadapPersonnelManagement.isValidSIADAPUnit(getPerson(), unit, getYear())) {
+	    throw new SiadapException("error.changing.working.unit.to.an.unregistered.one");
+	}
+
 	for (Accountability accountability : getParentAccountabilityTypes(configuration.getWorkingRelation(),
 		configuration.getWorkingRelationWithNoQuota())) {
 	    if (accountability.isActiveNow()) {

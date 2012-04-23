@@ -39,6 +39,14 @@
 	<p><b><bean:write name="message" /></b></p>
 </div>
 	</html:messages>
+	
+<logic:notEmpty name="person" property="siadap">
+	<logic:equal value="false" name="person" property="personWorkingInValidSIADAPUnit">
+		<div class="highlightBox"> 
+			<p style="color: darkRed"><b><bean:message bundle="SIADAP_RESOURCES" key="warning.working.unit.is.not.in.siadap.structure" /></b></p>
+		</div>
+	</logic:equal>
+</logic:notEmpty>
 
 <fr:view name="person">
 	<fr:schema type="module.siadap.domain.wrappers.PersonSiadapWrapper" bundle="SIADAP_RESOURCES">
