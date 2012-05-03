@@ -545,7 +545,7 @@ public class PersonSiadapWrapper extends PartyWrapper implements Serializable {
 	if (workingUnit == null)
 	    return false;
 
-	return SiadapPersonnelManagement.isValidSIADAPUnit(person, workingUnit.getUnit(), getYear());
+	return SiadapPersonnelManagement.isValidSIADAPUnit(workingUnit.getUnit(), getYear());
     }
 
 
@@ -924,7 +924,7 @@ public class PersonSiadapWrapper extends PartyWrapper implements Serializable {
 	    throw new SiadapException("error.changing.working.unit.already.submitted.for.acknowledgement");
 	SiadapYearConfiguration configuration = getConfiguration();
 
-	if (!SiadapPersonnelManagement.isValidSIADAPUnit(getPerson(), unit, getYear())) {
+	if (!SiadapPersonnelManagement.isValidSIADAPUnit(unit, getYear())) {
 	    throw new SiadapException("error.changing.working.unit.to.an.unregistered.one");
 	}
 

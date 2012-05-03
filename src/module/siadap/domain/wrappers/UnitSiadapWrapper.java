@@ -60,6 +60,7 @@ import module.siadap.domain.exceptions.ValidationTerminationException;
 import module.siadap.domain.scoring.SiadapGlobalEvaluation;
 import module.siadap.domain.util.SiadapMiscUtilClass;
 import module.siadap.domain.wrappers.SiadapUniverseWrapper.UniverseDisplayMode;
+import module.siadap.presentationTier.actions.SiadapPersonnelManagement;
 import module.workflow.activities.ActivityException;
 import module.workflow.activities.ActivityInformation;
 import module.workflow.activities.WorkflowActivity;
@@ -900,6 +901,10 @@ public class UnitSiadapWrapper extends PartyWrapper implements Serializable {
 
     public List<PersonSiadapWrapper> getUnitEmployeesWithQuotas(Predicate predicate) {
 	return getUnitEmployeesWithQuotas(true, predicate);
+    }
+
+    public boolean isValidSIADAPUnit() {
+	return SiadapPersonnelManagement.isValidSIADAPUnit(getUnit(), getYear());
     }
 
     public List<PersonSiadapWrapper> getUnitEmployeesWithQuotas(boolean continueToSubUnits, Predicate predicate) {

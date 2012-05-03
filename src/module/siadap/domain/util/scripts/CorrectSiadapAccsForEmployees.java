@@ -19,6 +19,8 @@ import module.organization.domain.Person;
 import module.siadap.domain.Siadap;
 import module.siadap.domain.SiadapRootModule;
 import module.siadap.domain.SiadapYearConfiguration;
+import module.siadap.domain.wrappers.PersonSiadapWrapper;
+import module.siadap.domain.wrappers.UnitSiadapWrapper;
 import myorg.domain.scheduler.WriteCustomTask;
 
 import org.joda.time.LocalDate;
@@ -83,10 +85,21 @@ public class CorrectSiadapAccsForEmployees extends WriteCustomTask {
 	relevantAccountabilityTypes.add(siadapYearConfiguration.getHarmonizationUnitRelations());
 	relevantAccountabilityTypes.add(siadapYearConfiguration.getHarmonizationResponsibleRelation());
 
+	//list of person's that aren't on the SIADAP model
+	List<PersonSiadapWrapper> personsWithoutFunctionalWorkingUnit = new ArrayList<PersonSiadapWrapper>();
+
+	List<Person> personsWithDuplicatedWorkAccs = new ArrayList<Person>();
+
 	//get all of the SIADAPs and accountabilities
 	Map<Person, List<Accountability>> persons = new HashMap<Person, List<Accountability>>();
 	for (Siadap siadap : SiadapRootModule.getInstance().getSiadaps()) {
 	    persons.put(siadap.getEvaluated(), new ArrayList<Accountability>());
+	    PersonSiadapWrapper personSiadapWrapper = new PersonSiadapWrapper(siadap.getEvaluated(), siadap.getYear());
+	    UnitSiadapWrapper workingUnit = personSiadapWrapper.getWorkingUnit();
+	    if (workingUnit != null && !workingUnit.isValidSIADAPUnit()) {
+		personsWithoutFunctionalWorkingUnit.add(personSiadapWrapper);
+	    }
+
 	}
 
 	Map<Person, Map<AccountabilityType, List<Accountability>>> duplicatedAccsForPerson = new HashMap<Person, Map<AccountabilityType, List<Accountability>>>();
@@ -128,6 +141,8 @@ public class CorrectSiadapAccsForEmployees extends WriteCustomTask {
 		    workingRelationAcc = null;
 		    workingRelationWithoutQuotasAcc = null;
 
+		    personsWithDuplicatedWorkAccs.add(person);
+
 		}
 
 		if (duplicatedAccs.size() >= 2) {
@@ -160,6 +175,30 @@ public class CorrectSiadapAccsForEmployees extends WriteCustomTask {
 			    + " creation user: '" + username + "'");
 		}
 
+	    }
+	}
+
+	out.println("Persons with 'invalid' SIADAP unit: " + personsWithoutFunctionalWorkingUnit.size() + " listing: ");
+	for (PersonSiadapWrapper personSiadapWrapper : personsWithoutFunctionalWorkingUnit) {
+	    out.println(personSiadapWrapper.getPerson().getPresentationName() + " "
+		    + personSiadapWrapper.getWorkingUnit().getUnit().getPresentationName());
+	}
+
+	out.println("\n\n\nTaking care of the duplicated work accs");
+
+	for (Person person : personsWithDuplicatedWorkAccs) {
+	    out.println("Processing " + person.getPresentationName());
+	    //let's get the quota working relation and delete it
+	    Collection<Accountability> parentAccountabilities = person.getParentAccountabilities(siadapYearConfiguration
+		    .getWorkingRelation());
+	    for (Accountability acc : parentAccountabilities) {
+		if (acc.isActiveNow()) {
+		    //let's remove it
+		    String username = (acc.getCreatorUser() != null) ? acc.getCreatorUser().getUsername() : "-";
+		    out.println("deleting Acc " + acc.getDetailsString() + " creation date: " + acc.getCreationDate()
+			    + " creation user: '" + username + "'");
+		    acc.delete();
+		}
 	    }
 	}
 

@@ -136,7 +136,7 @@ public class SiadapPersonnelManagement extends ContextBaseAction {
 
     }
 
-    public static boolean isValidSIADAPUnit(Person person, Unit unit, int year) {
+    public static boolean isValidSIADAPUnit(Unit unit, int year) {
 	AccountabilityType unitRelations = SiadapYearConfiguration.getSiadapYearConfiguration(year).getUnitRelations();
 	//let's get the unit and check to see if it has a unit relationship with some other unit or not 
 	Collection<Party> children = unit.getChildren(unitRelations);
