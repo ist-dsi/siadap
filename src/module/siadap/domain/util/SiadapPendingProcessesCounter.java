@@ -49,12 +49,17 @@ public class SiadapPendingProcessesCounter extends ProcessCounter {
     public int getCount() {
 	int result = 0;
 	final User user = UserView.getCurrentUser();
-	ArrayList<PersonSiadapWrapper> siadapWrappers = SiadapRootModule.getInstance().getAssociatedSiadaps(user.getPerson(),
+	try {
+	    ArrayList<PersonSiadapWrapper> siadapWrappers = SiadapRootModule.getInstance().getAssociatedSiadaps(user.getPerson(),
 		false);
-	//let's count the ones with pending actions: - anything that the user can do
-	for (PersonSiadapWrapper personSiadapWrapper : siadapWrappers) {
-	    if (!isToBeExcluded(personSiadapWrapper) && personSiadapWrapper.hasPendingActions())
-		result++;
+	    //let's count the ones with pending actions: - anything that the user can do
+	    for (PersonSiadapWrapper personSiadapWrapper : siadapWrappers) {
+		if (!isToBeExcluded(personSiadapWrapper) && personSiadapWrapper.hasPendingActions())
+		    result++;
+	    }
+	} catch (final Throwable t) {
+	    t.printStackTrace();
+	    //throw new Error(t);
 	}
 
 	return result;
