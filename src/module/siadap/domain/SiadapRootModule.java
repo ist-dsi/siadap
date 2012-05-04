@@ -45,6 +45,7 @@ import myorg.domain.ModuleInitializer;
 import myorg.domain.MyOrg;
 import myorg.domain.User;
 import myorg.domain.groups.NamedGroup;
+import myorg.domain.groups.PersistentGroup;
 import myorg.domain.groups.UnionGroup;
 
 import org.apache.log4j.Logger;
@@ -261,15 +262,15 @@ public class SiadapRootModule extends SiadapRootModule_Base implements ModuleIni
 
     private void initializeSiadapGroups(MyOrg root) {
 	SiadapRootModule.getInstance();
-	//	for (PersistentGroup group : root.getPersistentGroups()) {
-	//	    if (group instanceof NamedGroup) {
-	//		//init the named groups
-	//		if (((NamedGroup) group).getGroupName().equals(ImportTestUsers.groupName)) {
-	//		    //init the test user group
-	//		    setSiadapTestUserGroup((NamedGroup) group);
-	//		}
-	//	    }
-	//	}
+	for (PersistentGroup group : root.getPersistentGroups()) {
+	    if (group instanceof NamedGroup) {
+		//init the named groups
+		if (((NamedGroup) group).getGroupName().equals(ImportTestUsers.groupName)) {
+		    //init the test user group
+		    setSiadapTestUserGroup((NamedGroup) group);
+		}
+	    }
+	}
 
 	if (getSiadapTestUserGroup() == null) {
 	    //TODO create it ?!
