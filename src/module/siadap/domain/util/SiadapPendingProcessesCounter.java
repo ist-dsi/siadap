@@ -73,18 +73,8 @@ public class SiadapPendingProcessesCounter extends ProcessCounter {
      *         otherwise
      */
     private boolean isToBeExcluded(PersonSiadapWrapper personSiadapWrapper) {
-	if (personSiadapWrapper.getYear() != 2010)
-	    return false;
-	else {
-	    //let's check if the user is of the test user group
-	    if (SiadapRootModule.getInstance().getSiadapTestUserGroup().hasUsers(UserView.getCurrentUser())) {
-		return false;
-	    }
-	}
-	return true;
-
+	return personSiadapWrapper.getYear() == 2010;
     }
-
 
 
 }
