@@ -55,7 +55,7 @@ public class SiadapStateToShowInCount implements DataProvider {
     }
 
     public static SiadapProcessStateEnum getMaximumStateToShowInCount() {
-	return SiadapProcessStateEnum.HOMOLOGATED;
+	return SiadapProcessStateEnum.FINAL_STATE;
     }
 
 

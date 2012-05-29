@@ -110,4 +110,8 @@ public class SiadapMiscUtilClass {
 	return new LocalDate(year, 12, 30);
     }
 
+    public static LocalDate firstDayOfYear(Integer year) {
+	return new LocalDate(year, 1, 1);
+    }
+
 }

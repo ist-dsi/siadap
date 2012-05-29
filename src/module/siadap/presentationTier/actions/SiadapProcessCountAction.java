@@ -26,6 +26,10 @@ package module.siadap.presentationTier.actions;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
@@ -39,13 +43,18 @@ import module.organization.domain.Party;
 import module.organization.domain.Person;
 import module.organization.domain.Unit;
 import module.organization.presentationTier.actions.OrganizationModelAction;
+import module.siadap.domain.Siadap;
+import module.siadap.domain.SiadapProcess;
 import module.siadap.domain.SiadapProcessStateEnum;
+import module.siadap.domain.SiadapRootModule;
 import module.siadap.domain.SiadapYearConfiguration;
 import module.siadap.domain.util.SiadapMiscUtilClass;
+import module.siadap.domain.util.SiadapProcessCounter;
 import module.siadap.domain.wrappers.SiadapProcessStateEnumWrapper;
 import module.siadap.domain.wrappers.SiadapYearWrapper;
 import module.siadap.presentationTier.renderers.providers.SiadapStateToShowInCount;
 import module.siadap.presentationTier.renderers.providers.SiadapYearsFromExistingSiadapConfigurations;
+import module.workflow.domain.ProcessFile;
 import myorg.domain.MyOrg;
 import myorg.presentationTier.actions.ContextBaseAction;
 import myorg.presentationTier.component.OrganizationChart;
@@ -56,7 +65,11 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.joda.time.LocalDate;
 
+import pt.ist.fenixWebFramework.renderers.utils.RenderUtils;
+import pt.ist.fenixWebFramework.services.Service;
 import pt.ist.fenixWebFramework.struts.annotations.Mapping;
+
+import com.google.common.collect.ArrayListMultimap;
 
 @Mapping(path = "/siadapProcessCount")
 /**
@@ -73,6 +86,170 @@ public class SiadapProcessCountAction extends ContextBaseAction {
 	final ActionForward forward = super.execute(mapping, form, request, response);
 	OrganizationModelAction.addHeadToLayoutContext(request);
 	return forward;
+    }
+
+    public ActionForward listSiadapsByStateAndYear(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+	    HttpServletResponse response)
+	    throws Exception {
+
+	SiadapProcessStateEnum state = SiadapProcessStateEnum.valueOf(request.getParameter("state"));
+	Integer year = Integer.valueOf(request.getParameter("year"));
+
+	if (state == null || year == null)
+	    return null;
+
+	ArrayList<Siadap> siadapsOfYearAndState = new ArrayList<Siadap>();
+	for (Siadap siadap : SiadapRootModule.getInstance().getSiadaps()) {
+	    if (siadap.getYear().equals(year) && siadap.getState().equals(state)) {
+		siadapsOfYearAndState.add(siadap);
+	    }
+
+	}
+	
+	java.util.Collections
+		.sort(siadapsOfYearAndState, Siadap.COMPARATOR_BY_EVALUATED_PRESENTATION_NAME_FALLBACK_YEAR_THEN_OID);
+
+	request.setAttribute("renderRemoveLink", Boolean.FALSE);
+	request.setAttribute("siadaps", siadapsOfYearAndState);
+
+	return forward(request, "/module/siadap/listGivenCollectionOfSiadaps.jsp");
+    }
+
+    public ActionForward removeSiadap(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+	    HttpServletResponse response) throws Exception {
+	
+	Siadap siadap = getDomainObject(request, "siadapId");
+	Integer year = siadap.getYear();
+	
+	deleteSiadapEvenWithFiles(siadap);
+
+	return manageDuplicateSiadaps(request, year);
+
+    }
+
+    @Service
+    private void deleteSiadapEvenWithFiles(Siadap siadap) {
+	SiadapProcess process = siadap.getProcess();
+	for (ProcessFile file : process.getFiles()) {
+	    process.removeFiles(file);
+	}
+	for (ProcessFile file : process.getDeletedFiles()) {
+	    process.removeDeletedFiles(file);
+	}
+	siadap.delete(true);
+    }
+
+    private ActionForward manageDuplicateSiadaps(HttpServletRequest request, Integer year) throws Exception {
+	RenderUtils.invalidateViewState();
+	//let's make a list of duplicates
+	ArrayListMultimap<Person, Siadap> duplicateList = ArrayListMultimap.create();
+	for (Siadap siadap : SiadapRootModule.getInstance().getSiadaps()) {
+	    if (siadap.getYear().equals(year)) {
+		//and in the duplicateList
+		duplicateList.get(siadap.getEvaluated()).add(siadap);
+	    }
+	}
+
+	Set<Siadap> siadaps = new TreeSet<Siadap>(Siadap.COMPARATOR_BY_EVALUATED_PRESENTATION_NAME_FALLBACK_YEAR_THEN_OID);
+
+	for (Person person : duplicateList.keys()) {
+	    List<Siadap> list = duplicateList.get(person);
+	    if (list.size() > 1)
+		siadaps.addAll(list);
+	}
+
+	request.setAttribute("siadaps", siadaps);
+	request.setAttribute("renderRemoveLink", Boolean.TRUE);
+	return forward(request, "/module/siadap/listGivenCollectionOfSiadaps.jsp");
+    }
+    public ActionForward manageDuplicateSiadaps(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+	    HttpServletResponse response) throws Exception {
+
+	Integer year = Integer.valueOf(request.getParameter("year"));
+
+	return manageDuplicateSiadaps(request, year);
+	
+
+    }
+
+    public ActionForward manageUnlistedUsers(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+	    HttpServletResponse response) throws Exception {
+
+	Integer year = Integer.valueOf(request.getParameter("year"));
+
+	SiadapYearConfiguration configuration = SiadapYearConfiguration.getSiadapYearConfiguration(year);
+
+	//let's get all the siadasp
+	Set<Siadap> allSiadaps = new TreeSet<Siadap>(Siadap.COMPARATOR_BY_EVALUATED_PRESENTATION_NAME_FALLBACK_YEAR_THEN_OID);
+	for (Siadap siadap : SiadapRootModule.getInstance().getSiadaps()) {
+	    if (siadap.getYear().equals(year)) {
+		allSiadaps.add(siadap);
+	    }
+	}
+
+	//let's get all of the listed ones
+
+	SiadapProcessCounter siadapProcessCounter = new SiadapProcessCounter(configuration.getSiadapStructureTopUnit(), false,
+		configuration, true);
+
+	Set<Siadap> siadaps = siadapProcessCounter.getSiadaps();
+
+	allSiadaps.removeAll(siadaps);
+
+
+	request.setAttribute("siadaps", allSiadaps);
+	request.setAttribute("renderRemoveLink", Boolean.FALSE);
+	request.setAttribute("renderManageSiadapPersonLink", Boolean.TRUE);
+	return forward(request, "/module/siadap/listGivenCollectionOfSiadaps.jsp");
+
+    }
+
+    public ActionForward manageDuplicatePersons(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+	    HttpServletResponse response) throws Exception {
+
+	Integer year = Integer.valueOf(request.getParameter("year"));
+
+	//let's get the siadaps for the duplicate persons
+	SiadapYearConfiguration siadapYearConfiguration = SiadapYearConfiguration.getSiadapYearConfiguration(year);
+	SiadapProcessCounter processCounter = new SiadapProcessCounter(siadapYearConfiguration.getSiadapStructureTopUnit(),
+		false, siadapYearConfiguration);
+	Set<Person> duplicatePersons = processCounter.getDuplicatePersons();
+	ArrayList<Siadap> siadaps = new ArrayList<Siadap>();
+	for (Person person : duplicatePersons) {
+	    for (Siadap siadap : person.getSiadapsAsEvaluated()) {
+		if (siadap.getYear().equals(year)) {
+		    siadaps.add(siadap);
+		}
+	    }
+	}
+
+	request.setAttribute("siadaps", siadaps);
+	request.setAttribute("renderRemoveLink", Boolean.TRUE);
+	request.setAttribute("renderManageSiadapPersonLink", Boolean.TRUE);
+	return forward(request, "/module/siadap/listGivenCollectionOfSiadaps.jsp");
+
+
+    }
+
+    public ActionForward showUnitAccDetails(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+	    HttpServletResponse response) throws Exception {
+
+	Integer year = Integer.valueOf(request.getParameter("year"));
+
+	SiadapYearConfiguration siadapYearConfiguration = SiadapYearConfiguration.getSiadapYearConfiguration(year);
+
+	List<AccountabilityType> accountabilities = new ArrayList<AccountabilityType>();
+	accountabilities.add(siadapYearConfiguration.getUnitRelations());
+
+	LocalDate startDate = SiadapMiscUtilClass.firstDayOfYear(year);
+
+	request.setAttribute("startDate", startDate);
+	request.setAttribute("accountabilities", accountabilities);
+	request.setAttribute("showDeletedAccountabilities", Boolean.TRUE);
+	request.setAttribute("returnPageURL", "/siadapProcessCount.do?method=manageDuplicatePersons&year=" + year.toString());
+
+	return forward(request, "/organization/viewAccsAndHistory.jsp");
+
     }
 
     public ActionForward showUnit(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response)
@@ -121,6 +298,35 @@ public class SiadapProcessCountAction extends ContextBaseAction {
 	Unit unit = (Unit) getDomainObject(request, "unitId");
 	if (unit == null) {
 	    unit = configuration.getSiadapStructureTopUnit();
+
+	    
+	    //and let's also get the total number of SIADAPs for this year
+	    int siadapsCount = SiadapYearConfiguration.getSiadapYearConfiguration(siadapYearWrapper.getChosenYear())
+		    .getSiadapsCount();
+	    int siadapsDefinitiveCount = 0;
+	    Map<SiadapProcessStateEnum, Integer> stateCount = new HashMap<SiadapProcessStateEnum, Integer>();
+	    for (Siadap siadap : SiadapRootModule.getInstance().getSiadaps()) {
+		if (siadap.getYear().equals(siadapYearWrapper.getChosenYear())) {
+		    siadapsDefinitiveCount++;
+		    //let's put them on an HashMap by state TODO use Guave to do this
+		    SiadapProcessStateEnum state = siadap.getState();
+		    Integer integer = stateCount.get(state);
+		    if (integer == null) {
+			integer = 0;
+		    }
+		    integer++;
+		    stateCount.put(state, integer);
+		    
+
+		}
+	    }
+
+
+
+	    request.setAttribute("totalDefinitiveCount", stateCount);
+	    request.setAttribute("siadapsCount", siadapsCount);
+	    request.setAttribute("siadapsDefinitiveCount", siadapsDefinitiveCount);
+
 	}
 
 	final Collection<Party> parents = getParents(unit, configuration, dayToUse);

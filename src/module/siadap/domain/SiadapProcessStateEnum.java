@@ -120,6 +120,8 @@ public enum SiadapProcessStateEnum implements IPresentableEnum {
 	    return "siadap.state.waiting.review.commission";
 	case HOMOLOGATED:
 	    return "siadap.state.homologated";
+	case FINAL_STATE:
+	    return "siadap.state.final";
 	    //	case UNIMPLEMENTED_STATE:
 	    //	    return "siadap.state.unimplemented";
 	}

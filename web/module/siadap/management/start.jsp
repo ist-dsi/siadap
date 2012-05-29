@@ -31,6 +31,9 @@
 
 <bean:define id="year" name="siadapYearWrapper" property="chosenYear"/>
 
+<html:link page="/siadapProcessCount.do?method=manageUnlistedUsers" paramId="year" paramName="year" >
+	<p>Gerir pessoas não listadas</p>
+</html:link>
 <%-- Link for the hierarchy excel file --%>
 <html:link action="/siadapPersonnelManagement.do?method=downloadNormalSIADAPStructure" paramId="year" paramName="siadapYearWrapper" paramProperty="chosenYear">
 <p>Download da listagem de hierarquias SIADAP</p>

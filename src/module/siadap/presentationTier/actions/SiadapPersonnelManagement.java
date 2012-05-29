@@ -197,6 +197,24 @@ public class SiadapPersonnelManagement extends ContextBaseAction {
 	Person person = (Person) ((bean != null) ? bean.getDomainObject() : getDomainObject(request, "personId"));
 
 	int year = Integer.parseInt(request.getParameter("year"));
+
+	return viewPerson(request, response, person, year);
+
+    }
+
+    public final ActionForward viewPersonLinkAction(final ActionMapping mapping, final ActionForm form,
+	    final HttpServletRequest request, final HttpServletResponse response) throws Exception {
+
+	Person person = getDomainObject(request, "personId");
+
+	int year = Integer.parseInt(request.getParameter("year"));
+
+	return viewPerson(request, response, person, year);
+
+    }
+
+    protected final ActionForward viewPerson(final HttpServletRequest request, final HttpServletResponse response, Person person,
+	    int year) throws Exception {
 	PersonSiadapWrapper personSiadapWrapper = new PersonSiadapWrapper(person, year);
 
 	//checking for the existence of the e-mail addresses of the SiadapStructureManagementGroup users and let's warn if they don't exist
@@ -219,7 +237,9 @@ public class SiadapPersonnelManagement extends ContextBaseAction {
 	request.setAttribute("changeCompetenceTypeBean", new CompetenceTypeBean(personSiadapWrapper));
 	request.setAttribute("history", personSiadapWrapper.getAccountabilitiesHistory());
 	return forward(request, "/module/siadap/management/editPerson.jsp");
+
     }
+
 
     public final ActionForward terminateUnitHarmonization(final ActionMapping mapping, final ActionForm form,
 	    final HttpServletRequest request, final HttpServletResponse response) throws Exception {

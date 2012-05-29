@@ -1,3 +1,4 @@
+<%@page import="java.util.Map.Entry"%>
 <%@page import="module.siadap.presentationTier.renderers.providers.SiadapStateToShowInCount"%>
 <%@page import="org.joda.time.LocalDate"%>
 <%@page import="module.organization.domain.Accountability"%>
@@ -65,7 +66,16 @@
 <%-- TODO: make this JSP year sensible --%>
 <html:link action="<%="/siadapProcessCount.do?method=showSummaryTables&year="+configuration.getYear()%>" >Quadro síntese</html:link>
 
-
+<%
+	final SiadapProcessCounter mainCounter = new SiadapProcessCounter(unit, false, configuration);
+	int siadapTotalCount = 0;
+	int nrDuplicatedPersons = mainCounter.getDuplicatePersons().size();
+	for (int i = 0 ; i < mainCounter.getCounts().length && i < SiadapStateToShowInCount.getMaximumStateToShowInCount().ordinal(); i++) {
+	    final int count = mainCounter.getCounts()[i];
+	    final SiadapProcessStateEnum state = SiadapProcessStateEnum.values()[i];
+	    siadapTotalCount += count;
+	}
+%>
 <div class="infobox">
 	<table align="center" style="width: 100%; text-align: center;">
 		<tr>
@@ -128,19 +138,99 @@
 	</table>
 </div>
 
-<table class="tstyle3">
+<logic:present role="myorg.domain.RoleType.MANAGER">
+	<p>Secção só apresentada a administrador, usar com cuidado</p>
+	<logic:present name="siadapsCount">
+		<p>SiadapsCount: <bean:write name="siadapsCount"/></p>
+	</logic:present>
+</logic:present>
+<logic:present name="siadapsDefinitiveCount">
+<%	int siadapsDefinitiveCount = (Integer) request.getAttribute("siadapsDefinitiveCount"); %>
+	<logic:notEqual value="<%=String.valueOf(siadapTotalCount)%>" name="siadapsDefinitiveCount" >
+		<div class="highlightBox">
+			<p>Atenção, existem <%=siadapsDefinitiveCount - siadapTotalCount%> processos não listados</p>
+			<logic:present role="myorg.domain.RoleType.MANAGER">
+				<p>Secção só apresentada a administrador, usar com cuidado</p>
+				<html:link page="/siadapProcessCount.do?method=manageDuplicatePersons" paramId="year" paramName="year" >
+					<p>Número de pessoas duplicadas: <%=nrDuplicatedPersons%></p>
+				</html:link>
+				<p>siadapsDefinitiveCount: <bean:write name="siadapsDefinitiveCount"/></p>
+			</logic:present>
+			<html:link page="/siadapProcessCount.do?method=manageUnlistedUsers" paramId="year" paramName="year" >
+				<p>Gerir pessoas não listadas</p>
+			</html:link>
+		</div>
+	</logic:notEqual>
+</logic:present>
+<logic:present role="myorg.domain.RoleType.MANAGER">
+	<p>Secção só apresentada a administrador, usar com cuidado</p>
+	<logic:present name="totalDefinitiveCount">
+		<logic:iterate id="stateEntry" name="totalDefinitiveCount" >
+			<html:link page="<%="/siadapProcessCount.do?method=listSiadapsByStateAndYear&year=" + year + "&state=" + ((java.util.Map.Entry)stateEntry).getKey()%>">
+				<p><bean:write name="stateEntry" property="key.localizedName"/>: <bean:write name="stateEntry" property="value"/></p>
+			</html:link>
+		</logic:iterate>
+	</logic:present>
+	<html:link page="<%="/siadapProcessCount.do?method=manageDuplicateSiadaps&year=" + year %>">
+		<p>Gerir siadaps duplicados</p>
+	</html:link>
+</logic:present>
+
+
+
 <%
-	final SiadapProcessCounter counter = new SiadapProcessCounter(unit, false, configuration);
-	for (int i = 0 ; i < counter.getCounts().length && i < SiadapStateToShowInCount.getMaximumStateToShowInCount().ordinal(); i++) {
-	    final int count = counter.getCounts()[i];
-	    final SiadapProcessStateEnum state = SiadapProcessStateEnum.values()[i];
+final int NR_STATES_PER_ROW = 9;
+final int MAX_NR_STATES = (mainCounter.getCounts().length < SiadapStateToShowInCount.getMaximumStateToShowInCount().ordinal()) ? mainCounter.getCounts().length :  SiadapStateToShowInCount.getMaximumStateToShowInCount().ordinal();
+int j =0;
+%>
+<table class="tstyle tcenter">
+
+<% 
+	for (int i = 0; i < MAX_NR_STATES; i=j) {
 %>
 	<tr>
+	<%-- Let's take care of the blank spaces here
+	 --%>
+	<% 
+	int nrBlanksToFill = 0;
+		if ((i + NR_STATES_PER_ROW) > MAX_NR_STATES )
+		{
+		     nrBlanksToFill = ((i + NR_STATES_PER_ROW) - MAX_NR_STATES) / 2;
+		}
+	    %>
+	    <%
+	    	for (int k=0; k< nrBlanksToFill; k++) {
+	    %>
+	    <td></td>
+	    <% } %>
+<%
+	for (j=i ; ((j - i) < NR_STATES_PER_ROW) && (j < MAX_NR_STATES); j++) {
+	    final int count = mainCounter.getCounts()[j];
+	    final SiadapProcessStateEnum state = SiadapProcessStateEnum.values()[j];
+	    siadapTotalCount += count;
+%>
 		<th>
 			<strong>
 				<%= state.getLocalizedName() %>
 			</strong>
 		</th>
+	<% } %>
+	</tr>
+	<tr>
+		<%-- Let's take care of the blank spaces here
+	 --%>
+	    <%
+	    	for (int k=0; k< nrBlanksToFill; k++) {
+	    %>
+	    <td></td>
+	    <% } %>
+	
+<%
+	for (j=i ; ((j - i) < NR_STATES_PER_ROW) && (j  <MAX_NR_STATES); j++) {
+	    final int count = mainCounter.getCounts()[j];
+	    final SiadapProcessStateEnum state = SiadapProcessStateEnum.values()[j];
+	    siadapTotalCount += count;
+%>
 		
 		<td>
 			<%
@@ -157,11 +247,18 @@
 				}
 			%>
 		</td>
-	</tr>
 <%
 	}
 %>
+	</tr>
+	<%
+}
+%>
 </table>
+
+
+	
+
 
 <table align="center" style="width: 100%; text-align: center;">
 	<tr>

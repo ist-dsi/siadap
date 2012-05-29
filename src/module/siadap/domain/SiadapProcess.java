@@ -456,14 +456,15 @@ public class SiadapProcess extends SiadapProcess_Base {
      * Deletes the proccess if it has no relevant info on it (more than one
      * logged activity, any comment, etc)
      */
-    protected void delete() {
+    protected void delete(boolean neglectLogSize) {
 	releaseProcess();
 	List<WorkflowLog> executionLogs = getExecutionLogs();
-	if (executionLogs.size() > 1)
+	if (!neglectLogSize && executionLogs.size() > 1)
 	    throw new SiadapException("error.has.items.in.it");
 	for (WorkflowLog exLog : executionLogs) {
 	    removeExecutionLogs(exLog);
 	}
+	removeDocumentsRepository();
 	removeSiadap();
 	removeWorkflowSystem();
 	deleteDomainObject();

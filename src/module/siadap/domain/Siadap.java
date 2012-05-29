@@ -27,6 +27,7 @@ package module.siadap.domain;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import module.organization.domain.Accountability;
@@ -59,6 +60,29 @@ import pt.ist.fenixWebFramework.services.Service;
 public class Siadap extends Siadap_Base {
 
     public static final String SIADAP_BUNDLE_STRING = "resources/SiadapResources";
+    
+    public static final Comparator<Siadap> COMPARATOR_BY_EVALUATED_PRESENTATION_NAME_FALLBACK_YEAR_THEN_OID =  new Comparator<Siadap>() {
+
+	    @Override
+	    public int compare(Siadap o1, Siadap o2) {
+		
+	    int presentationNameComparison = 0;
+	    if (o1 == null || o2 == null) {
+		if (o2 == null && o1 == null)
+		    return 0;
+		if (o2 == null)
+		    return 1;
+		if (o1 == null)
+		    return -1;
+	    }
+	    if (o1.getEvaluated() != null && o2.getEvaluated() != null)
+		presentationNameComparison = o1.getEvaluated().getPresentationName()
+			.compareTo(o2.getEvaluated().getPresentationName());
+		int yearComparison = o1.getYear().compareTo(o2.getYear());
+	    return presentationNameComparison == 0 ? (yearComparison == 0 ? o1.getExternalId().compareTo(o2.getExternalId())
+		    : yearComparison) : presentationNameComparison;
+	    }
+	};
 
     //register itself in the pending processes widget:
     static {
@@ -120,6 +144,8 @@ public class Siadap extends Siadap_Base {
 	    }
 	} else if (getAcknowledgeHomologationDate() == null) {
 	    return SiadapProcessStateEnum.HOMOLOGATED;
+	} else if (getAcknowledgeHomologationDate() != null) {
+	    return SiadapProcessStateEnum.FINAL_STATE;
 	}
 	return SiadapProcessStateEnum.UNIMPLEMENTED_STATE;
     }
@@ -910,15 +936,19 @@ public class Siadap extends Siadap_Base {
 
     }
 
+
+    public void delete() {
+	delete(false);
+    }
     /**
      * Deletes the proccess and everything which is associated with it
      */
-    public void delete()
+    public void delete(boolean neglectLogSize)
     {
 	removeEvaluated();
 	SiadapProcess process = getProcess();
 	removeProcess();
-	process.delete();
+	process.delete(neglectLogSize);
 	for (SiadapEvaluationUniverse siadapEvalUni : getSiadapEvaluationUniverses())
 	{
 	    removeSiadapEvaluationUniverses(siadapEvalUni);

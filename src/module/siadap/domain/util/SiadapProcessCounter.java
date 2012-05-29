@@ -26,6 +26,8 @@ package module.siadap.domain.util;
 
 import java.io.Serializable;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Set;
 
 import module.organization.domain.Accountability;
 import module.organization.domain.AccountabilityType;
@@ -36,6 +38,9 @@ import module.siadap.domain.SiadapProcessStateEnum;
 import module.siadap.domain.SiadapYearConfiguration;
 
 import org.joda.time.LocalDate;
+
+import com.google.common.collect.ConcurrentHashMultiset;
+import com.google.common.collect.Multiset;
 
 /**
  * 
@@ -58,17 +63,40 @@ public class SiadapProcessCounter implements Serializable {
     private final transient AccountabilityType workingUnitWithQuotaRelation;
     private final transient AccountabilityType workingUnitWithoutQuotaRelation;
 
+    private final Multiset<Person> duplicatedPersons = ConcurrentHashMultiset.create();
+    private final Multiset<Unit> duplicatedUnit = ConcurrentHashMultiset.create();
+    private final boolean filteredDuplicatedPersonsSet = false;
+    private final boolean filteredDuplicatedUnitSet = false;
+    private final Unit topUnit;
+
+    private boolean gatherSiadaps = false;
+
+    private final Set<Siadap> siadaps = new HashSet<Siadap>();
+
+    public SiadapProcessCounter(final Unit unit, boolean distinguishBetweenUniverses, SiadapYearConfiguration configuration,
+	    boolean gatherSiadaps) {
+	this(unit, distinguishBetweenUniverses, configuration);
+	this.gatherSiadaps = gatherSiadaps;
+	init(distinguishBetweenUniverses);
+
+    }
     public SiadapProcessCounter(final Unit unit, boolean distinguishBetweenUniverses, SiadapYearConfiguration configuration) {
+	topUnit = unit;
 	this.configuration = configuration;
 	this.dayToUse = SiadapMiscUtilClass.lastDayOfYearWhereAccsAreActive(configuration.getYear());
 	unitRelations = configuration.getUnitRelations();
 	evaluationRelation = configuration.getEvaluationRelation();
 	workingUnitWithQuotaRelation = configuration.getWorkingRelation();
 	workingUnitWithoutQuotaRelation = configuration.getWorkingRelationWithNoQuota();
+	init(distinguishBetweenUniverses);
+
+    }
+
+    void init(boolean distinguishBetweenUniverses) {
 	if (distinguishBetweenUniverses) {
-	count(unit, distinguishBetweenUniverses);
+	    count(topUnit, distinguishBetweenUniverses);
 	} else
-	    count(unit);
+	    count(topUnit);
     }
 
     private void count(Unit unit, boolean distinguishBetweenUniverses) {
@@ -77,6 +105,7 @@ public class SiadapProcessCounter implements Serializable {
 		final AccountabilityType accountabilityType = accountability.getAccountabilityType();
 		if (accountabilityType == unitRelations) {
 		    final Unit child = (Unit) accountability.getChild();
+		    duplicatedUnit.add(child);
 		    count(child, distinguishBetweenUniverses);
 		} else if (accountabilityType == workingUnitWithQuotaRelation) {
 		    final Person person = (Person) accountability.getChild();
@@ -99,6 +128,7 @@ public class SiadapProcessCounter implements Serializable {
 		final AccountabilityType accountabilityType = accountability.getAccountabilityType();
 		if (accountabilityType == unitRelations) {
 		    final Unit child = (Unit) accountability.getChild();
+		    duplicatedUnit.add(child);
 		    count(child);
 		} else if (accountabilityType == workingUnitWithQuotaRelation
 			|| accountabilityType == workingUnitWithoutQuotaRelation) {
@@ -113,7 +143,10 @@ public class SiadapProcessCounter implements Serializable {
 	final Siadap siadap = configuration.getSiadapFor(person);
 	final SiadapProcessStateEnum state = siadap == null ? SiadapProcessStateEnum.NOT_CREATED : SiadapProcessStateEnum
 		.getState(siadap);
+	duplicatedPersons.add(person);
 	counts[state.ordinal()]++;
+	if (gatherSiadaps)
+	    getSiadaps().add(siadap);
     }
 
     private void count(final Person person, boolean withQuota) {
@@ -121,6 +154,8 @@ public class SiadapProcessCounter implements Serializable {
 	final SiadapProcessStateEnum state = siadap == null ? SiadapProcessStateEnum.NOT_CREATED : SiadapProcessStateEnum
 		.getState(siadap);
 	
+	duplicatedPersons.add(person);
+
 	//let's fill the complicated hashmap
 	HashMap<String, int[]> categoryHashMap = getCountsByQuotaAndCategories().get(Boolean.valueOf(withQuota));
 	if ( categoryHashMap == null)
@@ -139,6 +174,48 @@ public class SiadapProcessCounter implements Serializable {
 	    categoryHashMap.put(universesEnum.getCategoryString(siadap), categoryCounter);
 	}
 	categoryCounter[universesEnum.getSubCategoryIndex(state)]++;
+
+	if (gatherSiadaps)
+	    getSiadaps().add(siadap);
+    }
+    
+    public Set<Person> getDuplicatePersons()
+    {
+	if (!filteredDuplicatedPersonsSet)
+	    filterDuplicatedPersonsSet();
+	return duplicatedPersons.elementSet();
+	
+    }
+
+    public Set<Unit> getDuplicateUnits() {
+	if (!filteredDuplicatedUnitSet)
+	    filterDuplicatedUnitSet();
+	return duplicatedUnit.elementSet();
+
+    }
+
+    public Multiset<Unit> getOriginalDuplicateUnits() {
+	if (!filteredDuplicatedUnitSet)
+	    filterDuplicatedUnitSet();
+	return duplicatedUnit;
+
+    }
+
+    private void filterDuplicatedUnitSet() {
+	for (Unit unit : duplicatedUnit) {
+	    if (duplicatedUnit.count(unit) == 1) {
+		duplicatedUnit.remove(unit);
+	    }
+	}
+
+    }
+
+    private void filterDuplicatedPersonsSet() {
+	for (Person person : duplicatedPersons) {
+	    if (duplicatedPersons.count(person) == 1) {
+		duplicatedPersons.remove(person);
+	    }
+	}
     }
 
     public int[] getCounts() {
@@ -156,6 +233,9 @@ public class SiadapProcessCounter implements Serializable {
 
     public HashMap<Boolean, HashMap<String, int[]>> getCountsByQuotaAndCategories() {
 	return countsByQuotaAndCategories;
+    }
+    public Set<Siadap> getSiadaps() {
+	return siadaps;
     }
 
 }
