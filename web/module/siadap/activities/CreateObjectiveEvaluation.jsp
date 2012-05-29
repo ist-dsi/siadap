@@ -28,14 +28,14 @@
 	<fr:edit id="information" name="information">
 		<fr:schema type="module.siadap.activities.CreateObjectiveEvaluationActivityInformation" bundle="SIADAP_RESOURCES">
 			<fr:slot name="objective" layout="longText"
-					validator="pt.ist.fenixWebFramework.renderers.validators.RequiredValidator">
+					required="true">
 			<fr:property name="rows" value="3" />
 			<fr:property name="columns" value="50" />
 		</fr:slot>
 		<logic:present name="information" property="employJustification" >
 			<logic:equal name="information" property="employJustification" value="true">
 				<fr:slot name="justification" layout="longText"
-				validator="pt.ist.fenixWebFramework.renderers.validators.RequiredValidator">
+				required="true">
 					<fr:property name="rows" value="3" />
 					<fr:property name="columns" value="50" />
 				</fr:slot>
@@ -43,7 +43,7 @@
 		</logic:present>
 		
 		<logic:equal name="shouldTypeBeEditable" value="true">
-			<fr:slot name="type" validator="pt.ist.fenixWebFramework.renderers.validators.RequiredValidator"/>	
+			<fr:slot name="type" required="true"/>	
 		</logic:equal>
 		</fr:schema>
 		<fr:layout name="tabular">
@@ -76,17 +76,17 @@
 	 	<fr:edit id='<%= "indicator" + counter %>' name="indicator" >
 	 		<fr:schema type="module.siadap.activities.CreateObjectiveEvaluationActivityInformation$ObjectiveIndicator" bundle="SIADAP_RESOURCES">
 				<fr:slot name="measurementIndicator" layout="longText"
-					validator="pt.ist.fenixWebFramework.renderers.validators.RequiredValidator">
+					required="true">
 					<fr:property name="rows" value="3" />
 					<fr:property name="columns" value="50" />
 				</fr:slot>
 				<fr:slot name="superationCriteria" layout="longText"
-					validator="pt.ist.fenixWebFramework.renderers.validators.RequiredValidator">
+					required="true">
 					<fr:property name="rows" value="3" />
 					<fr:property name="columns" value="50" />
 				</fr:slot>
 				<fr:slot name="ponderationFactor" key="label.ponderationFactor.inPercentage"
-					validator="pt.ist.fenixWebFramework.renderers.validators.RequiredValidator" help="activity.CreateOrEditObjectiveEvaluation.ponderationFactor.help">
+					required="true" help="activity.CreateOrEditObjectiveEvaluation.ponderationFactor.help">
 					<fr:property name="maxLength" value="3"/>
 					<fr:property name="size" value="3"/>
 					<fr:validator name="pt.ist.fenixWebFramework.rendererExtensions.validators.NumberRangeValidator">

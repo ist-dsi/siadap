@@ -26,10 +26,10 @@
 		<td>
 	 	<fr:edit id='<%= "representation" + counter %>' name="representation" >
 	 		<fr:schema type="module.siadap.activities.ChangeCustomScheduleActivityInformation$CustomScheduleRepresentation" bundle="SIADAP_RESOURCES">
-				<fr:slot name="typeOfSchedule" 	validator="pt.ist.fenixWebFramework.renderers.validators.RequiredValidator" key="label.typeOfSchedule"/>
-				<fr:slot name="newDeadlineDate" key="label.newDeadlineDate" validator="pt.ist.fenixWebFramework.renderers.validators.RequiredValidator" layout="picker"/>
+				<fr:slot name="typeOfSchedule" 	required="true" key="label.typeOfSchedule"/>
+				<fr:slot name="newDeadlineDate" key="label.newDeadlineDate" required="true" layout="picker"/>
 				<fr:slot name="justification" layout="longText"
-					validator="pt.ist.fenixWebFramework.renderers.validators.RequiredValidator" key="label.ChangeCustomSchedule.justification">
+					required="true" key="label.ChangeCustomSchedule.justification">
 					<fr:property name="rows" value="1" />
 					<fr:property name="columns" value="50" />
 				</fr:slot>

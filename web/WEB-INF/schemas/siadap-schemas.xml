@@ -2,7 +2,7 @@
 		type="module.siadap.activities.CreateOrEditCompetenceEvaluationActivityInformation">
 		<slot name="competenceType" read-only="true"/>
 		<slot name="evaluatedOnlyByCompetences" layout="radio-postback" help="activity.CreateOrEditCompetenceEvaluation.evaluatedOnlyByCompetences.help"
-		validator="pt.ist.fenixWebFramework.renderers.validators.RequiredValidator" key="activity.CreateOrEditCompetenceEvaluation.evaluatedOnlyByCompetences">
+		required="true" key="activity.CreateOrEditCompetenceEvaluation.evaluatedOnlyByCompetences">
 			<property name="bundle" value="SIADAP_RESOURCES"/>
 			<property name="labelTerminator" value="."/>
 			<property name="falseLabel" value="siadap.false.no"/>
@@ -37,11 +37,11 @@
 <schema bundle="SIADAP_RESOURCES" name="activityInformation.RevertState"
 		type="module.siadap.activities.RevertStateActivityInformation">
 		<slot name="siadapProcessStateEnum" layout="menu-select"
-		validator="pt.ist.fenixWebFramework.renderers.validators.RequiredValidator" key="activity.RevertState.siadapProcessStateToRevertTo.label">
+		required="true" key="activity.RevertState.siadapProcessStateToRevertTo.label">
 			<property name="providerClass"
 				value="module.siadap.presentationTier.renderers.providers.RevertStatesProvider" />
 		</slot>
-		<slot name="justification" validator="pt.ist.fenixWebFramework.renderers.validators.RequiredValidator" key="activity.RevertState.justification.label" layout="longText">
+		<slot name="justification" required="true" key="activity.RevertState.justification.label" layout="longText">
 			<property name="bundle" value="SIADAP_RESOURCES"/>
 			<property name="rows" value="8" />
 			<property name="columns" value="50" />
@@ -51,22 +51,22 @@
 <schema bundle="SIADAP_RESOURCES" name="activityInformation.CurricularPonderationAttribution"
 		type="module.siadap.activities.CurricularPonderationActivityInformation">
 		<slot name="siadap.defaultSiadapUniverse" key="activity.CurricularPonderationAttribution.label.currentSiadapUniverse" read-only="true"/>
-		<slot name="siadapUniverseToApply" validator="pt.ist.fenixWebFramework.renderers.validators.RequiredValidator" key="activity.CurricularPonderationAttribution.label.siadapUniverseToApply" read-only="true"/>
-		<slot name="curricularPonderationRemarks" validator="pt.ist.fenixWebFramework.renderers.validators.RequiredValidator" key="activity.CurricularPonderationAttribution.label.curricularPonderationRemarks" layout="longText">
+		<slot name="siadapUniverseToApply" required="true" key="activity.CurricularPonderationAttribution.label.siadapUniverseToApply" read-only="true"/>
+		<slot name="curricularPonderationRemarks" required="true" key="activity.CurricularPonderationAttribution.label.curricularPonderationRemarks" layout="longText">
 			<property name="bundle" value="SIADAP_RESOURCES"/>
 			<property name="rows" value="8" />
 			<property name="columns" value="50" />
 		</slot>
-		<slot name="assignExcellentGrade" validator="pt.ist.fenixWebFramework.renderers.validators.RequiredValidator" layout="radio" key="activity.CurricularPonderationAttribution.label.assignExcellentGrade"/>
+		<slot name="assignExcellentGrade" required="true" layout="radio" key="activity.CurricularPonderationAttribution.label.assignExcellentGrade"/>
 		<slot name="excellentGradeJustification" key="activity.CurricularPonderationAttribution.label.excellentGradeJustification" layout="longText">
 			<property name="rows" value="8" />
 			<property name="columns" value="50" />
 		</slot>
-		<slot name="assignedGrade" validator="pt.ist.fenixWebFramework.renderers.validators.RequiredValidator" key="activity.CurricularPonderationAttribution.label.assignedGrade">
+		<slot name="assignedGrade" required="true" key="activity.CurricularPonderationAttribution.label.assignedGrade">
 			<property name="maxLength" value="5"/>
 			<property name="size" value="5"/>
 		</slot>
-		<slot name="evaluator" layout="autoComplete" validator="pt.ist.fenixWebFramework.renderers.validators.RequiredValidator">
+		<slot name="evaluator" layout="autoComplete" required="true">
 			<property name="labelField" value="name"/>
 			<property name="format" value="${name} (${user.username})"/>
 			<property name="minChars" value="3"/>		
@@ -95,7 +95,7 @@
 	bundle="SIADAP_RESOURCES" 
 	type="module.siadap.activities.NoEvaluationActivityInformation">
 	<slot name="noEvaluationJustification" layout="longText"
-		validator="pt.ist.fenixWebFramework.renderers.validators.RequiredValidator">
+		required="true">
 		<property name="rows" value="3" />
 		<property name="columns" value="50" />
 	</slot>
