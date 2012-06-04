@@ -32,6 +32,7 @@ import module.siadap.domain.wrappers.PersonSiadapWrapper;
 import module.workflow.domain.ProcessCounter;
 import myorg.applicationTier.Authenticate.UserView;
 import myorg.domain.User;
+import myorg.domain.VirtualHost;
 
 /**
  * 
@@ -48,21 +49,29 @@ public class SiadapPendingProcessesCounter extends ProcessCounter {
     @Override
     public int getCount() {
 	int result = 0;
-	final User user = UserView.getCurrentUser();
-	try {
-	    ArrayList<PersonSiadapWrapper> siadapWrappers = SiadapRootModule.getInstance().getAssociatedSiadaps(user.getPerson(),
-		false);
-	    //let's count the ones with pending actions: - anything that the user can do
-	    for (PersonSiadapWrapper personSiadapWrapper : siadapWrappers) {
-		if (!isToBeExcluded(personSiadapWrapper) && personSiadapWrapper.hasPendingActions())
-		    result++;
+	if (isApplicableToVirtualHost()) {
+	    final User user = UserView.getCurrentUser();
+	    try {
+		ArrayList<PersonSiadapWrapper> siadapWrappers = SiadapRootModule.getInstance().getAssociatedSiadaps(user.getPerson(),
+			false);
+		//let's count the ones with pending actions: - anything that the user can do
+		for (PersonSiadapWrapper personSiadapWrapper : siadapWrappers) {
+		    if (!isToBeExcluded(personSiadapWrapper) && personSiadapWrapper.hasPendingActions())
+			result++;
+		}
+	    } catch (final Throwable t) {
+		t.printStackTrace();
+		//throw new Error(t);
 	    }
-	} catch (final Throwable t) {
-	    t.printStackTrace();
-	    //throw new Error(t);
 	}
 
 	return result;
+    }
+
+    private boolean isApplicableToVirtualHost() {
+	final VirtualHost virtualHost = VirtualHost.getVirtualHostForThread();
+	// HACK: this is a temporary hack because SIADAP stuff is not yet VirtualHostAware!
+	return virtualHost != null && virtualHost.getHostname().equals("dot.ist.utl.pt");
     }
 
     /**
