@@ -33,7 +33,7 @@ public class CleanAccountabilitiesWithUselessPartyTypesOfGivenYear extends Write
     private static final int YEAR_TO_CLEAN = 2011;
 
     //if true, it will do nothing
-    private static final Boolean DRY_RUN = Boolean.TRUE;
+    private static final Boolean DRY_RUN = Boolean.FALSE;
     private LocalDate dateToUse;
     private AccountabilityType siadapUnitRelationsAccType;
 

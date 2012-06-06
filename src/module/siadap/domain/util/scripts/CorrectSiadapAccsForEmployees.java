@@ -19,11 +19,16 @@ import module.organization.domain.Person;
 import module.siadap.domain.Siadap;
 import module.siadap.domain.SiadapRootModule;
 import module.siadap.domain.SiadapYearConfiguration;
+import module.siadap.domain.util.SiadapMiscUtilClass;
 import module.siadap.domain.wrappers.PersonSiadapWrapper;
 import module.siadap.domain.wrappers.UnitSiadapWrapper;
 import myorg.domain.scheduler.WriteCustomTask;
 
 import org.joda.time.LocalDate;
+
+import com.google.common.base.Predicate;
+import com.google.common.collect.Iterables;
+import com.google.common.collect.Sets;
 
 /**
  * @author João Antunes (joao.antunes@tagus.ist.utl.pt) - 18 de Abr de 2012
@@ -72,7 +77,7 @@ public class CorrectSiadapAccsForEmployees extends WriteCustomTask {
      */
     @Override
     protected void doService() {
-	LocalDate dateToUse = new LocalDate();
+	final LocalDate dateToUse = SiadapMiscUtilClass.lastDayOfYearWhereAccsAreActive(2011);
 	//all of the relevant acc types
 	List<AccountabilityType> relevantAccountabilityTypes = new ArrayList<AccountabilityType>();
 	SiadapYearConfiguration siadapYearConfiguration = SiadapYearConfiguration.getSiadapYearConfiguration(2011);
@@ -186,13 +191,29 @@ public class CorrectSiadapAccsForEmployees extends WriteCustomTask {
 
 	out.println("\n\n\nTaking care of the duplicated work accs");
 
-	for (Person person : personsWithDuplicatedWorkAccs) {
+	for (final Person person : personsWithDuplicatedWorkAccs) {
 	    out.println("Processing " + person.getPresentationName());
 	    //let's get the quota working relation and delete it
-	    Collection<Accountability> parentAccountabilities = person.getParentAccountabilities(siadapYearConfiguration
-		    .getWorkingRelation());
-	    for (Accountability acc : parentAccountabilities) {
-		if (acc.isActiveNow()) {
+	    final Collection<Accountability> parentAccountabilities = person.getParentAccountabilities(
+		    siadapYearConfiguration.getWorkingRelation(), siadapYearConfiguration.getWorkingRelationWithNoQuota());
+	    HashSet<Accountability> filteredSet = Sets.newHashSet(Iterables.filter(parentAccountabilities,
+		    new Predicate<Accountability>() {
+
+			@Override
+			public boolean apply(Accountability acc) {
+			    if (!acc.isActive(dateToUse))
+				return false;
+			    for (Accountability accountability : parentAccountabilities) {
+				if (accountability.equals(acc) || !accountability.isActive(dateToUse))
+				    continue;
+				if (acc.overlaps(accountability.getBeginDate(), accountability.getEndDate()))
+				    return true;
+			    }
+			    return false;
+			}
+		    }));
+	    for (Accountability acc : filteredSet) {
+		if (acc.hasAccountabilityType(siadapYearConfiguration.getWorkingRelation())) {
 		    //let's remove it
 		    String username = (acc.getCreatorUser() != null) ? acc.getCreatorUser().getUsername() : "-";
 		    out.println("deleting Acc " + acc.getDetailsString() + " creation date: " + acc.getCreationDate()

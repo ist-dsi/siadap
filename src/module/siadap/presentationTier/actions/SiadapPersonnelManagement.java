@@ -498,12 +498,40 @@ public class SiadapPersonnelManagement extends ContextBaseAction {
 	for (Siadap siadap : siadaps) {
 	    if (siadap.getYear().intValue() == year) {
 		Row row = siadapRawDataSpreadsheet.addRow();
-		row.setCell(siadap.getEvaluated().getUser().getUsername());
-		row.setCell(siadap.getEvaluated().getPresentationName());
-		row.setCell(siadap.getEvaluator().getPerson().getUser().getUsername());
-		row.setCell(siadap.getEvaluator().getPerson().getPresentationName());
-		PersonSiadapWrapper evaluatedWrapper = new PersonSiadapWrapper(siadap.getEvaluated(), year);
-		row.setCell(evaluatedWrapper.getWorkingUnit().getUnit().getPresentationName());
+
+		//evaluated basic info
+		Person evaluated = siadap.getEvaluated();
+		String evaluatedUsername;
+		String evaluatedPresentationName;
+		if (evaluated != null) {
+		    evaluatedUsername = evaluated.getUser().getUsername();
+		    evaluatedPresentationName = evaluated.getPresentationName();
+		} else {
+		    evaluatedUsername = "-";
+		    evaluatedPresentationName = "-";
+		}
+
+		//evaluator basic info
+		Person evaluator = siadap.getEvaluator() == null ? null : siadap.getEvaluator().getPerson();
+		String evaluatorUsername;
+		String evaluatorPresentationName;
+		if (evaluator != null) {
+		    evaluatorUsername = evaluator.getUser().getUsername();
+		    evaluatorPresentationName = evaluator.getPresentationName();
+		} else {
+		    evaluatorUsername = "-";
+		    evaluatorPresentationName = "-";
+		}
+
+		row.setCell(evaluatedUsername);
+		row.setCell(evaluatedPresentationName);
+		
+		row.setCell(evaluatorUsername);
+		row.setCell(evaluatorPresentationName);
+
+		PersonSiadapWrapper evaluatedWrapper = new PersonSiadapWrapper(evaluated, year);
+		row.setCell(evaluatedWrapper.getWorkingUnit() == null || evaluatedWrapper.getWorkingUnit().getUnit() == null ? "-"
+			: evaluatedWrapper.getWorkingUnit().getUnit().getPresentationName());
 		row.setCell(evaluatedWrapper.getSiadap() == null
 			|| evaluatedWrapper.getUnitWhereIsHarmonized(evaluatedWrapper.getSiadap().getDefaultSiadapUniverse()) == null ? "-"
 			: evaluatedWrapper.getUnitWhereIsHarmonized(evaluatedWrapper.getSiadap().getDefaultSiadapUniverse())

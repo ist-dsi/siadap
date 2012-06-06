@@ -836,6 +836,18 @@ public class UnitSiadapWrapper extends PartyWrapper implements Serializable {
 	return unitEmployees;
     }
 
+    public List<PersonSiadapWrapper> getUnitEmployeesWithOngoingProcesses() {
+	List<PersonSiadapWrapper> unitEmployees = getUnitEmployees(true, new Predicate() {
+	    @Override
+	    public boolean evaluate(Object personObject) {
+		PersonSiadapWrapper personWrapper = (PersonSiadapWrapper) personObject;
+		return personWrapper.getSiadap().isOngoing();
+	    }
+	});
+	Collections.sort(unitEmployees, PersonSiadapWrapper.PERSON_COMPARATOR_BY_NAME_FALLBACK_YEAR_THEN_PERSON_OID);
+	return unitEmployees;
+    }
+
     public List<PersonSiadapWrapper> getUnitEmployeesWithProcessesHomologated() {
 	List<PersonSiadapWrapper> unitEmployees = getUnitEmployees(true, new Predicate() {
 	    @Override

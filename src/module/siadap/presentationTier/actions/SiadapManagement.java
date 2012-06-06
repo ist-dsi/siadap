@@ -681,6 +681,10 @@ public class SiadapManagement extends ContextBaseAction {
 	    request.setAttribute("employees", unitSiadapWrapper.getUnitEmployeesWithProcessesInReviewCommission());
 
 	}
+ else if (StringUtils.equals(mode, "viewOngoingProcesses")) {
+	    request.setAttribute("employees", unitSiadapWrapper.getUnitEmployeesWithOngoingProcesses());
+
+	}
 	request.setAttribute("mode", mode);
 	return forward(request, "/module/siadap/bulkManagement/viewOnlyProcesses.jsp");
     }

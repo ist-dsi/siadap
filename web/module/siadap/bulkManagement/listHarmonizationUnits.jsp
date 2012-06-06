@@ -68,7 +68,25 @@
 	</td>
 	<td><%= harmonizationUnit.getRelevantEvaluationPercentage() %> %</td>
 	<td><%= harmonizationUnit.getExcellencyEvaluationPercentage() %> %</td>
-	<td><%= harmonizationUnit.getSiadapProcessesOngoing().size() %></td>
+	<fr:form id="<%= "viewOngoingProcesses" + harmonizationUnit.getUnit().getExternalId() %>" action="<%= "/siadapManagement.do?method=viewOnlyProcesses&mode=viewOngoingProcesses&year=" + year.toString() + "&unitId=" + harmonizationUnit.getUnit().getExternalId() %>" >
+		<%
+			processes = harmonizationUnit.getSiadapProcessesOngoing();
+		
+			if (!processes.isEmpty()) {
+		%>
+				<td style="cursor: pointer;" onclick="<%="document.getElementById('viewOngoingProcesses" + harmonizationUnit.getUnit().getExternalId() + "').submit()"%>" >
+					<html:link action="<%= "/siadapManagement.do?method=viewOnlyProcesses&mode=viewOngoingProcesses&year=" + year.toString() + "&unitId=" + harmonizationUnit.getUnit().getExternalId() %>" >
+						<strong><%= processes.size() %></strong>
+					</html:link>
+				</td>
+		<%
+			} else {
+		%>
+				<td><%= processes.size() %></td>
+		<%
+			}
+		%>
+	</fr:form>
 	<fr:form id="<%= "formHomologation" + harmonizationUnit.getUnit().getExternalId() %>" action="<%= "/siadapManagement.do?method=viewPendingHomologationProcesses&year=" + year.toString() + "&unitId=" + harmonizationUnit.getUnit().getExternalId() %>" >
 		<%
 			processes = harmonizationUnit.getSiadapProcessesPendingHomologation();
