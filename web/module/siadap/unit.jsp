@@ -391,11 +391,9 @@ int j =0;
 					<%
 						if (personSiadapWrapper.getSiadap() == null) {
 					%>
-						<html:link page="<%= "/siadapManagement.do?method=createNewSiadapProcess&year="
-							+ configuration.getYear()
-							+ "&personId="
-							+ personSiadapWrapper.getPerson().getExternalId() %>">
-							<bean:message key="link.create" bundle="MYORG_RESOURCES"/>
+						<html:link page="<%= "/siadapPersonnelManagement.do?method=viewPerson&year=" + configuration.getYear() %>"
+								paramId="personId" paramName="person" paramProperty="externalId">
+								<bean:message key="link.create" bundle="MYORG_RESOURCES"/>
 						</html:link>
 					<%
 						} else {
