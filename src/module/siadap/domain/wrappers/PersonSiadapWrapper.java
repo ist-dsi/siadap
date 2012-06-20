@@ -919,8 +919,20 @@ public class PersonSiadapWrapper extends PartyWrapper implements Serializable {
     @Service
     public void changeWorkingUnitTo(Unit unit, Boolean withQuotas, LocalDate dateOfChange) {
 	verifyDate(dateOfChange);
-	//if he has already submitted the eval objectives and competences for the evaluated person, we shouldn't do this
-	if (getSiadap().getRequestedAcknowledgeDate() != null)
+	//if he has already submitted the eval objectives and competences for the evaluated person, we shouldn't do this, 
+	//unless the unit stays the same (therefore he should be changing the quotas), thus we must check if the quotas can be changed i.e. he is waiting harmonization
+
+	if (getWorkingUnit().getUnit().equals(unit)) {
+	    //let's check the state
+	    int currentStateOrdinal = getSiadap().getState().ordinal();
+	    //if we already reached the waiting harmonization state *and the period for it already begun* we need to send an exception
+	    if (currentStateOrdinal > SiadapProcessStateEnum.WAITING_HARMONIZATION.ordinal()
+		    || (currentStateOrdinal == SiadapProcessStateEnum.WAITING_HARMONIZATION.ordinal()
+			    && getConfiguration().getFirstLevelHarmonizationBegin() != null && getConfiguration()
+			    .getFirstLevelHarmonizationBegin().isBefore(new LocalDate()))) {
+		throw new SiadapException("error.changing.working.unit.cant.change.quotas.on.user.waiting.to.be.harmonized");
+	    }
+	} else if (getSiadap().getRequestedAcknowledgeDate() != null)
 	    throw new SiadapException("error.changing.working.unit.already.submitted.for.acknowledgement");
 	SiadapYearConfiguration configuration = getConfiguration();
 
