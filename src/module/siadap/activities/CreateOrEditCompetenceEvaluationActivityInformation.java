@@ -36,6 +36,8 @@ import module.workflow.activities.ActivityInformation;
 import module.workflow.activities.WorkflowActivity;
 import module.workflow.domain.WorkflowProcess;
 
+import org.apache.commons.lang.StringUtils;
+
 /**
  * 
  * @author João Antunes
@@ -45,7 +47,7 @@ public class CreateOrEditCompetenceEvaluationActivityInformation extends Activit
 	ContainsCompetenceType {
 
     private Siadap siadap;
-    private final CompetenceType competenceType;
+    private CompetenceType competenceType;
     private List<Competence> competences;
     // Variable used to make sure that the JSP is displayed to the user upon
     // creation/edition of the competences
@@ -58,7 +60,7 @@ public class CreateOrEditCompetenceEvaluationActivityInformation extends Activit
 	super(process, activity);
 	setCompetences(new ArrayList<Competence>(getSiadap().getCompetences()));
 	// setCompetences(process.getSiadap().getCompetences());
-	this.competenceType = process.getSiadap().getDefaultCompetenceType();
+	this.setCompetenceType(process.getSiadap().getDefaultCompetenceType());
 	if (process.getSiadap().getEvaluatedOnlyByCompetences() == null) {
 	    setEvaluatedOnlyByCompetences(Boolean.FALSE);
 	} else {
@@ -111,9 +113,32 @@ public class CreateOrEditCompetenceEvaluationActivityInformation extends Activit
 	this.evaluatedOnlyByCompetences = evaluatedOnlyByCompetences;
     }
 
+    /**
+     * 
+     * @param competence
+     *            the competence to check if there's an equivalent set here
+     * @return true if for the given competence we have in the
+     *         {@link #getCompetences()} any competence with the same name and
+     *         description (whitespace tolerant)
+     */
+    public boolean hasEquivalentCompetence(Competence competence) {
+	String competenceProcessedDescription = StringUtils.deleteWhitespace(competence.getDescription());
+	String competenceProcessedName = StringUtils.deleteWhitespace(competence.getName());
+	for (Competence availableCompetence : getCompetences()) {
+	    if (StringUtils.equalsIgnoreCase(StringUtils.deleteWhitespace(availableCompetence.getDescription()),
+		    competenceProcessedDescription))
+		return true;
+	}
+	return false;
+    }
+
     @Override
     public Boolean getEvaluatedOnlyByCompetences() {
 	return evaluatedOnlyByCompetences;
+    }
+
+    public void setCompetenceType(CompetenceType competenceType) {
+	this.competenceType = competenceType;
     }
 
 }

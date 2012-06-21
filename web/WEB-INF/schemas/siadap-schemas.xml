@@ -10,6 +10,16 @@
 		</slot>
 </schema>
 
+<schema bundle="SIADAP_RESOURCES" name="siadap.module.siadap.activities.ForceEditCompetenceSlashCareerEvaluationByCCA.postback"
+		type="module.siadap.activities.CreateOrEditCompetenceEvaluationActivityInformation">
+		 <slot name="competenceType" layout="menu-select-postback">
+	        <property name="providerClass"
+	        	value="module.siadap.presentationTier.renderers.providers.CompetenceTypeProvider" />
+	 		<property name="format" value="${name}" />
+			<property name="sortBy" value="name" />
+		</slot>
+</schema>
+
 <schema bundle="SIADAP_RESOURCES" name="SiadapUniverseWrapper-currentState"
 		type="module.siadap.domain.wrappers.SiadapUniverseWrapper">
 		<slot name="numberPeopleInUniverse" key="label.harmonization.totalHarmonizedInUniverse"/>

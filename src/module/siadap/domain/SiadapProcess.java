@@ -44,6 +44,7 @@ import module.siadap.activities.CurricularPonderationAttribution;
 import module.siadap.activities.EditCompetenceEvaluation;
 import module.siadap.activities.EditObjectiveEvaluation;
 import module.siadap.activities.Evaluation;
+import module.siadap.activities.ForceEditCompetenceSlashCareerEvaluationByCCA;
 import module.siadap.activities.Homologate;
 import module.siadap.activities.NoEvaluation;
 import module.siadap.activities.RemoveCustomSchedule;
@@ -121,6 +122,8 @@ public class SiadapProcess extends SiadapProcess_Base {
 	activities.add(new RevertNoEvaluation());
 	//	activities.add(new GrantExcellencyAward());
 	//	activities.add(new RevokeExcellencyAward());
+
+	activities.add(new ForceEditCompetenceSlashCareerEvaluationByCCA());
 
 	activities.add(new Validation());
 
