@@ -14,6 +14,7 @@
 <%@ taglib uri="/WEB-INF/struts-bean.tld" prefix="bean"%>
 <%@ taglib uri="/WEB-INF/struts-logic.tld" prefix="logic"%>
 <%@ taglib uri="/WEB-INF/fenix-renderers.tld" prefix="fr"%>
+<%@ taglib uri="/WEB-INF/workflow.tld" prefix="wf"%>
 
 <script src="<%= request.getContextPath() + "/javaScript/jquery.alerts.js"%>" type="text/javascript"></script>
 <script src="<%= request.getContextPath() + "/javaScript/alertHandlers.js"%>" type="text/javascript"></script>
@@ -119,9 +120,19 @@ request.setAttribute("isCCAMember", isCCAMember);
 
 	<%-- Part responsible for the changes on the SIADAP proccess (and the SIADAP user) --%>
 <logic:equal name="isAbleToChangeAnything" value="true">
-	<html:link styleId="removeSiadap"  page="<%="/siadapPersonnelManagement.do?method=removeSiadap&year="+year.toString()%>" paramName="person" paramProperty="person.externalId" paramId="personId">
-		<bean:message key="label.management.removeSiadap" bundle="SIADAP_RESOURCES"/>
-	</html:link>
+	<logic:present name="siadapProcess">
+		<wf:activityLink processName="siadapProcess" activityName="NullifyProcess" scope="request" target="_blank">
+			<wf:activityName processName="siadapProcess" activityName="NullifyProcess" scope="request"/>
+		</wf:activityLink>
+		<wf:activityLink processName="siadapProcess" activityName="RectifyNullifiedProcess" scope="request" target="_blank">
+			<wf:activityName processName="siadapProcess" activityName="RectifyNullifiedProcess" scope="request"/>
+		</wf:activityLink>
+	</logic:present>
+	<logic:notPresent name="siadapProcess">
+		<html:link styleId="removeFromSiadapStructure"  page="<%="/siadapPersonnelManagement.do?method=removeFromSiadapStructure&year="+year.toString()%>" paramName="person" paramProperty="person.externalId" paramId="personId">
+			<bean:message key="label.management.removeFromSiadapStructure" bundle="SIADAP_RESOURCES"/>
+		</html:link>
+	</logic:notPresent>
 	<logic:present name="personWrapper" property="siadap">
 		<p><a href="#" id="changeUnit"> <bean:message key="label.changeWorkingUnit" bundle="SIADAP_RESOURCES"/> </a> | <a href="#" id="changeEvaluator"> <bean:message key="label.changeEvaluator" bundle="SIADAP_RESOURCES"/> </a>
 			<logic:equal name="person" property="customEvaluatorDefined" value="true">
@@ -132,10 +143,6 @@ request.setAttribute("isCCAMember", isCCAMember);
 			| <a href="#" id="changeSiadapUniverse"> <bean:message key="label.changeSiadapUniverse" bundle="SIADAP_RESOURCES"/> </a>
 			| <a href="#" id="changeCompetenceTypeLink"> <bean:message key="label.changeCompetenceType" bundle="SIADAP_RESOURCES"/> </a>
 		   
-			  <script type="text/javascript">
-			   	linkConfirmationHook('removeSiadap', '<bean:message key="label.management.removeSiadap.confirmationMessage" bundle="SIADAP_RESOURCES"/>','<bean:message key="label.management.removeSiadap" bundle="SIADAP_RESOURCES"/>');
-			  </script>
-		    
 		    <logic:equal value="true" name="isCCAMember">
 		    	| <a href="#" id="forceChangeSiadapUniverse"> <bean:message key="label.forceChangeSiadapUniverse" bundle="SIADAP_RESOURCES"/> </a>
 		    </logic:equal>

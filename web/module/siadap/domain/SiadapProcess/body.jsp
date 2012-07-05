@@ -1,3 +1,4 @@
+<%@page import="module.siadap.domain.SiadapProcessStateEnum"%>
 <%@page import="module.siadap.domain.wrappers.PersonSiadapWrapper"%>
 <%@page import="module.siadap.domain.Siadap"%>
 <%@page import="module.siadap.domain.SiadapProcessSchedulesEnum"%>
@@ -150,6 +151,11 @@ pre {
 </table>
 <%-- END: The table with the deadlines and custom deadlines if they are defined --%>
 <div class="highlightBox"> 
+	<logic:notEmpty name="siadap" property="nulled">
+		<logic:equal value="true" name="siadap" property="nulled">
+				<h3 style="color: darkRed"><b><bean:message bundle="SIADAP_RESOURCES" key="label.nullifiedWarning"/></b> <a href="mailto:drh@drh.ist.utl.pt?subject=SIADAP%20processo%20mal%20anulado">drh@drh.ist.utl.pt</a></h3>
+		</logic:equal>
+	</logic:notEmpty>
 	<p><strong><bean:message bundle="SIADAP_RESOURCES" key="label.state" />: <bean:message bundle="SIADAP_RESOURCES" key="<%= ((Siadap) siadap).getState().getLabelPrefix() %>" /> - <bean:write name="evaluatedPersonWrapper" property="nextStep"/></strong></p>
 </div>
 

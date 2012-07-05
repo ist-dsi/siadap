@@ -56,6 +56,8 @@ public class ChangePersonnelSituation extends
 
     @Override
     public boolean isActive(SiadapProcess process, User user) {
+	if (!process.isActive())
+	    return false;
 	SiadapYearConfiguration configuration = SiadapYearConfiguration.getSiadapYearConfiguration(process.getSiadap().getYear());
 	return Role.getRole(RoleType.MANAGER).isMember(user) || configuration.isUserMemberOfStructureManagementGroup(user);
     }

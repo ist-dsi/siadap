@@ -52,6 +52,8 @@ public class AcknowledgeEvaluationObjectives extends WorkflowActivity<SiadapProc
 
     @Override
     public boolean isActive(SiadapProcess process, User user) {
+	if (!process.isActive())
+	    return false;
 	Siadap siadap = process.getSiadap();
 	return siadap.getEvaluated().getUser() == user && !siadap.isEvaluatedWithKnowledgeOfObjectives()
 		&& siadap.getRequestedAcknowledgeDate() != null;

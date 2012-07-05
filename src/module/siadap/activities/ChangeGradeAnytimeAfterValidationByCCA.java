@@ -39,6 +39,8 @@ public class ChangeGradeAnytimeAfterValidationByCCA extends
 
     @Override
     public boolean isActive(SiadapProcess process, User user) {
+	if (!process.isActive())
+	    return false;
 	Siadap siadap = process.getSiadap();
 	if (siadap.getState().ordinal() < SiadapProcessStateEnum.WAITING_SUBMITTAL_BY_EVALUATOR_AFTER_VALIDATION.ordinal())
 	    return false;

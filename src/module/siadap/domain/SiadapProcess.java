@@ -47,6 +47,8 @@ import module.siadap.activities.Evaluation;
 import module.siadap.activities.ForceEditCompetenceSlashCareerEvaluationByCCA;
 import module.siadap.activities.Homologate;
 import module.siadap.activities.NoEvaluation;
+import module.siadap.activities.NullifyProcess;
+import module.siadap.activities.RectifyNullifiedProcess;
 import module.siadap.activities.RemoveCustomSchedule;
 import module.siadap.activities.RemoveObjectiveEvaluation;
 import module.siadap.activities.RevertNoEvaluation;
@@ -95,6 +97,9 @@ public class SiadapProcess extends SiadapProcess_Base {
     private static List<WorkflowActivity<SiadapProcess, ? extends ActivityInformation<SiadapProcess>>> activities = new ArrayList<WorkflowActivity<SiadapProcess, ? extends ActivityInformation<SiadapProcess>>>();
 
     static {
+	activities.add(new NullifyProcess());
+	activities.add(new RectifyNullifiedProcess());
+
 	activities.add(new ChangeCustomSchedule());
 	activities.add(new RevertState());
 	activities.add(new RemoveCustomSchedule());
@@ -245,6 +250,8 @@ public class SiadapProcess extends SiadapProcess_Base {
 
     @Override
     public boolean isActive() {
+	if (getSiadap().getState().equals(SiadapProcessStateEnum.NULLED))
+	    return false;
 	return true;
     }
 

@@ -41,6 +41,8 @@ public class NoEvaluation extends WorkflowActivity<SiadapProcess, NoEvaluationAc
 
     @Override
     public boolean isActive(SiadapProcess process, User user) {
+	if (!process.isActive())
+	    return false;
 	Siadap siadap = process.getSiadap();
 	return !siadap.isWithSkippedEvaluation()
 		&& !siadap.isDefaultEvaluationDone()

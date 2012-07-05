@@ -1380,6 +1380,10 @@ public class UnitSiadapWrapper extends PartyWrapper implements Serializable {
 	return getUnit().getPartyName();
     }
 
+    public String getPresentationName() {
+	return getUnit().getPresentationName();
+    }
+
     @Override
     public int hashCode() {
 	return getUnit().hashCode();

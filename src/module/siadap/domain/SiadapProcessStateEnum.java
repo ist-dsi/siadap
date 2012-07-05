@@ -37,6 +37,8 @@ import pt.ist.fenixWebFramework.rendererExtensions.util.IPresentableEnum;
  * 
  */
 public enum SiadapProcessStateEnum implements IPresentableEnum {
+    NULLED,
+
     NOT_CREATED,
 
     INCOMPLETE_OBJ_OR_COMP,
@@ -88,6 +90,8 @@ public enum SiadapProcessStateEnum implements IPresentableEnum {
 
     public String getLabelPrefix() {
 	switch (this) {
+	case NULLED:
+	    return "siadap.state.nulled";
 	case NOT_CREATED:
 	    return "siadap.state.not.created";
 	case INCOMPLETE_OBJ_OR_COMP:

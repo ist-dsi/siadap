@@ -4,6 +4,7 @@
 
 <h3><bean:message bundle="SIADAP_RESOURCES" key="label.state.legend" /></h3>
 <ul>
+  <li><bean:message bundle="SIADAP_RESOURCES" key="siadap.state.nulled"/> - <bean:message bundle="SIADAP_RESOURCES" key="siadap.state.nulled.explanation"/>;</li>
   <li><bean:message bundle="SIADAP_RESOURCES" key="siadap.state.evaluation.not.going.to.be.done"/> - <bean:message bundle="SIADAP_RESOURCES" key="siadap.state.evaluation.not.going.to.be.done.explanation"/>;</li>
   <li><bean:message bundle="SIADAP_RESOURCES" key="siadap.state.incomplete.objectives.or.competences"/> - <bean:message bundle="SIADAP_RESOURCES" key="siadap.state.incomplete.objectives.or.competences.explanation"/>;</li>
   <li><bean:message bundle="SIADAP_RESOURCES" key="siadap.state.not.created"/> - <bean:message bundle="SIADAP_RESOURCES" key="siadap.state.not.created.explanation"/>;</li>

@@ -45,7 +45,7 @@ public class ChangeCustomSchedule extends WorkflowActivity<SiadapProcess, Change
 
     @Override
     public boolean isActive(SiadapProcess process, User user) {
-	return shouldBeAbleToChangeSchedules(process, user);
+	return shouldBeAbleToChangeSchedules(process, user) && process.isActive();
     }
 
     public static boolean shouldBeAbleToChangeSchedules(SiadapProcess process, User user) {

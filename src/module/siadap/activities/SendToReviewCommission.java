@@ -45,6 +45,8 @@ public class SendToReviewCommission extends WorkflowActivity<SiadapProcess, Acti
 
     @Override
     public boolean isActive(SiadapProcess process, User user) {
+	if (!process.isActive())
+	    return false;
 	int year = process.getSiadap().getYear();
 	if (SiadapRootModule.getInstance().getSiadapCCAGroup().isMember(user)
 		&& (process.getSiadap().getState().equals(SiadapProcessStateEnum.VALIDATION_ACKNOWLEDGED) || process.getSiadap()

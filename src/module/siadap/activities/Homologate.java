@@ -47,6 +47,8 @@ public class Homologate extends WorkflowActivity<SiadapProcess, HomologationActi
 
     @Override
     public boolean isActive(SiadapProcess process, User user) {
+	if (!process.isActive())
+	    return false;
 	Siadap siadap = process.getSiadap();
 	return siadap.getSiadapYearConfiguration().isPersonResponsibleForHomologation(user.getPerson())
 		&& (siadap.getState().equals(SiadapProcessStateEnum.WAITING_FOR_REVIEW_COMMISSION) || siadap.getState().equals(

@@ -41,6 +41,7 @@ import module.organization.domain.AccountabilityType;
 import module.organization.domain.Party;
 import module.organization.domain.Person;
 import module.organization.domain.Unit;
+import module.siadap.activities.NullifyProcess;
 import module.siadap.domain.CompetenceType;
 import module.siadap.domain.ExceedingQuotaProposal;
 import module.siadap.domain.ObjectiveEvaluation;
@@ -1347,18 +1348,15 @@ public class PersonSiadapWrapper extends PartyWrapper implements Serializable {
     /**
      * 
      * @throws SiadapException
-     *             if the SIADAP has already some info and thus cannot be
-     *             deleted
+     *             if the SIADAP proccess exists. Then it should be nullified (
+     *             {@link NullifyProcess}) instead
      */
     @Service
-    public void removeSiadap() throws SiadapException {
+    public void removeFromSiadapStructure() throws SiadapException {
 
 	if (getSiadap() != null) {
-	    //check to see if we can remove the proccess
-	    if (getSiadap().getState().ordinal() > SiadapProcessStateEnum.NOT_SEALED.ordinal())
-		throw new SiadapException("error.has.items.in.it");
-	    //ok, so now let's remove that and the relations
-	    getSiadap().delete();
+	    //shouldn't remove the structure, simply nullify it
+	    throw new SiadapException("error.should.nullify.not.remove");
 	}
 	for (Accountability acc : getPerson().getParentAccountabilities(getConfiguration().getUnitRelations(),
 		getConfiguration().getHarmonizationUnitRelations(), getConfiguration().getWorkingRelation(),

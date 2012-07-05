@@ -41,6 +41,8 @@ public class AutoEvaluation extends WorkflowActivity<SiadapProcess, AutoEvaluati
 
     @Override
     public boolean isActive(SiadapProcess process, User user) {
+	if (!process.isActive())
+	    return false;
 	Siadap siadap = process.getSiadap();
 	return siadap.getEvaluated().getUser() == user && !siadap.isAutoEvaliationDone()
 		&& siadap.isEvaluatedWithKnowledgeOfObjectives()

@@ -111,9 +111,24 @@
 	</slot>
 </schema> 
 
+<schema name="activityInformation.NullifyRatifyActivityInformation"
+	bundle="SIADAP_RESOURCES" 
+	type="module.siadap.activities.NullifyRatifyActivityInformation">
+	<slot name="justification" layout="longText"
+		required="true">
+		<property name="rows" value="3" />
+		<property name="columns" value="50" />
+	</slot>
+</schema> 
+
+<schema name="activityInformation.NullifyProcess" type="module.siadap.activities.NullifyRatifyActivityInformation" extends="activityInformation.NullifyRatifyActivityInformation"/>
+
+<schema name="activityInformation.RectifyNullifiedProcess" type="module.siadap.activities.NullifyRatifyActivityInformation" extends="activityInformation.NullifyRatifyActivityInformation"/>
+
+
 <schema name="view.UnitSiadapWrapper.name" bundle="SIADAP_RESOURCES"
 	type="module.siadap.domain.wrappers.UnitSiadapWrapper">
-	<slot name="name" />
+	<slot name="presentationName" />
 </schema>
 
 <schema name="view.PersonSiadapWrapper.name" bundle="SIADAP_RESOURCES"

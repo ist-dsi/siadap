@@ -226,7 +226,12 @@ public class SiadapPersonnelManagement extends ContextBaseAction {
 			new String[] { structureMngmntMember.getName() });
 	    }
 	}
-
+	
+	Siadap siadap = personSiadapWrapper.getSiadap();
+	if (siadap != null)
+	{
+	    request.setAttribute("siadapProcess", siadap.getProcess());
+	}
 	request.setAttribute("person", personSiadapWrapper);
 	request.setAttribute("bean", new VariantBean());
 	request.setAttribute("changeWorkingUnit", new ChangeWorkingUnitBean());
@@ -398,14 +403,15 @@ public class SiadapPersonnelManagement extends ContextBaseAction {
 	return changePersonnelSituation(mapping, form, request, response, new RemoveCustomEvaluatorBean());
     }
 
-    public final ActionForward removeSiadap(final ActionMapping mapping, final ActionForm form, final HttpServletRequest request,
+    public final ActionForward removeFromSiadapStructure(final ActionMapping mapping, final ActionForm form,
+	    final HttpServletRequest request,
 	    final HttpServletResponse response) throws Exception {
 
 	int year = Integer.parseInt(request.getParameter("year"));
 	Person evaluated = (Person) getDomainObject(request, "personId");
 
 	try {
-	    new PersonSiadapWrapper(evaluated, year).removeSiadap();
+	    new PersonSiadapWrapper(evaluated, year).removeFromSiadapStructure();
 	} catch (DomainException ex) {
 	    addMessage(request, ex.getKey(), ex.getArgs());
 	}

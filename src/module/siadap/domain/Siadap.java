@@ -110,6 +110,9 @@ public class Siadap extends Siadap_Base {
     }
 
     public SiadapProcessStateEnum getState() {
+	if (getNulled() == Boolean.TRUE) {
+	    return SiadapProcessStateEnum.NULLED;
+	} else
 	if (isWithSkippedEvaluation()) {
 	    return SiadapProcessStateEnum.EVALUATION_NOT_GOING_TO_BE_DONE;
 	} else if (!isWithObjectivesFilled()) {

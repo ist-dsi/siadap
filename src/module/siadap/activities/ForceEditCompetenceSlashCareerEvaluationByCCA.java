@@ -60,6 +60,8 @@ public class ForceEditCompetenceSlashCareerEvaluationByCCA extends
 
     @Override
     public boolean isActive(SiadapProcess process, User user) {
+	if (!process.isActive())
+	    return false;
 	Siadap siadap = process.getSiadap();
 	if (!siadap.getSiadapYearConfiguration().getCcaMembers().contains(user.getPerson()))
 	    return false;

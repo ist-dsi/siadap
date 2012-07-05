@@ -56,6 +56,8 @@ public class CreateCompetenceEvaluation
 
 	@Override
 	public boolean isActive(SiadapProcess process, User user) {
+	if (!process.isActive())
+	    return false;
 		Siadap siadap = process.getSiadap();
 	if (siadap.getEvaluator() == null)
 	    return false;

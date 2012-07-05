@@ -44,9 +44,11 @@ public class RevertState extends WorkflowActivity<SiadapProcess, RevertStateActi
 
     @Override
     public boolean isActive(SiadapProcess process, User user) {
+	if (!process.isActive())
+	    return false;
 	if (isSideEffect())
 	    return true;
-	return shouldBeAbleToRevertState(process, user);
+	return shouldBeAbleToRevertState(process, user) && process.getSiadap().getState() != SiadapProcessStateEnum.NULLED;
     }
 
     private static boolean shouldBeAbleToRevertState(SiadapProcess process, User user) {
