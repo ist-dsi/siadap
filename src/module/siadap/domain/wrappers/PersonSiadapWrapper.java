@@ -541,6 +541,14 @@ public class PersonSiadapWrapper extends PartyWrapper implements Serializable {
 	}
     }
 
+    public Unit getHarmonizationUnitForSIADAP2() {
+	return getUnitWhereIsHarmonized(SiadapUniverse.SIADAP2);
+    }
+
+    public Unit getHarmonizationUnitForSIADAP3() {
+	return getUnitWhereIsHarmonized(SiadapUniverse.SIADAP3);
+    }
+
     public boolean isPersonWorkingInValidSIADAPUnit() {
 	UnitSiadapWrapper workingUnit = getWorkingUnit();
 	if (workingUnit == null)

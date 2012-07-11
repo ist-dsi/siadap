@@ -65,6 +65,14 @@
 			<fr:property name="subSchema" value="view.PersonSiadapWrapper.name"/>
 		</fr:slot>
 		<fr:slot name="evaluator.person.user.username" layout="null-as-label" key="label.username"/>
+		<fr:slot name="harmonizationUnitForSIADAP2" layout="null-as-label" key="label.harmonizationUnitForSiadap2">
+			<fr:property name="subLayout" value="values"/>
+			<fr:property name="subSchema" value="view.UnitSiadapWrapper.name"/>
+		</fr:slot>
+		<fr:slot name="harmonizationUnitForSIADAP3" layout="null-as-label" key="label.harmonizationUnitForSiadap3">
+			<fr:property name="subLayout" value="values"/>
+			<fr:property name="subSchema" value="view.UnitSiadapWrapper.name"/>
+		</fr:slot>
 	</fr:schema>
 	<fr:layout name="tabular">
 		<fr:property name="classes" value="tstyle2"/>
