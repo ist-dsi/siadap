@@ -22,7 +22,7 @@
  *   along with the SIADAP Module. If not, see <http://www.gnu.org/licenses/>.
  * 
  */
-package myorg.modules.siadap.tests.web;
+package pt.ist.bennu.core.modules.siadap.tests.web;
 
 import java.util.Map;
 

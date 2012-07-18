@@ -4,7 +4,7 @@
     <entry>
       <string>org.cubictest.seleniumexporter</string>
       <org.cubictest.model.customstep.data.CustomTestStepData>
-        <displayText>myorg.modules.siadap.tests.web.SelectAndLoginWithEvaluatedIstId</displayText>
+        <displayText>pt.ist.bennu.core.modules.siadap.tests.web.SelectAndLoginWithEvaluatedIstId</displayText>
         <path>/SIADAP-test/src/main/java/myorg/modules/siadap/tests/web/SelectAndLoginWithEvaluatedIstId.java</path>
         <exporterUserSettings>
           <entry>

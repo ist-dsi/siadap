@@ -1,0 +1,626 @@
+package module.siadap.domain; 
+
+enum module.siadap.domain.scoring.SiadapObjectivesEvaluation as SiadapObjectivesEvaluation;
+enum module.siadap.domain.scoring.SiadapCompetencesEvaluation as SiadapCompetencesEvaluation;
+enum module.siadap.domain.scoring.SiadapGlobalEvaluation as SiadapGlobalEvaluation;
+enum module.siadap.domain.SiadapEvaluationObjectivesType as SiadapEvaluationObjectivesType;
+enum module.siadap.domain.ExceedingQuotaSuggestionType as ExceedingQuotaSuggestionType;
+enum module.siadap.domain.SiadapProcessStateEnum as SiadapProcessStateEnum;
+enum module.siadap.domain.SiadapUniverse as SiadapUniverse;
+
+valueType java.math.BigDecimal as BigDecimal {
+    externalizeWith {
+        String toString();
+    }
+}
+
+
+class SiadapRootModule {
+	Integer number;
+}
+
+
+class HomologationDocumentFile extends .module.workflow.domain.ProcessFile {
+}	
+
+class SiadapProcess extends .module.workflow.domain.WorkflowProcess {
+}
+
+class groups.SiadapScheduleEditorsGroup extends .pt.ist.bennu.core.domain.groups.PersistentGroup {
+}
+
+class groups.SiadapRevertStateGroup extends .pt.ist.bennu.core.domain.groups.PersistentGroup {
+}
+
+class groups.SiadapCCAGroup extends .pt.ist.bennu.core.domain.groups.PersistentGroup {
+}
+
+class groups.SiadapStructureManagementGroup extends .pt.ist.bennu.core.domain.groups.PersistentGroup {
+}
+
+class SiadapYearConfiguration {
+	int year;
+	
+	Integer siadap2ObjectivesPonderation;
+	Integer siadap2CompetencesPonderation;
+	
+	Integer siadap3ObjectivesPonderation;
+	Integer siadap3CompetencesPonderation;
+	
+	LocalDate objectiveSpecificationBegin;
+	LocalDate objectiveSpecificationEnd;	
+	LocalDate autoEvaluationBegin;
+	LocalDate autoEvaluationEnd;
+	LocalDate evaluationBegin;
+	LocalDate evaluationEnd;
+	
+	/* dates for the harmonization of all H.U. (except the special one) */
+	LocalDate firstLevelHarmonizationBegin;
+	LocalDate firstLevelHarmonizationEnd;
+	
+	Integer quotaExcellencySiadap2WithQuota;
+	Integer quotaExcellencySiadap3WithQuota;
+	
+	Integer quotaRelevantSiadap2WithQuota;
+	Integer quotaRelevantSiadap3WithQuota;
+	
+	Integer quotaRegularSiadap2WithQuota;
+	Integer quotaRegularSiadap3WithQuota;
+	
+	Integer quotaExcellencySiadap3WithoutQuota;
+	Integer quotaExcellencySiadap2WithoutQuota;
+	
+	Integer quotaRelevantSiadap2WithoutQuota;
+	Integer quotaRelevantSiadap3WithoutQuota;
+	
+	/* Really not used unless as a 'checksum' to make sure that the sum is 100 */
+	Integer quotaRegularSiadap2WithoutQuota;
+	Integer quotaRegularSiadap3WithoutQuota;
+	
+	Boolean lockHarmonizationOnQuota;
+	
+	Boolean lockHarmonizationOnQuotaOutsideOfQuotaUniverses;
+	
+	Boolean closedValidation;
+	
+	/* Waiting period after validation acknowledgment, before holomogation, in days */
+	Integer reviewCommissionWaitingPeriod;
+	
+	
+}
+
+class Siadap {
+	Integer year;
+	//Integer currentObjectiveVersion; //R3
+	Boolean evaluatedOnlyByCompetences;
+	
+	/* sealedDate should be replaced by submittedDate... 
+	anyway... it was already in production... let's stick with the term */
+	LocalDate objectivesAndCompetencesSealedDate;
+	LocalDate autoEvaluationSealedDate;
+	LocalDate evaluationSealedDate;
+	
+	LocalDate requestedAcknowledgeDate;
+	/*LocalDate harmonizationDate;*/
+	
+	/* a data em que foi submetida, após validação pelo CCA, ao avaliado para que este possa vê-la na
+	plataforma. (este passo intermédio é importante porque o avaliador deve comunicar antes deste a ter
+	disponível, a avaliação ao avaliado) */
+	LocalDate requestedAcknowledegeValidationDate;
+	LocalDate acknowledgeValidationDate;
+	LocalDate homologationDate;
+	LocalDate acknowledgeHomologationDate;
+	
+	LocalDate assignedToReviewCommissionDate;
+	
+	
+	
+	
+	/* custom dates for exceptional reasons */
+	
+	LocalDate customObjectiveSpecificationBegin;
+	LocalDate customObjectiveSpecificationEnd;	
+	
+	LocalDate customAutoEvaluationBegin;
+	LocalDate customAutoEvaluationEnd;
+	
+	LocalDate customEvaluationBegin;
+	LocalDate customEvaluationEnd;
+	
+	
+	Boolean nulled;
+	
+	 //SiadapUniverse siadapUniverse;//R1
+}
+
+class SiadapEvaluationUniverse
+{
+
+	SiadapUniverse siadapUniverse;
+	BigDecimal classification;
+	
+	Boolean defaultEvaluationUniverse (REQUIRED);
+	
+	Integer currentObjectiveVersion; //R3 - do not delete
+	
+	LocalDate harmonizationDate;
+	Boolean harmonizationAssessment;
+	Boolean harmonizationAssessmentForExcellencyAward;
+	
+	
+	/* TODO: joantune: Yet to be fully defined the meaning*/
+	BigDecimal evaluatorClassification;
+	Boolean evaluatorClassificationExcellencyAward;
+	
+	BigDecimal harmonizationClassification;
+	Boolean harmonizationClassificationExcellencyAward;
+	
+	/* Validação da avaliação - feita pelo CCA */
+	LocalDate validationDate;
+	Boolean ccaAssessment;
+	BigDecimal ccaClassification;
+	Boolean ccaClassificationExcellencyAward;
+	
+	BigDecimal ccaAfterValidationGrade;
+	Boolean ccaAfterValidationExcellencyAward;
+	
+	
+
+}
+
+class SiadapEvaluation {
+	String evaluationJustification;	
+	String noEvaluationJustification;
+	Boolean excellencyAward;
+	String excellencyAwardJustification;
+	String personalDevelopment;
+	String trainningNeeds;
+}
+
+class SiadapAutoEvaluation {
+	String objectivesJustification;
+	String competencesJustification;
+	String otherFactorsJustification;
+	String extremesJustification;
+	String commentsAndProposals;
+	
+	Integer factorOneClassification;
+	Integer factorTwoClassification;
+	Integer factorThreeClassification;
+	Integer factorFourClassification;
+	Integer factorFiveClassification;
+	Integer factorSixClassification;
+	
+}
+
+class SiadapEvaluationItem {
+	DateTime whenCreated;	
+	LocalDate acknowledgeDate;
+	//String ojbConcreteClass;
+}
+
+class CurricularPonderationEvaluationItem extends SiadapEvaluationItem {
+	Boolean excellencyAward;
+	String excellencyAwardJustification;
+	String curricularPonderationJustification;
+	
+	BigDecimal evaluation;
+}
+
+class ObjectiveEvaluation extends SiadapEvaluationItem {
+	String objective;	
+	String justificationForModification;
+	Integer fromVersion;
+	Integer untilVersion;
+	SiadapEvaluationObjectivesType type;
+}
+
+class ObjectiveEvaluationIndicator {
+	String measurementIndicator;
+	String superationCriteria;
+	BigDecimal ponderationFactor;
+	SiadapObjectivesEvaluation autoEvaluation;
+	SiadapObjectivesEvaluation evaluation;
+}
+
+class CompetenceEvaluation extends SiadapEvaluationItem {
+	SiadapCompetencesEvaluation autoEvaluation;
+	SiadapCompetencesEvaluation evaluation;
+}
+
+class Competence {
+	Integer number;
+	String name;
+	String description;
+}
+
+class CompetenceType {
+	String name;
+}
+
+class ExceedingQuotaProposal {
+	ExceedingQuotaSuggestionType suggestionType;
+	Integer proposalOrder;
+	SiadapUniverse siadapUniverse;
+	boolean withinOrganizationQuotaUniverse;
+}
+
+relation SiadapModuleRootMyOrg {
+	.pt.ist.bennu.core.domain.MyOrg playsRole myOrg;
+	SiadapRootModule playsRole siadapRootModule;
+}
+
+relation SiadapRootModuleSiadapScheduleEditorsGroup {
+	SiadapRootModule playsRole siadapRootModule;
+	groups.SiadapScheduleEditorsGroup playsRole siadapScheduleEditorsGroup;
+}
+
+relation SiadapRootModuleSiadapRevertStateGroup {
+	SiadapRootModule playsRole siadapRootModule;
+	groups.SiadapRevertStateGroup playsRole siadapRevertStateGroup;
+}
+
+relation SiadapRootModuleStatisticsAccessUnionGroup {
+	SiadapRootModule playsRole siadapRootModule;
+	 .pt.ist.bennu.core.domain.groups.UnionGroup playsRole statisticsAccessUnionGroup;
+}
+
+relation SiadapRootModuleSiadapCCAGroup {
+	SiadapRootModule playsRole siadapRootModule;
+	groups.SiadapCCAGroup playsRole siadapCCAGroup;
+}
+
+relation SiadapRootModuleSiadapStructureManagementGroup {
+	SiadapRootModule playsRole siadapRootModule;
+	groups.SiadapStructureManagementGroup playsRole siadapStructureManagementGroup;
+}
+
+relation SiadapRootModuleSiadap {
+	Siadap playsRole siadaps {
+		multiplicity *;
+	}
+	SiadapRootModule playsRole siadapRootModule;
+}
+
+relation SiadapRootModuleSiadapEvaluationItem {
+	SiadapEvaluationItem playsRole evaluationItems {
+		multiplicity *;
+	}
+	SiadapRootModule playsRole siadapRootModule;
+}
+
+relation PersonCurricularPonderationEvaluationItem {
+	CurricularPonderationEvaluationItem playsRole curricularPonderations {
+		multiplicity *;
+	}
+	.module.organization.domain.Person playsRole assignedCPEvaluator {
+		multiplicity 1;
+	}
+}
+
+relation SiadapRootModuleCompetence {
+	Competence playsRole competences {
+		multiplicity *;
+	}
+	SiadapRootModule playsRole siadapRootModule;
+}
+
+relation SiadapRootModuleCompetenceType {
+	CompetenceType playsRole competenceTypes {
+		multiplicity *;
+	}
+	SiadapRootModule playsRole siadapRootModule;
+}
+
+relation SiadapRootModuleSiadapAutoEvaluation {
+	SiadapAutoEvaluation playsRole autoEvaluations {
+		multiplicity *;
+	}
+	SiadapRootModule playsRole siadapRootModule;
+}
+
+relation SiadapRootModuleSiadapEvaluation {
+	SiadapEvaluation playsRole evaluations {
+		multiplicity *;
+	}
+	SiadapRootModule playsRole siadapRootModule;
+}
+
+relation SiadapProcessSiadap {
+	SiadapProcess playsRole process;
+	Siadap playsRole siadap;
+}
+ /*relation SiadapSiadapEvaluationItems {//R1
+ 	Siadap playsRole siadap;//R1
+ 	SiadapEvaluationItem playsRole siadapEvaluationItems {//R1
+ 		multiplicity *;//R1
+	}//R1
+}//R1
+*/
+
+relation SiadapEvaluationUniverseSiadapEvaluationItem {
+	SiadapEvaluationUniverse playsRole siadapEvaluationUniverse {
+		multiplicity 1;
+	}
+	SiadapEvaluationItem playsRole siadapEvaluationItems {
+		multiplicity *;
+	}
+}
+
+relation SiadapSiadapEvaluationUniverse{
+	SiadapEvaluationUniverse playsRole siadapEvaluationUniverses {
+		multiplicity *;
+	}
+	Siadap playsRole siadap{
+		multiplicity 1;
+	}
+}
+
+/*relation SiadapAutoEvaluationSiadap {//R1
+	Siadap playsRole siadap;//R1
+	SiadapAutoEvaluation playsRole autoEvaluationData;//R1
+}//R1
+*/
+relation SiadapAutoEvaluationSiadapEvaluationUniverse {
+	SiadapEvaluationUniverse playsRole siadapEvaluationUniverse {
+		multiplicity 1;
+	}
+	SiadapAutoEvaluation playsRole siadapAutoEvaluation {
+		multiplicity 0..1;
+	}
+}
+
+
+/*
+relation SiadapSiadapEvaluation {//R1
+	Siadap playsRole siadap;//R1
+	SiadapEvaluation playsRole evaluationData;//R1
+}//R1
+*/
+relation SiadapEvaluationSiadapEvaluationUniverse {
+	SiadapEvaluationUniverse playsRole siadapEvaluationUniverse {
+		multiplicity 1;
+	}
+	SiadapEvaluation playsRole siadapEvaluation {
+		multiplicity 0..1;
+	}
+}
+
+
+relation SiadapEvaluated {
+	.module.organization.domain.Person playsRole evaluated;
+	Siadap playsRole siadapsAsEvaluated {
+		multiplicity *;
+	}
+}
+
+relation CompetenceEvaluationCompetence {
+	CompetenceEvaluation playsRole competenceEvaluation {
+		multiplicity *;
+	}
+	Competence playsRole competence;
+}
+
+relation CompetenceCompentenceType {
+	CompetenceType playsRole competenceType;
+	Competence playsRole competences {
+		multiplicity *;
+	}	
+}
+
+relation SiadapYearConfigurationSiadap {
+	SiadapYearConfiguration playsRole siadapYearConfiguration {
+		multiplicity 0..1;
+	}
+	Siadap playsRole siadaps {
+		multiplicity *;
+	}
+}
+
+/*relation SiadapYearConfigurationSiadapStructureManagementGroupInstance {
+	SiadapYearConfiguration playsRole siadapYearConfiguration;
+	groups.SiadapStructureManagementGroup playsRole siadapStructureManagementGroup;
+	
+}*/
+
+relation SiadapYearConfigurationSiadapRootModule {
+	SiadapRootModule playsRole siadapRootModule;
+	SiadapYearConfiguration playsRole yearConfigurations {
+		multiplicity *;
+	}
+}	
+
+
+relation UnitRelationsAccountabilityType {
+	SiadapYearConfiguration playsRole yearConfigurationsForUnitRelations {
+		multiplicity *;
+	}
+	.module.organization.domain.AccountabilityType playsRole unitRelations;
+}
+
+relation HarmonizationUnitRelationsAccountabilityType {
+	SiadapYearConfiguration playsRole yearConfigurationsForHarmonizationUnitRelations {
+		multiplicity *;
+	}
+	.module.organization.domain.AccountabilityType playsRole harmonizationUnitRelations;
+}
+
+relation HarmonizationAccountabilityType {
+	SiadapYearConfiguration playsRole yearConfigurationsForHarmonizationRelations {
+		multiplicity *;
+	}
+	.module.organization.domain.AccountabilityType playsRole harmonizationResponsibleRelation;
+}
+
+relation WorkingAccountabilityType {
+	SiadapYearConfiguration playsRole yearConfigurationsForWorkingRelations {
+		multiplicity *;
+	}
+	.module.organization.domain.AccountabilityType playsRole workingRelation;
+}
+
+relation WorkingAccountabilityWithNoQuotaType {
+	SiadapYearConfiguration playsRole yearConfigurationsForWorkingRelationsWithNoQuota {
+		multiplicity *;
+	}
+	.module.organization.domain.AccountabilityType playsRole workingRelationWithNoQuota;
+}
+
+
+relation EvaluationAccountabilityType {
+	SiadapYearConfiguration playsRole yearConfigurationsForEvaluationRelations {
+		multiplicity *;
+	}
+	.module.organization.domain.AccountabilityType playsRole evaluationRelation;
+}
+
+relation SiadapSpecialHarmonizationUnit {
+	SiadapYearConfiguration playsRole yearConfigurationsForSpecialHarmonizationUnit {
+		multiplicity *;
+	}
+	.module.organization.domain.Unit playsRole siadapSpecialHarmonizationUnit;
+}
+
+relation SiadapTopUnit {
+	SiadapYearConfiguration playsRole yearConfigurationsForTopUnit {
+		multiplicity *;
+	}
+	.module.organization.domain.Unit playsRole siadapStructureTopUnit;
+}
+
+relation HarmonizationForUnitIsTerminated {
+	SiadapYearConfiguration playsRole yearConfigurationForClosedUnits;
+	.module.organization.domain.Unit playsRole harmonizationClosedUnits {
+		multiplicity *;
+	}
+}
+
+relation Siadap3HarmonizationSiadapYearConfiguration {
+	SiadapYearConfiguration playsRole yearConfigurationsForSiadap3HarmonizationRelation {
+		multiplicity *;
+	}
+	.module.organization.domain.AccountabilityType playsRole siadap3HarmonizationRelation;
+}
+
+relation Siadap2HarmonizationSiadapYearConfiguration {
+	SiadapYearConfiguration playsRole yearConfigurationsForSiadap2HarmonizationRelation {
+		multiplicity *;
+	}
+	.module.organization.domain.AccountabilityType playsRole siadap2HarmonizationRelation;
+}
+
+relation SiadapYearConfigurationCCAMembers {
+	SiadapYearConfiguration playsRole siadapYearConfigurationForCCAMembers {
+		multiplicity *;
+	}
+	.module.organization.domain.Person playsRole ccaMembers {
+		multiplicity *;
+	}
+}
+
+relation SiadapYearConfigurationSiadapStructureManagementGroup {
+	SiadapYearConfiguration playsRole siadapYearConfigurationForStructureManagementGroupMembers {
+		multiplicity *;
+	}
+	.module.organization.domain.Person playsRole structureManagementGroupMembers {
+		multiplicity *;
+	}
+}
+
+relation SiadapYearConfigurationScheduleEditorsMembers {
+	SiadapYearConfiguration playsRole siadapYearConfigurationForScheduleEditors {
+		multiplicity *;
+	}
+	.module.organization.domain.Person playsRole scheduleEditors {
+		multiplicity *;
+	}
+}
+
+
+relation SiadapYearConfigurationRevertStateMembers {
+	SiadapYearConfiguration playsRole siadapYearConfigurationForRevertStateGroupMember {
+		multiplicity *;
+	}
+	.module.organization.domain.Person playsRole revertStateGroupMember {
+		multiplicity *;
+	}
+}
+
+relation HomologationMembers {
+	SiadapYearConfiguration playsRole siadapYearConfigurationForHomologationMembers {
+		multiplicity *;
+	}
+	.module.organization.domain.Person playsRole homologationMembers {
+		multiplicity *;
+	}
+}
+
+relation ObjectiveEvaluationObjectiveEvaluationIndicator {
+	ObjectiveEvaluation playsRole objectiveEvaluation;
+	ObjectiveEvaluationIndicator playsRole indicators {
+		multiplicity *;
+	}
+}
+
+/* Used to keep track of the old objects and for the moment only useful
+ * to list the objects in the same position. But it might be useful in the 
+ * future to have the relation between the several objects that until
+ * now wasn't being saved */
+relation ObjectiveEvaluationObjectiveEvaluation {
+	ObjectiveEvaluation playsRole oldObjectiveEvaluation;
+	ObjectiveEvaluation playsRole newObjectiveEvaluation;
+}
+
+relation ObjectiveEvaluationIndicatorSiadapRootModule {
+	SiadapRootModule playsRole siadapRootModule;
+	ObjectiveEvaluationIndicator playsRole indicators {
+		multiplicity *;
+	}
+}	
+
+relation ExceedingQuotaProposalSiadapYearConfiguration {
+	ExceedingQuotaProposal playsRole exceedingQuotasProposals {
+		multiplicity *;
+	}
+	SiadapYearConfiguration playsRole yearConfiguration {
+		multiplicity 1;
+	}
+}
+
+relation ExceedingQuotaProposalPerson {
+	ExceedingQuotaProposal playsRole exceedingQuotasProposals {
+		multiplicity *;
+	}
+	.module.organization.domain.Person playsRole suggestion {
+		multiplicity 1;
+	}
+}
+
+relation ExceedingQuotaProposalUnit {
+	ExceedingQuotaProposal playsRole exceedingQuotasProposals {
+		multiplicity *;
+	}
+	.module.organization.domain.Unit playsRole unit {
+		multiplicity 1;
+	}
+}
+
+relation ExceedingQuotaProposalRootModule {
+	ExceedingQuotaProposal playsRole exceedingQuotasProposals {
+		multiplicity *;
+	}
+	SiadapRootModule playsRole siadapRootModule {
+		multiplicity 1;
+	}
+}
+
+relation SiadapEvaluationUniverseCompetenceType {
+	CompetenceType playsRole competenceSlashCareerType {
+		multiplicity 0..1;
+	}
+	SiadapEvaluationUniverse playsRole siadapEvaluationUniverses {
+		multiplicity *;
+	}
+}
+
+

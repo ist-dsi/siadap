@@ -1,2 +1,0 @@
-name=siadap-module
-depends=core,workflow-module,organization,email-module,contacts,remote,organization-ist,expenditure-tracking,scheduler
