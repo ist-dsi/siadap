@@ -10,14 +10,15 @@ import module.siadap.domain.exceptions.SiadapException;
 import module.siadap.domain.wrappers.PersonSiadapWrapper;
 import module.workflow.domain.WorkflowLog;
 import module.workflow.domain.WorkflowProcess;
-import pt.ist.bennu.core.domain.VirtualHost;
-import pt.ist.bennu.core.util.BundleUtil;
-import pt.ist.bennu.core.util.ClassNameBundle;
-import pt.ist.bennu.core.util.ReportUtils;
 import net.sf.jasperreports.engine.JRException;
 
 import org.apache.commons.lang.StringUtils;
 import org.joda.time.DateTime;
+
+import pt.ist.bennu.core.domain.VirtualHost;
+import pt.ist.bennu.core.util.BundleUtil;
+import pt.ist.bennu.core.util.ClassNameBundle;
+import pt.ist.bennu.core.util.ReportUtils;
 
 @ClassNameBundle(bundle = "resources/SiadapResources")
 public class HomologationDocumentFile extends HomologationDocumentFile_Base {
@@ -43,8 +44,7 @@ public class HomologationDocumentFile extends HomologationDocumentFile_Base {
 	this(BundleUtil.getStringFromResourceBundle(Siadap.SIADAP_BUNDLE_STRING,
 		"SiadapProcessDocument.motive.homologation.displayName"), "SIADAP_homologacao_"
 		+ StringUtils.replaceEach(personSiadapWrapper.getSiadap().getProcess().getProcessNumber() + ".pdf", new String[] {
-			"\\", "/" }, new String[] { "_", "_" }), generateHomologationDocument(
-		personSiadapWrapper,
+			"\\", "/" }, new String[] { "_", "_" }), generateHomologationDocument(personSiadapWrapper,
 		BundleUtil.getStringFromResourceBundle(Siadap.SIADAP_BUNDLE_STRING, "SiadapProcessDocument.motive.homologation")));
 	personSiadapWrapper.getSiadap().getProcess().addFiles(this);
     }
@@ -57,8 +57,9 @@ public class HomologationDocumentFile extends HomologationDocumentFile_Base {
 
 	final ResourceBundle resourceBundle = ResourceBundle.getBundle(Siadap.SIADAP_BUNDLE_STRING);
 	paramMap.put("process", process);
-	//joantune: NOTE: the PersonSiadapWrapper can be very handy because of some methods, but it will most likely decrease performance on the
-	//generation of the document
+	// joantune: NOTE: the PersonSiadapWrapper can be very handy because of
+	// some methods, but it will most likely decrease performance on the
+	// generation of the document
 	paramMap.put("personSiadapWrapper", personSiadapWrapper);
 	paramMap.put("documentGeneratedDate", new DateTime());
 	paramMap.put("generationMotive", generationMotive);
@@ -69,7 +70,7 @@ public class HomologationDocumentFile extends HomologationDocumentFile_Base {
 	paramMap.put("logoFilename", "Logo_" + VirtualHost.getVirtualHostForThread().getHostname() + ".png");
 
 	try {
-	    return ReportUtils.exportToPdfFileAsByteArray("siadapProcessDocument", paramMap, resourceBundle,
+	    return ReportUtils.exportToPdfFileAsByteArray("/reports/siadapProcessDocument.jasper", paramMap, resourceBundle,
 		    personSiadapWrapper.getAllObjEvaluationWrapperBeansOfDefaultEval());
 	} catch (JRException e) {
 	    e.printStackTrace();
