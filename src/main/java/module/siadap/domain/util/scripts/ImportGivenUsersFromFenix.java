@@ -32,10 +32,12 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
 
-import module.organizationIst.domain.listner.LoginListner;
 import pt.ist.bennu.core.domain.User;
 import pt.ist.bennu.core.domain.scheduler.ReadCustomTask;
 import pt.ist.bennu.core.domain.scheduler.TransactionalThread;
+
+import module.organizationIst.domain.listner.LoginListner;
+import module.siadap.domain.Siadap;
 
 /**
  * 
@@ -312,7 +314,7 @@ public class ImportGivenUsersFromFenix extends ReadCustomTask {
 		processLine(strLine);
 	    }
 	    // Close the input stream
-	    //	    in.close();
+	    // in.close();
 	} catch (IOException e) {// Catch exception if any
 	    out.println("Error: " + e.getMessage());
 	}
@@ -346,34 +348,28 @@ public class ImportGivenUsersFromFenix extends ReadCustomTask {
 
 	    int nrOfUsersImported = 0;
 
-	    //for each user let's get the remote person
+	    // for each user let's get the remote person
 	    for (User user : existingUsers) {
-		if (user.getPerson() == null || user.getPerson().getRemotePerson() == null
-			|| user.getPerson().getRemotePerson().getEmailForSendingEmails() == null) {
+		if (user.getPerson() == null || Siadap.getRemoteEmail(user.getPerson()) == null) {
 		    LoginListner.importUserInformation(user.getUsername());
-		    debug("Imported info for user " + user.getUsername() + " remote object is null? : "
-			    + (user.getPerson().getRemotePerson() == null), out);
+		    debug("Imported info for user " + user.getUsername(), out);
 		}
 	    }
 
-
 	}
-	   
 
     }
 
-    //    static protected void addMappedUserByUsername(String username) {
+    // static protected void addMappedUserByUsername(String username) {
     //
-    //	User user = User.findByUsername(username);
+    // User user = User.findByUsername(username);
     //
-    //	if (user == null) {
-    //		user = User.createNewUser(username);
-    //	    	out.println("Created user: " + username);
-    //	} else
-    //	    mappedUsers.add(user);
-    //    }
-
-  
+    // if (user == null) {
+    // user = User.createNewUser(username);
+    // out.println("Created user: " + username);
+    // } else
+    // mappedUsers.add(user);
+    // }
 
     private static void debug(String message, PrintWriter out) {
 
@@ -401,7 +397,7 @@ public class ImportGivenUsersFromFenix extends ReadCustomTask {
 	String evaluatedId = values[1].trim();
 	String evaluatorId = values[2].trim();
 
-	//let's add each of the users to the map
+	// let's add each of the users to the map
 
 	existingUsers.add(User.findByUsername(evaluatorId));
 	existingUsers.add(User.findByUsername(evaluatedId));

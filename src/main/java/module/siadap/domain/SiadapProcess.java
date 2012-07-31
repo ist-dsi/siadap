@@ -30,6 +30,19 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.MissingResourceException;
 
+import org.joda.time.LocalDate;
+
+import pt.ist.bennu.core.applicationTier.Authenticate.UserView;
+import pt.ist.bennu.core.domain.RoleType;
+import pt.ist.bennu.core.domain.User;
+import pt.ist.bennu.core.domain.VirtualHost;
+import pt.ist.bennu.core.domain.exceptions.DomainException;
+import pt.ist.bennu.core.domain.groups.Role;
+import pt.ist.bennu.core.util.BundleUtil;
+import pt.ist.bennu.core.util.ClassNameBundle;
+import pt.ist.emailNotifier.domain.Email;
+import pt.ist.fenixWebFramework.services.Service;
+
 import module.organization.domain.Person;
 import module.organizationIst.domain.listner.LoginListner;
 import module.siadap.activities.AcknowledgeEvaluationObjectives;
@@ -70,19 +83,6 @@ import module.workflow.domain.LabelLog;
 import module.workflow.domain.ProcessFile;
 import module.workflow.domain.WorkflowLog;
 import module.workflow.domain.WorkflowProcess;
-import pt.ist.bennu.core.applicationTier.Authenticate.UserView;
-import pt.ist.bennu.core.domain.RoleType;
-import pt.ist.bennu.core.domain.User;
-import pt.ist.bennu.core.domain.VirtualHost;
-import pt.ist.bennu.core.domain.exceptions.DomainException;
-import pt.ist.bennu.core.domain.groups.Role;
-import pt.ist.bennu.core.util.BundleUtil;
-import pt.ist.bennu.core.util.ClassNameBundle;
-
-import org.joda.time.LocalDate;
-
-import pt.ist.emailNotifier.domain.Email;
-import pt.ist.fenixWebFramework.services.Service;
 
 /**
  * 
@@ -119,20 +119,20 @@ public class SiadapProcess extends SiadapProcess_Base {
 	activities.add(new SubmitValidatedEvaluation());
 	activities.add(new AcknowledgeEvaluationValidation());
 	activities.add(new Homologate());
-	//	activities.add(new AcknowledgeHomologation());
+	// activities.add(new AcknowledgeHomologation());
 	activities.add(new EditObjectiveEvaluation());
 	activities.add(new SubmitForObjectivesAcknowledge());
-	//	activities.add(new NotValidateEvaluation());
+	// activities.add(new NotValidateEvaluation());
 	activities.add(new NoEvaluation());
 	activities.add(new RevertNoEvaluation());
-	//	activities.add(new GrantExcellencyAward());
-	//	activities.add(new RevokeExcellencyAward());
+	// activities.add(new GrantExcellencyAward());
+	// activities.add(new RevokeExcellencyAward());
 
 	activities.add(new ForceEditCompetenceSlashCareerEvaluationByCCA());
 
 	activities.add(new Validation());
 
-	//SiadapPersonnelManagement activities:
+	// SiadapPersonnelManagement activities:
 	activities.add(new ChangePersonnelSituation());
 
 	activities.add(new SendToReviewCommission());
@@ -188,7 +188,8 @@ public class SiadapProcess extends SiadapProcess_Base {
     public List<String> getWarningMessages() {
 	User currentUser = UserView.getCurrentUser();
 	ArrayList<String> warningMessagesToReturn = new ArrayList<String>();
-	//for each let's try to translate it using the resources, case it can't be found we print it as it is
+	// for each let's try to translate it using the resources, case it can't
+	// be found we print it as it is
 	ArrayList<String> warningMessages = getUserWarningsKey().get(currentUser);
 	if (warningMessages == null) {
 	    warningMessages = new ArrayList<String>();
@@ -324,12 +325,12 @@ public class SiadapProcess extends SiadapProcess_Base {
     }
 
     public static void checkEmailExistenceImportAndWarnOnError(Person person) {
-	//if we have no info about the person, let's import it
-	if (person.getRemotePerson() == null || person.getRemotePerson().getEmailForSendingEmails() == null) {
+	// if we have no info about the person, let's import it
+	if (Siadap.getRemoteEmail(person) == null) {
 	    LoginListner.importUserInformation(person.getUser().getUsername());
 	}
-	//if that didn't solved it, let's warn the admin by e-mail
-	if (person.getRemotePerson() == null || person.getRemotePerson().getEmailForSendingEmails() == null) {
+	// if that didn't solved it, let's warn the admin by e-mail
+	if (Siadap.getRemoteEmail(person) == null) {
 	    StringBuilder message = new StringBuilder("Error, could not import e-mail/info for person " + person.getName() + "\n");
 	    if (person.getUser() != null && person.getUser().getUsername() != null) {
 		message.append("the username is: " + person.getUser().getUsername() + "\n");
@@ -337,18 +338,17 @@ public class SiadapProcess extends SiadapProcess_Base {
 	    }
 	    message.append("Please take appropriate actions\n");
 	    notifyAdmin("[Bennu/Myorg] - Error retrieving remote information from fenix for a user", message.toString());
-
 	}
     }
 
-    //TODO change this so that the e-mail isn't hardcoded and there is a batch sent not for each error an e-mail
+    // TODO change this so that the e-mail isn't hardcoded and there is a batch
+    // sent not for each error an e-mail
     private static void notifyAdmin(String subject, String message) {
 	ArrayList<String> toAddress = new ArrayList<String>();
 	toAddress.add("joao.antunes@tagus.ist.utl.pt");
 	final VirtualHost virtualHost = VirtualHost.getVirtualHostForThread();
-	new Email(virtualHost.getApplicationSubTitle().getContent(),
-		    virtualHost.getSystemEmailAddress(), new String[] {}, toAddress, Collections.EMPTY_LIST,
-		Collections.EMPTY_LIST, subject, message);
+	new Email(virtualHost.getApplicationSubTitle().getContent(), virtualHost.getSystemEmailAddress(), new String[] {},
+		toAddress, Collections.EMPTY_LIST, Collections.EMPTY_LIST, subject, message);
     }
 
     @Override

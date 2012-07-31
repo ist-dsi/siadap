@@ -27,18 +27,17 @@ package module.siadap.activities;
 import java.util.ArrayList;
 import java.util.Collections;
 
+import org.joda.time.LocalDate;
+
+import pt.ist.bennu.core.domain.User;
+import pt.ist.bennu.core.domain.VirtualHost;
+import pt.ist.emailNotifier.domain.Email;
+
 import module.organization.domain.Person;
 import module.siadap.domain.Siadap;
 import module.siadap.domain.SiadapProcess;
 import module.workflow.activities.ActivityInformation;
 import module.workflow.activities.WorkflowActivity;
-import pt.ist.bennu.core.domain.User;
-import pt.ist.bennu.core.domain.VirtualHost;
-
-import org.joda.time.LocalDate;
-
-import pt.ist.emailNotifier.domain.Email;
-import pt.ist.fenixframework.plugins.remote.domain.exception.RemoteException;
 
 /**
  * 
@@ -80,7 +79,7 @@ public class SubmitValidatedEvaluation extends WorkflowActivity<SiadapProcess, A
 
 	try {
 	    SiadapProcess.checkEmailExistenceImportAndWarnOnError(evaluatedPerson);
-	    emailEvaluated = evaluatedPerson.getRemotePerson().getEmailForSendingEmails();
+	    emailEvaluated = Siadap.getRemoteEmail(evaluatedPerson);
 
 	    if (emailEvaluated != null) {
 		toAddress.add(emailEvaluated);
@@ -97,7 +96,7 @@ public class SubmitValidatedEvaluation extends WorkflowActivity<SiadapProcess, A
 			new String[] {}, toAddress, ccAddress, Collections.EMPTY_LIST, "SIADAP - " + year
 				+ " Nota final disponível", body.toString());
 	    }
-	} catch (RemoteException ex) {
+	} catch (Throwable ex) {
 	    System.out.println("Unable to lookup email address for: " + evaluatedPerson.getUser().getUsername() + " Error: "
 		    + ex.getMessage());
 	    process.addWarningMessage("warning.message.could.not.send.email.now");

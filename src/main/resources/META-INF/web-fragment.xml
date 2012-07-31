@@ -22,8 +22,6 @@
    <name>email-dispatch</name>
    <name>contacts</name>
    <name>geography</name>
-   <name>remote</name>
-   <name>remote-plugin</name>
    <name>organization-ist</name>
    <name>expenditure-tracking</name>
    <name>meta-workflow</name>
@@ -31,10 +29,10 @@
    <name>bennu-vaadin</name>
    <name>external-accounting-integration</name>
    <name>db-utils</name>
-   <name>web-service-utils</name>
    <name>messaging</name>
    <name>scheduler</name>
    <name>scheduler-plugin</name>
+   <name>web-service-utils</name>
    <!-- [END OF BENNU GENERATED FRAGMENT] -->
 		</after>
 		<before>

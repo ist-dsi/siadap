@@ -30,10 +30,18 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
+import org.apache.commons.collections.Predicate;
+import org.apache.commons.lang.StringUtils;
+import org.joda.time.Interval;
+import org.joda.time.LocalDate;
+
+import pt.ist.fenixWebFramework.services.Service;
+
 import module.organization.domain.Accountability;
 import module.organization.domain.AccountabilityType;
 import module.organization.domain.Person;
 import module.organization.domain.Unit;
+import module.organizationIst.webservices.JerseyRemoteUser;
 import module.siadap.domain.exceptions.SiadapException;
 import module.siadap.domain.scoring.SiadapGlobalEvaluation;
 import module.siadap.domain.util.SiadapMiscUtilClass;
@@ -42,13 +50,6 @@ import module.siadap.domain.wrappers.PersonSiadapWrapper;
 import module.workflow.domain.utils.WorkflowCommentCounter;
 import module.workflow.widgets.ProcessListWidget;
 import module.workflow.widgets.UnreadCommentsWidget;
-
-import org.apache.commons.collections.Predicate;
-import org.apache.commons.lang.StringUtils;
-import org.joda.time.Interval;
-import org.joda.time.LocalDate;
-
-import pt.ist.fenixWebFramework.services.Service;
 
 /**
  * 
@@ -60,12 +61,12 @@ import pt.ist.fenixWebFramework.services.Service;
 public class Siadap extends Siadap_Base {
 
     public static final String SIADAP_BUNDLE_STRING = "resources/SiadapResources";
-    
-    public static final Comparator<Siadap> COMPARATOR_BY_EVALUATED_PRESENTATION_NAME_FALLBACK_YEAR_THEN_OID =  new Comparator<Siadap>() {
 
-	    @Override
-	    public int compare(Siadap o1, Siadap o2) {
-		
+    public static final Comparator<Siadap> COMPARATOR_BY_EVALUATED_PRESENTATION_NAME_FALLBACK_YEAR_THEN_OID = new Comparator<Siadap>() {
+
+	@Override
+	public int compare(Siadap o1, Siadap o2) {
+
 	    int presentationNameComparison = 0;
 	    if (o1 == null || o2 == null) {
 		if (o2 == null && o1 == null)
@@ -78,18 +79,17 @@ public class Siadap extends Siadap_Base {
 	    if (o1.getEvaluated() != null && o2.getEvaluated() != null)
 		presentationNameComparison = o1.getEvaluated().getPresentationName()
 			.compareTo(o2.getEvaluated().getPresentationName());
-		int yearComparison = o1.getYear().compareTo(o2.getYear());
+	    int yearComparison = o1.getYear().compareTo(o2.getYear());
 	    return presentationNameComparison == 0 ? (yearComparison == 0 ? o1.getExternalId().compareTo(o2.getExternalId())
 		    : yearComparison) : presentationNameComparison;
-	    }
-	};
+	}
+    };
 
-    //register itself in the pending processes widget:
+    // register itself in the pending processes widget:
     static {
 	ProcessListWidget.register(new SiadapPendingProcessesCounter());
 	UnreadCommentsWidget.register(new WorkflowCommentCounter(SiadapProcess.class));
     }
-
 
     public static final int MINIMUM_EFICIENCY_OBJECTIVES_NUMBER = 1;
     public static final int MINIMUM_PERFORMANCE_OBJECTIVES_NUMBER = 1;
@@ -112,8 +112,7 @@ public class Siadap extends Siadap_Base {
     public SiadapProcessStateEnum getState() {
 	if (getNulled() == Boolean.TRUE) {
 	    return SiadapProcessStateEnum.NULLED;
-	} else
-	if (isWithSkippedEvaluation()) {
+	} else if (isWithSkippedEvaluation()) {
 	    return SiadapProcessStateEnum.EVALUATION_NOT_GOING_TO_BE_DONE;
 	} else if (!isWithObjectivesFilled()) {
 	    return SiadapProcessStateEnum.INCOMPLETE_OBJ_OR_COMP;
@@ -158,11 +157,11 @@ public class Siadap extends Siadap_Base {
 	    return false;
 	}
 
-	LocalDate limitDate = getAcknowledgeValidationDate().plusDays(getSiadapYearConfiguration().getReviewCommissionWaitingPeriod());
+	LocalDate limitDate = getAcknowledgeValidationDate().plusDays(
+		getSiadapYearConfiguration().getReviewCommissionWaitingPeriod());
 	LocalDate today = new LocalDate();
 	return !today.isAfter(limitDate);
     }
-
 
     public boolean isOngoing() {
 	return getState().equals(SiadapProcessStateEnum.EVALUATION_NOT_GOING_TO_BE_DONE)
@@ -212,15 +211,14 @@ public class Siadap extends Siadap_Base {
 	return null;
     }
 
-
-    //    public List<CompetenceEvaluation> getCompetenceEvaluations() {
-    //	return getEvaluations(CompetenceEvaluation.class, null, null);
-    //    }
-
+    // public List<CompetenceEvaluation> getCompetenceEvaluations() {
+    // return getEvaluations(CompetenceEvaluation.class, null, null);
+    // }
 
     public List<CompetenceEvaluation> getCompetenceEvaluations() {
 	return getDefaultSiadapEvaluationUniverse().getCompetenceEvaluations();
     }
+
     public boolean isAutoEvaliationDone() {
 	return getAutoEvaluationSealedDate() != null;
     }
@@ -236,50 +234,46 @@ public class Siadap extends Siadap_Base {
 	return defaultSiadapEvaluationUniverse.getValidationDate();
     }
 
-    public boolean isEvaluationDone(SiadapUniverse siadapUniverse)
-    {
+    public boolean isEvaluationDone(SiadapUniverse siadapUniverse) {
 	SiadapEvaluationUniverse siadapEvaluationUniverseForSiadapUniverse = getSiadapEvaluationUniverseForSiadapUniverse(siadapUniverse);
 	return siadapEvaluationUniverseForSiadapUniverse.isEvaluationDone();
     }
 
-
-
-
-
-
-//    public BigDecimal getPonderatedObjectivesScoring() {
-    //	return getPonderationResult(getObjectivesScoring(), getObjectivesPonderation());
-    //    }
+    // public BigDecimal getPonderatedObjectivesScoring() {
+    // return getPonderationResult(getObjectivesScoring(),
+    // getObjectivesPonderation());
+    // }
     //
-    //    public BigDecimal getCompetencesScoring() {
-    //	return getEvaluationScoring(getCompetenceEvaluations());
-    //    }
+    // public BigDecimal getCompetencesScoring() {
+    // return getEvaluationScoring(getCompetenceEvaluations());
+    // }
     //
-    //    public BigDecimal getPonderatedCompetencesScoring() {
-    //	return getPonderationResult(getCompetencesScoring(), getCompetencesPonderation());
-    //    }
+    // public BigDecimal getPonderatedCompetencesScoring() {
+    // return getPonderationResult(getCompetencesScoring(),
+    // getCompetencesPonderation());
+    // }
     //
-    //    public BigDecimal getTotalEvaluationScoring() {
-    //	return getPonderatedCompetencesScoring().add(getPonderatedObjectivesScoring());
-    //    }
+    // public BigDecimal getTotalEvaluationScoring() {
+    // return
+    // getPonderatedCompetencesScoring().add(getPonderatedObjectivesScoring());
+    // }
     //
-    //    public Double getCompetencesPonderation() {
-    //	return getSiadapYearConfiguration().getCompetencesPonderation();
-    //    }
+    // public Double getCompetencesPonderation() {
+    // return getSiadapYearConfiguration().getCompetencesPonderation();
+    // }
     //
     public List<SiadapEvaluationItem> getCurrentEvaluationItems() {
-	
+
 	ArrayList<SiadapEvaluationItem> currentEvaluationItems = new ArrayList<SiadapEvaluationItem>();
 	final SiadapEvaluationUniverse evalUniverse = getDefaultSiadapEvaluationUniverse();
 	currentEvaluationItems.addAll(evalUniverse.getEvaluations(SiadapEvaluationItem.class, new Predicate() {
 
-		    @Override
-		    public boolean evaluate(Object arg0) {
-			return (arg0 instanceof ObjectiveEvaluation) ? ((ObjectiveEvaluation) arg0)
-.isValidForVersion(evalUniverse
-			    .getCurrentObjectiveVersion()) : true;
-		    }
-		}, null));
+	    @Override
+	    public boolean evaluate(Object arg0) {
+		return (arg0 instanceof ObjectiveEvaluation) ? ((ObjectiveEvaluation) arg0).isValidForVersion(evalUniverse
+			.getCurrentObjectiveVersion()) : true;
+	    }
+	}, null));
 	return currentEvaluationItems;
     }
 
@@ -364,77 +358,70 @@ public class Siadap extends Siadap_Base {
 	    return null;
 	return getDefaultSiadapEvaluationUniverse().getCompetenceSlashCareerType();
     }
-    
+
     @Service
     public void createCurricularPonderation(SiadapUniverse siadapUniverse, BigDecimal gradeToAssign, Boolean assignedExcellency,
-	    String excellencyAwardJustification, String curricularPonderationJustification, Person evaluator)
-    {
-	//let's validate everything
+	    String excellencyAwardJustification, String curricularPonderationJustification, Person evaluator) {
+	// let's validate everything
 	if (siadapUniverse == null || assignedExcellency == null || evaluator == null
 		|| !SiadapGlobalEvaluation.isValidGrade(gradeToAssign, assignedExcellency.booleanValue())
 		|| (assignedExcellency.booleanValue() && StringUtils.isEmpty(excellencyAwardJustification))
 		|| StringUtils.isEmpty(curricularPonderationJustification))
 	    throw new SiadapException("invalid.data.for.creation.of.a.curricular.ponderation");
 
-	//let's if we don't have an evaluation for the given universe
+	// let's if we don't have an evaluation for the given universe
 	if (getSiadapEvaluationUniverseForSiadapUniverse(siadapUniverse) != null)
 	    throw new SiadapException("error.curricular.ponderation.cannot.have.more.than.one.eval.for.universe");
 
 	SiadapYearConfiguration siadapYearConfiguration = getSiadapYearConfiguration();
 	Unit siadapSpecialHarmonizationUnit = siadapYearConfiguration.getSiadapSpecialHarmonizationUnit();
-	if (siadapSpecialHarmonizationUnit == null)
-	{
+	if (siadapSpecialHarmonizationUnit == null) {
 	    throw new SiadapException("error.must.configure.special.harmonnization.unit.first");
 	}
-	
+
 	AccountabilityType accTypeToReplace = null;
-	if (siadapUniverse.equals(SiadapUniverse.SIADAP2))
-	{
-	    accTypeToReplace =siadapYearConfiguration.getSiadap2HarmonizationRelation();
-	}
-	else if (siadapUniverse.equals(SiadapUniverse.SIADAP3))
-	{
+	if (siadapUniverse.equals(SiadapUniverse.SIADAP2)) {
+	    accTypeToReplace = siadapYearConfiguration.getSiadap2HarmonizationRelation();
+	} else if (siadapUniverse.equals(SiadapUniverse.SIADAP3)) {
 	    accTypeToReplace = siadapYearConfiguration.getSiadap3HarmonizationRelation();
 	}
-	
-	if (accTypeToReplace == null)
-	{
+
+	if (accTypeToReplace == null) {
 	    throw new SiadapException("error.must.configure.SIADAP.2.and.3.harm.relation.types.first");
 	}
-	//let's create the new SiadapEvaluationUniverse
+	// let's create the new SiadapEvaluationUniverse
 	SiadapEvaluationUniverse siadapEvaluationUniverse = new SiadapEvaluationUniverse(this, siadapUniverse, null, false);
 	CurricularPonderationEvaluationItem curricularPonderationEvaluationItem = new CurricularPonderationEvaluationItem(
 		gradeToAssign, assignedExcellency, excellencyAwardJustification, curricularPonderationJustification,
 		siadapEvaluationUniverse, evaluator);
-	//let's connect this SiadapEvaluationUniverse with the specialunit
+	// let's connect this SiadapEvaluationUniverse with the specialunit
 	Person evaluated = getEvaluated();
-	//let's remove the current accountability that it might have for the given SiadapUniverse
-	
+	// let's remove the current accountability that it might have for the
+	// given SiadapUniverse
+
 	Accountability accToRemove = null;
 	LocalDate dateToUse = null;
-	//let's search for the previous accountability
-	for (Accountability accountability : evaluated.getParentAccountabilities(accTypeToReplace))
-	{
-	    //let's confirm that in the other end there's a unit, and that the accountability is for this year
-	    if (accountability.getParent() instanceof Unit)
-	    {
-		if (accountability.isActive(SiadapMiscUtilClass.lastDayOfYear(getYear())))
-		{
-		    //this is the one to replace, let's get its begindate
+	// let's search for the previous accountability
+	for (Accountability accountability : evaluated.getParentAccountabilities(accTypeToReplace)) {
+	    // let's confirm that in the other end there's a unit, and that the
+	    // accountability is for this year
+	    if (accountability.getParent() instanceof Unit) {
+		if (accountability.isActive(SiadapMiscUtilClass.lastDayOfYear(getYear()))) {
+		    // this is the one to replace, let's get its begindate
 		    dateToUse = accountability.getBeginDate();
 		    accToRemove = accountability;
-		    //let's actually be conservative here. If we already have one, let's just abort
+		    // let's actually be conservative here. If we already have
+		    // one, let's just abort
 		    throw new SiadapException("already.with.a.curricular.ponderation.attributed");
 		}
 	    }
 	}
-	
-	if (dateToUse == null)
-	{
-	    //let's get a viable date here 30th December of the year
+
+	if (dateToUse == null) {
+	    // let's get a viable date here 30th December of the year
 	    dateToUse = new LocalDate(getYear(), 12, 30);
 	}
-	
+
 	if (accToRemove != null)
 	    accToRemove.delete();
 	evaluated.addParent(siadapSpecialHarmonizationUnit, accTypeToReplace, dateToUse,
@@ -533,15 +520,18 @@ public class Siadap extends Siadap_Base {
 	}
 	return null;
     }
-    
-    //    public boolean hasRelevantSiadapEvaluation(SiadapUniverse siadapUniverseToConsider) {
-    //	SiadapEvaluationUniverse siadapEvaluationUniverseForSiadapUniverse = getSiadapEvaluationUniverseForSiadapUniverse(siadapUniverseToConsider);
-    //	if (siadapEvaluationUniverseForSiadapUniverse == null) {
-    //	    return false;
-    //	}
-    //	return SiadapGlobalEvaluation.HIGH.accepts(siadapEvaluationUniverseForSiadapUniverse.getTotalEvaluationScoring());
+
+    // public boolean hasRelevantSiadapEvaluation(SiadapUniverse
+    // siadapUniverseToConsider) {
+    // SiadapEvaluationUniverse siadapEvaluationUniverseForSiadapUniverse =
+    // getSiadapEvaluationUniverseForSiadapUniverse(siadapUniverseToConsider);
+    // if (siadapEvaluationUniverseForSiadapUniverse == null) {
+    // return false;
+    // }
+    // return
+    // SiadapGlobalEvaluation.HIGH.accepts(siadapEvaluationUniverseForSiadapUniverse.getTotalEvaluationScoring());
     //
-    //    }
+    // }
 
     public SiadapGlobalEvaluation getSiadapGlobalEvaluationEnum(SiadapUniverse siadapUniverse) {
 	return getSiadapGlobalEvaluationEnum(siadapUniverse, false);
@@ -566,20 +556,22 @@ public class Siadap extends Siadap_Base {
      *         evaluation for the given siadapUniverseToConsider
      */
     public boolean hasGivenSiadapGlobalEvaluation(SiadapGlobalEvaluation siadapGlobalEvaluation,
-	    SiadapUniverse siadapUniverseToConsider)
-    {
+	    SiadapUniverse siadapUniverseToConsider) {
 	return hasGivenSiadapGlobalEvaluation(siadapGlobalEvaluation, siadapUniverseToConsider, false);
     }
 
     public boolean hasGivenSiadapGlobalEvaluation(SiadapGlobalEvaluation siadapGlobalEvaluation,
 	    SiadapUniverse siadapUniverseToConsider, boolean considerValidation) {
 	SiadapEvaluationUniverse siadapEvaluationUniverseForSiadapUniverse = getSiadapEvaluationUniverseForSiadapUniverse(siadapUniverseToConsider);
-	if (siadapEvaluationUniverseForSiadapUniverse == null && siadapGlobalEvaluation.equals(SiadapGlobalEvaluation.NONEXISTING)) {
+	if (siadapEvaluationUniverseForSiadapUniverse == null
+		&& siadapGlobalEvaluation.equals(SiadapGlobalEvaluation.NONEXISTING)) {
 	    return true;
 	}
-	if (siadapEvaluationUniverseForSiadapUniverse == null) return false;
+	if (siadapEvaluationUniverseForSiadapUniverse == null)
+	    return false;
 
-	//if we are on the default evaluation universe, we should check if this one is finished or not
+	// if we are on the default evaluation universe, we should check if this
+	// one is finished or not
 	if (siadapEvaluationUniverseForSiadapUniverse.getDefaultEvaluationUniverse() && !isDefaultEvaluationDone())
 
 	{
@@ -590,7 +582,7 @@ public class Siadap extends Siadap_Base {
 	}
 	BigDecimal gradeToUse = null;
 	boolean excellencyAward = false;
-	//if we have a compelte validation assessment, we should use that
+	// if we have a compelte validation assessment, we should use that
 	if (considerValidation && siadapEvaluationUniverseForSiadapUniverse.hasValidationAssessment()) {
 	    gradeToUse = siadapEvaluationUniverseForSiadapUniverse.getCcaClassification();
 	    excellencyAward = siadapEvaluationUniverseForSiadapUniverse.getCcaClassificationExcellencyAward();
@@ -603,23 +595,24 @@ public class Siadap extends Siadap_Base {
 
     }
 
-
-    //    public boolean hasExcellentSiadapEvaluation(SiadapUniverse siadapUniverseToConsider) {
-    //	SiadapEvaluationUniverse siadapEvaluationUniverseForSiadapUniverse = getSiadapEvaluationUniverseForSiadapUniverse(siadapUniverseToConsider);
-    //	if (siadapEvaluationUniverseForSiadapUniverse == null) {
-    //	    return false;
-    //	}
-    //	return siadapEvaluationUniverseForSiadapUniverse.hasExcellencyAwarded()
-    //		&& SiadapGlobalEvaluation.EXCELLENCY.accepts(siadapEvaluationUniverseForSiadapUniverse
-    //			.getTotalEvaluationScoring());
-    //    }
+    // public boolean hasExcellentSiadapEvaluation(SiadapUniverse
+    // siadapUniverseToConsider) {
+    // SiadapEvaluationUniverse siadapEvaluationUniverseForSiadapUniverse =
+    // getSiadapEvaluationUniverseForSiadapUniverse(siadapUniverseToConsider);
+    // if (siadapEvaluationUniverseForSiadapUniverse == null) {
+    // return false;
+    // }
+    // return siadapEvaluationUniverseForSiadapUniverse.hasExcellencyAwarded()
+    // &&
+    // SiadapGlobalEvaluation.EXCELLENCY.accepts(siadapEvaluationUniverseForSiadapUniverse
+    // .getTotalEvaluationScoring());
+    // }
 
     public boolean hasExcellencyAward() {
 	if (getEvaluationData2() == null || getEvaluationData2().getExcellencyAward() == null)
-		return false;
+	    return false;
 	return getEvaluationData2().getExcellencyAward();
     }
-
 
     public List<ObjectiveEvaluation> getObjectiveEvaluations() {
 	return getDefaultSiadapEvaluationUniverse().getObjectiveEvaluations();
@@ -709,9 +702,7 @@ public class Siadap extends Siadap_Base {
 	return new Interval(SiadapMiscUtilClass.convertDateToBeginOfDay(begin), SiadapMiscUtilClass.convertDateToEndOfDay(end));
     }
 
-
-
-    //TODO change this appropriately when Issue #31 is resolved
+    // TODO change this appropriately when Issue #31 is resolved
     private boolean isAutoEvaluationScheduleDefined() {
 
 	SiadapYearConfiguration configuration = getSiadapYearConfiguration();
@@ -722,7 +713,7 @@ public class Siadap extends Siadap_Base {
 	return true;
     }
 
-    //TODO change this appropriately when Issue #31 is resolved
+    // TODO change this appropriately when Issue #31 is resolved
     private boolean isEvaluationScheduleDefined() {
 
 	SiadapYearConfiguration configuration = getSiadapYearConfiguration();
@@ -733,7 +724,7 @@ public class Siadap extends Siadap_Base {
 	return true;
     }
 
-    //TODO change this appropriately when Issue #31 is resolved
+    // TODO change this appropriately when Issue #31 is resolved
     private boolean isObjectiveSpecificationScheduleDefined() {
 	SiadapYearConfiguration configuration = getSiadapYearConfiguration();
 	LocalDate begin = configuration.getObjectiveSpecificationBegin();
@@ -744,7 +735,7 @@ public class Siadap extends Siadap_Base {
     }
 
     public boolean isAutoEvaluationIntervalFinished() {
-	//TODO change this appropriately when Issue #31 is resolved
+	// TODO change this appropriately when Issue #31 is resolved
 	if (!isAutoEvaluationScheduleDefined())
 	    return false;
 	return getAutoEvaluationInterval().isBeforeNow();
@@ -753,14 +744,14 @@ public class Siadap extends Siadap_Base {
     public boolean isEvaluationIntervalFinished() {
 	if (!isEvaluationScheduleDefined())
 	    return false;
-	//TODO change this appropriately when Issue #31 is resolved
+	// TODO change this appropriately when Issue #31 is resolved
 	return getEvaluationInterval().isBeforeNow();
     }
 
     public boolean isObjectiveSpecificationIntervalFinished() {
 	if (!isObjectiveSpecificationScheduleDefined())
 	    return false;
-	//TODO change this appropriately when Issue #31 is resolved
+	// TODO change this appropriately when Issue #31 is resolved
 	return getObjectiveSpecificationInterval().isBeforeNow();
     }
 
@@ -771,8 +762,6 @@ public class Siadap extends Siadap_Base {
 	getProcess().removeHarmonizationMark(evaluationUniverse);
     }
 
-
-
     public boolean hasAnAssociatedCurricularPonderationEval() {
 	for (SiadapEvaluationUniverse evaluationUniverse : getSiadapEvaluationUniverses()) {
 	    if (evaluationUniverse.isCurriculumPonderation())
@@ -780,8 +769,8 @@ public class Siadap extends Siadap_Base {
 	}
 	return false;
     }
-    
-    //    public SiadapEvaluationUniverse getCurr
+
+    // public SiadapEvaluationUniverse getCurr
 
     @Service
     public void markAsHarmonized(LocalDate harmonizationDate, SiadapUniverse siadapUniverse) {
@@ -790,19 +779,20 @@ public class Siadap extends Siadap_Base {
 		|| (evaluationUniverse.hasExcellencyAwardedFromEvaluator() && evaluationUniverse
 			.getHarmonizationAssessmentForExcellencyAward() == null))
 	    throw new SiadapException("harmonization.error.there.are.people.not.harmonized");
-	//let's also make sure that this person either has been marked as not having an evaluation or has the evaluation done
-	if (!isEvaluationDone(siadapUniverse) )
-	{
-	    if (evaluationUniverse.getDefaultEvaluationUniverse() && isWithSkippedEvaluation())
-	    {
-		//do nothing :)
+	// let's also make sure that this person either has been marked as not
+	// having an evaluation or has the evaluation done
+	if (!isEvaluationDone(siadapUniverse)) {
+	    if (evaluationUniverse.getDefaultEvaluationUniverse() && isWithSkippedEvaluation()) {
+		// do nothing :)
 	    } else {
 		throw new SiadapException("error.harmonization.can't.harmonize.with.users.without.grade");
 	    }
 	}
 
-	//let's also make sure there's consistency between the excellency assessment and the regular.
-	//you cannot have the case where excellencyAssessment = true and regularAssessment = false
+	// let's also make sure there's consistency between the excellency
+	// assessment and the regular.
+	// you cannot have the case where excellencyAssessment = true and
+	// regularAssessment = false
 	if (evaluationUniverse.getHarmonizationAssessment() != null
 		&& evaluationUniverse.getHarmonizationAssessmentForExcellencyAward() != null
 		&& evaluationUniverse.getHarmonizationAssessmentForExcellencyAward() == true
@@ -873,21 +863,26 @@ public class Siadap extends Siadap_Base {
 	return true;
     }
 
-    // TODO: joantune: uncomment once Roxo's work is put in production. For now it's impossible to check this because one cannot access the information in other objects
-    //    @ConsistencyPredicate
-    //    public boolean validateExistenceOfOnlyOneSetOfEvaluationItemsPerUniverse() {
-    //	boolean foundOneSet = false;
-    //	for (SiadapEvaluationUniverse evaluationUniverse : getSiadapEvaluationUniverses()) {
-    //	    List<SiadapEvaluationItem> siadapEvaluationItems = evaluationUniverse.getSiadapEvaluationItems();
-    //	    if (siadapEvaluationItems != null && siadapEvaluationItems.size() > 0) {
-    //		if (foundOneSet) {
-    //		    return false;
-    //		}
-    //		foundOneSet = true;
-    //	    }
-    //	}
-    //	return true;
-    //    }
+    // TODO: joantune: uncomment once Roxo's work is put in production. For now
+    // it's impossible to check this because one cannot access the information
+    // in other objects
+    // @ConsistencyPredicate
+    // public boolean
+    // validateExistenceOfOnlyOneSetOfEvaluationItemsPerUniverse() {
+    // boolean foundOneSet = false;
+    // for (SiadapEvaluationUniverse evaluationUniverse :
+    // getSiadapEvaluationUniverses()) {
+    // List<SiadapEvaluationItem> siadapEvaluationItems =
+    // evaluationUniverse.getSiadapEvaluationItems();
+    // if (siadapEvaluationItems != null && siadapEvaluationItems.size() > 0) {
+    // if (foundOneSet) {
+    // return false;
+    // }
+    // foundOneSet = true;
+    // }
+    // }
+    // return true;
+    // }
 
     public boolean validateExistenceOfOnlyOneSetOfEvaluationAndAutoEvaluation() {
 	boolean foundOneSet = false;
@@ -914,8 +909,8 @@ public class Siadap extends Siadap_Base {
 
     public List<SiadapEvaluationItem> getSiadapEvaluationItems2() {
 	List<SiadapEvaluationItem> siadapEvaluationItems = getDefaultSiadapEvaluationUniverse().getSiadapEvaluationItems();
-	    if (siadapEvaluationItems != null && siadapEvaluationItems.size() > 0)
-		return siadapEvaluationItems;
+	if (siadapEvaluationItems != null && siadapEvaluationItems.size() > 0)
+	    return siadapEvaluationItems;
 	return Collections.EMPTY_LIST;
     }
 
@@ -929,7 +924,7 @@ public class Siadap extends Siadap_Base {
     }
 
     public void setDefaultSiadapUniverse(SiadapUniverse siadapUniverseToChangeTo) {
-	//if we have another one, we should throw an exception
+	// if we have another one, we should throw an exception
 	if (getSiadapEvaluationUniverseForSiadapUniverse(siadapUniverseToChangeTo) != null
 		&& !getSiadapEvaluationUniverseForSiadapUniverse(siadapUniverseToChangeTo).equals(
 			getDefaultSiadapEvaluationUniverse())) {
@@ -939,21 +934,19 @@ public class Siadap extends Siadap_Base {
 
     }
 
-
     public void delete() {
 	delete(false);
     }
+
     /**
      * Deletes the proccess and everything which is associated with it
      */
-    public void delete(boolean neglectLogSize)
-    {
+    public void delete(boolean neglectLogSize) {
 	removeEvaluated();
 	SiadapProcess process = getProcess();
 	removeProcess();
 	process.delete(neglectLogSize);
-	for (SiadapEvaluationUniverse siadapEvalUni : getSiadapEvaluationUniverses())
-	{
+	for (SiadapEvaluationUniverse siadapEvalUni : getSiadapEvaluationUniverses()) {
 	    removeSiadapEvaluationUniverses(siadapEvalUni);
 	    siadapEvalUni.delete();
 	}
@@ -983,4 +976,7 @@ public class Siadap extends Siadap_Base {
 
     }
 
+    public static String getRemoteEmail(Person person) {
+	return new JerseyRemoteUser(person.getUser()).getEmailForSendingEmails();
+    }
 }

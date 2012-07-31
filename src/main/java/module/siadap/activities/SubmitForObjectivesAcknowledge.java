@@ -27,19 +27,18 @@ package module.siadap.activities;
 import java.util.ArrayList;
 import java.util.Collections;
 
+import org.joda.time.LocalDate;
+
+import pt.ist.bennu.core.domain.User;
+import pt.ist.bennu.core.domain.VirtualHost;
+import pt.ist.bennu.core.domain.exceptions.DomainException;
+import pt.ist.emailNotifier.domain.Email;
+
 import module.organization.domain.Person;
 import module.siadap.domain.Siadap;
 import module.siadap.domain.SiadapProcess;
 import module.workflow.activities.ActivityInformation;
 import module.workflow.activities.WorkflowActivity;
-import pt.ist.bennu.core.domain.User;
-import pt.ist.bennu.core.domain.VirtualHost;
-import pt.ist.bennu.core.domain.exceptions.DomainException;
-
-import org.joda.time.LocalDate;
-
-import pt.ist.emailNotifier.domain.Email;
-import pt.ist.fenixframework.plugins.remote.domain.exception.RemoteException;
 
 /**
  * 
@@ -73,9 +72,9 @@ public class SubmitForObjectivesAcknowledge extends WorkflowActivity<SiadapProce
 	    try {
 		evaluatorPerson = activityInformation.getProcess().getSiadap().getEvaluator().getPerson();
 		siadapProcess.checkEmailExistenceImportAndWarnOnError(evaluatorPerson);
-		emailEvaluator = evaluatorPerson.getRemotePerson().getEmailForSendingEmails();
+		emailEvaluator = Siadap.getRemoteEmail(evaluatorPerson);
 
-	    } catch (RemoteException ex) {
+	    } catch (Throwable ex) {
 		if (evaluatorPerson != null) {
 		    System.out.println("Could not get e-mail for evaluator " + evaluatorPerson.getName());
 		} else {
@@ -86,7 +85,7 @@ public class SubmitForObjectivesAcknowledge extends WorkflowActivity<SiadapProce
 	    try {
 		final Person evaluatedPerson = activityInformation.getProcess().getSiadap().getEvaluated();
 		siadapProcess.checkEmailExistenceImportAndWarnOnError(evaluatedPerson);
-		String emailEvaluated = evaluatedPerson.getRemotePerson().getEmailForSendingEmails();
+		String emailEvaluated = Siadap.getRemoteEmail(evaluatedPerson);
 
 		if (emailEvaluated != null) {
 		    toAddress.add(emailEvaluated);
@@ -105,13 +104,12 @@ public class SubmitForObjectivesAcknowledge extends WorkflowActivity<SiadapProce
 		    body.append("Esta mensagem foi enviada por meio das Aplicações Centrais do IST.\n");
 
 		    final VirtualHost virtualHost = VirtualHost.getVirtualHostForThread();
-		    new Email(virtualHost.getApplicationSubTitle().getContent(),
-				    virtualHost.getSystemEmailAddress(), new String[] {}, toAddress, ccAddress,
-			    Collections.EMPTY_LIST, "SIADAP - " + year
+		    new Email(virtualHost.getApplicationSubTitle().getContent(), virtualHost.getSystemEmailAddress(),
+			    new String[] {}, toAddress, ccAddress, Collections.EMPTY_LIST, "SIADAP - " + year
 				    + " Reversão excepcional do estado do processo SIADAP para o estado anterior ao de ",
 			    body.toString());
 		}
-	    } catch (RemoteException ex) {
+	    } catch (Throwable ex) {
 		System.out.println("Unable to lookup email address for: "
 			+ activityInformation.getProcess().getSiadap().getEvaluated().getUser().getUsername() + " Error: "
 			+ ex.getMessage());
@@ -136,9 +134,9 @@ public class SubmitForObjectivesAcknowledge extends WorkflowActivity<SiadapProce
 	try {
 	    evaluatorPerson = activityInformation.getProcess().getSiadap().getEvaluator().getPerson();
 	    siadapProcess.checkEmailExistenceImportAndWarnOnError(evaluatorPerson);
-	    emailEvaluator = evaluatorPerson.getRemotePerson().getEmailForSendingEmails();
+	    emailEvaluator = Siadap.getRemoteEmail(evaluatorPerson);
 
-	} catch (RemoteException ex) {
+	} catch (Throwable ex) {
 	    if (evaluatorPerson != null) {
 		System.out.println("Could not get e-mail for evaluator " + evaluatorPerson.getName());
 	    } else {
@@ -149,7 +147,7 @@ public class SubmitForObjectivesAcknowledge extends WorkflowActivity<SiadapProce
 	try {
 	    final Person evaluatedPerson = activityInformation.getProcess().getSiadap().getEvaluated();
 	    siadapProcess.checkEmailExistenceImportAndWarnOnError(evaluatedPerson);
-	    String emailEvaluated = evaluatedPerson.getRemotePerson().getEmailForSendingEmails();
+	    String emailEvaluated = Siadap.getRemoteEmail(evaluatedPerson);
 
 	    if (emailEvaluated != null) {
 		toAddress.add(emailEvaluated);
@@ -165,11 +163,11 @@ public class SubmitForObjectivesAcknowledge extends WorkflowActivity<SiadapProce
 		body.append("Esta mensagem foi enviada por meio das Aplicações Centrais do IST.\n");
 
 		final VirtualHost virtualHost = VirtualHost.getVirtualHostForThread();
-		new Email(virtualHost.getApplicationSubTitle().getContent(),
-			    virtualHost.getSystemEmailAddress(), new String[] {}, toAddress, ccAddress,
-			Collections.EMPTY_LIST, "SIADAP - Tomada de conhecimento de objectivos e competências", body.toString());
+		new Email(virtualHost.getApplicationSubTitle().getContent(), virtualHost.getSystemEmailAddress(),
+			new String[] {}, toAddress, ccAddress, Collections.EMPTY_LIST,
+			"SIADAP - Tomada de conhecimento de objectivos e competências", body.toString());
 	    }
-	} catch (RemoteException ex) {
+	} catch (Throwable ex) {
 	    System.out.println("Unable to lookup email address for: "
 		    + activityInformation.getProcess().getSiadap().getEvaluated().getUser().getUsername() + " Error: "
 		    + ex.getMessage());

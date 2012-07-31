@@ -28,6 +28,13 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
 
+import org.apache.commons.lang.StringUtils;
+import org.joda.time.LocalDate;
+
+import pt.ist.bennu.core.domain.VirtualHost;
+import pt.ist.bennu.core.util.BundleUtil;
+import pt.ist.emailNotifier.domain.Email;
+
 import module.organization.domain.Person;
 import module.siadap.domain.Siadap;
 import module.siadap.domain.SiadapEvaluationUniverse;
@@ -39,18 +46,10 @@ import module.siadap.domain.wrappers.PersonSiadapWrapper;
 import module.workflow.activities.ActivityInformation;
 import module.workflow.activities.WorkflowActivity;
 import module.workflow.domain.WorkflowProcess;
-import pt.ist.bennu.core.domain.VirtualHost;
-import pt.ist.bennu.core.util.BundleUtil;
-
-import org.apache.commons.lang.StringUtils;
-import org.joda.time.LocalDate;
-
-import pt.ist.emailNotifier.domain.Email;
-import pt.ist.fenixframework.plugins.remote.domain.exception.RemoteException;
 
 /**
  * 
- *         ActivityInformation for all validation related activities.
+ * ActivityInformation for all validation related activities.
  * 
  * @author João Antunes
  * 
@@ -61,7 +60,7 @@ public class ValidationActivityInformation extends ActivityInformation<SiadapPro
 	SET_VALIDATION_DATA {
 	    @Override
 	    public void process(PersonSiadapWrapper personWrapper, SiadapUniverse siadapUniverse) {
-		//let's apply everything
+		// let's apply everything
 		SiadapEvaluationUniverse siadapEvaluationUniverseForSiadapUniverse = personWrapper.getSiadap()
 			.getSiadapEvaluationUniverseForSiadapUniverse(siadapUniverse);
 		Boolean validationAssessment = null;
@@ -82,11 +81,11 @@ public class ValidationActivityInformation extends ActivityInformation<SiadapPro
 		    break;
 		}
 
-		//now let's check the values:
+		// now let's check the values:
 		validationGrade = checkValidationDataAndAssignGrade(validationAssessment, validationExcellencyAssessment,
 			validationGrade, harmonizationClassification);
 
-		//let's apply them
+		// let's apply them
 		siadapEvaluationUniverseForSiadapUniverse.setCcaAssessment(validationAssessment);
 		siadapEvaluationUniverseForSiadapUniverse.setCcaClassificationExcellencyAward(validationExcellencyAssessment);
 		siadapEvaluationUniverseForSiadapUniverse.setCcaClassification(validationGrade);
@@ -120,10 +119,13 @@ public class ValidationActivityInformation extends ActivityInformation<SiadapPro
 		    throw new SiadapException("error.validation.must.have.harmonization.grade");
 		BigDecimal gradeInEffect = null;
 		if (validationAssessment != null && validationAssessment) {
-		    //		    if (validationGrade != null)
-		    //something went wrong in the interface, or someone fiddled with this!!
-		    //TODO as soon as JS is implemented to always give null here, remove this comment
-		    //			throw new SiadapException("error.validation.grade.inconsistent");
+		    // if (validationGrade != null)
+		    // something went wrong in the interface, or someone fiddled
+		    // with this!!
+		    // TODO as soon as JS is implemented to always give null
+		    // here, remove this comment
+		    // throw new
+		    // SiadapException("error.validation.grade.inconsistent");
 		    gradeInEffect = harmonizationClassification;
 		    validationGrade = gradeInEffect;
 		} else {
@@ -141,7 +143,8 @@ public class ValidationActivityInformation extends ActivityInformation<SiadapPro
 
 	    @Override
 	    public boolean hasAllneededInfo(PersonSiadapWrapper personWrapper, SiadapUniverse universe) {
-		//if there is something different for the given universe, we will set it and thus return true
+		// if there is something different for the given universe, we
+		// will set it and thus return true
 		SiadapEvaluationUniverse siadapEvaluationUniverse = personWrapper.getSiadap()
 			.getSiadapEvaluationUniverseForSiadapUniverse(universe);
 		switch (universe) {
@@ -169,7 +172,7 @@ public class ValidationActivityInformation extends ActivityInformation<SiadapPro
 	TERMINATE_VALIDATION {
 	    @Override
 	    public void process(PersonSiadapWrapper personWrapper, SiadapUniverse siadapUniverse) {
-		//Throw an exception if we are missing data
+		// Throw an exception if we are missing data
 
 		if (!personWrapper.getSiadap().hasCompleteValidationAssessment(siadapUniverse))
 		    throw new SiadapException("error.validation.can.not.close.without.validating.everybody");
@@ -180,7 +183,8 @@ public class ValidationActivityInformation extends ActivityInformation<SiadapPro
 
 	    @Override
 	    public boolean hasAllneededInfo(PersonSiadapWrapper personWrapper, SiadapUniverse universe) {
-		//let's always return true, and later throw an exception if we don't have all of the needed data
+		// let's always return true, and later throw an exception if we
+		// don't have all of the needed data
 		return true;
 	    }
 
@@ -199,7 +203,7 @@ public class ValidationActivityInformation extends ActivityInformation<SiadapPro
 	    try {
 		ArrayList<String> toAddress = new ArrayList<String>();
 		SiadapProcess.checkEmailExistenceImportAndWarnOnError(evaluator);
-		String emailEvaluator = evaluator.getRemotePerson().getEmailForSendingEmails();
+		String emailEvaluator = Siadap.getRemoteEmail(evaluator);
 		if (StringUtils.isBlank(emailEvaluator))
 		    throw new SiadapException("error.could.not.notify.given.user", evaluator.getPresentationName());
 		if (!StringUtils.isBlank(emailEvaluator)) {
@@ -216,7 +220,7 @@ public class ValidationActivityInformation extends ActivityInformation<SiadapPro
 			    new String[] {}, toAddress, Collections.EMPTY_LIST, Collections.EMPTY_LIST, "SIADAP - " + year
 				    + " - Avaliações validadas", body.toString());
 		}
-	    } catch (final RemoteException ex) {
+	    } catch (final Throwable ex) {
 		System.out.println("Unable to lookup email address for: " + evaluator.getPresentationName() + " Error: "
 			+ ex.getMessage());
 		throw new SiadapException("error.could.not.notify.given.user", evaluator.getPresentationName());
