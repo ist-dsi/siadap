@@ -26,11 +26,10 @@ package module.siadap.domain;
 
 import java.util.MissingResourceException;
 
-import pt.ist.bennu.core.domain.exceptions.DomainException;
-import pt.ist.bennu.core.util.BundleUtil;
-
 import org.joda.time.LocalDate;
 
+import pt.ist.bennu.core.domain.exceptions.DomainException;
+import pt.ist.bennu.core.util.BundleUtil;
 import pt.ist.fenixWebFramework.rendererExtensions.util.IPresentableEnum;
 
 /**

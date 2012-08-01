@@ -26,9 +26,9 @@ package module.siadap.domain;
 
 import java.util.Comparator;
 
-import module.siadap.domain.scoring.IScoring;
-
 import org.joda.time.DateTime;
+
+import module.siadap.domain.scoring.IScoring;
 
 /**
  * 

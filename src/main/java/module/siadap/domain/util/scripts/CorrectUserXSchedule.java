@@ -26,19 +26,19 @@ package module.siadap.domain.util.scripts;
 
 import java.util.ArrayList;
 
+import org.joda.time.LocalDate;
+
+import pt.ist.bennu.core.applicationTier.Authenticate;
+import pt.ist.bennu.core.domain.User;
+import pt.ist.bennu.core.domain.scheduler.WriteCustomTask;
+import pt.ist.fenixWebFramework.security.UserView;
+
 import module.siadap.activities.ChangeCustomSchedule;
 import module.siadap.activities.ChangeCustomScheduleActivityInformation;
 import module.siadap.activities.ChangeCustomScheduleActivityInformation.CustomScheduleRepresentation;
 import module.siadap.domain.Siadap;
 import module.siadap.domain.SiadapProcessSchedulesEnum;
 import module.siadap.domain.wrappers.PersonSiadapWrapper;
-import pt.ist.bennu.core.applicationTier.Authenticate;
-import pt.ist.bennu.core.domain.User;
-import pt.ist.bennu.core.domain.scheduler.WriteCustomTask;
-
-import org.joda.time.LocalDate;
-
-import pt.ist.fenixWebFramework.security.UserView;
 
 /**
  * 

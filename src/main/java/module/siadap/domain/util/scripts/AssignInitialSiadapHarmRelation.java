@@ -28,6 +28,11 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import org.joda.time.LocalDate;
+
+import pt.ist.bennu.core.domain.scheduler.ReadCustomTask;
+import pt.ist.bennu.core.domain.scheduler.TransactionalThread;
+
 import module.organization.domain.Accountability;
 import module.organization.domain.AccountabilityType;
 import module.organization.domain.Person;
@@ -40,10 +45,6 @@ import module.siadap.domain.SiadapYearConfiguration;
 import module.siadap.domain.util.SiadapMiscUtilClass;
 import module.siadap.domain.wrappers.PersonSiadapWrapper;
 import module.siadap.domain.wrappers.UnitSiadapWrapper;
-import pt.ist.bennu.core.domain.scheduler.ReadCustomTask;
-import pt.ist.bennu.core.domain.scheduler.TransactionalThread;
-
-import org.joda.time.LocalDate;
 
 /**
  * 

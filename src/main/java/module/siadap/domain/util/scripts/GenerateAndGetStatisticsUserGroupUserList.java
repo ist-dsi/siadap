@@ -24,10 +24,11 @@
  */
 package module.siadap.domain.util.scripts;
 
-import module.siadap.domain.SiadapRootModule;
 import pt.ist.bennu.core.domain.User;
 import pt.ist.bennu.core.domain.groups.UnionGroup;
 import pt.ist.bennu.core.domain.scheduler.WriteCustomTask;
+
+import module.siadap.domain.SiadapRootModule;
 
 /**
  * 

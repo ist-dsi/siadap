@@ -28,13 +28,14 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import module.organization.domain.Person;
-import module.siadap.domain.SiadapYearConfiguration;
-import module.siadap.domain.util.SiadapMiscUtilClass;
+import org.joda.time.LocalDate;
+
 import pt.ist.bennu.core.domain.User;
 import pt.ist.bennu.core.util.BundleUtil;
 
-import org.joda.time.LocalDate;
+import module.organization.domain.Person;
+import module.siadap.domain.SiadapYearConfiguration;
+import module.siadap.domain.util.SiadapMiscUtilClass;
 
 /**
  * 

@@ -26,15 +26,16 @@ package module.siadap.activities;
 
 import java.util.ResourceBundle;
 
+import pt.ist.bennu.core.domain.User;
+import pt.ist.bennu.core.domain.exceptions.DomainException;
+import pt.ist.bennu.core.util.BundleUtil;
+
 import module.siadap.activities.ChangeCustomScheduleActivityInformation.CustomScheduleRepresentation;
 import module.siadap.domain.Siadap;
 import module.siadap.domain.SiadapProcess;
 import module.siadap.domain.SiadapYearConfiguration;
 import module.workflow.activities.ActivityInformation;
 import module.workflow.activities.WorkflowActivity;
-import pt.ist.bennu.core.domain.User;
-import pt.ist.bennu.core.domain.exceptions.DomainException;
-import pt.ist.bennu.core.util.BundleUtil;
 
 /**
  * 

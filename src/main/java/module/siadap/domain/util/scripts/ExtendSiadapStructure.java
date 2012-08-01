@@ -28,6 +28,11 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import pt.ist.bennu.core.applicationTier.Authenticate;
+import pt.ist.bennu.core.domain.User;
+import pt.ist.bennu.core.domain.scheduler.WriteCustomTask;
+import pt.ist.fenixWebFramework.security.UserView;
+
 import module.organization.domain.Accountability;
 import module.organization.domain.AccountabilityType;
 import module.organization.domain.Person;
@@ -40,10 +45,6 @@ import module.siadap.domain.SiadapUniverse;
 import module.siadap.domain.SiadapYearConfiguration;
 import module.siadap.domain.exceptions.SiadapException;
 import module.siadap.domain.util.SiadapMiscUtilClass;
-import pt.ist.bennu.core.applicationTier.Authenticate;
-import pt.ist.bennu.core.domain.User;
-import pt.ist.bennu.core.domain.scheduler.WriteCustomTask;
-import pt.ist.fenixWebFramework.security.UserView;
 
 /**
  * 

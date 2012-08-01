@@ -31,8 +31,7 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 
-import pt.ist.fenixWebFramework.renderers.components.state.ViewState;
-import pt.ist.fenixWebFramework.renderers.utils.RenderUtils;
+import pt.ist.bennu.core.presentationTier.actions.ContextBaseAction;
 import pt.ist.fenixWebFramework.struts.annotations.Mapping;
 
 import module.siadap.domain.Competence;
@@ -40,7 +39,6 @@ import module.siadap.domain.CompetenceType;
 import module.siadap.domain.SiadapRootModule;
 import module.siadap.domain.dto.CompetenceBean;
 import module.siadap.domain.dto.CompetenceTypeBean;
-import pt.ist.bennu.core.presentationTier.actions.ContextBaseAction;
 
 @Mapping(path = "/competencesManagement")
 /**

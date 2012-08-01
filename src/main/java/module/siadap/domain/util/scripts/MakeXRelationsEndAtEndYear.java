@@ -24,12 +24,13 @@
  */
 package module.siadap.domain.util.scripts;
 
+import org.joda.time.LocalDate;
+
+import pt.ist.bennu.core.domain.scheduler.WriteCustomTask;
+
 import module.organization.domain.Accountability;
 import module.organization.domain.AccountabilityType;
 import module.siadap.domain.SiadapYearConfiguration;
-import pt.ist.bennu.core.domain.scheduler.WriteCustomTask;
-
-import org.joda.time.LocalDate;
 
 /**
  * 

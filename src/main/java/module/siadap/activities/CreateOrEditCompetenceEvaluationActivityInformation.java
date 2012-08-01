@@ -27,6 +27,8 @@ package module.siadap.activities;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
+
 import module.siadap.domain.Competence;
 import module.siadap.domain.CompetenceType;
 import module.siadap.domain.Siadap;
@@ -35,8 +37,6 @@ import module.siadap.presentationTier.renderers.providers.CompetencesForCompeten
 import module.workflow.activities.ActivityInformation;
 import module.workflow.activities.WorkflowActivity;
 import module.workflow.domain.WorkflowProcess;
-
-import org.apache.commons.lang.StringUtils;
 
 /**
  * 

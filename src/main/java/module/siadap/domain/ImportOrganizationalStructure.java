@@ -28,15 +28,15 @@ import java.util.HashSet;
 
 import org.joda.time.LocalDate;
 
-import module.siadap.domain.*;
+import pt.ist.bennu.core.domain.scheduler.ReadCustomTask;
 import pt.ist.fenixWebFramework.services.ServiceManager;
 import pt.ist.fenixWebFramework.services.ServicePredicate;
 import pt.ist.fenixframework.pstm.AbstractDomainObject;
+
 import module.organization.domain.AccountabilityType;
 import module.organization.domain.OrganizationalModel;
 import module.organization.domain.Party;
 import module.organization.domain.Unit;
-import pt.ist.bennu.core.domain.scheduler.ReadCustomTask;
 
 /**
  * 

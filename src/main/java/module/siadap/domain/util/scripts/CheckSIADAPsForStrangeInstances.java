@@ -6,9 +6,10 @@ package module.siadap.domain.util.scripts;
 import java.util.Set;
 import java.util.TreeSet;
 
+import pt.ist.bennu.core.domain.scheduler.WriteCustomTask;
+
 import module.siadap.domain.Siadap;
 import module.siadap.domain.SiadapRootModule;
-import pt.ist.bennu.core.domain.scheduler.WriteCustomTask;
 
 /**
  * @author João Antunes (joao.antunes@tagus.ist.utl.pt) - 29 de Mai de 2012

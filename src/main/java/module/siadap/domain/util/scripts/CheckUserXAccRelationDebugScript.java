@@ -28,6 +28,11 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import org.apache.commons.collections.Predicate;
+
+import pt.ist.bennu.core.domain.User;
+import pt.ist.bennu.core.domain.scheduler.ReadCustomTask;
+
 import module.organization.domain.Accountability;
 import module.organization.domain.AccountabilityType;
 import module.organization.domain.Party;
@@ -36,10 +41,6 @@ import module.organization.domain.Unit;
 import module.siadap.domain.SiadapYearConfiguration;
 import module.siadap.domain.wrappers.PartyWrapper.FilterAccountabilities;
 import module.siadap.domain.wrappers.UnitSiadapWrapper;
-import pt.ist.bennu.core.domain.User;
-import pt.ist.bennu.core.domain.scheduler.ReadCustomTask;
-
-import org.apache.commons.collections.Predicate;
 
 /**
  * Debug script to be used in the production/fenix-tests version

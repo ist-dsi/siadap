@@ -26,9 +26,10 @@ package module.siadap.presentationTier.renderers.providers;
 
 import java.util.Collections;
 
-import module.siadap.domain.CompetenceType;
 import pt.ist.fenixWebFramework.renderers.DataProvider;
 import pt.ist.fenixWebFramework.renderers.components.converters.Converter;
+
+import module.siadap.domain.CompetenceType;
 
 /**
  * 

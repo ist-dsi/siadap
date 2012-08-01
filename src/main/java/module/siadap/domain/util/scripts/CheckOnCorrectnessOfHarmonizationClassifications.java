@@ -27,9 +27,10 @@ package module.siadap.domain.util.scripts;
 import java.util.ArrayList;
 import java.util.List;
 
+import pt.ist.bennu.core.domain.scheduler.WriteCustomTask;
+
 import module.siadap.domain.Siadap;
 import module.siadap.domain.SiadapRootModule;
-import pt.ist.bennu.core.domain.scheduler.WriteCustomTask;
 
 /**
  * 

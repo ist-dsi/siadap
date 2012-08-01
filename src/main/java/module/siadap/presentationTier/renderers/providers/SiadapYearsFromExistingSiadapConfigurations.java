@@ -27,11 +27,12 @@ package module.siadap.presentationTier.renderers.providers;
 import java.util.ArrayList;
 import java.util.Collections;
 
-import module.siadap.domain.SiadapRootModule;
-import module.siadap.domain.SiadapYearConfiguration;
 import pt.ist.bennu.core.applicationTier.Authenticate.UserView;
 import pt.ist.fenixWebFramework.renderers.DataProvider;
 import pt.ist.fenixWebFramework.renderers.components.converters.Converter;
+
+import module.siadap.domain.SiadapRootModule;
+import module.siadap.domain.SiadapYearConfiguration;
 
 /**
  * 

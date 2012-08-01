@@ -27,8 +27,9 @@ package module.siadap.domain;
 import java.math.BigDecimal;
 import java.util.Comparator;
 
-import module.siadap.domain.scoring.IScoring;
 import pt.ist.bennu.core.domain.exceptions.DomainException;
+
+import module.siadap.domain.scoring.IScoring;
 
 /**
  * 

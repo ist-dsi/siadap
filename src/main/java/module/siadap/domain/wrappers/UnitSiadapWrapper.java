@@ -39,6 +39,16 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
+import org.apache.commons.collections.Predicate;
+import org.jfree.data.time.Month;
+import org.joda.time.Interval;
+import org.joda.time.LocalDate;
+
+import pt.ist.bennu.core.domain.exceptions.DomainException;
+import pt.ist.bennu.core.util.BundleUtil;
+import pt.ist.fenixWebFramework.services.Service;
+import pt.utl.ist.fenix.tools.util.i18n.MultiLanguageString;
+
 import module.organization.domain.Accountability;
 import module.organization.domain.AccountabilityType;
 import module.organization.domain.Party;
@@ -64,16 +74,6 @@ import module.siadap.presentationTier.actions.SiadapPersonnelManagement;
 import module.workflow.activities.ActivityException;
 import module.workflow.activities.ActivityInformation;
 import module.workflow.activities.WorkflowActivity;
-import pt.ist.bennu.core.domain.exceptions.DomainException;
-import pt.ist.bennu.core.util.BundleUtil;
-
-import org.apache.commons.collections.Predicate;
-import org.jfree.data.time.Month;
-import org.joda.time.Interval;
-import org.joda.time.LocalDate;
-
-import pt.ist.fenixWebFramework.services.Service;
-import pt.utl.ist.fenix.tools.util.i18n.MultiLanguageString;
 
 /**
  * 

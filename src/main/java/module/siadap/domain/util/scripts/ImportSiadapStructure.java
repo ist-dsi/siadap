@@ -35,6 +35,20 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.jrcs.diff.Diff;
+import org.apache.commons.jrcs.diff.DifferentiationFailedException;
+import org.apache.commons.jrcs.diff.Revision;
+import org.apache.commons.lang.StringUtils;
+import org.joda.time.LocalDate;
+
+import pt.ist.bennu.core.domain.User;
+import pt.ist.bennu.core.domain.scheduler.ReadCustomTask;
+import pt.ist.bennu.core.domain.scheduler.TransactionalThread;
+import pt.ist.expenditureTrackingSystem.domain.organization.CostCenter;
+import pt.ist.fenixframework.pstm.AbstractDomainObject;
+import pt.utl.ist.fenix.tools.util.i18n.Language;
+import pt.utl.ist.fenix.tools.util.i18n.MultiLanguageString;
+
 import module.organization.domain.Accountability;
 import module.organization.domain.AccountabilityType;
 import module.organization.domain.Party;
@@ -44,20 +58,6 @@ import module.organization.domain.predicates.PartyPredicate;
 import module.organizationIst.domain.listner.LoginListner;
 import module.siadap.domain.SiadapYearConfiguration;
 import module.siadap.domain.wrappers.PersonSiadapWrapper;
-import pt.ist.bennu.core.domain.User;
-import pt.ist.bennu.core.domain.scheduler.ReadCustomTask;
-import pt.ist.bennu.core.domain.scheduler.TransactionalThread;
-
-import org.apache.commons.jrcs.diff.Diff;
-import org.apache.commons.jrcs.diff.DifferentiationFailedException;
-import org.apache.commons.jrcs.diff.Revision;
-import org.apache.commons.lang.StringUtils;
-import org.joda.time.LocalDate;
-
-import pt.ist.expenditureTrackingSystem.domain.organization.CostCenter;
-import pt.ist.fenixframework.pstm.AbstractDomainObject;
-import pt.utl.ist.fenix.tools.util.i18n.Language;
-import pt.utl.ist.fenix.tools.util.i18n.MultiLanguageString;
 
 /**
  * 

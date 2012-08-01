@@ -24,6 +24,11 @@
  */
 package module.siadap.activities;
 
+import org.apache.commons.lang.StringUtils;
+import org.joda.time.LocalDate;
+
+import pt.ist.bennu.core.domain.User;
+
 import module.siadap.activities.ChangeGradeAnytimeActivityInformation.GradePerUniverseBean;
 import module.siadap.domain.HomologationDocumentFile;
 import module.siadap.domain.Siadap;
@@ -34,10 +39,6 @@ import module.siadap.domain.scoring.SiadapGlobalEvaluation;
 import module.siadap.domain.wrappers.PersonSiadapWrapper;
 import module.workflow.activities.ActivityInformation;
 import module.workflow.activities.WorkflowActivity;
-import pt.ist.bennu.core.domain.User;
-
-import org.apache.commons.lang.StringUtils;
-import org.joda.time.LocalDate;
 
 /**
  * 

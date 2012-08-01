@@ -26,9 +26,10 @@ package module.siadap.presentationTier.renderers.providers;
 
 import java.util.ArrayList;
 
-import module.siadap.domain.SiadapProcessStateEnum;
 import pt.ist.fenixWebFramework.renderers.DataProvider;
 import pt.ist.fenixWebFramework.renderers.components.converters.Converter;
+
+import module.siadap.domain.SiadapProcessStateEnum;
 
 /**
  * 

@@ -26,15 +26,14 @@ package module.siadap.presentationTier.renderers.providers;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.List;
 
 import org.joda.time.LocalDate;
 
-import module.siadap.domain.SiadapRootModule;
-import module.siadap.domain.SiadapYearConfiguration;
-import module.siadap.presentationTier.actions.SiadapManagement;
 import pt.ist.fenixWebFramework.renderers.DataProvider;
 import pt.ist.fenixWebFramework.renderers.components.converters.Converter;
+
+import module.siadap.domain.SiadapRootModule;
+import module.siadap.domain.SiadapYearConfiguration;
 
 /**
  * Gets the SiadapYearConfiguration years plus one and eventually the current we are at

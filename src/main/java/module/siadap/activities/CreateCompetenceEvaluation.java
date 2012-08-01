@@ -26,15 +26,16 @@ package module.siadap.activities;
 
 import java.util.ResourceBundle;
 
+import pt.ist.bennu.core.domain.User;
+import pt.ist.bennu.core.domain.exceptions.DomainException;
+import pt.utl.ist.fenix.tools.util.i18n.Language;
+
 import module.siadap.domain.Competence;
 import module.siadap.domain.CompetenceEvaluation;
 import module.siadap.domain.Siadap;
 import module.siadap.domain.SiadapProcess;
 import module.workflow.activities.ActivityInformation;
 import module.workflow.activities.WorkflowActivity;
-import pt.ist.bennu.core.domain.User;
-import pt.ist.bennu.core.domain.exceptions.DomainException;
-import pt.utl.ist.fenix.tools.util.i18n.Language;
 
 /**
  * 

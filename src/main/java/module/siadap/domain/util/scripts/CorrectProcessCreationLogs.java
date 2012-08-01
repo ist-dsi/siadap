@@ -6,17 +6,17 @@ package module.siadap.domain.util.scripts;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.commons.lang.StringUtils;
+
+import pt.ist.bennu.core.domain.scheduler.WriteCustomTask;
+import pt.utl.ist.fenix.tools.util.Strings;
+
 import module.siadap.domain.Siadap;
 import module.siadap.domain.SiadapProcess;
 import module.siadap.domain.SiadapRootModule;
 import module.siadap.domain.SiadapYearConfiguration;
 import module.workflow.domain.LabelLog;
 import module.workflow.domain.WorkflowLog;
-import pt.ist.bennu.core.domain.scheduler.WriteCustomTask;
-
-import org.apache.commons.lang.StringUtils;
-
-import pt.utl.ist.fenix.tools.util.Strings;
 
 /**
  * @author João Antunes (joao.antunes@tagus.ist.utl.pt) - 4 de Abr de 2012

@@ -24,9 +24,9 @@
  */
 package module.siadap.domain;
 
-import pt.ist.bennu.core.domain.exceptions.DomainException;
-
 import org.apache.commons.lang.StringUtils;
+
+import pt.ist.bennu.core.domain.exceptions.DomainException;
 
 /**
  * 

@@ -24,15 +24,16 @@
  */
 package module.siadap.activities;
 
+import org.apache.commons.lang.StringUtils;
+
+import pt.ist.bennu.core.domain.User;
+
 import module.siadap.domain.Siadap;
 import module.siadap.domain.SiadapProcess;
 import module.siadap.domain.SiadapYearConfiguration;
 import module.siadap.domain.scoring.SiadapGlobalEvaluation;
 import module.workflow.activities.ActivityInformation;
 import module.workflow.activities.WorkflowActivity;
-import pt.ist.bennu.core.domain.User;
-
-import org.apache.commons.lang.StringUtils;
 
 /**
  * 

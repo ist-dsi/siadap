@@ -24,10 +24,11 @@
  */
 package module.siadap.domain.util.scripts;
 
+import pt.ist.bennu.core.domain.scheduler.WriteCustomTask;
+
 import module.siadap.domain.Siadap;
 import module.siadap.domain.SiadapEvaluationUniverse;
 import module.siadap.domain.SiadapRootModule;
-import pt.ist.bennu.core.domain.scheduler.WriteCustomTask;
 
 /**
  * 

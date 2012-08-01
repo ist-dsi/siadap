@@ -30,15 +30,15 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-import module.siadap.domain.exceptions.SiadapException;
-import module.siadap.domain.scoring.IScoring;
-import module.siadap.domain.scoring.SiadapGlobalEvaluation;
-import pt.ist.bennu.core.domain.exceptions.DomainException;
-
 import org.apache.commons.collections.Predicate;
 import org.joda.time.LocalDate;
 
+import pt.ist.bennu.core.domain.exceptions.DomainException;
 import pt.ist.fenixWebFramework.services.Service;
+
+import module.siadap.domain.exceptions.SiadapException;
+import module.siadap.domain.scoring.IScoring;
+import module.siadap.domain.scoring.SiadapGlobalEvaluation;
 
 /**
  * 

@@ -30,14 +30,15 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang.StringUtils;
+
+import pt.ist.bennu.core.domain.scheduler.ReadCustomTask;
+import pt.ist.bennu.core.domain.scheduler.TransactionalThread;
+
 import module.siadap.domain.Siadap;
 import module.siadap.domain.SiadapEvaluationItem;
 import module.siadap.domain.SiadapRootModule;
 import module.siadap.domain.SiadapUniverse;
-import pt.ist.bennu.core.domain.scheduler.ReadCustomTask;
-import pt.ist.bennu.core.domain.scheduler.TransactionalThread;
-
-import org.apache.commons.lang.StringUtils;
 
 /**
  * 

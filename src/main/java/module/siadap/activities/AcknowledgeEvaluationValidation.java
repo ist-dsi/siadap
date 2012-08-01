@@ -24,13 +24,14 @@
  */
 package module.siadap.activities;
 
+import org.joda.time.LocalDate;
+
+import pt.ist.bennu.core.domain.User;
+
 import module.siadap.domain.Siadap;
 import module.siadap.domain.SiadapProcess;
 import module.workflow.activities.ActivityInformation;
 import module.workflow.activities.WorkflowActivity;
-import pt.ist.bennu.core.domain.User;
-
-import org.joda.time.LocalDate;
 
 /**
  * 

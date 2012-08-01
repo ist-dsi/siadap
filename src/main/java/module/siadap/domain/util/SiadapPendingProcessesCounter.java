@@ -26,13 +26,14 @@ package module.siadap.domain.util;
 
 import java.util.ArrayList;
 
+import pt.ist.bennu.core.applicationTier.Authenticate.UserView;
+import pt.ist.bennu.core.domain.User;
+import pt.ist.bennu.core.domain.VirtualHost;
+
 import module.siadap.domain.SiadapProcess;
 import module.siadap.domain.SiadapRootModule;
 import module.siadap.domain.wrappers.PersonSiadapWrapper;
 import module.workflow.domain.ProcessCounter;
-import pt.ist.bennu.core.applicationTier.Authenticate.UserView;
-import pt.ist.bennu.core.domain.User;
-import pt.ist.bennu.core.domain.VirtualHost;
 
 /**
  * 

@@ -24,6 +24,11 @@
  */
 package module.siadap.activities;
 
+import org.joda.time.LocalDate;
+
+import pt.ist.bennu.core.domain.User;
+import pt.ist.bennu.core.util.BundleUtil;
+
 import module.siadap.domain.Siadap;
 import module.siadap.domain.SiadapEvaluationItem;
 import module.siadap.domain.SiadapEvaluationUniverse;
@@ -32,10 +37,6 @@ import module.siadap.domain.exceptions.SiadapException;
 import module.workflow.activities.ActivityException;
 import module.workflow.activities.ActivityInformation;
 import module.workflow.activities.WorkflowActivity;
-import pt.ist.bennu.core.domain.User;
-import pt.ist.bennu.core.util.BundleUtil;
-
-import org.joda.time.LocalDate;
 
 /**
  * 

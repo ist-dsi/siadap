@@ -24,12 +24,12 @@
  */
 package module.siadap.domain.util;
 
-import module.siadap.domain.SiadapRootModule;
-import module.siadap.domain.SiadapYearConfiguration;
-
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 import org.joda.time.ReadableInstant;
+
+import module.siadap.domain.SiadapRootModule;
+import module.siadap.domain.SiadapYearConfiguration;
 
 /**
  * 

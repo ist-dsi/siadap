@@ -27,6 +27,8 @@ package module.siadap.domain.util.scripts;
 import java.util.ArrayList;
 import java.util.List;
 
+import pt.ist.bennu.core.domain.scheduler.WriteCustomTask;
+
 import module.organization.domain.Accountability;
 import module.organization.domain.AccountabilityType;
 import module.organization.domain.PartyType;
@@ -34,7 +36,6 @@ import module.organization.domain.Unit;
 import module.siadap.domain.SiadapYearConfiguration;
 import module.siadap.domain.util.SiadapMiscUtilClass;
 import module.siadap.domain.wrappers.UnitSiadapWrapper;
-import pt.ist.bennu.core.domain.scheduler.WriteCustomTask;
 
 /**
  * 

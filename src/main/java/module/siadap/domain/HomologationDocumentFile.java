@@ -6,10 +6,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.ResourceBundle;
 
-import module.siadap.domain.exceptions.SiadapException;
-import module.siadap.domain.wrappers.PersonSiadapWrapper;
-import module.workflow.domain.WorkflowLog;
-import module.workflow.domain.WorkflowProcess;
 import net.sf.jasperreports.engine.JRException;
 
 import org.apache.commons.lang.StringUtils;
@@ -19,6 +15,11 @@ import pt.ist.bennu.core.domain.VirtualHost;
 import pt.ist.bennu.core.util.BundleUtil;
 import pt.ist.bennu.core.util.ClassNameBundle;
 import pt.ist.bennu.core.util.ReportUtils;
+
+import module.siadap.domain.exceptions.SiadapException;
+import module.siadap.domain.wrappers.PersonSiadapWrapper;
+import module.workflow.domain.WorkflowLog;
+import module.workflow.domain.WorkflowProcess;
 
 @ClassNameBundle(bundle = "resources/SiadapResources")
 public class HomologationDocumentFile extends HomologationDocumentFile_Base {

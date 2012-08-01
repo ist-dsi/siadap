@@ -24,6 +24,10 @@
  */
 package module.siadap.activities;
 
+import pt.ist.bennu.core.domain.RoleType;
+import pt.ist.bennu.core.domain.User;
+import pt.ist.bennu.core.domain.groups.Role;
+
 import module.siadap.domain.CompetenceType;
 import module.siadap.domain.Siadap;
 import module.siadap.domain.SiadapProcess;
@@ -31,9 +35,6 @@ import module.siadap.domain.SiadapUniverse;
 import module.siadap.domain.SiadapYearConfiguration;
 import module.workflow.activities.ActivityInformation;
 import module.workflow.activities.WorkflowActivity;
-import pt.ist.bennu.core.domain.RoleType;
-import pt.ist.bennu.core.domain.User;
-import pt.ist.bennu.core.domain.groups.Role;
 
 /**
  * 

@@ -6,6 +6,11 @@ package module.siadap.activities;
 import java.math.BigDecimal;
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
+
+import pt.ist.bennu.core.domain.User;
+import pt.ist.bennu.core.util.BundleUtil;
+
 import module.siadap.activities.ChangeGradeAnytimeActivityInformation.GradePerUniverseBean;
 import module.siadap.domain.Siadap;
 import module.siadap.domain.SiadapProcess;
@@ -15,10 +20,6 @@ import module.siadap.domain.exceptions.SiadapException;
 import module.siadap.domain.scoring.SiadapGlobalEvaluation;
 import module.workflow.activities.ActivityInformation;
 import module.workflow.activities.WorkflowActivity;
-import pt.ist.bennu.core.domain.User;
-import pt.ist.bennu.core.util.BundleUtil;
-
-import org.apache.commons.lang.StringUtils;
 
 /**
  * @author João Antunes (joao.antunes@tagus.ist.utl.pt) - 12 de Abr de 2012

@@ -24,12 +24,13 @@
  */
 package module.siadap.domain.util.scripts;
 
-import module.organization.domain.Unit;
-import module.siadap.domain.SiadapYearConfiguration;
+import org.joda.time.LocalDate;
+
 import pt.ist.bennu.core.domain.exceptions.DomainException;
 import pt.ist.bennu.core.domain.scheduler.WriteCustomTask;
 
-import org.joda.time.LocalDate;
+import module.organization.domain.Unit;
+import module.siadap.domain.SiadapYearConfiguration;
 
 /**
  * 

@@ -24,11 +24,12 @@
  */
 package module.siadap.domain.util;
 
-import module.siadap.domain.Siadap;
-import module.siadap.domain.SiadapProcessStateEnum;
 import pt.ist.bennu.core.util.BundleUtil;
 import pt.ist.bennu.core.util.ClassNameBundle;
 import pt.ist.fenixWebFramework.rendererExtensions.util.IPresentableEnum;
+
+import module.siadap.domain.Siadap;
+import module.siadap.domain.SiadapProcessStateEnum;
 
 /**
  * 

@@ -25,9 +25,7 @@
 package module.siadap.domain.wrappers;
 
 import java.io.Serializable;
-import java.util.List;
 
-import module.siadap.domain.SiadapRootModule;
 import module.siadap.domain.SiadapYearConfiguration;
 
 /**

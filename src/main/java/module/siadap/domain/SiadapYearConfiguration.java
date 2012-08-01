@@ -29,16 +29,17 @@ import java.util.Set;
 import java.util.TreeSet;
 
 import jvstm.cps.ConsistencyPredicate;
-import module.organization.domain.Person;
-import module.siadap.domain.groups.SiadapCCAGroup;
-import module.siadap.domain.groups.SiadapStructureManagementGroup;
-import module.siadap.domain.wrappers.UnitSiadapWrapper;
 import pt.ist.bennu.core.applicationTier.Authenticate.UserView;
 import pt.ist.bennu.core.domain.MyOrg;
 import pt.ist.bennu.core.domain.User;
 import pt.ist.bennu.core.domain.groups.NamedGroup;
 import pt.ist.bennu.core.domain.groups.PersistentGroup;
 import pt.ist.fenixWebFramework.services.Service;
+
+import module.organization.domain.Person;
+import module.siadap.domain.groups.SiadapCCAGroup;
+import module.siadap.domain.groups.SiadapStructureManagementGroup;
+import module.siadap.domain.wrappers.UnitSiadapWrapper;
 
 /**
  * 

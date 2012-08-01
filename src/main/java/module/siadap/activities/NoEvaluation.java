@@ -24,12 +24,13 @@
  */
 package module.siadap.activities;
 
+import pt.ist.bennu.core.domain.User;
+
 import module.siadap.domain.Siadap;
 import module.siadap.domain.SiadapEvaluation;
 import module.siadap.domain.SiadapProcess;
 import module.workflow.activities.ActivityInformation;
 import module.workflow.activities.WorkflowActivity;
-import pt.ist.bennu.core.domain.User;
 
 /**
  * 

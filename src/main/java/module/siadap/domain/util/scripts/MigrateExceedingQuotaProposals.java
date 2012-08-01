@@ -29,12 +29,13 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 
+import pt.ist.bennu.core.domain.scheduler.WriteCustomTask;
+
 import module.organization.domain.Unit;
 import module.siadap.domain.ExceedingQuotaProposal;
 import module.siadap.domain.ExceedingQuotaSuggestionType;
 import module.siadap.domain.SiadapRootModule;
 import module.siadap.domain.SiadapUniverse;
-import pt.ist.bennu.core.domain.scheduler.WriteCustomTask;
 
 /**
  * 

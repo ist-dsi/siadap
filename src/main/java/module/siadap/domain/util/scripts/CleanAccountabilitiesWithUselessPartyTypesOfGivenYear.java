@@ -8,6 +8,10 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.joda.time.LocalDate;
+
+import pt.ist.bennu.core.domain.scheduler.WriteCustomTask;
+
 import module.organization.domain.Accountability;
 import module.organization.domain.AccountabilityType;
 import module.organization.domain.Party;
@@ -15,9 +19,6 @@ import module.organization.domain.PartyType;
 import module.organization.domain.Unit;
 import module.siadap.domain.SiadapYearConfiguration;
 import module.siadap.domain.util.SiadapMiscUtilClass;
-import pt.ist.bennu.core.domain.scheduler.WriteCustomTask;
-
-import org.joda.time.LocalDate;
 
 /**
  * @author João Antunes (joao.antunes@tagus.ist.utl.pt) - 28 Maio de 2012 Remove

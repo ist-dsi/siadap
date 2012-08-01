@@ -24,10 +24,11 @@
  */
 package module.siadap.domain;
 
-import module.siadap.domain.exceptions.SiadapException;
+import org.apache.commons.lang.StringUtils;
+
 import pt.ist.bennu.core.util.BundleUtil;
 
-import org.apache.commons.lang.StringUtils;
+import module.siadap.domain.exceptions.SiadapException;
 
 /**
  * 

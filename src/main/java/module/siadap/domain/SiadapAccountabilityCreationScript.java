@@ -24,11 +24,12 @@
  */
 package module.siadap.domain;
 
-import module.organization.domain.AccountabilityType;
-import module.organization.domain.AccountabilityType.AccountabilityTypeBean;
 import pt.ist.bennu.core.domain.scheduler.WriteCustomTask;
 import pt.utl.ist.fenix.tools.util.i18n.Language;
 import pt.utl.ist.fenix.tools.util.i18n.MultiLanguageString;
+
+import module.organization.domain.AccountabilityType;
+import module.organization.domain.AccountabilityType.AccountabilityTypeBean;
 
 /**
  * 

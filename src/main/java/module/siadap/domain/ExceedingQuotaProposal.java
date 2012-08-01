@@ -30,14 +30,14 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.collections.Predicate;
+
+import pt.ist.fenixWebFramework.services.Service;
+
 import module.organization.domain.Person;
 import module.organization.domain.Unit;
 import module.siadap.domain.exceptions.SiadapException;
 import module.siadap.domain.wrappers.UnitSiadapWrapper;
-
-import org.apache.commons.collections.Predicate;
-
-import pt.ist.fenixWebFramework.services.Service;
 
 /**
  * 

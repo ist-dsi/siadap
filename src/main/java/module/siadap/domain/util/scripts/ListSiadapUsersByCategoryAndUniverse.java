@@ -28,6 +28,11 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import org.joda.time.DateTime;
+import org.joda.time.LocalDate;
+
+import pt.ist.bennu.core.domain.scheduler.ReadCustomTask;
+
 import module.organization.domain.Accountability;
 import module.organization.domain.AccountabilityType;
 import module.organization.domain.Person;
@@ -36,10 +41,6 @@ import module.siadap.domain.Siadap;
 import module.siadap.domain.SiadapProcessStateEnum;
 import module.siadap.domain.SiadapYearConfiguration;
 import module.siadap.domain.util.SiadapStatisticsSummaryBoardUniversesEnum;
-import pt.ist.bennu.core.domain.scheduler.ReadCustomTask;
-
-import org.joda.time.DateTime;
-import org.joda.time.LocalDate;
 
 /**
  * Class used to list the Siadap users [full name (istId)] separated by
