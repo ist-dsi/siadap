@@ -83,6 +83,7 @@ import module.workflow.domain.LabelLog;
 import module.workflow.domain.ProcessFile;
 import module.workflow.domain.WorkflowLog;
 import module.workflow.domain.WorkflowProcess;
+import module.workflow.domain.WorkflowSystem;
 
 /**
  * 
@@ -169,6 +170,8 @@ public class SiadapProcess extends SiadapProcess_Base {
 
 	setSiadap(new Siadap(year, evaluated, siadapUniverse, competenceType));
 	setProcessNumber("S" + year + "/" + evaluated.getUser().getUsername());
+
+	setWorkflowSystem(WorkflowSystem.getInstance());
 
 	new LabelLog(this, currentUser, this.getClass().getName() + ".creation", "resources/SiadapResources",
 		evaluated.getName(), year.toString(), siadapUniverse.getLocalizedName(), competenceType.getName());
