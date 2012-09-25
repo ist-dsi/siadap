@@ -448,25 +448,48 @@ public class SiadapPersonnelManagement extends ContextBaseAction {
 	siadapRawDataSpreadsheet.setHeader("Conta para quotas IST");
 
 	// let's get all of the SIADAPs
-	SiadapYearConfiguration siadapYearConfiguration = SiadapYearConfiguration.getSiadapYearConfiguration(year);
 	// List<Siadap> siadaps = siadapYearConfiguration.getSiadaps();
 	List<Siadap> siadaps = SiadapRootModule.getInstance().getSiadaps();
 	for (Siadap siadap : siadaps) {
 	    if (siadap.getYear().intValue() == year) {
 		Row row = siadapRawDataSpreadsheet.addRow();
-		row.setCell(siadap.getEvaluated().getUser().getUsername());
-		row.setCell(siadap.getEvaluated().getPresentationName());
-		row.setCell(siadap.getEvaluator().getPerson().getUser().getUsername());
-		row.setCell(siadap.getEvaluator().getPerson().getPresentationName());
-		PersonSiadapWrapper evaluatedWrapper = new PersonSiadapWrapper(siadap.getEvaluated(), year);
-		row.setCell(evaluatedWrapper.getWorkingUnit().getUnit().getPresentationName());
-		row.setCell(evaluatedWrapper.getSiadap() == null
-			|| evaluatedWrapper.getUnitWhereIsHarmonized(evaluatedWrapper.getSiadap().getDefaultSiadapUniverse()) == null ? "-"
-			: evaluatedWrapper.getUnitWhereIsHarmonized(evaluatedWrapper.getSiadap().getDefaultSiadapUniverse())
-				.getPresentationName());
-		row.setCell(evaluatedWrapper.getCareerName());
-		row.setCell(String.valueOf(siadap.getDefaultSiadapUniverse()));
-		row.setCell(evaluatedWrapper.isQuotaAware() ? "Sim" : "Não");
+		//protection against NPEs
+		if (siadap.getEvaluated() == null) {
+		    row.setCell("-");
+		    row.setCell("-");
+		} else {
+		    row.setCell(siadap.getEvaluated().getUser().getUsername());
+		    row.setCell(siadap.getEvaluated().getPresentationName());
+		}
+		if (siadap.getEvaluator() == null) {
+		    row.setCell("-");
+		    row.setCell("-");
+		} else {
+		    row.setCell(siadap.getEvaluator().getPerson().getUser().getUsername());
+		    row.setCell(siadap.getEvaluator().getPerson().getPresentationName());
+		}
+		if (siadap.getEvaluated() == null) {
+		    row.setCell("-");
+		    row.setCell("-");
+		    row.setCell("-");
+		    row.setCell("-");
+		    row.setCell("-");
+		} else {
+		    PersonSiadapWrapper evaluatedWrapper = new PersonSiadapWrapper(siadap.getEvaluated(), year);
+		    if (evaluatedWrapper.getWorkingUnit() == null) {
+			row.setCell("-");
+		    } else {
+			row.setCell(evaluatedWrapper.getWorkingUnit().getUnit().getPresentationName());
+		    }
+		    row.setCell(evaluatedWrapper.getSiadap() == null
+			    || evaluatedWrapper.getUnitWhereIsHarmonized(evaluatedWrapper.getSiadap().getDefaultSiadapUniverse()) == null ? "-"
+			    : evaluatedWrapper.getUnitWhereIsHarmonized(evaluatedWrapper.getSiadap().getDefaultSiadapUniverse())
+				    .getPresentationName());
+		    row.setCell(evaluatedWrapper.getCareerName());
+		    row.setCell(String.valueOf(siadap.getDefaultSiadapUniverse()));
+		    row.setCell(evaluatedWrapper.isQuotaAware() ? "Sim" : "Não");
+
+		}
 	    }
 	}
 
