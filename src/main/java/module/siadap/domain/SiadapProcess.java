@@ -478,7 +478,6 @@ public class SiadapProcess extends SiadapProcess_Base {
 	for (WorkflowLog exLog : executionLogs) {
 	    removeExecutionLogs(exLog);
 	}
-	removeDocumentsRepository();
 	removeSiadap();
 	removeWorkflowSystem();
 	deleteDomainObject();

@@ -28,11 +28,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import org.joda.time.LocalDate;
-
-import pt.ist.bennu.core.domain.scheduler.ReadCustomTask;
-import pt.ist.bennu.core.domain.scheduler.TransactionalThread;
-
 import module.organization.domain.Accountability;
 import module.organization.domain.AccountabilityType;
 import module.organization.domain.Person;
@@ -45,6 +40,11 @@ import module.siadap.domain.SiadapYearConfiguration;
 import module.siadap.domain.util.SiadapMiscUtilClass;
 import module.siadap.domain.wrappers.PersonSiadapWrapper;
 import module.siadap.domain.wrappers.UnitSiadapWrapper;
+
+import org.joda.time.LocalDate;
+
+import pt.ist.bennu.core.domain.scheduler.ReadCustomTask;
+import pt.ist.bennu.core.domain.scheduler.TransactionalThread;
 
 /**
  * 
@@ -112,7 +112,8 @@ public class AssignInitialSiadapHarmRelation extends ReadCustomTask {
 	    AccountabilityType siadap3HarmonizationRelation = siadapYearConfiguration.getSiadap3HarmonizationRelation();
 	    if (siadap2HarmonizationRelation == null || siadap3HarmonizationRelation == null)
 	    {
-		out.println("Could not assign H. relations for SIADAPs in the year " + year + " because the relations where not configured");
+		out.println("Could not assign H. relations for SIADAPs in the year " + year
+			+ " because the relations were not configured");
 	    }
 	    
 		SiadapEvaluationUniverse defaultSiadapEvaluationUniverse = siadap.getDefaultSiadapEvaluationUniverse();
