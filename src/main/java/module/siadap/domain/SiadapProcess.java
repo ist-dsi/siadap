@@ -30,11 +30,23 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.MissingResourceException;
 
+import org.joda.time.LocalDate;
+
+import pt.ist.bennu.core.applicationTier.Authenticate.UserView;
+import pt.ist.bennu.core.domain.RoleType;
+import pt.ist.bennu.core.domain.User;
+import pt.ist.bennu.core.domain.VirtualHost;
+import pt.ist.bennu.core.domain.exceptions.DomainException;
+import pt.ist.bennu.core.domain.groups.Role;
+import pt.ist.bennu.core.util.BundleUtil;
+import pt.ist.bennu.core.util.ClassNameBundle;
+import pt.ist.emailNotifier.domain.Email;
+import pt.ist.fenixWebFramework.services.Service;
+
 import module.organization.domain.Person;
 import module.organizationIst.domain.listner.LoginListner;
 import module.siadap.activities.AcknowledgeEvaluationObjectives;
 import module.siadap.activities.AcknowledgeEvaluationValidation;
-import module.siadap.activities.AcknowledgeHomologation;
 import module.siadap.activities.AutoEvaluation;
 import module.siadap.activities.ChangeCustomSchedule;
 import module.siadap.activities.ChangeGradeAnytimeAfterValidationByCCA;
@@ -73,19 +85,6 @@ import module.workflow.domain.WorkflowLog;
 import module.workflow.domain.WorkflowProcess;
 import module.workflow.domain.WorkflowSystem;
 
-import org.joda.time.LocalDate;
-
-import pt.ist.bennu.core.applicationTier.Authenticate.UserView;
-import pt.ist.bennu.core.domain.RoleType;
-import pt.ist.bennu.core.domain.User;
-import pt.ist.bennu.core.domain.VirtualHost;
-import pt.ist.bennu.core.domain.exceptions.DomainException;
-import pt.ist.bennu.core.domain.groups.Role;
-import pt.ist.bennu.core.util.BundleUtil;
-import pt.ist.bennu.core.util.ClassNameBundle;
-import pt.ist.emailNotifier.domain.Email;
-import pt.ist.fenixWebFramework.services.Service;
-
 /**
  * 
  * @author João Antunes
@@ -121,7 +120,7 @@ public class SiadapProcess extends SiadapProcess_Base {
 	activities.add(new SubmitValidatedEvaluation());
 	activities.add(new AcknowledgeEvaluationValidation());
 	activities.add(new Homologate());
-	activities.add(new AcknowledgeHomologation());
+	// activities.add(new AcknowledgeHomologation());
 	activities.add(new EditObjectiveEvaluation());
 	activities.add(new SubmitForObjectivesAcknowledge());
 	// activities.add(new NotValidateEvaluation());
