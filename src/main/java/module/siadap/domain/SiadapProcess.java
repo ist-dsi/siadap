@@ -47,6 +47,7 @@ import module.organization.domain.Person;
 import module.organizationIst.domain.listner.LoginListner;
 import module.siadap.activities.AcknowledgeEvaluationObjectives;
 import module.siadap.activities.AcknowledgeEvaluationValidation;
+import module.siadap.activities.AcknowledgeHomologation;
 import module.siadap.activities.AutoEvaluation;
 import module.siadap.activities.ChangeCustomSchedule;
 import module.siadap.activities.ChangeGradeAnytimeAfterValidationByCCA;
@@ -120,7 +121,7 @@ public class SiadapProcess extends SiadapProcess_Base {
 	activities.add(new SubmitValidatedEvaluation());
 	activities.add(new AcknowledgeEvaluationValidation());
 	activities.add(new Homologate());
-	// activities.add(new AcknowledgeHomologation());
+	activities.add(new AcknowledgeHomologation());
 	activities.add(new EditObjectiveEvaluation());
 	activities.add(new SubmitForObjectivesAcknowledge());
 	// activities.add(new NotValidateEvaluation());
@@ -168,10 +169,9 @@ public class SiadapProcess extends SiadapProcess_Base {
 	    }
 	}
 
+	setWorkflowSystem(WorkflowSystem.getInstance());
 	setSiadap(new Siadap(year, evaluated, siadapUniverse, competenceType));
 	setProcessNumber("S" + year + "/" + evaluated.getUser().getUsername());
-
-	setWorkflowSystem(WorkflowSystem.getInstance());
 
 	new LabelLog(this, currentUser, this.getClass().getName() + ".creation", "resources/SiadapResources",
 		evaluated.getName(), year.toString(), siadapUniverse.getLocalizedName(), competenceType.getName());
