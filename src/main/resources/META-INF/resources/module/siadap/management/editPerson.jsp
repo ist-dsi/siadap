@@ -449,6 +449,8 @@ request.setAttribute("isCCAMember", isCCAMember);
  <jsp:param value="<%=configuration.getWorkingRelation().getExternalId()%>" name="accountabilities"/>
  <jsp:param value="<%=configuration.getWorkingRelationWithNoQuota().getExternalId()%>" name="accountabilities"/>
  <jsp:param value="<%=configuration.getHarmonizationResponsibleRelation().getExternalId()%>" name="accountabilities"/>
+ <jsp:param value="<%=configuration.getSiadap2HarmonizationRelation().getExternalId()%>" name="accountabilities"/>
+ <jsp:param value="<%=configuration.getSiadap3HarmonizationRelation().getExternalId()%>" name="accountabilities"/>
  <jsp:param value="<%=year%>" name="endDateYear"/>
  <jsp:param value="12" name="endDateMonth"/>
  <jsp:param value="31" name="endDateDay"/>

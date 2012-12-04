@@ -352,12 +352,17 @@ public class SiadapProcessCountAction extends ContextBaseAction {
     public ActionForward showSummaryTables(ActionMapping mapping, ActionForm form, HttpServletRequest request,
 	    HttpServletResponse response) throws Exception {
 
-	//	final OrganizationalModel organizationalModel = findOrgModel();
-	//	//get the top unit (IST)
-	//	final Unit unit = getUnit(organizationalModel, request);
-	//
-	//	request.setAttribute("unit", unit);
-	//
+	final OrganizationalModel organizationalModel = findOrgModel();
+	//get the top unit (IST)
+	final Unit unit = getUnit(organizationalModel, request);
+
+	request.setAttribute("unit", unit);
+
+	String year = getAttribute(request, "year");
+	SiadapYearConfiguration siadapYearConfiguration = SiadapYearConfiguration.getSiadapYearConfiguration(Integer
+		.valueOf(year));
+	request.setAttribute("configuration", siadapYearConfiguration);
+
 	return forward(request, "/module/siadap/summaryBoard.jsp");
 
     }
@@ -447,14 +452,11 @@ public class SiadapProcessCountAction extends ContextBaseAction {
 	return false;
     }
 
-    //    private Unit getUnit(final OrganizationalModel organizationalModel, final HttpServletRequest request) {
-    //	final Unit unit = getDomainObject(request, "unitId");
-    //	return unit == null
-    //		? (organizationalModel.hasAnyParties()
-    //			? (Unit) organizationalModel.getPartiesIterator().next()
-    //			: null)
-    //		: unit;
-    //    }
+    private Unit getUnit(final OrganizationalModel organizationalModel, final HttpServletRequest request) {
+	final Unit unit = getDomainObject(request, "unitId");
+	return unit == null ? (organizationalModel.hasAnyParties() ? (Unit) organizationalModel.getPartiesIterator().next()
+		: null) : unit;
+    }
 
     private OrganizationalModel findOrgModel() {
 	final MyOrg instance = MyOrg.getInstance();

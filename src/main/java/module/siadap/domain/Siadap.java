@@ -30,13 +30,6 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-import org.apache.commons.collections.Predicate;
-import org.apache.commons.lang.StringUtils;
-import org.joda.time.Interval;
-import org.joda.time.LocalDate;
-
-import pt.ist.fenixWebFramework.services.Service;
-
 import module.organization.domain.Accountability;
 import module.organization.domain.AccountabilityType;
 import module.organization.domain.Person;
@@ -50,6 +43,13 @@ import module.webserviceutils.client.JerseyRemoteUser;
 import module.workflow.domain.utils.WorkflowCommentCounter;
 import module.workflow.widgets.ProcessListWidget;
 import module.workflow.widgets.UnreadCommentsWidget;
+
+import org.apache.commons.collections.Predicate;
+import org.apache.commons.lang.StringUtils;
+import org.joda.time.Interval;
+import org.joda.time.LocalDate;
+
+import pt.ist.fenixWebFramework.services.Service;
 
 /**
  * 
@@ -616,11 +616,6 @@ public class Siadap extends Siadap_Base {
 
     public List<ObjectiveEvaluation> getObjectiveEvaluations() {
 	return getDefaultSiadapEvaluationUniverse().getObjectiveEvaluations();
-    }
-
-    @Override
-    public SiadapYearConfiguration getSiadapYearConfiguration() {
-	return SiadapYearConfiguration.getSiadapYearConfiguration(getYear());
     }
 
     public LocalDate getAutoEvaluationEndDate() {

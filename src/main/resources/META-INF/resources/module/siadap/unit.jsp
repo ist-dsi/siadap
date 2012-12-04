@@ -63,14 +63,14 @@
 	<fr:view name="unit" property="presentationName"/>
 </h2>
 
-<%-- TODO: make this JSP year sensible --%>
+<%-- TODO: make this JSP year sensitive --%>
 <html:link action="<%="/siadapProcessCount.do?method=showSummaryTables&year="+configuration.getYear()%>" >Quadro síntese</html:link>
 
 <%
 	final SiadapProcessCounter mainCounter = new SiadapProcessCounter(unit, false, configuration);
 	int siadapTotalCount = 0;
 	int nrDuplicatedPersons = mainCounter.getDuplicatePersons().size();
-	for (int i = 0 ; i < mainCounter.getCounts().length && i < SiadapStateToShowInCount.getMaximumStateToShowInCount().ordinal(); i++) {
+	for (int i = 0 ; i < mainCounter.getCounts().length && i <= SiadapStateToShowInCount.getMaximumStateToShowInCount().ordinal() + 1; i++) {
 	    final int count = mainCounter.getCounts()[i];
 	    final SiadapProcessStateEnum state = SiadapProcessStateEnum.values()[i];
 	    siadapTotalCount += count;
@@ -112,7 +112,7 @@
 							<bean:define id="toolTip" type="java.lang.String">
 								<ul>
 								<%
-									for (int i = 0 ; i < counter.getCounts().length && i < SiadapStateToShowInCount.getMaximumStateToShowInCount().ordinal(); i++) {
+									for (int i = 0 ; i < counter.getCounts().length && i <= SiadapStateToShowInCount.getMaximumStateToShowInCount().ordinal() + 1; i++) {
 										final int count = counter.getCounts()[i];
 										final SiadapProcessStateEnum state = SiadapProcessStateEnum.values()[i];
 								%>
@@ -180,7 +180,7 @@
 
 <%
 final int NR_STATES_PER_ROW = 9;
-final int MAX_NR_STATES = (mainCounter.getCounts().length < SiadapStateToShowInCount.getMaximumStateToShowInCount().ordinal()) ? mainCounter.getCounts().length :  SiadapStateToShowInCount.getMaximumStateToShowInCount().ordinal();
+final int MAX_NR_STATES = (mainCounter.getCounts().length <= SiadapStateToShowInCount.getMaximumStateToShowInCount().ordinal() + 1) ? mainCounter.getCounts().length :  SiadapStateToShowInCount.getMaximumStateToShowInCount().ordinal() + 1;
 int j =0;
 %>
 <table class="tstyle tcenter">

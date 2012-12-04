@@ -124,6 +124,15 @@ public class PersonSiadapWrapper extends PartyWrapper implements Serializable {
 
     }
 
+    public PersonSiadapWrapper(Siadap siadap) {
+	super(siadap.getYear());
+	this.person = siadap.getEvaluated();
+
+	if (person != null)
+	    initIntermediateValues();
+
+    }
+
     /**
      * Inits the intermediate values used for display purposes. More
      * specifically: {@link #harmonizationCurrentAssessmentForSIADAP2},

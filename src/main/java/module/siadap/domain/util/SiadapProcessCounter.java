@@ -29,18 +29,21 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.joda.time.LocalDate;
-
-import com.google.common.collect.ConcurrentHashMultiset;
-import com.google.common.collect.Multiset;
-
 import module.organization.domain.Accountability;
 import module.organization.domain.AccountabilityType;
 import module.organization.domain.Person;
 import module.organization.domain.Unit;
 import module.siadap.domain.Siadap;
+import module.siadap.domain.SiadapEvaluationUniverse;
 import module.siadap.domain.SiadapProcessStateEnum;
 import module.siadap.domain.SiadapYearConfiguration;
+import module.siadap.domain.scoring.SiadapGlobalEvaluation;
+
+import org.joda.time.LocalDate;
+
+import com.google.common.collect.ConcurrentHashMultiset;
+import com.google.common.collect.HashMultiset;
+import com.google.common.collect.Multiset;
 
 /**
  * 
@@ -54,7 +57,7 @@ public class SiadapProcessCounter implements Serializable {
 
     private final int counts[] = new int[SiadapProcessStateEnum.values().length];
 
-    private final HashMap<Boolean, HashMap<String, int[]>> countsByQuotaAndCategories = new HashMap<Boolean, HashMap<String, int[]>>();
+    private final HashMap<Boolean, HashMap<String, NumberAndGradeCounter>> countsByQuotaAndCategories = new HashMap<Boolean, HashMap<String, NumberAndGradeCounter>>();
 
     private final LocalDate dayToUse;
     private final transient SiadapYearConfiguration configuration;
@@ -73,6 +76,8 @@ public class SiadapProcessCounter implements Serializable {
 
     private final Set<Siadap> siadaps = new HashSet<Siadap>();
 
+    private final Set<Siadap> curricularPonderationSiadaps = new HashSet<Siadap>();
+
     public SiadapProcessCounter(final Unit unit, boolean distinguishBetweenUniverses, SiadapYearConfiguration configuration,
 	    boolean gatherSiadaps) {
 	this(unit, distinguishBetweenUniverses, configuration);
@@ -80,6 +85,7 @@ public class SiadapProcessCounter implements Serializable {
 	init(distinguishBetweenUniverses);
 
     }
+
     public SiadapProcessCounter(final Unit unit, boolean distinguishBetweenUniverses, SiadapYearConfiguration configuration) {
 	topUnit = unit;
 	this.configuration = configuration;
@@ -149,42 +155,113 @@ public class SiadapProcessCounter implements Serializable {
 	    getSiadaps().add(siadap);
     }
 
+    public static class NumberAndGradeCounter {
+
+	public NumberAndGradeCounter(String categoryName, SiadapStatisticsSummaryBoardUniversesEnum universesEnum) {
+	    this.categoryName = categoryName;
+	    this.subCategoryTypeEnum = universesEnum;
+	    this.subCategoryCounter = new int[universesEnum.getNrOfSubCategories()];
+	}
+
+	String categoryName;
+
+	SiadapStatisticsSummaryBoardUniversesEnum subCategoryTypeEnum;
+
+	int totalNumberOfCategoryPeople = 0;
+
+	int[] subCategoryCounter;
+
+	Multiset<SiadapGlobalEvaluation> gradeCounter = HashMultiset.create();
+
+	void addPerson(int subCategoryIndex) {
+	    this.subCategoryCounter[subCategoryIndex]++;
+	    totalNumberOfCategoryPeople++;
+	}
+
+	void addGrade(SiadapGlobalEvaluation evaluation) {
+	    gradeCounter.add(evaluation);
+	}
+
+	public boolean hasSubCategories() {
+	    return getNumberSubCategories() > 1;
+	}
+
+	public int getNumberSubCategories() {
+	    return this.subCategoryCounter.length;
+	}
+
+	public int[] getSubCategoryCounter() {
+	    return this.subCategoryCounter;
+	}
+
+	public int getNumberOfPeopleForSubcategory(int subcategoryIndex) {
+	    return this.subCategoryCounter[subcategoryIndex];
+	}
+
+	public int getTotalNumberOfCategoryPeople() {
+	    return totalNumberOfCategoryPeople;
+	}
+
+	public Multiset<SiadapGlobalEvaluation> getGradeCounter() {
+	    return gradeCounter;
+	}
+
+    }
+
+
     private void count(final Person person, boolean withQuota) {
 	final Siadap siadap = configuration.getSiadapFor(person);
 	final SiadapProcessStateEnum state = siadap == null ? SiadapProcessStateEnum.NOT_CREATED : SiadapProcessStateEnum
 		.getState(siadap);
-	
+
 	duplicatedPersons.add(person);
 
 	//let's fill the complicated hashmap
-	HashMap<String, int[]> categoryHashMap = getCountsByQuotaAndCategories().get(Boolean.valueOf(withQuota));
-	if ( categoryHashMap == null)
+	HashMap<String, NumberAndGradeCounter> categoryHashMap = getCountsByQuotaAndCategories().get(Boolean.valueOf(withQuota));
+	if (categoryHashMap == null)
 	//if it doesn't exist for this quotaaware/noquotaaware universe, let's create it
 	{
-	    categoryHashMap = new HashMap<String, int[]>();
+	    categoryHashMap = new HashMap<String, NumberAndGradeCounter>();
 	    getCountsByQuotaAndCategories().put(Boolean.valueOf(withQuota), categoryHashMap);
 	}
-	
-	
-	SiadapStatisticsSummaryBoardUniversesEnum universesEnum = SiadapStatisticsSummaryBoardUniversesEnum.getStatisticsUniverse(state);
-	int[] categoryCounter = categoryHashMap.get(universesEnum.getCategoryString(siadap));
-	if (categoryCounter == null) {
+
+	SiadapStatisticsSummaryBoardUniversesEnum universesEnum = SiadapStatisticsSummaryBoardUniversesEnum
+		.getStatisticsUniverse(state);
+	String categoryName = universesEnum.getCategoryString(siadap);
+	NumberAndGradeCounter numberAndGradeCounter = categoryHashMap.get(categoryName);
+	if (numberAndGradeCounter == null) {
 	    //do we already have a counter for this category?!, if not, we create it
-	    categoryCounter = new int[universesEnum.getNrOfSubCategories()];
-	    categoryHashMap.put(universesEnum.getCategoryString(siadap), categoryCounter);
+	    numberAndGradeCounter = new NumberAndGradeCounter(categoryName, universesEnum);
+	    categoryHashMap.put(universesEnum.getCategoryString(siadap), numberAndGradeCounter);
 	}
-	categoryCounter[universesEnum.getSubCategoryIndex(state)]++;
+
+	//Registering the SIADAPS in curricular ponderation
+	if (siadap != null && siadap.hasAnAssociatedCurricularPonderationEval()) {
+	    getCurricularPonderationSiadaps().add(siadap);
+	}
+
+	//let's register the person
+	numberAndGradeCounter.addPerson(universesEnum.getSubCategoryIndex(state));
+
+	//let's register the person's grade
+	if (siadap != null) {
+
+	    SiadapEvaluationUniverse defaultSiadapEvaluationUniverse = siadap.getDefaultSiadapEvaluationUniverse();
+	    if (defaultSiadapEvaluationUniverse != null
+		    && defaultSiadapEvaluationUniverse.getLatestSiadapGlobalEvaluationEnum() != null) {
+		numberAndGradeCounter.addGrade(defaultSiadapEvaluationUniverse.getLatestSiadapGlobalEvaluationEnum());
+	    }
+	}
 
 	if (gatherSiadaps)
 	    getSiadaps().add(siadap);
     }
-    
-    public Set<Person> getDuplicatePersons()
-    {
+
+    public Set<Person> getDuplicatePersons() {
 	if (!filteredDuplicatedPersonsSet)
 	    filterDuplicatedPersonsSet();
 	return duplicatedPersons.elementSet();
-	
+
     }
 
     public Set<Unit> getDuplicateUnits() {
@@ -231,11 +308,16 @@ public class SiadapProcessCounter implements Serializable {
 	return false;
     }
 
-    public HashMap<Boolean, HashMap<String, int[]>> getCountsByQuotaAndCategories() {
+    public HashMap<Boolean, HashMap<String, NumberAndGradeCounter>> getCountsByQuotaAndCategories() {
 	return countsByQuotaAndCategories;
     }
+
     public Set<Siadap> getSiadaps() {
 	return siadaps;
+    }
+
+    public Set<Siadap> getCurricularPonderationSiadaps() {
+	return curricularPonderationSiadaps;
     }
 
 }
