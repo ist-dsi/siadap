@@ -27,7 +27,9 @@ package module.siadap.domain.util;
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
+import java.util.TreeSet;
 
 import module.organization.domain.Accountability;
 import module.organization.domain.AccountabilityType;
@@ -36,8 +38,10 @@ import module.organization.domain.Unit;
 import module.siadap.domain.Siadap;
 import module.siadap.domain.SiadapEvaluationUniverse;
 import module.siadap.domain.SiadapProcessStateEnum;
+import module.siadap.domain.SiadapRootModule;
 import module.siadap.domain.SiadapYearConfiguration;
 import module.siadap.domain.scoring.SiadapGlobalEvaluation;
+import module.siadap.domain.wrappers.PersonSiadapWrapper;
 
 import org.joda.time.LocalDate;
 
@@ -72,11 +76,13 @@ public class SiadapProcessCounter implements Serializable {
     private final boolean filteredDuplicatedUnitSet = false;
     private final Unit topUnit;
 
-    private boolean gatherSiadaps = false;
+    private boolean gatherSiadaps = true;
 
     private final Set<Siadap> siadaps = new HashSet<Siadap>();
 
     private final Set<Siadap> curricularPonderationSiadaps = new HashSet<Siadap>();
+
+    private final Map<Integer, Set<Siadap>> notListedSiadaps = new HashMap<Integer, Set<Siadap>>();
 
     public SiadapProcessCounter(final Unit unit, boolean distinguishBetweenUniverses, SiadapYearConfiguration configuration,
 	    boolean gatherSiadaps) {
@@ -101,6 +107,11 @@ public class SiadapProcessCounter implements Serializable {
     void init(boolean distinguishBetweenUniverses) {
 	if (distinguishBetweenUniverses) {
 	    count(topUnit, distinguishBetweenUniverses);
+	    //if we are distinguishing between universes, let's also include the not lister persons
+	    for (Siadap siadap : getOrCreateSiadapsNotListed()) {
+		PersonSiadapWrapper siadapWrapper = new PersonSiadapWrapper(siadap);
+		count(siadapWrapper.getPerson(), siadapWrapper.isQuotaAware());
+	    }
 	} else
 	    count(topUnit);
     }
@@ -151,8 +162,34 @@ public class SiadapProcessCounter implements Serializable {
 		.getState(siadap);
 	duplicatedPersons.add(person);
 	counts[state.ordinal()]++;
-	if (gatherSiadaps)
+	if (gatherSiadaps && siadap != null)
 	    getSiadaps().add(siadap);
+    }
+
+    public Set<Siadap> getOrCreateSiadapsNotListed() {
+	int year = configuration.getYear();
+	Set<Siadap> notListedSiadapsForGivenYear = notListedSiadaps.get(year);
+	if (notListedSiadapsForGivenYear == null) {
+	    notListedSiadapsForGivenYear = new TreeSet<Siadap>(
+		    Siadap.COMPARATOR_BY_EVALUATED_PRESENTATION_NAME_FALLBACK_YEAR_THEN_OID);
+
+	    //let's gather all of the relevant siadaps
+	    for (Siadap siadap : SiadapRootModule.getInstance().getSiadaps()) {
+		if (siadap.getYear().equals(year)) {
+		    notListedSiadapsForGivenYear.add(siadap);
+		}
+	    }
+	    notListedSiadapsForGivenYear.removeAll(getSiadaps());
+	    notListedSiadaps.put(year, notListedSiadapsForGivenYear);
+	    return notListedSiadapsForGivenYear;
+
+	} else {
+	    return notListedSiadapsForGivenYear;
+	}
+    }
+
+    public int getOrCreateSiadapsNotListedSize() {
+	return getOrCreateSiadapsNotListed().size();
     }
 
     public static class NumberAndGradeCounter {
@@ -161,21 +198,30 @@ public class SiadapProcessCounter implements Serializable {
 	    this.categoryName = categoryName;
 	    this.subCategoryTypeEnum = universesEnum;
 	    this.subCategoryCounter = new int[universesEnum.getNrOfSubCategories()];
+	    this.totalPeopleEvaluatedByCompetencesOnlyCounter = 0;
 	}
 
 	String categoryName;
 
-	SiadapStatisticsSummaryBoardUniversesEnum subCategoryTypeEnum;
+	private final SiadapStatisticsSummaryBoardUniversesEnum subCategoryTypeEnum;
 
 	int totalNumberOfCategoryPeople = 0;
 
 	int[] subCategoryCounter;
+
+	int totalPeopleEvaluatedByCompetencesOnlyCounter;
+
+	final Set<Siadap> siadapsForThisCategory = new HashSet<Siadap>();
 
 	Multiset<SiadapGlobalEvaluation> gradeCounter = HashMultiset.create();
 
 	void addPerson(int subCategoryIndex) {
 	    this.subCategoryCounter[subCategoryIndex]++;
 	    totalNumberOfCategoryPeople++;
+	}
+
+	void addPersonEvaluatedOnlyByCompetences() {
+	    this.totalPeopleEvaluatedByCompetencesOnlyCounter++;
 	}
 
 	void addGrade(SiadapGlobalEvaluation evaluation) {
@@ -194,8 +240,20 @@ public class SiadapProcessCounter implements Serializable {
 	    return this.subCategoryCounter;
 	}
 
+	public void addSiadapForThisCategory(Siadap siadap) {
+	    this.siadapsForThisCategory.add(siadap);
+	}
+
+	public Set<Siadap> getSiadapsForThisCategory() {
+	    return siadapsForThisCategory;
+	}
+
 	public int getNumberOfPeopleForSubcategory(int subcategoryIndex) {
 	    return this.subCategoryCounter[subcategoryIndex];
+	}
+
+	public int getNumberOfPeopleEvaluatedOnlyByCompetences() {
+	    return this.totalPeopleEvaluatedByCompetencesOnlyCounter;
 	}
 
 	public int getTotalNumberOfCategoryPeople() {
@@ -206,8 +264,11 @@ public class SiadapProcessCounter implements Serializable {
 	    return gradeCounter;
 	}
 
-    }
+	public SiadapStatisticsSummaryBoardUniversesEnum getSubCategoryTypeEnum() {
+	    return subCategoryTypeEnum;
+	}
 
+    }
 
     private void count(final Person person, boolean withQuota) {
 	final Siadap siadap = configuration.getSiadapFor(person);
@@ -243,6 +304,14 @@ public class SiadapProcessCounter implements Serializable {
 	//let's register the person
 	numberAndGradeCounter.addPerson(universesEnum.getSubCategoryIndex(state));
 
+	if (siadap != null) {
+	    Boolean evaluatedOnlyByCompetences = siadap.getEvaluatedOnlyByCompetences();
+	    if (evaluatedOnlyByCompetences != null && evaluatedOnlyByCompetences) {
+		numberAndGradeCounter.addPersonEvaluatedOnlyByCompetences();
+	    }
+
+	}
+
 	//let's register the person's grade
 	if (siadap != null) {
 
@@ -253,8 +322,11 @@ public class SiadapProcessCounter implements Serializable {
 	    }
 	}
 
-	if (gatherSiadaps)
+	if (gatherSiadaps && siadap != null) {
 	    getSiadaps().add(siadap);
+	    numberAndGradeCounter.addSiadapForThisCategory(siadap);
+
+	}
     }
 
     public Set<Person> getDuplicatePersons() {

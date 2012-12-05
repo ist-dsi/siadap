@@ -36,21 +36,6 @@ import java.util.TreeSet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.lang.StringUtils;
-import org.apache.struts.action.ActionForm;
-import org.apache.struts.action.ActionForward;
-import org.apache.struts.action.ActionMapping;
-import org.joda.time.LocalDate;
-
-import pt.ist.bennu.core.domain.MyOrg;
-import pt.ist.bennu.core.presentationTier.actions.ContextBaseAction;
-import pt.ist.bennu.core.presentationTier.component.OrganizationChart;
-import pt.ist.fenixWebFramework.renderers.utils.RenderUtils;
-import pt.ist.fenixWebFramework.services.Service;
-import pt.ist.fenixWebFramework.struts.annotations.Mapping;
-
-import com.google.common.collect.ArrayListMultimap;
-
 import module.organization.domain.Accountability;
 import module.organization.domain.AccountabilityType;
 import module.organization.domain.OrganizationalModel;
@@ -71,6 +56,21 @@ import module.siadap.presentationTier.renderers.providers.SiadapStateToShowInCou
 import module.siadap.presentationTier.renderers.providers.SiadapYearsFromExistingSiadapConfigurations;
 import module.workflow.domain.ProcessFile;
 
+import org.apache.commons.lang.StringUtils;
+import org.apache.struts.action.ActionForm;
+import org.apache.struts.action.ActionForward;
+import org.apache.struts.action.ActionMapping;
+import org.joda.time.LocalDate;
+
+import pt.ist.bennu.core.domain.MyOrg;
+import pt.ist.bennu.core.presentationTier.actions.ContextBaseAction;
+import pt.ist.bennu.core.presentationTier.component.OrganizationChart;
+import pt.ist.fenixWebFramework.renderers.utils.RenderUtils;
+import pt.ist.fenixWebFramework.services.Service;
+import pt.ist.fenixWebFramework.struts.annotations.Mapping;
+
+import com.google.common.collect.ArrayListMultimap;
+
 @Mapping(path = "/siadapProcessCount")
 /**
  * 
@@ -89,8 +89,7 @@ public class SiadapProcessCountAction extends ContextBaseAction {
     }
 
     public ActionForward listSiadapsByStateAndYear(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-	    HttpServletResponse response)
-	    throws Exception {
+	    HttpServletResponse response) throws Exception {
 
 	SiadapProcessStateEnum state = SiadapProcessStateEnum.valueOf(request.getParameter("state"));
 	Integer year = Integer.valueOf(request.getParameter("year"));
@@ -105,7 +104,7 @@ public class SiadapProcessCountAction extends ContextBaseAction {
 	    }
 
 	}
-	
+
 	java.util.Collections
 		.sort(siadapsOfYearAndState, Siadap.COMPARATOR_BY_EVALUATED_PRESENTATION_NAME_FALLBACK_YEAR_THEN_OID);
 
@@ -117,10 +116,10 @@ public class SiadapProcessCountAction extends ContextBaseAction {
 
     public ActionForward removeSiadap(ActionMapping mapping, ActionForm form, HttpServletRequest request,
 	    HttpServletResponse response) throws Exception {
-	
+
 	Siadap siadap = getDomainObject(request, "siadapId");
 	Integer year = siadap.getYear();
-	
+
 	deleteSiadapEvenWithFiles(siadap);
 
 	return manageDuplicateSiadaps(request, year);
@@ -162,13 +161,13 @@ public class SiadapProcessCountAction extends ContextBaseAction {
 	request.setAttribute("renderRemoveLink", Boolean.TRUE);
 	return forward(request, "/module/siadap/listGivenCollectionOfSiadaps.jsp");
     }
+
     public ActionForward manageDuplicateSiadaps(ActionMapping mapping, ActionForm form, HttpServletRequest request,
 	    HttpServletResponse response) throws Exception {
 
 	Integer year = Integer.valueOf(request.getParameter("year"));
 
 	return manageDuplicateSiadaps(request, year);
-	
 
     }
 
@@ -176,31 +175,58 @@ public class SiadapProcessCountAction extends ContextBaseAction {
 	    HttpServletResponse response) throws Exception {
 
 	Integer year = Integer.valueOf(request.getParameter("year"));
-
+	//
 	SiadapYearConfiguration configuration = SiadapYearConfiguration.getSiadapYearConfiguration(year);
-
-	//let's get all the siadasp
-	Set<Siadap> allSiadaps = new TreeSet<Siadap>(Siadap.COMPARATOR_BY_EVALUATED_PRESENTATION_NAME_FALLBACK_YEAR_THEN_OID);
-	for (Siadap siadap : SiadapRootModule.getInstance().getSiadaps()) {
-	    if (siadap.getYear().equals(year)) {
-		allSiadaps.add(siadap);
-	    }
-	}
-
+	//
 	//let's get all of the listed ones
-
+	//
 	SiadapProcessCounter siadapProcessCounter = new SiadapProcessCounter(configuration.getSiadapStructureTopUnit(), false,
 		configuration, true);
+	//
 
-	Set<Siadap> siadaps = siadapProcessCounter.getSiadaps();
-
-	allSiadaps.removeAll(siadaps);
-
-
-	request.setAttribute("siadaps", allSiadaps);
+	request.setAttribute("siadaps", siadapProcessCounter.getOrCreateSiadapsNotListed());
 	request.setAttribute("renderRemoveLink", Boolean.FALSE);
 	request.setAttribute("renderManageSiadapPersonLink", Boolean.TRUE);
 	return forward(request, "/module/siadap/listGivenCollectionOfSiadaps.jsp");
+
+	//	TypeOfList siadapsNotListedInStatistics = ListSiadapsComponent.TypeOfList.SIADAPS_NOT_LISTED_IN_STATISTICS;
+
+	//	return forward(
+	//		request,
+	//		"/vaadinContext.do?method=forwardToVaadin#"
+	//			+ new FragmentQuery(ListSiadapsComponent.class, year.toString(), siadapsNotListedInStatistics.name())
+	//				.getQueryString());
+
+    }
+
+    public ActionForward showUnknownCategoryUsers(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+	    HttpServletResponse response) throws Exception {
+
+	String categoryString = request.getParameter("categoryString");
+	Boolean quotaAware = Boolean.valueOf(request.getParameter("quota"));
+	Integer year = Integer.valueOf(request.getParameter("year"));
+	//
+	SiadapYearConfiguration configuration = SiadapYearConfiguration.getSiadapYearConfiguration(year);
+	//
+	//let's get all of the listed ones
+	//
+	SiadapProcessCounter siadapProcessCounter = new SiadapProcessCounter(configuration.getSiadapStructureTopUnit(), true,
+		configuration, true);
+	//
+
+	request.setAttribute("siadaps", siadapProcessCounter.getCountsByQuotaAndCategories().get(quotaAware).get(categoryString)
+		.getSiadapsForThisCategory());
+	request.setAttribute("renderRemoveLink", Boolean.FALSE);
+	request.setAttribute("renderManageSiadapPersonLink", Boolean.FALSE);
+	return forward(request, "/module/siadap/listGivenCollectionOfSiadaps.jsp");
+
+	//	TypeOfList siadapsNotListedInStatistics = ListSiadapsComponent.TypeOfList.SIADAPS_NOT_LISTED_IN_STATISTICS;
+
+	//	return forward(
+	//		request,
+	//		"/vaadinContext.do?method=forwardToVaadin#"
+	//			+ new FragmentQuery(ListSiadapsComponent.class, year.toString(), siadapsNotListedInStatistics.name())
+	//				.getQueryString());
 
     }
 
@@ -227,7 +253,6 @@ public class SiadapProcessCountAction extends ContextBaseAction {
 	request.setAttribute("renderRemoveLink", Boolean.TRUE);
 	request.setAttribute("renderManageSiadapPersonLink", Boolean.TRUE);
 	return forward(request, "/module/siadap/listGivenCollectionOfSiadaps.jsp");
-
 
     }
 
@@ -299,7 +324,6 @@ public class SiadapProcessCountAction extends ContextBaseAction {
 	if (unit == null) {
 	    unit = configuration.getSiadapStructureTopUnit();
 
-	    
 	    //and let's also get the total number of SIADAPs for this year
 	    int siadapsCount = SiadapYearConfiguration.getSiadapYearConfiguration(siadapYearWrapper.getChosenYear())
 		    .getSiadapsCount();
@@ -316,12 +340,9 @@ public class SiadapProcessCountAction extends ContextBaseAction {
 		    }
 		    integer++;
 		    stateCount.put(state, integer);
-		    
 
 		}
 	    }
-
-
 
 	    request.setAttribute("totalDefinitiveCount", stateCount);
 	    request.setAttribute("siadapsCount", siadapsCount);

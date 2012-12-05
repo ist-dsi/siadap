@@ -1,3 +1,6 @@
+<%@page import="module.siadap.domain.util.SiadapStatisticsSummaryBoardUniversesEnum"%>
+<%@page import="module.siadap.presentationTier.vaadin.ListSiadapsComponent"%>
+<%@page import="pt.ist.vaadinframework.fragment.FragmentQuery"%>
 <%@page import="module.siadap.domain.scoring.SiadapGlobalEvaluation"%>
 <%@page import="module.siadap.domain.util.SiadapProcessCounter.NumberAndGradeCounter"%>
 <%@page import="java.util.HashMap"%>
@@ -22,6 +25,8 @@
 <h2>
 	<fr:view name="unit" property="presentationName"/> (<fr:view name="configuration" property="year"/>)
 </h2>
+<html:link action="/siadapProcessCount.do?method=showUnit" paramId="year" paramName="configuration" paramProperty="year" >« Voltar as contagens</html:link>
+
 
 <%
 	final SiadapYearConfiguration configuration = (SiadapYearConfiguration) request.getAttribute("configuration");
@@ -29,6 +34,14 @@
 	HashMap<String, NumberAndGradeCounter> counterHashMap;
 	request.setAttribute("counter", counter);
 %>
+
+<%-- <logic:greaterThan name="counter" property="orCreateSiadapsNotListedSize" value="0">
+	<div class="infobox">
+		<p>Atenção, existem <%=counter.getOrCreateSiadapsNotListedSize()%> processos não incluidos nas listagens em baixo</p>
+		<p>Pode consultar esses casos <html:link page="<%="/vaadinContext.do?method=forwardToVaadin#" + 
+	new FragmentQuery(ListSiadapsComponent.class, String.valueOf(configuration.getYear()), ListSiadapsComponent.TypeOfList.SIADAPS_NOT_LISTED_IN_STATISTICS.name()).getQueryString() %>" target="_blank">aqui</html:link></p>
+	</div>
+</logic:greaterThan> --%>
 
 <%
 for (Boolean booleanKey : counter.getCountsByQuotaAndCategories().keySet())
@@ -114,6 +127,15 @@ else {
  	}
 %>
 </ul>
+
+<p>Número de avaliados apenas por competências: <%=numberAndGradeCounter.getNumberOfPeopleEvaluatedOnlyByCompetences() %></p>
+
+<% if (numberAndGradeCounter.getSubCategoryTypeEnum().equals(SiadapStatisticsSummaryBoardUniversesEnum.UNKNOWN_CATEGORY))  {%>
+<html:link page="<%="/siadapProcessCount.do?method=showUnknownCategoryUsers&quota="+booleanKey + "&categoryString="+categoryString%>" paramId="year" paramName="configuration" paramProperty="year" >
+				<p>Mostrar pessoas sem categoria</p>
+</html:link>
+
+<%} %>
 
 <%
   }
