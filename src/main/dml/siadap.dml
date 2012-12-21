@@ -127,6 +127,7 @@ class Siadap {
 	LocalDate customEvaluationBegin;
 	LocalDate customEvaluationEnd;
 	
+	boolean forcedReadinessToHomologation;
 	
 	Boolean nulled;
 	

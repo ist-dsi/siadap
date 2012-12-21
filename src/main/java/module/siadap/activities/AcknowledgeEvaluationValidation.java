@@ -30,6 +30,7 @@ import pt.ist.bennu.core.domain.User;
 
 import module.siadap.domain.Siadap;
 import module.siadap.domain.SiadapProcess;
+import module.siadap.domain.SiadapProcessStateEnum;
 import module.workflow.activities.ActivityInformation;
 import module.workflow.activities.WorkflowActivity;
 
@@ -45,7 +46,7 @@ public class AcknowledgeEvaluationValidation extends WorkflowActivity<SiadapProc
     public boolean isActive(SiadapProcess process, User user) {
 	Siadap siadap = process.getSiadap();
 	return siadap.getEvaluated().getUser() == user && siadap.getRequestedAcknowledegeValidationDate() != null
-		&& siadap.getAcknowledgeValidationDate() == null;
+		&& siadap.getAcknowledgeValidationDate() == null && siadap.getState().equals(SiadapProcessStateEnum.WAITING_VALIDATION_ACKNOWLEDGMENT_BY_EVALUATED);
     }
 
     @Override

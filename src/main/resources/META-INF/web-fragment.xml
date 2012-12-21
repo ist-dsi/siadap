@@ -19,7 +19,6 @@
    <name>file-support-plugin</name>
    <name>organization</name>
    <name>lucene-indexing-plugin</name>
-   <name>bennu-vaadin</name>
    <name>email-dispatch</name>
    <name>contacts</name>
    <name>geography</name>
@@ -33,6 +32,7 @@
    <name>scheduler</name>
    <name>scheduler-plugin</name>
    <name>web-service-utils</name>
+   <name>bennu-vaadin</name>
    <!-- [END OF BENNU GENERATED FRAGMENT] -->
 		</after>
 		<before>

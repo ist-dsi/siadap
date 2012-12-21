@@ -36,6 +36,7 @@ import pt.ist.emailNotifier.domain.Email;
 import module.organization.domain.Person;
 import module.siadap.domain.Siadap;
 import module.siadap.domain.SiadapProcess;
+import module.siadap.domain.SiadapProcessStateEnum;
 import module.workflow.activities.ActivityInformation;
 import module.workflow.activities.WorkflowActivity;
 
@@ -50,7 +51,7 @@ public class SubmitValidatedEvaluation extends WorkflowActivity<SiadapProcess, A
     public boolean isActive(SiadapProcess process, User user) {
 	Siadap siadap = process.getSiadap();
 	return siadap.getEvaluator().getPerson().getUser() == user && siadap.getValidationDateOfDefaultEvaluation() != null
-		&& siadap.getRequestedAcknowledegeValidationDate() == null && siadap.getAcknowledgeValidationDate() == null;
+		&& siadap.getRequestedAcknowledegeValidationDate() == null && siadap.getAcknowledgeValidationDate() == null && siadap.getState().equals(SiadapProcessStateEnum.WAITING_SUBMITTAL_BY_EVALUATOR_AFTER_VALIDATION);
     }
 
     @Override

@@ -27,9 +27,12 @@ package module.siadap.domain.util;
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
+
+import javax.annotation.Nullable;
 
 import module.organization.domain.Accountability;
 import module.organization.domain.AccountabilityType;
@@ -45,9 +48,11 @@ import module.siadap.domain.wrappers.PersonSiadapWrapper;
 
 import org.joda.time.LocalDate;
 
+import com.google.common.base.Predicate;
 import com.google.common.collect.ConcurrentHashMultiset;
 import com.google.common.collect.HashMultiset;
 import com.google.common.collect.Multiset;
+import com.google.common.collect.Sets;
 
 /**
  * 
@@ -57,339 +62,397 @@ import com.google.common.collect.Multiset;
  */
 public class SiadapProcessCounter implements Serializable {
 
-    private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 1L;
 
-    private final int counts[] = new int[SiadapProcessStateEnum.values().length];
+	private final int counts[] = new int[SiadapProcessStateEnum.values().length];
 
-    private final HashMap<Boolean, HashMap<String, NumberAndGradeCounter>> countsByQuotaAndCategories = new HashMap<Boolean, HashMap<String, NumberAndGradeCounter>>();
+	private final HashMap<Boolean, HashMap<String, NumberAndGradeCounter>> countsByQuotaAndCategories = new HashMap<Boolean, HashMap<String, NumberAndGradeCounter>>();
 
-    private final LocalDate dayToUse;
-    private final transient SiadapYearConfiguration configuration;
-    private final transient AccountabilityType unitRelations;
-    private final transient AccountabilityType evaluationRelation;
-    private final transient AccountabilityType workingUnitWithQuotaRelation;
-    private final transient AccountabilityType workingUnitWithoutQuotaRelation;
+	private final LocalDate dayToUse;
+	private final transient SiadapYearConfiguration configuration;
+	private final transient AccountabilityType unitRelations;
+	private final transient AccountabilityType evaluationRelation;
+	private final transient AccountabilityType workingUnitWithQuotaRelation;
+	private final transient AccountabilityType workingUnitWithoutQuotaRelation;
 
-    private final Multiset<Person> duplicatedPersons = ConcurrentHashMultiset.create();
-    private final Multiset<Unit> duplicatedUnit = ConcurrentHashMultiset.create();
-    private final boolean filteredDuplicatedPersonsSet = false;
-    private final boolean filteredDuplicatedUnitSet = false;
-    private final Unit topUnit;
+	private final Multiset<Person> duplicatedPersons = ConcurrentHashMultiset
+			.create();
+	private final Multiset<Unit> duplicatedUnit = ConcurrentHashMultiset
+			.create();
+	private final boolean filteredDuplicatedPersonsSet = false;
+	private final boolean filteredDuplicatedUnitSet = false;
+	private final Unit topUnit;
 
-    private boolean gatherSiadaps = true;
+	private boolean gatherSiadaps = true;
 
-    private final Set<Siadap> siadaps = new HashSet<Siadap>();
+	private final Set<Siadap> siadaps = new HashSet<Siadap>();
 
-    private final Set<Siadap> curricularPonderationSiadaps = new HashSet<Siadap>();
+	private final Set<Siadap> curricularPonderationSiadaps = new HashSet<Siadap>();
 
-    private final Map<Integer, Set<Siadap>> notListedSiadaps = new HashMap<Integer, Set<Siadap>>();
+	private final Map<Integer, Set<Siadap>> notListedSiadaps = new HashMap<Integer, Set<Siadap>>();
 
-    public SiadapProcessCounter(final Unit unit, boolean distinguishBetweenUniverses, SiadapYearConfiguration configuration,
-	    boolean gatherSiadaps) {
-	this(unit, distinguishBetweenUniverses, configuration);
-	this.gatherSiadaps = gatherSiadaps;
-	init(distinguishBetweenUniverses);
+	public SiadapProcessCounter(final Unit unit,
+			boolean distinguishBetweenUniverses,
+			SiadapYearConfiguration configuration, boolean gatherSiadaps) {
+		this(unit, distinguishBetweenUniverses, configuration);
+		this.gatherSiadaps = gatherSiadaps;
+		init(distinguishBetweenUniverses);
 
-    }
+	}
 
-    public SiadapProcessCounter(final Unit unit, boolean distinguishBetweenUniverses, SiadapYearConfiguration configuration) {
-	topUnit = unit;
-	this.configuration = configuration;
-	this.dayToUse = SiadapMiscUtilClass.lastDayOfYearWhereAccsAreActive(configuration.getYear());
-	unitRelations = configuration.getUnitRelations();
-	evaluationRelation = configuration.getEvaluationRelation();
-	workingUnitWithQuotaRelation = configuration.getWorkingRelation();
-	workingUnitWithoutQuotaRelation = configuration.getWorkingRelationWithNoQuota();
-	init(distinguishBetweenUniverses);
+	public SiadapProcessCounter(final Unit unit,
+			boolean distinguishBetweenUniverses,
+			SiadapYearConfiguration configuration) {
+		topUnit = unit;
+		this.configuration = configuration;
+		this.dayToUse = SiadapMiscUtilClass
+				.lastDayOfYearWhereAccsAreActive(configuration.getYear());
+		unitRelations = configuration.getUnitRelations();
+		evaluationRelation = configuration.getEvaluationRelation();
+		workingUnitWithQuotaRelation = configuration.getWorkingRelation();
+		workingUnitWithoutQuotaRelation = configuration
+				.getWorkingRelationWithNoQuota();
+		init(distinguishBetweenUniverses);
 
-    }
+	}
 
-    void init(boolean distinguishBetweenUniverses) {
-	if (distinguishBetweenUniverses) {
-	    count(topUnit, distinguishBetweenUniverses);
-	    //if we are distinguishing between universes, let's also include the not lister persons
-	    for (Siadap siadap : getOrCreateSiadapsNotListed()) {
-		PersonSiadapWrapper siadapWrapper = new PersonSiadapWrapper(siadap);
-		count(siadapWrapper.getPerson(), siadapWrapper.isQuotaAware());
-	    }
-	} else
-	    count(topUnit);
-    }
+	void init(boolean distinguishBetweenUniverses) {
+		if (distinguishBetweenUniverses) {
+			count(topUnit, distinguishBetweenUniverses);
+			// if we are distinguishing between universes, let's also include
+			// the not lister persons
+			for (Siadap siadap : getOrCreateSiadapsNotListed()) {
+				PersonSiadapWrapper siadapWrapper = new PersonSiadapWrapper(
+						siadap);
+				count(siadapWrapper.getPerson(), siadapWrapper.isQuotaAware());
+			}
+		} else
+			count(topUnit);
+	}
 
-    private void count(Unit unit, boolean distinguishBetweenUniverses) {
-	for (final Accountability accountability : unit.getChildAccountabilitiesSet()) {
-	    if (accountability.isActive(dayToUse)) {
-		final AccountabilityType accountabilityType = accountability.getAccountabilityType();
-		if (accountabilityType == unitRelations) {
-		    final Unit child = (Unit) accountability.getChild();
-		    duplicatedUnit.add(child);
-		    count(child, distinguishBetweenUniverses);
-		} else if (accountabilityType == workingUnitWithQuotaRelation) {
-		    final Person person = (Person) accountability.getChild();
-		    count(person, true);
+	private void count(Unit unit, boolean distinguishBetweenUniverses) {
+		for (final Accountability accountability : unit
+				.getChildAccountabilitiesSet()) {
+			if (accountability.isActive(dayToUse)) {
+				final AccountabilityType accountabilityType = accountability
+						.getAccountabilityType();
+				if (accountabilityType == unitRelations) {
+					final Unit child = (Unit) accountability.getChild();
+					duplicatedUnit.add(child);
+					count(child, distinguishBetweenUniverses);
+				} else if (accountabilityType == workingUnitWithQuotaRelation) {
+					final Person person = (Person) accountability.getChild();
+					count(person, true);
 
-		} else if (accountabilityType == workingUnitWithoutQuotaRelation) {
-		    final Person person = (Person) accountability.getChild();
-		    count(person, false);
+				} else if (accountabilityType == workingUnitWithoutQuotaRelation) {
+					final Person person = (Person) accountability.getChild();
+					count(person, false);
+
+				}
+
+			}
+		}
+
+	}
+
+	private void count(final Unit unit) {
+		for (final Accountability accountability : unit
+				.getChildAccountabilitiesSet()) {
+			if (accountability.isActive(dayToUse)) {
+				final AccountabilityType accountabilityType = accountability
+						.getAccountabilityType();
+				if (accountabilityType == unitRelations) {
+					final Unit child = (Unit) accountability.getChild();
+					duplicatedUnit.add(child);
+					count(child);
+				} else if (accountabilityType == workingUnitWithQuotaRelation
+						|| accountabilityType == workingUnitWithoutQuotaRelation) {
+					final Person person = (Person) accountability.getChild();
+					count(person);
+				}
+			}
+		}
+	}
+
+	private void count(final Person person) {
+		final Siadap siadap = configuration.getSiadapFor(person);
+		final SiadapProcessStateEnum state = siadap == null ? SiadapProcessStateEnum.NOT_CREATED
+				: SiadapProcessStateEnum.getState(siadap);
+		duplicatedPersons.add(person);
+		counts[state.ordinal()]++;
+		if (gatherSiadaps && siadap != null)
+			getSiadaps().add(siadap);
+	}
+
+	public Set<Siadap> getOrCreateSiadapsNotListed() {
+		final int year = configuration.getYear();
+		Set<Siadap> notListedSiadapsForGivenYear = notListedSiadaps.get(year);
+		if (notListedSiadapsForGivenYear == null) {
+			notListedSiadapsForGivenYear = new TreeSet<Siadap>(
+					Siadap.COMPARATOR_BY_EVALUATED_PRESENTATION_NAME_FALLBACK_YEAR_THEN_OID);
+
+			notListedSiadapsForGivenYear.addAll(Sets.filter(SiadapRootModule.getInstance().getSiadapsSet(), new Predicate<Siadap>() {
+
+				@Override
+				public boolean apply(@Nullable Siadap input) {
+					if (input == null)
+						return false;
+					return input.getYear() == year;
+				}
+			}));
+
+			notListedSiadapsForGivenYear.removeAll(getSiadaps());
+			notListedSiadaps.put(year, notListedSiadapsForGivenYear);
+			return notListedSiadapsForGivenYear;
+
+		} else {
+			return notListedSiadapsForGivenYear;
+		}
+	}
+
+	public int getOrCreateSiadapsNotListedSize() {
+		return getOrCreateSiadapsNotListed().size();
+	}
+
+	public static class NumberAndGradeCounter {
+
+		public NumberAndGradeCounter(String categoryName,
+				SiadapStatisticsSummaryBoardUniversesEnum universesEnum) {
+			this.categoryName = categoryName;
+			this.subCategoryTypeEnum = universesEnum;
+			this.subCategoryCounter = new int[universesEnum
+					.getNrOfSubCategories()];
+			this.totalPeopleEvaluatedByCompetencesOnlyCounter = 0;
+		}
+
+		String categoryName;
+
+		private final SiadapStatisticsSummaryBoardUniversesEnum subCategoryTypeEnum;
+
+		int totalNumberOfCategoryPeople = 0;
+
+		int[] subCategoryCounter;
+
+		int totalPeopleEvaluatedByCompetencesOnlyCounter;
+
+		final Set<Siadap> siadapsForThisCategory = new HashSet<Siadap>();
+
+		Multiset<SiadapGlobalEvaluation> gradeCounter = HashMultiset.create();
+
+		void addPerson(int subCategoryIndex) {
+			this.subCategoryCounter[subCategoryIndex]++;
+			totalNumberOfCategoryPeople++;
+		}
+
+		void addPersonEvaluatedOnlyByCompetences() {
+			this.totalPeopleEvaluatedByCompetencesOnlyCounter++;
+		}
+
+		void addGrade(SiadapGlobalEvaluation evaluation) {
+			gradeCounter.add(evaluation);
+		}
+
+		public boolean hasSubCategories() {
+			return getNumberSubCategories() > 1;
+		}
+
+		public int getNumberSubCategories() {
+			return this.subCategoryCounter.length;
+		}
+
+		public int[] getSubCategoryCounter() {
+			return this.subCategoryCounter;
+		}
+
+		public void addSiadapForThisCategory(Siadap siadap) {
+			this.siadapsForThisCategory.add(siadap);
+		}
+
+		public Set<Siadap> getSiadapsForThisCategory() {
+			return siadapsForThisCategory;
+		}
+
+		public int getNumberOfPeopleForSubcategory(int subcategoryIndex) {
+			return this.subCategoryCounter[subcategoryIndex];
+		}
+
+		public int getNumberOfPeopleEvaluatedOnlyByCompetences() {
+			return this.totalPeopleEvaluatedByCompetencesOnlyCounter;
+		}
+
+		public int getTotalNumberOfCategoryPeople() {
+			return totalNumberOfCategoryPeople;
+		}
+
+		public Multiset<SiadapGlobalEvaluation> getGradeCounter() {
+			return gradeCounter;
+		}
+
+		public SiadapStatisticsSummaryBoardUniversesEnum getSubCategoryTypeEnum() {
+			return subCategoryTypeEnum;
+		}
+
+	}
+
+	private void count(final Person person, boolean withQuota) {
+		final Siadap siadap = configuration.getSiadapFor(person);
+		final SiadapProcessStateEnum state = siadap == null ? SiadapProcessStateEnum.NOT_CREATED
+				: SiadapProcessStateEnum.getState(siadap);
+
+		duplicatedPersons.add(person);
+
+		// let's fill the complicated hashmap
+		HashMap<String, NumberAndGradeCounter> categoryHashMap = getCountsByQuotaAndCategories()
+				.get(Boolean.valueOf(withQuota));
+		if (categoryHashMap == null)
+		// if it doesn't exist for this quotaaware/noquotaaware universe, let's
+		// create it
+		{
+			categoryHashMap = new HashMap<String, NumberAndGradeCounter>();
+			getCountsByQuotaAndCategories().put(Boolean.valueOf(withQuota),
+					categoryHashMap);
+		}
+
+		SiadapStatisticsSummaryBoardUniversesEnum universesEnum = SiadapStatisticsSummaryBoardUniversesEnum
+				.getStatisticsUniverse(state);
+		String categoryName = universesEnum.getCategoryString(siadap);
+		NumberAndGradeCounter numberAndGradeCounter = categoryHashMap
+				.get(categoryName);
+		if (numberAndGradeCounter == null) {
+			// do we already have a counter for this category?!, if not, we
+			// create it
+			numberAndGradeCounter = new NumberAndGradeCounter(categoryName,
+					universesEnum);
+			categoryHashMap.put(universesEnum.getCategoryString(siadap),
+					numberAndGradeCounter);
+		}
+
+		// Registering the SIADAPS in curricular ponderation
+		if (siadap != null && siadap.hasAnAssociatedCurricularPonderationEval()) {
+			getCurricularPonderationSiadaps().add(siadap);
+		}
+
+		// let's register the person
+		numberAndGradeCounter.addPerson(universesEnum
+				.getSubCategoryIndex(state));
+
+		if (siadap != null) {
+			Boolean evaluatedOnlyByCompetences = siadap
+					.getEvaluatedOnlyByCompetences();
+			if (evaluatedOnlyByCompetences != null
+					&& evaluatedOnlyByCompetences) {
+				numberAndGradeCounter.addPersonEvaluatedOnlyByCompetences();
+			}
 
 		}
 
-	    }
-	}
+		// let's register the person's grade
+		if (siadap != null) {
 
-    }
-
-    private void count(final Unit unit) {
-	for (final Accountability accountability : unit.getChildAccountabilitiesSet()) {
-	    if (accountability.isActive(dayToUse)) {
-		final AccountabilityType accountabilityType = accountability.getAccountabilityType();
-		if (accountabilityType == unitRelations) {
-		    final Unit child = (Unit) accountability.getChild();
-		    duplicatedUnit.add(child);
-		    count(child);
-		} else if (accountabilityType == workingUnitWithQuotaRelation
-			|| accountabilityType == workingUnitWithoutQuotaRelation) {
-		    final Person person = (Person) accountability.getChild();
-		    count(person);
+			SiadapEvaluationUniverse defaultSiadapEvaluationUniverse = siadap
+					.getDefaultSiadapEvaluationUniverse();
+			if (defaultSiadapEvaluationUniverse != null
+					&& defaultSiadapEvaluationUniverse
+							.getLatestSiadapGlobalEvaluationEnum() != null) {
+				numberAndGradeCounter.addGrade(defaultSiadapEvaluationUniverse
+						.getLatestSiadapGlobalEvaluationEnum());
+			}
 		}
-	    }
-	}
-    }
 
-    private void count(final Person person) {
-	final Siadap siadap = configuration.getSiadapFor(person);
-	final SiadapProcessStateEnum state = siadap == null ? SiadapProcessStateEnum.NOT_CREATED : SiadapProcessStateEnum
-		.getState(siadap);
-	duplicatedPersons.add(person);
-	counts[state.ordinal()]++;
-	if (gatherSiadaps && siadap != null)
-	    getSiadaps().add(siadap);
-    }
+		if (gatherSiadaps && siadap != null) {
+			getSiadaps().add(siadap);
+			numberAndGradeCounter.addSiadapForThisCategory(siadap);
 
-    public Set<Siadap> getOrCreateSiadapsNotListed() {
-	int year = configuration.getYear();
-	Set<Siadap> notListedSiadapsForGivenYear = notListedSiadaps.get(year);
-	if (notListedSiadapsForGivenYear == null) {
-	    notListedSiadapsForGivenYear = new TreeSet<Siadap>(
-		    Siadap.COMPARATOR_BY_EVALUATED_PRESENTATION_NAME_FALLBACK_YEAR_THEN_OID);
-
-	    //let's gather all of the relevant siadaps
-	    for (Siadap siadap : SiadapRootModule.getInstance().getSiadaps()) {
-		if (siadap.getYear().equals(year)) {
-		    notListedSiadapsForGivenYear.add(siadap);
 		}
-	    }
-	    notListedSiadapsForGivenYear.removeAll(getSiadaps());
-	    notListedSiadaps.put(year, notListedSiadapsForGivenYear);
-	    return notListedSiadapsForGivenYear;
-
-	} else {
-	    return notListedSiadapsForGivenYear;
-	}
-    }
-
-    public int getOrCreateSiadapsNotListedSize() {
-	return getOrCreateSiadapsNotListed().size();
-    }
-
-    public static class NumberAndGradeCounter {
-
-	public NumberAndGradeCounter(String categoryName, SiadapStatisticsSummaryBoardUniversesEnum universesEnum) {
-	    this.categoryName = categoryName;
-	    this.subCategoryTypeEnum = universesEnum;
-	    this.subCategoryCounter = new int[universesEnum.getNrOfSubCategories()];
-	    this.totalPeopleEvaluatedByCompetencesOnlyCounter = 0;
 	}
 
-	String categoryName;
-
-	private final SiadapStatisticsSummaryBoardUniversesEnum subCategoryTypeEnum;
-
-	int totalNumberOfCategoryPeople = 0;
-
-	int[] subCategoryCounter;
-
-	int totalPeopleEvaluatedByCompetencesOnlyCounter;
-
-	final Set<Siadap> siadapsForThisCategory = new HashSet<Siadap>();
-
-	Multiset<SiadapGlobalEvaluation> gradeCounter = HashMultiset.create();
-
-	void addPerson(int subCategoryIndex) {
-	    this.subCategoryCounter[subCategoryIndex]++;
-	    totalNumberOfCategoryPeople++;
-	}
-
-	void addPersonEvaluatedOnlyByCompetences() {
-	    this.totalPeopleEvaluatedByCompetencesOnlyCounter++;
-	}
-
-	void addGrade(SiadapGlobalEvaluation evaluation) {
-	    gradeCounter.add(evaluation);
-	}
-
-	public boolean hasSubCategories() {
-	    return getNumberSubCategories() > 1;
-	}
-
-	public int getNumberSubCategories() {
-	    return this.subCategoryCounter.length;
-	}
-
-	public int[] getSubCategoryCounter() {
-	    return this.subCategoryCounter;
-	}
-
-	public void addSiadapForThisCategory(Siadap siadap) {
-	    this.siadapsForThisCategory.add(siadap);
-	}
-
-	public Set<Siadap> getSiadapsForThisCategory() {
-	    return siadapsForThisCategory;
-	}
-
-	public int getNumberOfPeopleForSubcategory(int subcategoryIndex) {
-	    return this.subCategoryCounter[subcategoryIndex];
-	}
-
-	public int getNumberOfPeopleEvaluatedOnlyByCompetences() {
-	    return this.totalPeopleEvaluatedByCompetencesOnlyCounter;
-	}
-
-	public int getTotalNumberOfCategoryPeople() {
-	    return totalNumberOfCategoryPeople;
-	}
-
-	public Multiset<SiadapGlobalEvaluation> getGradeCounter() {
-	    return gradeCounter;
-	}
-
-	public SiadapStatisticsSummaryBoardUniversesEnum getSubCategoryTypeEnum() {
-	    return subCategoryTypeEnum;
-	}
-
-    }
-
-    private void count(final Person person, boolean withQuota) {
-	final Siadap siadap = configuration.getSiadapFor(person);
-	final SiadapProcessStateEnum state = siadap == null ? SiadapProcessStateEnum.NOT_CREATED : SiadapProcessStateEnum
-		.getState(siadap);
-
-	duplicatedPersons.add(person);
-
-	//let's fill the complicated hashmap
-	HashMap<String, NumberAndGradeCounter> categoryHashMap = getCountsByQuotaAndCategories().get(Boolean.valueOf(withQuota));
-	if (categoryHashMap == null)
-	//if it doesn't exist for this quotaaware/noquotaaware universe, let's create it
-	{
-	    categoryHashMap = new HashMap<String, NumberAndGradeCounter>();
-	    getCountsByQuotaAndCategories().put(Boolean.valueOf(withQuota), categoryHashMap);
-	}
-
-	SiadapStatisticsSummaryBoardUniversesEnum universesEnum = SiadapStatisticsSummaryBoardUniversesEnum
-		.getStatisticsUniverse(state);
-	String categoryName = universesEnum.getCategoryString(siadap);
-	NumberAndGradeCounter numberAndGradeCounter = categoryHashMap.get(categoryName);
-	if (numberAndGradeCounter == null) {
-	    //do we already have a counter for this category?!, if not, we create it
-	    numberAndGradeCounter = new NumberAndGradeCounter(categoryName, universesEnum);
-	    categoryHashMap.put(universesEnum.getCategoryString(siadap), numberAndGradeCounter);
-	}
-
-	//Registering the SIADAPS in curricular ponderation
-	if (siadap != null && siadap.hasAnAssociatedCurricularPonderationEval()) {
-	    getCurricularPonderationSiadaps().add(siadap);
-	}
-
-	//let's register the person
-	numberAndGradeCounter.addPerson(universesEnum.getSubCategoryIndex(state));
-
-	if (siadap != null) {
-	    Boolean evaluatedOnlyByCompetences = siadap.getEvaluatedOnlyByCompetences();
-	    if (evaluatedOnlyByCompetences != null && evaluatedOnlyByCompetences) {
-		numberAndGradeCounter.addPersonEvaluatedOnlyByCompetences();
-	    }
+	public Set<Person> getDuplicatePersons() {
+		if (!filteredDuplicatedPersonsSet)
+			filterDuplicatedPersonsSet();
+		return duplicatedPersons.elementSet();
 
 	}
 
-	//let's register the person's grade
-	if (siadap != null) {
-
-	    SiadapEvaluationUniverse defaultSiadapEvaluationUniverse = siadap.getDefaultSiadapEvaluationUniverse();
-	    if (defaultSiadapEvaluationUniverse != null
-		    && defaultSiadapEvaluationUniverse.getLatestSiadapGlobalEvaluationEnum() != null) {
-		numberAndGradeCounter.addGrade(defaultSiadapEvaluationUniverse.getLatestSiadapGlobalEvaluationEnum());
-	    }
-	}
-
-	if (gatherSiadaps && siadap != null) {
-	    getSiadaps().add(siadap);
-	    numberAndGradeCounter.addSiadapForThisCategory(siadap);
+	public Set<Unit> getDuplicateUnits() {
+		if (!filteredDuplicatedUnitSet)
+			filterDuplicatedUnitSet();
+		return duplicatedUnit.elementSet();
 
 	}
-    }
 
-    public Set<Person> getDuplicatePersons() {
-	if (!filteredDuplicatedPersonsSet)
-	    filterDuplicatedPersonsSet();
-	return duplicatedPersons.elementSet();
+	public Multiset<Unit> getOriginalDuplicateUnits() {
+		if (!filteredDuplicatedUnitSet)
+			filterDuplicatedUnitSet();
+		return duplicatedUnit;
 
-    }
-
-    public Set<Unit> getDuplicateUnits() {
-	if (!filteredDuplicatedUnitSet)
-	    filterDuplicatedUnitSet();
-	return duplicatedUnit.elementSet();
-
-    }
-
-    public Multiset<Unit> getOriginalDuplicateUnits() {
-	if (!filteredDuplicatedUnitSet)
-	    filterDuplicatedUnitSet();
-	return duplicatedUnit;
-
-    }
-
-    private void filterDuplicatedUnitSet() {
-	for (Unit unit : duplicatedUnit) {
-	    if (duplicatedUnit.count(unit) == 1) {
-		duplicatedUnit.remove(unit);
-	    }
 	}
 
-    }
+	private void filterDuplicatedUnitSet() {
+		for (Unit unit : duplicatedUnit) {
+			if (duplicatedUnit.count(unit) == 1) {
+				duplicatedUnit.remove(unit);
+			}
+		}
 
-    private void filterDuplicatedPersonsSet() {
-	for (Person person : duplicatedPersons) {
-	    if (duplicatedPersons.count(person) == 1) {
-		duplicatedPersons.remove(person);
-	    }
 	}
-    }
 
-    public int[] getCounts() {
-	return counts;
-    }
-
-    public boolean hasAnyPendingProcesses() {
-	for (int i = 0; i < counts.length; i++) {
-	    if (i != 6 && counts[i] > 0) {
-		return true;
-	    }
+	private void filterDuplicatedPersonsSet() {
+		for (Person person : duplicatedPersons) {
+			if (duplicatedPersons.count(person) == 1) {
+				duplicatedPersons.remove(person);
+			}
+		}
 	}
-	return false;
-    }
 
-    public HashMap<Boolean, HashMap<String, NumberAndGradeCounter>> getCountsByQuotaAndCategories() {
-	return countsByQuotaAndCategories;
-    }
+	public int[] getCounts() {
+		return counts;
+	}
 
-    public Set<Siadap> getSiadaps() {
-	return siadaps;
-    }
+	public boolean hasAnyPendingProcesses() {
+		for (int i = 0; i < counts.length; i++) {
+			if (i != 6 && counts[i] > 0) {
+				return true;
+			}
+		}
+		return false;
+	}
 
-    public Set<Siadap> getCurricularPonderationSiadaps() {
-	return curricularPonderationSiadaps;
-    }
+	public HashMap<Boolean, HashMap<String, NumberAndGradeCounter>> getCountsByQuotaAndCategories() {
+		return countsByQuotaAndCategories;
+	}
+
+	public Set<Siadap> getSiadaps() {
+		return siadaps;
+	}
+
+	public Set<Siadap> getCurricularPonderationSiadaps() {
+		return curricularPonderationSiadaps;
+	}
+
+	public static Set<Siadap> getSiadapsInState(final int year,
+			final SiadapProcessStateEnum... states) {
+		
+		     HashSet<Siadap> allSiadapsInGivenStates = new HashSet<Siadap>();
+		     
+		     allSiadapsInGivenStates.addAll(Sets.filter(SiadapRootModule.getInstance().getSiadapsSet(), new Predicate<Siadap>() {
+
+				@Override
+				public boolean apply(@Nullable Siadap siadapInstance) {
+					if (siadapInstance == null)
+						return false;
+					if (siadapInstance.getYear() != year)
+						return false;
+					for (SiadapProcessStateEnum state : states) {
+						if (siadapInstance.getState().equals(state))
+							return true;
+					}
+					return false;
+				}
+			}));
+		
+		
+		return allSiadapsInGivenStates;
+
+	}
 
 }

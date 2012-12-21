@@ -59,6 +59,7 @@ import module.siadap.activities.EditCompetenceEvaluation;
 import module.siadap.activities.EditObjectiveEvaluation;
 import module.siadap.activities.Evaluation;
 import module.siadap.activities.ForceEditCompetenceSlashCareerEvaluationByCCA;
+import module.siadap.activities.ForceReadinessToHomologate;
 import module.siadap.activities.Homologate;
 import module.siadap.activities.NoEvaluation;
 import module.siadap.activities.NullifyProcess;
@@ -117,7 +118,7 @@ public class SiadapProcess extends SiadapProcess_Base {
 	activities.add(new SubmitEvaluation());
 	activities.add(new CurricularPonderationAttribution());
 	activities.add(new ValidateEvaluation());
-
+	activities.add(new ForceReadinessToHomologate());
 	activities.add(new SubmitValidatedEvaluation());
 	activities.add(new AcknowledgeEvaluationValidation());
 	activities.add(new Homologate());

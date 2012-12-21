@@ -1,3 +1,5 @@
+<%@page import="module.siadap.domain.SiadapProcessStateEnum"%>
+<%@page import="module.siadap.domain.util.SiadapProcessCounter"%>
 <%@page import="module.siadap.domain.SiadapYearConfiguration"%>
 <%@page import="module.siadap.domain.wrappers.SiadapYearWrapper"%>
 <%@page import="module.siadap.domain.wrappers.PersonSiadapWrapper"%>
@@ -7,6 +9,11 @@
 <%@ taglib uri="http://jakarta.apache.org/struts/tags-bean" prefix="bean"%>
 <%@ taglib uri="http://jakarta.apache.org/struts/tags-logic" prefix="logic"%>
 <%@ taglib uri="http://fenix-ashes.ist.utl.pt/fenix-renderers" prefix="fr"%>
+
+<script src="<%= request.getContextPath() + "/javaScript/jquery.alerts.js"%>" type="text/javascript"></script>
+<script src="<%= request.getContextPath() + "/javaScript/alertHandlers.js"%>" type="text/javascript"></script>
+<script src="<%= request.getContextPath() + "/javaScript/spin.js"%>" type="text/javascript"></script>
+<script src="<%= request.getContextPath() + "/javaScript/jquery.blockUI.js"%>" type="text/javascript"></script>
 
 <h2> SIADAP <bean:write name="siadapYearWrapper" property="chosenYear"/></h2>
 
@@ -167,10 +174,83 @@ SiadapYearWrapper siadapYearWrapper = (SiadapYearWrapper) request.getAttribute("
 <%-- Get the View of the top unit for harmonization, if we are part of the CCA group--%>
 <logic:equal value="true" name="person" property="CCAMember">
 <%-- TODO: localize --%>
-<h3>Vista das unidades de harmonização:</h3>
+<%--Vista das unidades de harmonização --%>
+<h3><bean:message bundle="SIADAP_RESOURCES" key="label.listSiadaps.jsp.harmonizationUnitsView" />:</h3>
 <html:link page="<%="/siadapManagement.do?method=viewUnitHarmonizationData&year=" + String.valueOf(siadapYearWrapper.getChosenYear()) + "&unitId=" + module.siadap.domain.SiadapYearConfiguration.getSiadapYearConfiguration(siadapYearWrapper.getChosenYear()).getSiadapStructureTopUnit().getExternalId()%>" >
-	Ir para unidade topo
+	<%-- Ir para unidade topo --%>
+	<bean:message bundle="SIADAP_RESOURCES" key="label.listSiadaps.jsp.goto.top.unit.link"/>
 </html:link>
+
+<%--<h3>Acções em massa do CCA</h3> --%>
+<h3><bean:message bundle="SIADAP_RESOURCES" key="label.listSiadaps.jsp.CCA.bulk.actions" /></h3>
+<p>Processos passíveis de serem forçosamente disponibilizados já para homologação <%= String.valueOf( SiadapProcessCounter.getSiadapsInState(siadapYearWrapper.getChosenYear(), new SiadapProcessStateEnum[] { SiadapProcessStateEnum.WAITING_SUBMITTAL_BY_EVALUATOR_AFTER_VALIDATION, SiadapProcessStateEnum.WAITING_VALIDATION_ACKNOWLEDGMENT_BY_EVALUATED, SiadapProcessStateEnum.VALIDATION_ACKNOWLEDGED}).size()) %> </p>
+
+
+
+<script type="text/javascript">
+$(document).ready(function() {
+	//linkConfirmationHookForm('selectionForm', '<bean:message key="label.confirm.batch.homologation" bundle="SIADAP_RESOURCES"/>','<bean:message key="label.batch.homologation.label" bundle="SIADAP_RESOURCES"/>');
+	
+	 $('#forceHomologationReadinessForm :submit').click(function() { 
+         $.blockUI({ message: $('#confirmationQuestion'), css: { width: '350px' } }); 
+         return false;
+     }); 
+	 
+	 $('#yes').click(function() { 
+         // update the block message 
+         displayLoadingScreen();
+         $('#forceHomologationReadinessForm').submit();
+     	});
+
+     $('#no').click(function() { 
+         $.unblockUI(); 
+         return false; 
+     }); 
+
+});
+
+function displayLoadingScreen() {
+	var opts = {
+			  lines: 13, // The number of lines to draw
+			  length: 7, // The length of each line
+			  width: 4, // The line thickness
+			  radius: 10, // The radius of the inner circle
+			  rotate: 0, // The rotation offset
+			  color: '#000', // #rgb or #rrggbb
+			  speed: 1, // Rounds per second
+			  trail: 60, // Afterglow percentage
+			  shadow: false, // Whether to render a shadow
+			  hwaccel: false, // Whether to use hardware acceleration
+			  className: 'spinner', // The CSS class to assign to the spinner
+			  zIndex: 2e9, // The z-index (defaults to 2000000000)
+			  //top: 'auto', // Top position relative to parent in px
+			  //left: 'auto' // Left position relative to parent in px
+			};
+	$.blockUI({ message: $('#pleaseWait'),
+				//TODO comment the timeout
+				//timeout: 2000
+				fadeIn: 1000,
+				css: { top: '20%' }
+				}); 
+	var target = document.getElementById('pleaseWait');
+	var spinner = new Spinner(opts).spin(target);
+}
+
+</script>
+
+<div id="pleaseWait" style="display:none; height: 100px;"> 
+    <p><b>A processar... por favor aguarde</b></p> 
+</div> 
+
+<form id="forceHomologationReadinessForm" action="<%=request.getContextPath()%>/siadapManagement.do?method=batchForceReadinessToHomologation&year=<%=siadapYearWrapper.getChosenYear().toString()%>" method="post">
+<input class="inputbutton" type="submit" value="Forçar prontidão para homologação">
+</form>
+
+<div id="confirmationQuestion" style="display:none; cursor: default"> 
+        <h3><bean:message key="activity.confirmation.module.siadap.activities.ForceReadinessToHomologate" bundle="SIADAP_RESOURCES"/></h3> 
+        <input type="button" id="yes" value="Sim" /> 
+        <input type="button" id="no" value="Não" /> 
+</div> 
 
 </logic:equal>
 </logic:present>
