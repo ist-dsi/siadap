@@ -196,12 +196,6 @@
 			bundle="SIADAP_RESOURCES" />
 	</html:submit>
 </fr:form> 
-<script>
-    $(document).ready(function() {
-        $("<div class=\"dinline forminline\"><form id='" + 'auto-evaluation-input' + "form' action='" + 'teste' + "' method=\"post\"'></form></div>").insertBefore("#" + 'auto-evaluation-input'); 
-    });
-
-</script>
 
 <fr:form
 	action='<%="/workflowProcessManagement.do?method=viewProcess&processId=" + processId%>'>
