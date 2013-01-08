@@ -25,11 +25,12 @@
 		<table class="tstyle2">
 		<logic:iterate id="evaluation" name="information"
 			property="process.siadap.objectiveEvaluations"
-			type="module.siadap.domain.ObjectiveEvaluation">
+			type="module.siadap.domain.ObjectiveEvaluation"
+			indexId="j">
 			<tr>
 				<th  style="white-space: normal !important;" colspan="3" class="aleft"><fr:view name="evaluation" property="objective" /></th>
 			</tr>
-			<logic:iterate id="indicator" name="evaluation" property="indicators">
+			<logic:iterate id="indicator" name="evaluation" property="indicators" indexId="i">
 			<tr>
 				<td  style="white-space: normal !important;" >
 					<i><bean:message bundle="SIADAP_RESOURCES" key="label.measurementIndicator.singularLabel"/>:</i> <fr:view name="indicator" property="measurementIndicator"/>
@@ -37,7 +38,7 @@
 				<td style="white-space: normal !important;">
 					<i><bean:message bundle="SIADAP_RESOURCES" key="label.superationCriteria"/>:</i> <fr:view name="indicator" property="superationCriteria"/>
 				</td>
-				<td><fr:edit name="indicator" slot="autoEvaluation" /></td>
+				<td><fr:edit id="<%= ("editIdEvaluation" + j) + i%>" name="indicator" slot="autoEvaluation" /></td>
 			</tr>
 			</logic:iterate>
 			<tr><td> </td></tr>
@@ -48,7 +49,7 @@
 	<div><strong><bean:message
 		key="label.autoEvaluation.objectivesJustification"
 		bundle="SIADAP_RESOURCES" /> (<bean:message key="label.requiredField" bundle="SIADAP_RESOURCES" />) :</strong>
-	<p><fr:edit name="information" slot="objectivesJustification"
+	<p><fr:edit id="editId2" name="information" slot="objectivesJustification"
 		type="java.lang.String">
 		<fr:layout name="longText">
 			<fr:property name="rows" value="8" />
@@ -63,7 +64,7 @@
 			property="process.siadap.competenceEvaluations">
 			<tr>
 				<th class="aleft"><fr:view name="competence" property="competence.name" /></th>
-				<td><fr:edit name="competence" slot="autoEvaluation" /></td>
+				<td><fr:edit id="editId3" name="competence" slot="autoEvaluation" /></td>
 			</tr>
 		</logic:iterate>
 	</table>
@@ -72,7 +73,7 @@
 		key="label.autoEvaluation.competencesJustification"
 		bundle="SIADAP_RESOURCES" /> (<bean:message key="label.requiredField" bundle="SIADAP_RESOURCES" />) :</strong>
 
-	<p><fr:edit name="information" slot="competencesJustification">
+	<p><fr:edit id="editId4" name="information" slot="competencesJustification">
 		<fr:layout name="longText">
 			<fr:property name="rows" value="8" />
 			<fr:property name="columns" value="80" />
@@ -87,7 +88,7 @@
 	
 	<bean:message key="label.autoEvaluation.performanceInfluencingFactors.explanation" bundle="SIADAP_RESOURCES"/>
 	
-	<fr:edit name="information" >
+	<fr:edit id="editId5" name="information" >
 		<fr:schema
 			type="module.siadap.activities.AutoEvaluationActivityInformation"
 			bundle="SIADAP_RESOURCES">
@@ -152,12 +153,12 @@
 			<fr:property name="columnClasses" value="aleft,,tderror"/>
 		</fr:layout>
 	</fr:edit>
-	</table>
+
 	<div><strong><bean:message
 		key="label.autoEvaluation.otherFactorsJustification"
 		bundle="SIADAP_RESOURCES" />:</strong>
 
-	<p><fr:edit name="information" slot="otherFactorsJustification"
+	<p><fr:edit id="editId6" name="information" slot="otherFactorsJustification"
 		type="java.lang.String">
 		<fr:layout name="longText">
 			<fr:property name="rows" value="8" />
@@ -170,7 +171,7 @@
 		key="label.autoEvaluation.extremesJustification"
 		bundle="SIADAP_RESOURCES" />:</strong>
 
-	<p><fr:edit name="information" slot="extremesJustification"
+	<p><fr:edit id="editId7" name="information" slot="extremesJustification"
 		type="java.lang.String">
 		<fr:layout name="longText">
 			<fr:property name="rows" value="8" />
@@ -183,7 +184,7 @@
 		key="label.autoEvaluation.commentsAndProposals"
 		bundle="SIADAP_RESOURCES" />:</strong>
 
-	<p><fr:edit name="information" slot="commentsAndProposals"
+	<p><fr:edit id="editId8" name="information" slot="commentsAndProposals"
 		type="java.lang.String">
 		<fr:layout name="longText">
 			<fr:property name="rows" value="8" />
