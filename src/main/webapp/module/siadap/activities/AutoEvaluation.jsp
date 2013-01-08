@@ -61,10 +61,11 @@
 	<bean:message key="label.competences" bundle="SIADAP_RESOURCES" />:
 	    <table class="tstyle2" style="white-space: normal !important;">
 		<logic:iterate id="competence" name="information"
-			property="process.siadap.competenceEvaluations">
+			property="process.siadap.competenceEvaluations"
+			indexId="k">
 			<tr>
 				<th class="aleft"><fr:view name="competence" property="competence.name" /></th>
-				<td><fr:edit id="editId3" name="competence" slot="autoEvaluation" /></td>
+				<td><fr:edit id="<%= "editIdCompetence" + k %>" name="competence" slot="autoEvaluation" /></td>
 			</tr>
 		</logic:iterate>
 	</table>
