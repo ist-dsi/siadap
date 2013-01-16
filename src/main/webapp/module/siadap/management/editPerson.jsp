@@ -35,12 +35,12 @@
   </div> 
 	</html:messages>
 <%-- <h3><bean:message bundle="SIADAP_RESOURCES" key="label.warnings"/>:</h3> --%>
-	<html:messages id="message" bundle="SIADAP_RESOURCES" property="WARNING" message="true" header="label.warnings">
-<div class="highlightBox"> 
-	<p><b><bean:write name="message" /></b></p>
-</div>
-	</html:messages>
-	
+<html:messages id="message" bundle="SIADAP_RESOURCES" property="messageWarning" message="true" header="label.warnings">
+	<div class="highlightBox"> 
+		<p><b><bean:write name="message" /></b></p>
+	</div>
+</html:messages>
+
 <logic:notEmpty name="person" property="siadap">
 	<logic:equal value="false" name="person" property="personWorkingInValidSIADAPUnit">
 		<div class="highlightBox"> 

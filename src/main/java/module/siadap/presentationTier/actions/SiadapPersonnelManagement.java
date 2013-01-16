@@ -174,13 +174,16 @@ public class SiadapPersonnelManagement extends ContextBaseAction {
 								+ ".needs.info");
 			}
 			activity.execute(activityInformation);
+			
+			if (informationBeanWrapper.getSuccessWarningMessage() != null)
+				addLocalizedWarningMessage(request, informationBeanWrapper.getSuccessWarningMessage());
 
 		} catch (DomainException ex) {
 			addLocalizedMessage(request, ex.getLocalizedMessage());
 		} catch (ActivityException e) {
 			addLocalizedMessage(request, e.getMessage());
 		}
-
+		
 		return viewPerson(mapping, form, request, response);
 	}
 
@@ -244,7 +247,7 @@ public class SiadapPersonnelManagement extends ContextBaseAction {
 			if (emailAddress == null || StringUtils.isBlank(emailAddress)) {
 				addMessage(
 						request,
-						"WARNING",
+						"messageWarning",
 						"manage.siadapStructure.person.has.no.valid.emailaddress",
 						new String[] { structureMngmntMember.getName() });
 			}
@@ -780,6 +783,11 @@ public class SiadapPersonnelManagement extends ContextBaseAction {
 									.getPresentationName()) };
 		}
 
+		@Override
+		public String getSuccessWarningMessage() {
+			return null;
+		}
+
 	}
 
 	public static class ChangeSiadapUniverseBean extends
@@ -871,6 +879,11 @@ public class SiadapPersonnelManagement extends ContextBaseAction {
 			this.justificationForForcingChange = justificationForForcingChange;
 		}
 
+		@Override
+		public String getSuccessWarningMessage() {
+			return null;
+		}
+
 	}
 
 	public static class SiadapCreationBean implements Serializable {
@@ -955,6 +968,11 @@ public class SiadapPersonnelManagement extends ContextBaseAction {
 							getEvaluator().getPresentationName(),
 							getDateOfChange().toString()) };
 		}
+
+		@Override
+		public String getSuccessWarningMessage() {
+			return null;
+		}
 	}
 
 	public static class CompetenceTypeBean extends
@@ -1011,6 +1029,11 @@ public class SiadapPersonnelManagement extends ContextBaseAction {
 							Siadap.SIADAP_BUNDLE_STRING,
 							CompetenceTypeBean.class.getSimpleName(),
 							competenceType.getName()) };
+		}
+
+		@Override
+		public String getSuccessWarningMessage() {
+			return null;
 		}
 	}
 
@@ -1078,6 +1101,11 @@ public class SiadapPersonnelManagement extends ContextBaseAction {
 									.toString()) };
 		}
 
+		@Override
+		public String getSuccessWarningMessage() {
+			return BundleUtil.getStringFromResourceBundle(Siadap.SIADAP_BUNDLE_STRING, "warning.changed.working.unit.check.evaluator");
+		}
+
 	}
 
 	public static abstract class ActivityInformationBeanWrapper {
@@ -1098,6 +1126,12 @@ public class SiadapPersonnelManagement extends ContextBaseAction {
 		 * @return an array of strings with the arguments description
 		 */
 		public abstract String[] getArgumentsDescription(SiadapProcess process);
+		
+		/**
+		 * 
+		 * @return a warning message to be displayed in the interface, if the activity executes successfully
+		 */
+		public abstract String getSuccessWarningMessage();
 
 	}
 
