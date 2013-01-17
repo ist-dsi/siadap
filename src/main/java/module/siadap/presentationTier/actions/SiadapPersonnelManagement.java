@@ -1082,7 +1082,6 @@ public class SiadapPersonnelManagement extends ContextBaseAction {
 			new PersonSiadapWrapper(process.getSiadap().getEvaluated(), process
 					.getSiadap().getYear()).changeWorkingUnitTo(getUnit(),
 					getWithQuotas(), getDateOfChange());
-
 		}
 
 		@Override
@@ -1092,13 +1091,14 @@ public class SiadapPersonnelManagement extends ContextBaseAction {
 							Siadap.SIADAP_BUNDLE_STRING, "siadap.true.yes")
 					: BundleUtil.getFormattedStringFromResourceBundle(
 							Siadap.SIADAP_BUNDLE_STRING, "siadap.false.no");
+							PersonSiadapWrapper evaluator = new PersonSiadapWrapper(process.getSiadap()).getEvaluator(); 
+			String currentEvaluator = evaluator == null ? "-" : evaluator.getPerson().getPresentationName();
 			return new String[] { BundleUtil
 					.getFormattedStringFromResourceBundle(
 							Siadap.SIADAP_BUNDLE_STRING,
 							ChangeWorkingUnitBean.class.getSimpleName(), unit
-									.getPartyName().getContent(), String
-									.valueOf(withQuotas), dateOfChange
-									.toString()) };
+									.getPresentationName() , countsForInstitutionalQuotas, dateOfChange
+									.toString(), BundleUtil.getFormattedStringFromResourceBundle(Siadap.SIADAP_BUNDLE_STRING, "ChangeWorkingUnitBean.evaluatorSideEffect", currentEvaluator)) };
 		}
 
 		@Override
