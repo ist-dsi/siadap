@@ -1098,7 +1098,8 @@ public class SiadapPersonnelManagement extends ContextBaseAction {
 							Siadap.SIADAP_BUNDLE_STRING,
 							ChangeWorkingUnitBean.class.getSimpleName(), unit
 									.getPresentationName() , countsForInstitutionalQuotas, dateOfChange
-									.toString(), BundleUtil.getFormattedStringFromResourceBundle(Siadap.SIADAP_BUNDLE_STRING, "ChangeWorkingUnitBean.evaluatorSideEffect", currentEvaluator)) };
+									.toString())};
+									//, BundleUtil.getFormattedStringFromResourceBundle(Siadap.SIADAP_BUNDLE_STRING, "ChangeWorkingUnitBean.evaluatorSideEffect", currentEvaluator)) };
 		}
 
 		@Override
