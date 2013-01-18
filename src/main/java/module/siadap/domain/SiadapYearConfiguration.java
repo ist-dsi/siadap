@@ -28,6 +28,9 @@ import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
+import org.jfree.data.time.Month;
+import org.joda.time.LocalDate;
+
 import jvstm.cps.ConsistencyPredicate;
 import pt.ist.bennu.core.applicationTier.Authenticate.UserView;
 import pt.ist.bennu.core.domain.MyOrg;
@@ -77,6 +80,25 @@ public class SiadapYearConfiguration extends SiadapYearConfiguration_Base {
     public static NamedGroup getHomologationMembersGroup() {
 	initGroups();
 	return homologationMembersGroup;
+    }
+    
+    /**
+     * 
+     * @return {@link #getLastDay()} minus 1 day = 30th December
+     */
+    public LocalDate getLastDayForAccountabilities()
+    {
+    	return getLastDay().minusDays(1);
+    }
+    public LocalDate getLastDay()
+    {
+	    return new LocalDate(getYear(), Month.DECEMBER, 31);
+    }
+    
+    public LocalDate getFirstDay()
+    {
+	    return new LocalDate(getYear(), Month.JANUARY, 1);
+    
     }
 
     private static NamedGroup homologationMembersGroup;
