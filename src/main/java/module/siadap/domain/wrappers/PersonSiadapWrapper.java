@@ -1091,12 +1091,13 @@ public class PersonSiadapWrapper extends PartyWrapper implements Serializable {
 		verifyDate(dateOfChange);
 		// we must check if the quotas can be changed i.e. he is
 		// waiting harmonization or not.
+			verifyWorkingAndHarmonizationUnitChange();
+			
+			SiadapYearConfiguration configuration = getConfiguration();
 
-		if (getWorkingUnit() != null && !getWorkingUnit().getUnit().equals(unit)) {
+		if (getWorkingUnit() != null) {
 			// let's check the state
 
-			verifyWorkingAndHarmonizationUnitChange();
-			SiadapYearConfiguration configuration = getConfiguration();
 
 			if (!UnitSiadapWrapper.isValidSIADAPUnit(unit, getYear())) {
 				throw new SiadapException(
@@ -1111,6 +1112,7 @@ public class PersonSiadapWrapper extends PartyWrapper implements Serializable {
 							dateOfChange);
 				}
 			}
+		}
 			unit.addChild(getPerson(),
 					withQuotas ? configuration.getWorkingRelation()
 							: configuration.getWorkingRelationWithNoQuota(),
@@ -1119,7 +1121,6 @@ public class PersonSiadapWrapper extends PartyWrapper implements Serializable {
 			// let's also change the harmonization unit
 			changeHarmonizationUnitTo(unit, dateOfChange);
 		}
-	}
 
 	// use the version that allows a date instead (may not apply to all of the
 	// cases. If so, please delete the Deprecated tag)
