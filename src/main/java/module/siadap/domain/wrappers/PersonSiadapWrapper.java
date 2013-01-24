@@ -1036,7 +1036,7 @@ public class PersonSiadapWrapper extends PartyWrapper implements Serializable {
 		}
 	}
 
-	public void changeHarmonizationUnitTo(Unit unit, LocalDate dateOfChange) {
+	public void changeHarmonizationUnitTo(Unit unit, LocalDate dateOfChange, String justification) {
 		verifyDate(dateOfChange);
 		verifyWorkingAndHarmonizationUnitChange();
 
@@ -1055,11 +1055,11 @@ public class PersonSiadapWrapper extends PartyWrapper implements Serializable {
 		for (Accountability accountability : getParentAccountabilityTypes(defaultUniverseHarmonizationRelation)) {
 			if (accountability.isActiveNow()) {
 				accountability.editDates(accountability.getBeginDate(),
-						dateOfChange);
+						dateOfChange, justification);
 			}
 		}
 		unit.addChild(getPerson(), defaultUniverseHarmonizationRelation,
-				dateOfChange, null);
+				dateOfChange, null, justification);
 
 	}
 
@@ -1076,9 +1076,7 @@ public class PersonSiadapWrapper extends PartyWrapper implements Serializable {
 				.ordinal()
 				|| (currentStateOrdinal == SiadapProcessStateEnum.WAITING_HARMONIZATION
 						.ordinal()
-						&& getConfiguration().getFirstLevelHarmonizationBegin() != null && getConfiguration()
-						.getFirstLevelHarmonizationBegin().isBefore(
-								new LocalDate()))) {
+						&& getConfiguration().isHarmonizationPeriodOpenNow())) {
 			throw new SiadapException(
 					"error.changing.working.unit.cant.change.quotas.on.user.waiting.to.be.harmonized");
 		}
@@ -1087,7 +1085,7 @@ public class PersonSiadapWrapper extends PartyWrapper implements Serializable {
 
 	@Service
 	public void changeWorkingUnitTo(Unit unit, Boolean withQuotas,
-			LocalDate dateOfChange) {
+			LocalDate dateOfChange, String justification) {
 		verifyDate(dateOfChange);
 		// we must check if the quotas can be changed i.e. he is
 		// waiting harmonization or not.
@@ -1119,14 +1117,14 @@ public class PersonSiadapWrapper extends PartyWrapper implements Serializable {
 					dateOfChange, null);
 
 			// let's also change the harmonization unit
-			changeHarmonizationUnitTo(unit, dateOfChange);
+			changeHarmonizationUnitTo(unit, dateOfChange, justification);
 		}
 
 	// use the version that allows a date instead (may not apply to all of the
 	// cases. If so, please delete the Deprecated tag)
 	@Deprecated
 	public void changeWorkingUnitTo(Unit unit, Boolean withQuotas) {
-		changeWorkingUnitTo(unit, withQuotas, new LocalDate());
+		changeWorkingUnitTo(unit, withQuotas, new LocalDate(), null);
 	}
 
 	// use the version that allows a date instead (may not apply to all of the

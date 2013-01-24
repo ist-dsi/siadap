@@ -24,6 +24,7 @@
  */
 package module.siadap.domain.wrappers;
 
+import java.io.ObjectInputStream.GetField;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.math.MathContext;
@@ -44,11 +45,13 @@ import org.jfree.data.time.Month;
 import org.joda.time.Interval;
 import org.joda.time.LocalDate;
 
+import com.google.common.base.Preconditions;
 import com.google.common.collect.Sets;
 
 import pt.ist.bennu.core.domain.exceptions.DomainException;
 import pt.ist.bennu.core.util.BundleUtil;
 import pt.ist.fenixWebFramework.services.Service;
+import pt.utl.ist.fenix.tools.util.i18n.Language;
 import pt.utl.ist.fenix.tools.util.i18n.MultiLanguageString;
 
 import module.organization.domain.Accountability;
@@ -283,6 +286,7 @@ public class UnitSiadapWrapper extends PartyWrapper implements Serializable {
 	 *         accountabilityType, false otherwise
 	 */
 	public boolean isConnectedToTopUnit(AccountabilityType accountabilityType) {
+		Preconditions.checkNotNull(accountabilityType, "accountabilityType mustn't be null");
 		Unit siadapStructureTopUnit = getConfiguration().getSiadapStructureTopUnit();
 		return getUnit().hasPartyAsAncestor(siadapStructureTopUnit, Collections.singleton(accountabilityType), getConfiguration().getLastDayForAccountabilities());
 
@@ -883,6 +887,28 @@ public class UnitSiadapWrapper extends PartyWrapper implements Serializable {
 					}
 				});
 	}
+	
+	/**
+	 *  Creates an o
+	 * @param year
+	 * @param name
+	 * @param number
+	 * @return
+	 */
+	public static Unit createSiadapHarmonizationUnit(int year, MultiLanguageString name, int number) {
+		//let's get the data we need
+		SiadapYearConfiguration siadapYearConfiguration = SiadapYearConfiguration.getSiadapYearConfiguration(year);
+		Unit siadapStructureTopUnit = siadapYearConfiguration.getSiadapStructureTopUnit();
+		
+		AccountabilityType harmonizationUnitRelation = siadapYearConfiguration.getHarmonizationUnitRelations();
+		
+		LocalDate beginDate = siadapYearConfiguration.getFirstDay();
+		
+		PartyType harmonizationPartyType = PartyType.readBy(SIADAP_HARMONIZATION_UNIT_TYPE);
+		
+		return siadapStructureTopUnit.create(siadapStructureTopUnit, name, HARMONIZATION_UNIT_NAME_PREFIX + String.valueOf(number) , harmonizationPartyType, harmonizationUnitRelation, beginDate, null);
+	}
+	
 
 	/**
 	 * @param totalPeople
@@ -901,16 +927,28 @@ public class UnitSiadapWrapper extends PartyWrapper implements Serializable {
 
 	}
 
+	public final static String HARMONIZATION_UNIT_NAME_PREFIX = "SIADAP - U.H. ";
+	public static Unit getHarmonizationUnit(int number) {
+		PartyType harmonizationPartyType = PartyType.readBy(SIADAP_HARMONIZATION_UNIT_TYPE);
+		for (Party party : harmonizationPartyType.getParties()) {
+			if (! (party instanceof Unit))
+			{
+				throw new SiadapException("Error, the harmonization party type should only have units associated with it");
+			}
+			Unit unit = (Unit) party;
+			if (unit.getAcronym().equals(HARMONIZATION_UNIT_NAME_PREFIX + String.valueOf(number)))
+				return unit;
+		}
+		return null;
+	}
+	
 	public Unit getHarmonizationUnit() {
 		return getHarmonizationUnit(getUnit());
 	}
 
 	private Unit getHarmonizationUnit(Unit unit) {
 		UnitSiadapWrapper wrapper = new UnitSiadapWrapper(unit, getYear());
-		if (!wrapper.getChildPersons(
-				getConfiguration().getHarmonizationResponsibleRelation())
-				.isEmpty()
-				&& isHarmonizationUnit(unit)) {
+		if (isHarmonizationUnit(unit)) {
 			return unit;
 		}
 		Collection<Unit> units = wrapper.getParentUnits(getConfiguration()
@@ -1718,6 +1756,80 @@ public class UnitSiadapWrapper extends PartyWrapper implements Serializable {
 		return getUnit().equals(
 				getConfiguration().getSiadapSpecialHarmonizationUnit());
 	}
+	
+	/**
+	 * 
+	 * @param harmonizationUnit the unit which the subUnit is going to connect to. It must be an HarmonizationUnit
+	 * @param subUnit the sub unit to connect
+	 * @param year the year, which is used to get the accountability type and the dates of the accountability
+	 * @param justification String representation of the reason of this accountability, or null
+	 */
+	@SuppressWarnings("boxing")
+	public static void addHarmonizationUnitRelation(Unit harmonizationUnit, Unit subUnit, int year, String justification) throws SiadapException{
+		if (!harmonizationUnit.getPartyTypes().contains(PartyType.readBy(SIADAP_HARMONIZATION_UNIT_TYPE))) {
+			throw new SiadapException("given harmonizationUnit: " + harmonizationUnit.getPresentationName() + " must have a PartyType of: " + SIADAP_HARMONIZATION_UNIT_TYPE);
+		}
+		
+		SiadapYearConfiguration siadapYearConfiguration = SiadapYearConfiguration.getSiadapYearConfiguration(year);
+		
+		if (siadapYearConfiguration.isHarmonizationPeriodOpenNow())
+			throw new SiadapException("error.cannot.change.harmonization.structure.with.open.harmonization.period");
+		
+		
+		//let's see if we already have the connection
+		UnitSiadapWrapper unitSiadapWrapper = new UnitSiadapWrapper(subUnit, year);
+		
+		Unit currentHU = unitSiadapWrapper.getHarmonizationUnit();
+		if (currentHU != null)
+		{
+			if (currentHU.equals(harmonizationUnit))
+				return; //we already have that relation
+			unitSiadapWrapper.removeHarmonizationUnitRelation(currentHU, subUnit, year , justification);
+		}
+		
+		//ok, so now let's add the relation
+		subUnit.addParent(harmonizationUnit, siadapYearConfiguration.getHarmonizationUnitRelations(), siadapYearConfiguration.getFirstDay(), null, justification);
+		
+	}
+	
+	/**
+	 * 
+	 * @param harmonizationUnit the unit which the subUnit is going to connect to. It must be an HarmonizationUnit
+	 * @param subUnit the sub unit to connect
+	 * @param year the year, which is used to get the accountability type and the dates of the accountability
+	 * @param justification String representation of the reason of this accountability, or null
+	 */
+	@SuppressWarnings("boxing")
+	public static void removeHarmonizationUnitRelation(Unit harmonizationUnit, Unit subUnit, int year, String justification) throws SiadapException{
+		if (!harmonizationUnit.getPartyTypes().contains(PartyType.readBy(SIADAP_HARMONIZATION_UNIT_TYPE))) {
+			throw new SiadapException("given harmonizationUnit: " + harmonizationUnit.getPresentationName() + " must have a PartyType of: " + SIADAP_HARMONIZATION_UNIT_TYPE);
+		}
+		
+		SiadapYearConfiguration siadapYearConfiguration = SiadapYearConfiguration.getSiadapYearConfiguration(year);
+		
+		if (siadapYearConfiguration.isHarmonizationPeriodOpenNow())
+			throw new SiadapException("error.cannot.change.harmonization.structure.with.open.harmonization.period");
+		
+		
+		//let's see if we have the connection
+		UnitSiadapWrapper unitSiadapWrapper = new UnitSiadapWrapper(subUnit, year);
+		
+		Unit currentHU = unitSiadapWrapper.getHarmonizationUnit();
+		if (currentHU == null || !currentHU.equals(harmonizationUnit) )
+			return; //nothing to do here, the H.U. is already not this one
+		if (currentHU != null)
+		{
+			//we need to remove the old relation
+			Collection<Accountability> parentAccountabilities = subUnit.getParentAccountabilities(siadapYearConfiguration.getLastDayForAccountabilities(), siadapYearConfiguration.getLastDayForAccountabilities(), siadapYearConfiguration.getHarmonizationUnitRelations());
+			if (parentAccountabilities.size() > 1)
+				throw new SiadapException("Too many accoutabilities for a given day. Data inconsistency on an Harm. Unit relation between unit " + currentHU.getPresentationName()+" and " + subUnit.getPresentationName());
+			if (parentAccountabilities.size() != 1)
+				throw new SiadapException("Error, we should have one accountability between unit " + currentHU.getPresentationName()+" and " + subUnit.getPresentationName());
+			Accountability accToEnd = parentAccountabilities.iterator().next();
+			accToEnd.setEndDate( siadapYearConfiguration.getFirstDay().minusDays(1), justification);
+		}
+		
+	}
 
 	public Interval getHarmonizationInterval() {
 		SiadapYearConfiguration configuration = getConfiguration();
@@ -1928,6 +2040,68 @@ public class UnitSiadapWrapper extends PartyWrapper implements Serializable {
 		if (siadapStructureTopUnit == null)
 			return false;
 		return siadapStructureTopUnit.equals(getUnit());
+	}
+
+	/**
+	 * Connects this harmonization unit with the top harmonization unit for the year which is implicit
+	 * 
+	 * @param justification the justification/reason for the accountability that is going to be created
+	 * 
+	 * @throws IllegalArgumentException in case this is not an HarmonizationUnit
+	 * @throws SiadapException in case we cannot change because the harmonization period is already open, or we don't have all the data we need
+	 */
+	public void connectToTopHarmonizationUnit(String justification) throws IllegalArgumentException, SiadapException {
+		Preconditions.checkNotNull(getUnit());
+		if (!isHarmonizationUnit()) {
+			throw new IllegalArgumentException("this method should only be called in a HarmonizationUnit. Called in unit: " + getUnit().getPresentationName());
+		}
+		SiadapYearConfiguration configuration = getConfiguration();
+		if (configuration.isHarmonizationPeriodOpenNow())
+			throw new SiadapException("error.shant.make.changes.to.harm.structure.when.harm.is.occurring");
+		
+		if (isConnectedToTopUnit(configuration.getHarmonizationUnitRelations()))
+			return;
+		else {
+			configuration.getSiadapStructureTopUnit().addChild(getUnit(), configuration.getHarmonizationUnitRelations(), configuration.getFirstDay(), configuration.getLastDay(), justification);
+		}
+		
+		
+	}
+	/**
+	 * 
+	 * @param justification the justification/reason for the accountability that is going to be created
+	 * @throws IllegalArgumentException in case this is not an HarmonizationUnit
+	 * @throws SiadapException in case we cannot change because the harmonization period is already open, or we don't have all the data we need
+	 * @return true if it leaves 'behind' orphaned units. i.e. units that are connected to this H.U.
+	 */
+	public boolean deactivateHarmonizationUnit(String justification) throws IllegalArgumentException, SiadapException {
+		if (!isHarmonizationUnit())
+			throw new IllegalArgumentException("this method should only be called in a HarmonizationUnit");
+		SiadapYearConfiguration configuration = getConfiguration();
+		if (configuration.isHarmonizationPeriodOpenNow())
+			throw new SiadapException("error.shant.make.changes.to.harm.structure.when.harm.is.occurring");
+		boolean hasOrphanedUnits = !getSubHarmonizationUnits().isEmpty();
+		
+		AccountabilityType harmonizationUnitRelation = configuration.getHarmonizationUnitRelations();
+		
+		if (!isConnectedToTopUnit(harmonizationUnitRelation))
+			return hasOrphanedUnits;
+		
+		Unit siadapStructureTopUnit = configuration.getSiadapStructureTopUnit();
+		
+		//let's disconnect it
+			Collection<Accountability> parentAccountabilities = getUnit().getParentAccountabilities(configuration.getLastDayForAccountabilities(), configuration.getLastDayForAccountabilities(), harmonizationUnitRelation);
+			if (parentAccountabilities.size() > 1)
+				throw new SiadapException("Too many accoutabilities for a given day. Data inconsistency on an Harm. Unit relation between unit " + siadapStructureTopUnit.getPresentationName()+" and " + getUnit().getPresentationName());
+			if (parentAccountabilities.size() != 1)
+				throw new SiadapException("Error, we should have one accountability between unit " + siadapStructureTopUnit.getPresentationName()+" and " + getUnit().getPresentationName());
+			Accountability accToEnd = parentAccountabilities.iterator().next();
+			
+			accToEnd.setEndDate(configuration.getFirstDay().minusDays(1), justification);
+		
+		
+		return hasOrphanedUnits;
+		
 	}
 
 	// public List<ExcedingQuotaProposal> getExcedingQuotaProposalSuggestions()

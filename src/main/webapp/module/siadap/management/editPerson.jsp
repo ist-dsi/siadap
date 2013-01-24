@@ -142,7 +142,7 @@ request.setAttribute("isCCAMember", isCCAMember);
 		</html:link>
 	</logic:notPresent>
 	<logic:present name="personWrapper" property="siadap">
-		<p><a href="#" id="changeUnit"> <bean:message key="label.changeWorkingUnit" bundle="SIADAP_RESOURCES"/> </a> | <a href="#" id="changeEvaluator"> <bean:message key="label.changeEvaluator" bundle="SIADAP_RESOURCES"/> </a>
+		<p> <a href="#" id="changeUnit"> <bean:message key="label.changeWorkingUnit" bundle="SIADAP_RESOURCES"/> </a> | <a href="#" id="changeHarmonizationUnit"> <bean:message key="label.changeHarmonizationUnit" bundle="SIADAP_RESOURCES"/> </a> | <a href="#" id="changeEvaluator"> <bean:message key="label.changeEvaluator" bundle="SIADAP_RESOURCES"/> </a>
 			<logic:equal name="person" property="customEvaluatorDefined" value="true">
 			| <html:link page="<%="/siadapPersonnelManagement.do?method=removeCustomEvaluator&activity=ChangePersonnelSituation&year=" + year.toString()%>" paramId="personId"  paramName="person"  paramProperty="person.externalId">
 				<bean:message key="label.removeCustomEvaluator" bundle="SIADAP_RESOURCES"/>
@@ -160,7 +160,8 @@ request.setAttribute("isCCAMember", isCCAMember);
 <p>(funcionalidades desactivadas, crie o processo SIADAP antes)</p>
 	<p>
 	    <bean:message key="label.changeWorkingUnit" bundle="SIADAP_RESOURCES"/>
-	    |<bean:message key="label.changeEvaluator" bundle="SIADAP_RESOURCES"/>			
+	    | <bean:message key="label.changeHarmonizationUnit" bundle="SIADAP_RESOURCES"/>
+	    | <bean:message key="label.changeEvaluator" bundle="SIADAP_RESOURCES"/>			
 		| <bean:message key="label.changeSiadapUniverse" bundle="SIADAP_RESOURCES"/> 
 		| <bean:message key="label.changeCompetenceType" bundle="SIADAP_RESOURCES"/>
 		<logic:equal value="true" name="isCCAMember">
@@ -243,7 +244,60 @@ request.setAttribute("isCCAMember", isCCAMember);
 		<fr:layout name="picker"/>
 		</fr:edit>
 		
-		<html:submit styleClass="inputbutton"><bean:message key="renderers.form.submit.name" bundle="RENDERER_RESOURCES"/></html:submit>
+		<div style="vertical-align: middle;">
+			<label>Justificação/Razão:</label>
+			 <fr:edit id="changeWorkingUnit4" name="changeWorkingUnit" slot="justification" >
+			<fr:layout name="longText">
+				<%-- <fr:property name=""/> --%>
+			</fr:layout>
+		</div>
+		</fr:edit>
+		
+		<div>
+			<html:submit styleClass="inputbutton"><bean:message key="renderers.form.submit.name" bundle="RENDERER_RESOURCES"/></html:submit>
+		</div>
+	</fr:form>
+		</div>
+	</div>
+	
+	<div id="changeHarmonizationUnitDiv" style="display: none;">
+		<div class="highlightBox">
+		<fr:form action="<%= "/siadapPersonnelManagement.do?method=changeHarmonizationUnit&activity=ChangePersonnelSituation&personId=" + personId + "&year=" + year.toString() %>">
+		<fr:edit id="changeHarmonizationUnit" name="changeHarmonizationUnit" visible="false"/>
+	
+		<fr:edit id="changeHarmonizationUnit1" name="changeHarmonizationUnit" slot="unit" >
+		
+		<fr:layout name="autoComplete">
+			<fr:property name="classes" value="tstyle2"/>
+			<fr:property name="labelField" value="partyName.content"/>
+			<fr:property name="format" value="${presentationName}"/>
+			<fr:property name="minChars" value="3"/>		
+			<fr:property name="args" value="<%="provider=module.siadap.presentationTier.renderers.providers.HarmonizationUnitAutoCompleteProvider," + "year=" + year%>"/>
+			<fr:property name="size" value="60"/>
+			<fr:validator name="pt.ist.fenixWebFramework.rendererExtensions.validators.RequiredAutoCompleteSelectionValidator">
+				<fr:property name="message" value="label.pleaseSelectOne.unit"/>
+				<fr:property name="bundle" value="EXPENDITURE_RESOURCES"/>
+				<fr:property name="key" value="true"/>
+			</fr:validator>
+		</fr:layout>
+	</fr:edit>
+	
+		Data da alteração: <fr:edit id="changeHarmonizationUnit2" name="changeHarmonizationUnit" slot="dateOfChange" >
+		<fr:layout name="picker"/>
+		</fr:edit>
+		
+		<div style="vertical-align: middle;">
+			<label style="display: inline-block;">Justificação/Razão:</label>
+			 <fr:edit id="changeHarmonizationUnit3" name="changeHarmonizationUnit" slot="justification" >
+			<fr:layout name="longText">
+				<fr:property name="style" value="display: inline-block"/>
+			</fr:layout>
+		</div>
+		</fr:edit>
+		
+		<div>
+			<html:submit styleClass="inputbutton"><bean:message key="renderers.form.submit.name" bundle="RENDERER_RESOURCES"/></html:submit>
+		</div>
 	</fr:form>
 		</div>
 	</div>
@@ -317,12 +371,23 @@ request.setAttribute("isCCAMember", isCCAMember);
 	</div>
 </logic:equal>
 <script type="text/javascript">
+
+	$("#changeHarmonizationUnit").click(function() {
+		$("#changeEvaluatorDiv").hide();
+		$("#changeSiadapUniverseDiv").hide();
+		$("#forceChangeSiadapUniverseDiv").hide();
+		$("#createSiadapDiv").hide();
+		$("#changeCompetenceTypeDiv").hide();
+		$("#changeUnitDiv").hide();
+		$("#changeHarmonizationUnitDiv").slideToggle();
+	});
 	$("#changeUnit").click(function() {
 		$("#changeEvaluatorDiv").hide();
 		$("#changeSiadapUniverseDiv").hide();
 		$("#forceChangeSiadapUniverseDiv").hide();
 		$("#createSiadapDiv").hide();
 		$("#changeCompetenceTypeDiv").hide();
+		$("#changeHarmonizationUnitDiv").hide();
 		$("#changeUnitDiv").slideToggle();
 	});
 	$("#createSiadapLink").click(function(){
@@ -331,6 +396,7 @@ request.setAttribute("isCCAMember", isCCAMember);
 		$("#forceChangeSiadapUniverseDiv").hide();
 		$("#changeUnitDiv").hide();
 		$("#changeCompetenceTypeDiv").hide();
+		$("#changeHarmonizationUnitDiv").hide();
 		$("#createSiadapDiv").slideToggle();
 		return false;
 	});
@@ -340,6 +406,7 @@ request.setAttribute("isCCAMember", isCCAMember);
 		$("#forceChangeSiadapUniverseDiv").hide();
 		$("#changeUnitDiv").hide();
 		$("#createSiadapDiv").hide();
+		$("#changeHarmonizationUnitDiv").hide();
 		$("#changeCompetenceTypeDiv").slideToggle();
 		return false;
 	});
@@ -351,6 +418,7 @@ request.setAttribute("isCCAMember", isCCAMember);
 		$("#changeCompetenceTypeDiv").hide();
 		$("#forceChangeSiadapUniverseDiv").hide();
 		$("#changeSiadapUniverseDiv").slideToggle();
+		$("#changeHarmonizationUnitDiv").hide();
 	});
 
 	$("#changeEvaluator").click(function() {
@@ -359,6 +427,7 @@ request.setAttribute("isCCAMember", isCCAMember);
 		$("#createSiadapDiv").hide();
 		$("#changeCompetenceTypeDiv").hide();
 		$("#forceChangeSiadapUniverseDiv").hide();
+		$("#changeHarmonizationUnitDiv").hide();
 		$("#changeEvaluatorDiv").slideToggle();
 	});
 	
@@ -368,6 +437,7 @@ request.setAttribute("isCCAMember", isCCAMember);
 		$("#createSiadapDiv").hide();
 		$("#changeCompetenceTypeDiv").hide();
 		$("#changeSiadapUniverseDiv").hide();
+		$("#changeHarmonizationUnitDiv").hide();
 		$("#forceChangeSiadapUniverseDiv").slideToggle();
 	});
 

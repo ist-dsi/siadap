@@ -260,6 +260,7 @@ public class SiadapPersonnelManagement extends ContextBaseAction {
 		request.setAttribute("person", personSiadapWrapper);
 		request.setAttribute("bean", new VariantBean());
 		request.setAttribute("changeWorkingUnit", new ChangeWorkingUnitBean());
+		request.setAttribute("changeHarmonizationUnit", new ChangeHarmonizationUnitBean());
 		request.setAttribute("changeEvaluator", new ChangeEvaluatorBean());
 		request.setAttribute("createSiadapBean", new SiadapCreationBean(
 				personSiadapWrapper));
@@ -452,6 +453,15 @@ public class SiadapPersonnelManagement extends ContextBaseAction {
 			final HttpServletResponse response) throws Exception {
 
 		ChangeWorkingUnitBean bean = getRenderedObject("changeWorkingUnit");
+
+		return changePersonnelSituation(mapping, form, request, response, bean);
+	}
+	
+	public final ActionForward changeHarmonizationUnit(final ActionMapping mapping,
+			final ActionForm form, final HttpServletRequest request,
+			final HttpServletResponse response) throws Exception {
+
+		ChangeHarmonizationUnitBean bean = getRenderedObject("changeHarmonizationUnit");
 
 		return changePersonnelSituation(mapping, form, request, response, bean);
 	}
@@ -1043,6 +1053,7 @@ public class SiadapPersonnelManagement extends ContextBaseAction {
 		private Boolean withQuotas;
 		private Unit unit;
 		private LocalDate dateOfChange;
+		private String justification;
 
 		public ChangeWorkingUnitBean() {
 			this.dateOfChange = new LocalDate();
@@ -1081,7 +1092,7 @@ public class SiadapPersonnelManagement extends ContextBaseAction {
 		public void execute(SiadapProcess process) throws SiadapException {
 			new PersonSiadapWrapper(process.getSiadap().getEvaluated(), process
 					.getSiadap().getYear()).changeWorkingUnitTo(getUnit(),
-					getWithQuotas(), getDateOfChange());
+					getWithQuotas(), getDateOfChange(), getJustification());
 		}
 
 		@Override
@@ -1107,8 +1118,79 @@ public class SiadapPersonnelManagement extends ContextBaseAction {
 			return BundleUtil.getStringFromResourceBundle(Siadap.SIADAP_BUNDLE_STRING, "warning.changed.working.unit.check.evaluator");
 		}
 
+		public String getJustification() {
+			return justification;
+		}
+
+		public void setJustification(String justification) {
+			this.justification = justification;
+		}
+
 	}
 
+	public static class ChangeHarmonizationUnitBean extends
+			ActivityInformationBeanWrapper implements Serializable {
+
+		private Unit unit;
+		private LocalDate dateOfChange;
+		private String justification;
+
+		public ChangeHarmonizationUnitBean() {
+			this.dateOfChange = new LocalDate();
+		}
+
+		public Unit getUnit() {
+			return unit;
+		}
+
+		public void setUnit(Unit unit) {
+			this.unit = unit;
+		}
+
+		public void setDateOfChange(LocalDate dateOfChange) {
+			this.dateOfChange = dateOfChange;
+		}
+
+		public LocalDate getDateOfChange() {
+			return dateOfChange;
+		}
+
+		@Override
+		public boolean hasAllNeededInfo() {
+			return (getUnit() != null && getDateOfChange() != null);
+		}
+
+		@Override
+		public void execute(SiadapProcess process) throws SiadapException {
+			new PersonSiadapWrapper(process.getSiadap().getEvaluated(), process
+					.getSiadap().getYear()).changeHarmonizationUnitTo(getUnit(), getDateOfChange(), getJustification());
+		}
+
+		@Override
+		public String[] getArgumentsDescription(SiadapProcess process) {
+			return new String[] { BundleUtil
+					.getFormattedStringFromResourceBundle(
+							Siadap.SIADAP_BUNDLE_STRING,
+							ChangeHarmonizationUnitBean.class.getSimpleName(), getUnit().getPresentationName()
+									, dateOfChange
+									.toString())};
+									//, BundleUtil.getFormattedStringFromResourceBundle(Siadap.SIADAP_BUNDLE_STRING, "ChangeWorkingUnitBean.evaluatorSideEffect", currentEvaluator)) };
+		}
+
+		@Override
+		public String getSuccessWarningMessage() {
+			return BundleUtil.getStringFromResourceBundle(Siadap.SIADAP_BUNDLE_STRING, "warning.changed.working.unit.check.evaluator");
+		}
+
+		public String getJustification() {
+			return justification;
+		}
+
+		public void setJustification(String justification) {
+			this.justification = justification;
+		}
+
+	}
 	public static abstract class ActivityInformationBeanWrapper {
 
 		public abstract boolean hasAllNeededInfo();

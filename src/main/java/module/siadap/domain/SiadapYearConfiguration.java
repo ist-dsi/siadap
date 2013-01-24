@@ -100,6 +100,11 @@ public class SiadapYearConfiguration extends SiadapYearConfiguration_Base {
 	    return new LocalDate(getYear(), Month.JANUARY, 1);
     
     }
+    
+    public boolean isHarmonizationPeriodOpenNow() {
+    	return getFirstLevelHarmonizationBegin() != null && getFirstLevelHarmonizationBegin().isBefore(new LocalDate());
+    	
+    }
 
     private static NamedGroup homologationMembersGroup;
     private static boolean groupsInitialized = false;
