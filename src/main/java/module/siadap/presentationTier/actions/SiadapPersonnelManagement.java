@@ -58,6 +58,7 @@ import pt.utl.ist.fenix.tools.util.excel.Spreadsheet;
 import pt.utl.ist.fenix.tools.util.excel.Spreadsheet.Row;
 
 import module.contacts.domain.EmailAddress;
+import module.fileManagement.domain.task.AddWebdavNode;
 import module.organization.domain.Accountability;
 import module.organization.domain.AccountabilityType;
 import module.organization.domain.Party;
@@ -103,6 +104,11 @@ public class SiadapPersonnelManagement extends ContextBaseAction {
 			final HttpServletResponse response) throws Exception {
 
 		SiadapYearWrapper siadapYearWrapper = (SiadapYearWrapper) getRenderedObject("siadapYearWrapper");
+		String yearString = getAttribute(request, "year");
+		if (siadapYearWrapper == null && yearString != null)
+		{
+			siadapYearWrapper = new SiadapYearWrapper(Integer.valueOf(yearString));
+		}
 		if (siadapYearWrapper == null) {
 			ArrayList<Integer> yearsWithConfigs = SiadapYearsFromExistingSiadapConfigurations
 					.getYearsWithExistingConfigs();
@@ -118,10 +124,35 @@ public class SiadapPersonnelManagement extends ContextBaseAction {
 		request.setAttribute("siadapYearWrapper", siadapYearWrapper);
 		VariantBean bean = new VariantBean();
 		request.setAttribute("bean", bean);
+		
+		//let's get all of the people that aren't harmonized for this year
+		Set<Siadap> siadapsWithoutValidHarmonizationUnit = siadapYearWrapper.getSiadapYearConfiguration().getSiadapsWithoutValidHarmonizationUnit();
+		if (siadapsWithoutValidHarmonizationUnit.isEmpty() == false) {
+			addLocalizedWarningMessage(request, BundleUtil.getFormattedStringFromResourceBundle(Siadap.SIADAP_BUNDLE_STRING, "siadapPersonnelManagement.start.warning.withoutValidHarm"));
+		}
+		
 
 		request.setAttribute("person", new PersonSiadapWrapper(UserView
 				.getCurrentUser().getPerson(), new LocalDate().getYear()));
 		return forward(request, "/module/siadap/management/start.jsp");
+	}
+	
+	public final ActionForward manageUsersWithoutValidHarmonizationUnit(final ActionMapping mapping,
+			final ActionForm form, final HttpServletRequest request,
+			final HttpServletResponse response) throws Exception {
+		
+		Integer year = Integer.valueOf((String) getAttribute(request, "year"));
+		
+		SiadapYearConfiguration siadapYearConfiguration = SiadapYearConfiguration.getSiadapYearConfiguration(year);
+		
+		Set<Siadap> siadapsWithoutValidHarmonizationUnit = siadapYearConfiguration.getSiadapsWithoutValidHarmonizationUnit();
+		
+		request.setAttribute("siadaps", siadapsWithoutValidHarmonizationUnit);
+		request.setAttribute("year", year);
+		
+		
+		return forward(request, "/module/siadap/management/personsWithInvalidHarmonizationUnit.jsp");
+		
 	}
 
 	public final ActionForward createNewSiadapProcess(

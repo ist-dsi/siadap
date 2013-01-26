@@ -574,6 +574,13 @@ public class PersonSiadapWrapper extends PartyWrapper implements Serializable {
 		return units;
 	}
 
+	/**
+	 * 
+	 * @return the unit where is harmonized for the default harmonization universe
+	 */
+	public Unit getUnitWhereIsHarmonized() {
+		return getUnitWhereIsHarmonized(getDefaultSiadapUniverse());
+	}
 	public Unit getUnitWhereIsHarmonized(SiadapUniverse siadapUniverse) {
 		if (siadapUniverse == null)
 			return null;
@@ -594,6 +601,36 @@ public class PersonSiadapWrapper extends PartyWrapper implements Serializable {
 			}
 		}
 	}
+	
+	/**
+	 * 
+	 * @return the unit where is harmonized for the default harmonization universe. The harmoniztion unit must be a valid one, i.e. connected to the top structure unit for this year
+	 * @see UnitSiadapWrapper#isValidHarmonizationUnit();
+	 */
+	public Unit getValidUnitWhereIsHarmonized() {
+		return getValidUnitWhereIsHarmonized(getDefaultSiadapUniverse());
+	}
+	public Unit getValidUnitWhereIsHarmonized(SiadapUniverse siadapUniverse) {
+		if (siadapUniverse == null)
+			return null;
+		List<Unit> parentUnits = getParentUnits(getParty(),
+				siadapUniverse.getHarmonizationRelation(getConfiguration()));
+		if (parentUnits.isEmpty())
+			return null;
+		if (parentUnits.size() > 1) {
+			throw new SiadapException("inconsistent.harmonization.units");
+
+		} else {
+			UnitSiadapWrapper unitWrapper = new UnitSiadapWrapper(
+					parentUnits.get(0), getYear());
+			if (unitWrapper.isValidHarmonizationUnit())
+				return unitWrapper.getUnit();
+			else {
+				return unitWrapper.getValidHarmonizationUnit();
+			}
+		}
+	}
+	
 
 	public Unit getHarmonizationUnitForSIADAP2() {
 		return getUnitWhereIsHarmonized(SiadapUniverse.SIADAP2);
@@ -1036,7 +1073,7 @@ public class PersonSiadapWrapper extends PartyWrapper implements Serializable {
 		}
 	}
 
-	public void changeHarmonizationUnitTo(Unit unit, LocalDate dateOfChange, String justification) {
+	public void changeHarmonizationUnitTo(Unit unit, LocalDate dateOfChange, String justification) throws SiadapException {
 		verifyDate(dateOfChange);
 		verifyWorkingAndHarmonizationUnitChange();
 
@@ -1044,7 +1081,7 @@ public class PersonSiadapWrapper extends PartyWrapper implements Serializable {
 
 		if (!UnitSiadapWrapper.isValidSIADAPHarmonizationUnit(unit, getYear())) {
 			throw new SiadapException(
-					"error.changing.harmonization.unit.to.an.invalid.one");
+					"error.changing.harmonization.unit.to.an.invalid.one", unit.getPresentationName());
 		}
 
 		// find out what is the accountability we should be changing

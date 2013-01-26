@@ -708,12 +708,12 @@ public class SiadapRootModule extends SiadapRootModule_Base implements ModuleIni
 		    }
 
 		    PersonSiadapWrapper evaluatorWrapper = personWrapper.getEvaluator();
-		    String istIdEvaluator = evaluatorWrapper.getPerson().getUser().getUsername();
+		    String istIdEvaluator = evaluatorWrapper == null ? "-" : evaluatorWrapper.getPerson().getUser().getUsername();
 		    cell = row.createCell(cellIndex++);
 		    cell.setCellValue(istIdEvaluator);
 		    cell.setCellStyle(defaultTextIstIdStyle);
 
-		    String nameEvaluatorWrapper = evaluatorWrapper.getName();
+		    String nameEvaluatorWrapper = evaluatorWrapper == null ? "-" : evaluatorWrapper.getName();
 		    cell = row.createCell(cellIndex++);
 		    cell.setCellValue(nameEvaluatorWrapper);
 		    cell.setCellStyle(defaultTextNameStyle);

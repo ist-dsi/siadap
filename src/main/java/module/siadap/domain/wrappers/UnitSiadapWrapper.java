@@ -956,6 +956,21 @@ public class UnitSiadapWrapper extends PartyWrapper implements Serializable {
 		return units.isEmpty() ? null : getHarmonizationUnit(units.iterator()
 				.next());
 	}
+	
+	public Unit getValidHarmonizationUnit() {
+		return getHarmonizationUnit(getUnit());
+	}
+
+	private Unit getValidHarmonizationUnit(Unit unit) {
+		UnitSiadapWrapper wrapper = new UnitSiadapWrapper(unit, getYear());
+		if (isValidHarmonizationUnit(unit)) {
+			return unit;
+		}
+		Collection<Unit> units = wrapper.getParentUnits(getConfiguration()
+				.getHarmonizationUnitRelations());
+		return units.isEmpty() ? null : getHarmonizationUnit(units.iterator()
+				.next());
+	}
 
 	/**
 	 * 
@@ -1279,6 +1294,25 @@ public class UnitSiadapWrapper extends PartyWrapper implements Serializable {
 					// seen that we are in the top harmonization unit, we will
 					// show info about all of the persons on the sub units
 					return true;
+				}
+			}
+		}
+		return false;
+
+	}
+	
+	public boolean isValidHarmonizationUnit() {
+		return isValidHarmonizationUnit(getUnit());
+	}
+
+	public boolean isValidHarmonizationUnit(Unit unit) {
+		if (unit != null) {
+			for (PartyType partyType : unit.getPartyTypes()) {
+				if (partyType.getType().equalsIgnoreCase(
+						SIADAP_HARMONIZATION_UNIT_TYPE)) {
+					// seen that we are in the top harmonization unit, we will
+					// show info about all of the persons on the sub units
+					return isConnectedToTopUnit(getConfiguration().getHarmonizationUnitRelations());
 				}
 			}
 		}

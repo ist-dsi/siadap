@@ -11,6 +11,7 @@
 
 <h2><bean:message key="link.siadap.structureManagement" bundle="SIADAP_RESOURCES"/></h2>
 
+
 <%-- The year chooser: --%>
 <fr:form action="/siadapPersonnelManagement.do?method=start">
 	<fr:edit id="siadapYearWrapper" name="siadapYearWrapper" nested="true">
@@ -29,7 +30,20 @@
 	</fr:edit>
 </fr:form>  
 
+<html:messages id="message" bundle="SIADAP_RESOURCES" property="messageWarning" message="true" header="label.warnings">
+	<div class="highlightBox"> 
+		<p><b><bean:write name="message" /></b></p>
+	</div>
+</html:messages>
+
+
+	
+	
 <bean:define id="year" name="siadapYearWrapper" property="chosenYear"/>
+
+<html:link page="/siadapPersonnelManagement.do?method=manageUsersWithoutValidHarmonizationUnit" paramId="year" paramName="year" >
+	<p>Gerir processos sem unidade de harmonização válida</p>
+</html:link>
 
 <html:link page="/siadapProcessCount.do?method=manageUnlistedUsers" paramId="year" paramName="year" >
 	<p>Gerir pessoas não listadas</p>
