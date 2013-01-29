@@ -33,6 +33,7 @@ import java.util.Set;
 import java.util.TreeSet;
 
 import javax.annotation.Nullable;
+import javax.naming.OperationNotSupportedException;
 
 import module.organization.domain.Accountability;
 import module.organization.domain.AccountabilityType;
@@ -45,6 +46,7 @@ import module.siadap.domain.SiadapRootModule;
 import module.siadap.domain.SiadapYearConfiguration;
 import module.siadap.domain.scoring.SiadapGlobalEvaluation;
 import module.siadap.domain.wrappers.PersonSiadapWrapper;
+import module.siadap.presentationTier.actions.UnitManagementInterfaceAction.Mode;
 
 import org.joda.time.LocalDate;
 
@@ -71,9 +73,9 @@ public class SiadapProcessCounter implements Serializable {
 	private final LocalDate dayToUse;
 	private final transient SiadapYearConfiguration configuration;
 	private final transient AccountabilityType unitRelations;
-	private final transient AccountabilityType evaluationRelation;
-	private final transient AccountabilityType workingUnitWithQuotaRelation;
-	private final transient AccountabilityType workingUnitWithoutQuotaRelation;
+//	private final transient AccountabilityType evaluationRelation;
+	private final transient AccountabilityType firstKindOfWorkerRelation;
+	private final transient AccountabilityType secondKindOfWorkerRelation;
 
 	private final Multiset<Person> duplicatedPersons = ConcurrentHashMultiset
 			.create();
@@ -99,19 +101,40 @@ public class SiadapProcessCounter implements Serializable {
 		init(distinguishBetweenUniverses);
 
 	}
-
+	
+	private SiadapProcessCounter(final Unit unit, boolean distinguishBetweenUniverses, SiadapYearConfiguration configuration, AccountabilityType unitAccType, AccountabilityType firstKindOfAccType, AccountabilityType secondKindOfAccType) {
+	    topUnit = unit;
+        this.configuration = configuration;
+        this.dayToUse = SiadapMiscUtilClass
+                .lastDayOfYearWhereAccsAreActive(configuration.getYear());
+        unitRelations = unitAccType;
+//      evaluationRelation = configuration.getEvaluationRelation();
+        firstKindOfWorkerRelation = firstKindOfAccType;
+        secondKindOfWorkerRelation = secondKindOfAccType;
+        init(distinguishBetweenUniverses);
+	}
+	
+	/**
+	 * 
+	 * @param unit
+	 * @param distinguishBetweenUniverses
+	 * @param configuration
+	 * @param mode
+	 * @throws OperationNotSupportedException if a mode is not supported
+	 */
+	public SiadapProcessCounter(final Unit unit, boolean distinguishBetweenUniverses, SiadapYearConfiguration configuration, Mode mode) throws OperationNotSupportedException {
+	    this(unit, distinguishBetweenUniverses, configuration, mode.getUnitAccType(configuration), mode.getEmployeeAccTypes(configuration)[0], mode.getEmployeeAccTypes(configuration)[1]);
+	    AccountabilityType[] employeeAccTypes = mode.getEmployeeAccTypes(configuration);
+	    if (employeeAccTypes.length != 2)
+	        throw new OperationNotSupportedException("do not support Mode: " + mode.name());
+	    
+	    
+	}
+	
 	public SiadapProcessCounter(final Unit unit,
 			boolean distinguishBetweenUniverses,
 			SiadapYearConfiguration configuration) {
-		topUnit = unit;
-		this.configuration = configuration;
-		this.dayToUse = SiadapMiscUtilClass
-				.lastDayOfYearWhereAccsAreActive(configuration.getYear());
-		unitRelations = configuration.getUnitRelations();
-		evaluationRelation = configuration.getEvaluationRelation();
-		workingUnitWithQuotaRelation = configuration.getWorkingRelation();
-		workingUnitWithoutQuotaRelation = configuration
-				.getWorkingRelationWithNoQuota();
+	    this(unit, distinguishBetweenUniverses, configuration, configuration.getUnitRelations(), configuration.getWorkingRelation(), configuration.getWorkingRelationWithNoQuota());
 		init(distinguishBetweenUniverses);
 
 	}
@@ -140,11 +163,11 @@ public class SiadapProcessCounter implements Serializable {
 					final Unit child = (Unit) accountability.getChild();
 					duplicatedUnit.add(child);
 					count(child, distinguishBetweenUniverses);
-				} else if (accountabilityType == workingUnitWithQuotaRelation) {
+				} else if (accountabilityType == firstKindOfWorkerRelation) {
 					final Person person = (Person) accountability.getChild();
 					count(person, true);
 
-				} else if (accountabilityType == workingUnitWithoutQuotaRelation) {
+				} else if (accountabilityType == secondKindOfWorkerRelation) {
 					final Person person = (Person) accountability.getChild();
 					count(person, false);
 
@@ -165,8 +188,8 @@ public class SiadapProcessCounter implements Serializable {
 					final Unit child = (Unit) accountability.getChild();
 					duplicatedUnit.add(child);
 					count(child);
-				} else if (accountabilityType == workingUnitWithQuotaRelation
-						|| accountabilityType == workingUnitWithoutQuotaRelation) {
+				} else if (accountabilityType == firstKindOfWorkerRelation
+						|| accountabilityType == secondKindOfWorkerRelation) {
 					final Person person = (Person) accountability.getChild();
 					count(person);
 				}

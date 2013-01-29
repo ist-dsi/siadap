@@ -1,3 +1,5 @@
+<%@page import="module.siadap.presentationTier.actions.UnitManagementInterfaceAction.Mode"%>
+<%@page import="module.siadap.presentationTier.actions.UnitManagementInterfaceAction"%>
 <%@page import="java.util.Map.Entry"%>
 <%@page import="module.siadap.presentationTier.renderers.providers.SiadapStateToShowInCount"%>
 <%@page import="org.joda.time.LocalDate"%>
@@ -16,31 +18,37 @@
 <%@ taglib uri="http://fenix-ashes.ist.utl.pt/fenix-renderers" prefix="fr"%>
 <%@ taglib uri="http://fenix-ashes.ist.utl.pt/chart" prefix="chart" %>
 
+<%
+	final Mode mode = (Mode) request.getAttribute("mode");
+%>
+
+<bean:define id="year" name="siadapYearWrapper" property="chosenYear"/>
+<%-- the mode chooser: --%>
+<p>
+	<%
+	if (UnitManagementInterfaceAction.Mode.HARMONIZATION_UNIT_MODE == mode) {
+	%>
+		<html:link action="<%="/unitManagementInterface.do?method=showUnit&year=" + year + "&mode="+UnitManagementInterfaceAction.Mode.REGULAR_UNIT_MODE.name()%>" >
+			<bean:message bundle="SIADAP_RESOURCES" key="link.unitManagementInterface.regularUnitMode"/>
+		</html:link>
+		| <bean:message bundle="SIADAP_RESOURCES" key="link.unitManagementInterface.harmonizationUnitMode"/>
+	<% } %>
+	<%
+	if (UnitManagementInterfaceAction.Mode.REGULAR_UNIT_MODE == mode) {
+	%>
+			<bean:message bundle="SIADAP_RESOURCES" key="link.unitManagementInterface.regularUnitMode"/>
+		| 
+		<html:link action="<%="/unitManagementInterface.do?method=showUnit&year=" + year + "&mode="+UnitManagementInterfaceAction.Mode.HARMONIZATION_UNIT_MODE.name()%>" >
+			<bean:message bundle="SIADAP_RESOURCES" key="link.unitManagementInterface.harmonizationUnitMode"/>
+		</html:link>
+	<% } %>
+</p>
 <%-- The year chooser: --%>
-<fr:form action="/siadapProcessCount.do?method=showUnit">
+<fr:form action="<%="/unitManagementInterface.do?method=showUnit&mode=" + mode.name()%>" >
 	<fr:edit id="siadapYearWrapper" name="siadapYearWrapper" nested="true">
 		<fr:schema bundle="SIADAP" type="module.siadap.domain.wrappers.SiadapYearWrapper">
 			<fr:slot name="chosenYear" bundle="SIADAP_RESOURCES" layout="menu-select-postback" key="siadap.start.siadapYearChoice">
 					<fr:property name="providerClass" value="module.siadap.presentationTier.renderers.providers.SiadapYearsFromExistingSiadapConfigurations"/>
-					<%-- 
-					<fr:property name="format" value="${year}" />
-					--%>
-					<fr:property name="nullOptionHidden" value="true"/>
-					<%-- 
-					<fr:property name="eachSchema" value="module.siadap.presentationTier.renderers.providers.SiadapYearConfigurationsFromExisting.year"/>
-					--%>
-			</fr:slot>
-		</fr:schema>
-	</fr:edit>
-</fr:form>  
-<bean:define id="year" name="siadapYearWrapper" property="chosenYear"/>
-
-<bean:define id="siadapProcessStateEnumToFilter" name="siadapProcessStateToFilter" property="processStateEnum"/>
-<fr:form action="<%="/siadapProcessCount.do?method=showUnit" + "&year=" + year%>">
-	<fr:edit id="siadapProcessStateToFilter" name="siadapProcessStateToFilter" nested="true"  >
-		<fr:schema bundle="SIADAP" type="module.siadap.domain.wrappers.SiadapProcessStateEnumWrapper">
-			<fr:slot name="processStateEnum" bundle="SIADAP_RESOURCES" layout="menu-select-postback" key="siadap.count.state.to.filter">
-					<fr:property name="providerClass" value="module.siadap.presentationTier.renderers.providers.SiadapStateToShowInCount"/>
 					<%-- 
 					<fr:property name="format" value="${year}" />
 					--%>
@@ -63,11 +71,8 @@
 	<fr:view name="unit" property="presentationName"/>
 </h2>
 
-<%-- TODO: make this JSP year sensitive --%>
-<html:link action="<%="/siadapProcessCount.do?method=showSummaryTables&year="+configuration.getYear()%>" >Quadro síntese</html:link>
-
 <%
-	final SiadapProcessCounter mainCounter = new SiadapProcessCounter(unit, false, configuration);
+	final SiadapProcessCounter mainCounter = new SiadapProcessCounter(unit, false, configuration, mode);
 	int siadapTotalCount = 0;
 	int nrDuplicatedPersons = mainCounter.getDuplicatePersons().size();
 	for (int i = 0 ; i < mainCounter.getCounts().length && i <= SiadapStateToShowInCount.getMaximumStateToShowInCount().ordinal() + 1; i++) {
@@ -92,21 +97,8 @@
 							</div>
 						<%			    
 							} else if (party.isUnit()) {
-							    final SiadapProcessCounter counter = new SiadapProcessCounter((Unit) party, false, configuration);
+							    final SiadapProcessCounter counter = new SiadapProcessCounter((Unit) party, false, configuration, mode);
 							    String styleSuffix = null;
-							    for (int i=((SiadapProcessStateEnum)siadapProcessStateEnumToFilter).ordinal(); i < counter.getCounts().length; i++)
-							    {
-									if (counter.getCounts()[i] > 0)
-									{
-									    styleSuffix = "border-color: red;";
-									    break;
-									}
-									    
-							    }
-							    if (styleSuffix == null)
-							    {
-								  styleSuffix = "";
-							    }
 						%>
 							<bean:define id="toolTipTitle" type="java.lang.String"><bean:message key="label.process.state.counts" bundle="SIADAP_RESOURCES"/></bean:define>
 							<bean:define id="toolTip" type="java.lang.String">
@@ -124,8 +116,8 @@
 								%>
 								</ul>
 							</bean:define>
-							<div class="orgTBox orgTBoxLight" style="<%= styleSuffix %> " title="header=[ <%= toolTipTitle %> ] body=[<%= toolTip %>]">
-								<html:link page="<%="/siadapProcessCount.do?method=showUnit&year=" + year + "&siadapProcessStateEnumToFilterOrdinal="+siadapProcessStateEnumToFilter%>" paramId="unitId" paramName="party" paramProperty="externalId" styleClass="secondaryLink">
+							<div class="orgTBox orgTBoxLight"  title="header=[ <%= toolTipTitle %> ] body=[<%= toolTip %>]">
+								<html:link page="<%="/unitManagementInterface.do?method=showUnit&year=" + year +"&mode=" + mode.name() %>" paramId="unitId" paramName="party" paramProperty="externalId" styleClass="secondaryLink">
 									<bean:write name="party" property="partyName"/>
 								</html:link>
 							</div>
@@ -138,44 +130,17 @@
 	</table>
 </div>
 
-<logic:present role="pt.ist.bennu.core.domain.RoleType.MANAGER">
-	<p>Secção só apresentada a administrador, usar com cuidado</p>
-	<logic:present name="siadapsCount">
-		<p>SiadapsCount: <bean:write name="siadapsCount"/></p>
-	</logic:present>
-</logic:present>
 <logic:present name="siadapsDefinitiveCount">
 <%	int siadapsDefinitiveCount = (Integer) request.getAttribute("siadapsDefinitiveCount"); %>
 	<logic:notEqual value="<%=String.valueOf(siadapTotalCount)%>" name="siadapsDefinitiveCount" >
 		<div class="highlightBox">
 			<p>Atenção, existem <%=siadapsDefinitiveCount - siadapTotalCount%> processos não listados</p>
-			<logic:present role="pt.ist.bennu.core.domain.RoleType.MANAGER">
-				<p>Secção só apresentada a administrador, usar com cuidado</p>
-				<html:link page="/siadapProcessCount.do?method=manageDuplicatePersons" paramId="year" paramName="year" >
-					<p>Número de pessoas duplicadas: <%=nrDuplicatedPersons%></p>
-				</html:link>
-				<p>siadapsDefinitiveCount: <bean:write name="siadapsDefinitiveCount"/></p>
-			</logic:present>
-			<html:link page="/siadapProcessCount.do?method=manageUnlistedUsers" paramId="year" paramName="year" >
+			<html:link page="/unitManagementInterface.do?method=manageUnlistedUsers" paramId="year" paramName="year" >
 				<p>Gerir pessoas não listadas</p>
 			</html:link>
 		</div>
 	</logic:notEqual>
 </logic:present>
-<logic:present role="pt.ist.bennu.core.domain.RoleType.MANAGER">
-	<p>Secção só apresentada a administrador, usar com cuidado</p>
-	<logic:present name="totalDefinitiveCount">
-		<logic:iterate id="stateEntry" name="totalDefinitiveCount" >
-			<html:link page="<%="/siadapProcessCount.do?method=listSiadapsByStateAndYear&year=" + year + "&state=" + ((java.util.Map.Entry)stateEntry).getKey()%>">
-				<p><bean:write name="stateEntry" property="key.localizedName"/>: <bean:write name="stateEntry" property="value"/></p>
-			</html:link>
-		</logic:iterate>
-	</logic:present>
-	<html:link page="<%="/siadapProcessCount.do?method=manageDuplicateSiadaps&year=" + year %>">
-		<p>Gerir siadaps duplicados</p>
-	</html:link>
-</logic:present>
-
 
 
 <%
@@ -233,19 +198,7 @@ int j =0;
 %>
 		
 		<td>
-			<%
-				if (count == 0 || state.ordinal() < ((SiadapProcessStateEnum) siadapProcessStateEnumToFilter).ordinal()  ) {
-			%>
 				<%= count %>
-			<%
-				} else {
-			%>
-				<font color="red">
-					<%= count %>
-				</font>
-			<%
-				}
-			%>
 		</td>
 <%
 	}
@@ -273,20 +226,64 @@ int j =0;
 						<img src="<%= urlUnitHarmonizer %>">
 					</logic:iterate>
 				</logic:notEmpty>
-				<p>
 					<logic:notEmpty name="unitHarmonizers">
 						<logic:iterate id="unitHarmonizer" name="unitHarmonizers">
-							<html:link page="<%= "/siadapPersonnelManagement.do?method=viewPerson&year=" + configuration.getYear() %>"										paramId="personId" paramName="unitHarmonizer" paramProperty="externalId"
+							<p>
+							<html:link page="<%= "/siadapPersonnelManagement.do?method=viewPerson&year=" + configuration.getYear() %>" 
+								paramId="personId" paramName="unitHarmonizer" paramProperty="externalId"
 									styleClass="secondaryLink">
 								<bean:write name="unitHarmonizer" property="presentationName"/>
+							</html:link> | 
+							<html:link page="<%= "/siadapPersonnelManagement.do?method=terminateUnitHarmonization&year=" + configuration.getYear()+"&unitId="+ unit.getExternalId() + "&personId=" + ((Person)unitHarmonizer).getExternalId()%>" 
+								paramId="personId" paramName="unitHarmonizer" paramProperty="externalId">
+								 (Remover)
 							</html:link>
+							</p>
 						</logic:iterate>
 					</logic:notEmpty>
 					
 					<logic:empty name="unitHarmonizers">
-						<bean:message key="label.not.defined" bundle="SIADAP_RESOURCES"/>
+						<p><bean:message key="label.not.defined" bundle="SIADAP_RESOURCES"/></p>
 					</logic:empty>
-				</p>
+					<%
+					if (mode.equals(Mode.HARMONIZATION_UNIT_MODE)) {
+					%>
+					<div id="addHarmonizationUnitResponsibleDiv" >
+						<div class="highlightBox">
+		
+						<fr:form action="<%= "/unitManagementInterface.do?method=addHarmonizationUnitResponsible&year=" + year.toString() + "&mode=" + mode.name() + "&unitId=" + unit.getExternalId() %>">
+		
+							<fr:edit id="addHarmonizationUnitResponsible" name="bean" visible="false"/>
+		
+						<fr:edit id="addHarmonizationUnitResponsible1" name="bean" slot="domainObject">
+						<fr:layout name="autoComplete">
+					        <fr:property name="labelField" value="name"/>
+							<fr:property name="format" value="${name} (${user.username})"/>
+							<fr:property name="minChars" value="3"/>		
+							<fr:property name="args" value="provider=module.organization.presentationTier.renderers.providers.PersonAutoCompleteProvider"/>
+							<fr:property name="size" value="60"/>
+							<fr:validator name="pt.ist.fenixWebFramework.rendererExtensions.validators.RequiredAutoCompleteSelectionValidator">
+								<fr:property name="message" value="label.pleaseSelectOne.unit"/>
+								<fr:property name="bundle" value="EXPENDITURE_RESOURCES"/>
+								<fr:property name="key" value="true"/>
+							</fr:validator>
+							</fr:layout>
+						</fr:edit>
+						
+						<%--
+						Data da alteração: <fr:edit id="changeEvaluator1" name="changeEvaluator" slot="dateOfChange" >
+						<fr:layout name="picker"/>
+						</fr:edit>
+						 --%>
+						 
+						<html:submit styleClass="inputbutton"><bean:message key="renderers.form.submit.name" bundle="RENDERER_RESOURCES"/></html:submit>
+					</fr:form>
+							
+						</div>
+					</div>
+					<%
+					}
+					%>
 			</div>
 		</td>
 		<td style="width: 50%; text-align: center; vertical-align: top; padding: 15px;">
@@ -298,22 +295,23 @@ int j =0;
 					<bean:define id="urlUnitResponsible" type="java.lang.String">https://fenix.ist.utl.pt/publico/retrievePersonalPhoto.do?method=retrieveByUUID&amp;contentContextPath_PATH=/homepage&amp;uuid=<bean:write name="unitResponsible" property="user.username"/></bean:define>
 					<img src="<%= urlUnitResponsible %>">
 				</logic:present>
+				<p>
 					<logic:present name="unitResponsible">
-						<p>
 						<html:link page="<%= "/siadapPersonnelManagement.do?method=viewPerson&year=" + configuration.getYear() %>"
 								paramId="personId" paramName="unitResponsible" paramProperty="externalId"
 								styleClass="secondaryLink">
 							<bean:write name="unitResponsible" property="presentationName"/>
 						</html:link>
-						</p>
 					</logic:present>
 					<logic:notPresent name="unitResponsible">
-						<p><bean:message key="label.not.defined" bundle="SIADAP_RESOURCES"/></p>
+						<bean:message key="label.not.defined" bundle="SIADAP_RESOURCES"/>
 					</logic:notPresent>
+				</p>
 			</div>
 		</td>
 	</tr>
 </table>
+
 
 
 <logic:notEmpty name="workerAccountabilities">
@@ -377,19 +375,7 @@ int j =0;
 					<%
 						final SiadapProcessStateEnum state = personSiadapWrapper.getCurrentProcessState();
 					%>
-					<%
-						if (state.ordinal() < ((SiadapProcessStateEnum) siadapProcessStateEnumToFilter).ordinal()  ) {
-					%>
 						<%= state.getLocalizedName() %>
-					<%
-						} else {
-					%>
-						<font color="red">
-							<%= state.getLocalizedName() %>
-						</font>
-					<%
-						}
-					%>
 				</td>
 				<td>
 					<%
@@ -418,7 +404,7 @@ int j =0;
 </logic:notEmpty>
 
 <br/>
-<jsp:include page="processStateLegend.jsp"/>
+<jsp:include page="../processStateLegend.jsp"/>
 
 <script type="text/javascript">
 if (typeof document.attachEvent!='undefined') {

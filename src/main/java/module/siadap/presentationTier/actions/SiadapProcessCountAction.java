@@ -52,6 +52,7 @@ import module.siadap.domain.util.SiadapMiscUtilClass;
 import module.siadap.domain.util.SiadapProcessCounter;
 import module.siadap.domain.wrappers.SiadapProcessStateEnumWrapper;
 import module.siadap.domain.wrappers.SiadapYearWrapper;
+import module.siadap.domain.wrappers.UnitSiadapWrapper;
 import module.siadap.presentationTier.renderers.providers.SiadapStateToShowInCount;
 import module.siadap.presentationTier.renderers.providers.SiadapYearsFromExistingSiadapConfigurations;
 import module.workflow.domain.ProcessFile;
@@ -317,9 +318,6 @@ public class SiadapProcessCountAction extends ContextBaseAction {
 
 	request.setAttribute("siadapProcessStateToFilter", siadapProcessStateToFilter);
 
-	//let's always use the last day of the year
-	LocalDate dayToUse = SiadapMiscUtilClass.lastDayOfYearWhereAccsAreActive(configuration.getYear());
-
 	Unit unit = (Unit) getDomainObject(request, "unitId");
 	if (unit == null) {
 	    unit = configuration.getSiadapStructureTopUnit();
@@ -350,22 +348,27 @@ public class SiadapProcessCountAction extends ContextBaseAction {
 
 	}
 
-	final Collection<Party> parents = getParents(unit, configuration, dayToUse);
-	final Collection<Party> children = getChildren(unit, configuration, dayToUse);
+	final Collection<Party> parents = UnitSiadapWrapper.UnitTransverseUtil.getActiveParents(unit, configuration);
+	final Collection<Party> children = UnitSiadapWrapper.UnitTransverseUtil.getActiveChildren(unit, configuration);
 
 	OrganizationChart<Party> chart = new OrganizationChart<Party>(unit, parents, children, 3);
 	request.setAttribute("chart", chart);
 
-	final Collection<Accountability> workerAccountabilities = getChildrenWorkers(unit, configuration, dayToUse);
+	final Collection<Accountability> workerAccountabilities = UnitSiadapWrapper.UnitTransverseUtil.getActiveChildrenWorkers(unit, configuration);
 	request.setAttribute("workerAccountabilities", workerAccountabilities);
 
-	final Person unitResponsible = findUnitChild(unit, dayToUse, configuration.getEvaluationRelation(),
-		configuration.getUnitRelations());
+	UnitSiadapWrapper unitSiadapWrapper = new UnitSiadapWrapper(unit, configuration.getYear());
+	final Person unitResponsible = unitSiadapWrapper.getEvaluationResponsible();
 	request.setAttribute("unitResponsible", unitResponsible);
 
-	final Person unitHarmanizer = findUnitChild(unit, dayToUse, configuration.getHarmonizationResponsibleRelation(),
-		configuration.getUnitRelations());
-	request.setAttribute("unitHarmanizer", unitHarmanizer);
+	
+	final Collection<Person> unitHarmonizers = new TreeSet<Person>(Party.COMPARATOR_BY_NAME);
+	UnitSiadapWrapper harmonizationUnit = new UnitSiadapWrapper(unitSiadapWrapper.getHarmonizationUnit(), configuration.getYear());
+	
+	if (harmonizationUnit.isValidHarmonizationUnit())
+	    unitHarmonizers.addAll(harmonizationUnit.getHarmonizationResponsibles());
+	    
+	request.setAttribute("unitHarmonizers", unitHarmonizers);
 
 	return forward(request, "/module/siadap/unit.jsp");
     }
@@ -373,9 +376,10 @@ public class SiadapProcessCountAction extends ContextBaseAction {
     public ActionForward showSummaryTables(ActionMapping mapping, ActionForm form, HttpServletRequest request,
 	    HttpServletResponse response) throws Exception {
 
-	final OrganizationalModel organizationalModel = findOrgModel();
+	final OrganizationalModel organizationalModel = UnitSiadapWrapper.findRegularOrgModel();
 	//get the top unit (IST)
-	final Unit unit = getUnit(organizationalModel, request);
+	String unitExternalId = getAttribute(request, "unitId");
+	final Unit unit = UnitSiadapWrapper.getUnit(organizationalModel, unitExternalId);
 
 	request.setAttribute("unit", unit);
 
@@ -388,105 +392,16 @@ public class SiadapProcessCountAction extends ContextBaseAction {
 
     }
 
-    private Person findUnitChild(final Unit unit, final LocalDate dayToUse, final AccountabilityType accountabilityType,
-	    final AccountabilityType unitAccountabilityType) {
-	for (final Accountability accountability : unit.getChildAccountabilitiesSet()) {
-	    if (isActive(accountability, dayToUse, accountabilityType)) {
-		return (Person) accountability.getChild();
-	    }
-	}
-	final Unit parent = findUnitParent(unit, dayToUse, unitAccountabilityType);
-	return parent == null ? null : findUnitChild(parent, dayToUse, accountabilityType, unitAccountabilityType);
-    }
+   
 
-    private Unit findUnitParent(final Unit unit, final LocalDate dayToUse, final AccountabilityType accountabilityType) {
-	for (final Accountability accountability : unit.getParentAccountabilitiesSet()) {
-	    if (isActive(accountability, dayToUse, accountabilityType)) {
-		return (Unit) accountability.getParent();
-	    }
-	}
-	return null;
-    }
 
-    public Collection<Party> getParents(final Unit unit, final SiadapYearConfiguration configuration, final LocalDate dayToUse) {
-	final SortedSet<Party> result = new TreeSet<Party>(Party.COMPARATOR_BY_NAME);
-	for (final Accountability accountability : unit.getParentAccountabilitiesSet()) {
-	    if (isActiveUnit(accountability, configuration, dayToUse)) {
-		result.add(accountability.getParent());
-	    }
-	}
-	return result;
-    }
+  
 
-    public Collection<Party> getChildren(final Unit unit, final SiadapYearConfiguration configuration, final LocalDate dayToUse) {
-	final SortedSet<Party> result = new TreeSet<Party>(Party.COMPARATOR_BY_NAME);
-	for (final Accountability accountability : unit.getChildAccountabilitiesSet()) {
-	    if (isActiveUnit(accountability, configuration, dayToUse)
-		    && hasSomeWorker((Unit) accountability.getChild(), configuration, dayToUse)) {
-		result.add(accountability.getChild());
-	    }
-	}
-	return result;
-    }
+   
 
-    private boolean hasSomeWorker(final Unit unit, final SiadapYearConfiguration configuration, final LocalDate dayToUse) {
-	for (final Accountability accountability : unit.getChildAccountabilitiesSet()) {
-	    if (isActiveWorker(accountability, configuration, dayToUse)
-		    || (isActiveUnit(accountability, configuration, dayToUse) && hasSomeWorker((Unit) accountability.getChild(),
-			    configuration, dayToUse))) {
-		return true;
-	    }
-	}
-	return false;
-    }
+   
 
-    public Collection<Accountability> getChildrenWorkers(final Unit unit, final SiadapYearConfiguration configuration,
-	    final LocalDate dayToUse) {
-	final SortedSet<Accountability> result = new TreeSet<Accountability>(Accountability.COMPARATOR_BY_CHILD_PARTY_NAMES);
-	for (final Accountability accountability : unit.getChildAccountabilitiesSet()) {
-	    if (isActiveWorker(accountability, configuration, dayToUse)) {
-		result.add(accountability);
-	    }
-	}
-	return result;
-    }
+   
 
-    private boolean isActiveUnit(Accountability accountability, SiadapYearConfiguration configuration, LocalDate dayToUse) {
-	return isActive(accountability, dayToUse, configuration.getUnitRelations());
-    }
-
-    private boolean isActiveWorker(Accountability accountability, SiadapYearConfiguration configuration, LocalDate dayToUse) {
-	return isActive(accountability, dayToUse, configuration.getWorkingRelation(),
-		configuration.getWorkingRelationWithNoQuota());
-    }
-
-    private boolean isActive(final Accountability accountability, final LocalDate dayToUse,
-	    final AccountabilityType... accountabilityTypes) {
-	final AccountabilityType accountabilityType = accountability.getAccountabilityType();
-	if (accountability.isActive(dayToUse)) {
-	    for (final AccountabilityType type : accountabilityTypes) {
-		if (type == accountabilityType) {
-		    return true;
-		}
-	    }
-	}
-	return false;
-    }
-
-    private Unit getUnit(final OrganizationalModel organizationalModel, final HttpServletRequest request) {
-	final Unit unit = getDomainObject(request, "unitId");
-	return unit == null ? (organizationalModel.hasAnyParties() ? (Unit) organizationalModel.getPartiesIterator().next()
-		: null) : unit;
-    }
-
-    private OrganizationalModel findOrgModel() {
-	final MyOrg instance = MyOrg.getInstance();
-	for (final OrganizationalModel organizationalModel : instance.getOrganizationalModelsSet()) {
-	    if (organizationalModel.getName().getContent().equals("SIADAP")) {
-		return organizationalModel;
-	    }
-	}
-	return null;
-    }
 
 }

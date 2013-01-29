@@ -247,11 +247,11 @@ request.setAttribute("isCCAMember", isCCAMember);
 		<div style="vertical-align: middle;">
 			<label>Justificação/Razão:</label>
 			 <fr:edit id="changeWorkingUnit4" name="changeWorkingUnit" slot="justification" >
-			<fr:layout name="longText">
-				<%-- <fr:property name=""/> --%>
-			</fr:layout>
+				<fr:layout name="longText">
+					<%-- <fr:property name=""/> --%>
+				</fr:layout>
+			</fr:edit>
 		</div>
-		</fr:edit>
 		
 		<div>
 			<html:submit styleClass="inputbutton"><bean:message key="renderers.form.submit.name" bundle="RENDERER_RESOURCES"/></html:submit>
@@ -289,11 +289,11 @@ request.setAttribute("isCCAMember", isCCAMember);
 		<div style="vertical-align: middle;">
 			<label style="display: inline-block;">Justificação/Razão:</label>
 			 <fr:edit id="changeHarmonizationUnit3" name="changeHarmonizationUnit" slot="justification" >
-			<fr:layout name="longText">
-				<fr:property name="style" value="display: inline-block"/>
-			</fr:layout>
+				<fr:layout name="longText">
+					<fr:property name="style" value="display: inline-block"/>
+				</fr:layout>
+			</fr:edit>
 		</div>
-		</fr:edit>
 		
 		<div>
 			<html:submit styleClass="inputbutton"><bean:message key="renderers.form.submit.name" bundle="RENDERER_RESOURCES"/></html:submit>

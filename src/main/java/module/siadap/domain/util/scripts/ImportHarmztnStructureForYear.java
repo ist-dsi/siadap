@@ -52,17 +52,17 @@ import pt.utl.ist.fenix.tools.util.i18n.MultiLanguageString;
 public class ImportHarmztnStructureForYear extends WriteCustomTask {
 
 	private static final FileNode dataFileNode = AbstractDomainObject
-			.fromExternalId("7073811496115");
+			.fromExternalId("7073811496915");
 
 	private static final int year = 2012;
 
-	private static final boolean DRY_RUN = false;
+	private static final boolean DRY_RUN = true;
 
 	private static final boolean DEBUG = true;
 
 	private static final boolean IGNORE_DIFFERENT_NAMES_IN_CC_UNITS = true;
 
-	private static final String VIRTUAL_HOST_SERVER_NAME = "joantune-workstation";
+	private static final String VIRTUAL_HOST_SERVER_NAME = "dot.ist.utl.pt";
 
 	private static final String CHARSET_NAME = "iso-8859-1";
 

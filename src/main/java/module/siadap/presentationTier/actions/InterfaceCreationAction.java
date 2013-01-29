@@ -113,5 +113,18 @@ public class InterfaceCreationAction extends BaseAction {
 	return forwardToMuneConfiguration(request, virtualHost, node);
 
     }
+    
+    @CreateNodeAction(bundle = "SIADAP_RESOURCES", key = "add.node.siadap.unitManagement", groupKey = "label.module.siadap")
+    public final ActionForward createSiadapUnitManagementInterfaceNode(final ActionMapping mapping, final ActionForm form,
+	    final HttpServletRequest request, final HttpServletResponse response) throws Exception {
+	final VirtualHost virtualHost = getDomainObject(request, "virtualHostToManageId");
+	final Node node = getDomainObject(request, "parentOfNodesToManageId");
+
+	ActionNode.createActionNode(virtualHost, node, "/unitManagementInterface", "showUnit", "resources.SiadapResources",
+		"link.unitManagementInterface", SiadapRootModule.getInstance().getStatisticsAccessUnionGroup());
+
+	return forwardToMuneConfiguration(request, virtualHost, node);
+
+    }
 
 }
