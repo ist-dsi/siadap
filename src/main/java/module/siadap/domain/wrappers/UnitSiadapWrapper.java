@@ -41,6 +41,7 @@ import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
+import javax.annotation.Nullable;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.collections.Predicate;
@@ -48,7 +49,9 @@ import org.jfree.data.time.Month;
 import org.joda.time.Interval;
 import org.joda.time.LocalDate;
 
+import com.google.common.base.Function;
 import com.google.common.base.Preconditions;
+import com.google.common.collect.Collections2;
 import com.google.common.collect.Sets;
 
 import pt.ist.bennu.core.domain.MyOrg;
@@ -472,6 +475,42 @@ public class UnitSiadapWrapper extends PartyWrapper implements Serializable {
         return counter;
     }
 
+    /**
+     * 
+     * @param descendOnStructure
+     * @return a
+     *         {@link PersonSiadapWrapper#PERSON_COMPARATOR_BY_NAME_FALLBACK_YEAR_THEN_PERSON_OID}
+     *         sorted tree set with the people that are harmonized in this unit,
+     *         or in this unit and below, if descendOnStructure is true
+     */
+    public Set<PersonSiadapWrapper> getPeopleHarmonizedInThisUnit(boolean descendOnStructure) {
+        TreeSet<PersonSiadapWrapper> personsToReturn = new TreeSet<PersonSiadapWrapper>(
+                PersonSiadapWrapper.PERSON_COMPARATOR_BY_NAME_FALLBACK_YEAR_THEN_PERSON_OID);
+        SiadapYearConfiguration configuration = getConfiguration();
+        List<Person> childPersons = getChildPersons(configuration.getSiadap3HarmonizationRelation(),
+                configuration.getSiadap2HarmonizationRelation());
+        if (descendOnStructure) {
+            for (Unit childUnit : getChildUnits(configuration.getHarmonizationUnitRelations())) {
+                personsToReturn.addAll(new UnitSiadapWrapper(childUnit, configuration.getYear())
+                        .getPeopleHarmonizedInThisUnit(true));
+            }
+        }
+
+        personsToReturn.addAll(Collections2.transform(childPersons, new Function<Person, PersonSiadapWrapper>() {
+
+            @Override
+            @Nullable
+            public PersonSiadapWrapper apply(@Nullable
+            Person input) {
+                if (input == null)
+                    return null;
+                return new PersonSiadapWrapper(input, getYear());
+            }
+        }));
+        return personsToReturn;
+
+    }
+
     @Service
     public ArrayList<SiadapException> executeValidation(Collection<SiadapUniverseWrapper> siadapUniverseWrappers,
 
@@ -590,7 +629,7 @@ public class UnitSiadapWrapper extends PartyWrapper implements Serializable {
         List<Person> childPersons = getChildPersons(getConfiguration().getEvaluationRelation());
         if (childPersons.size() > 1)
             throw new SiadapException("inconsistency.unit.with.more.than.one.evaluation.responsible");
-        return childPersons.isEmpty() ? null: childPersons.iterator().next();
+        return childPersons.isEmpty() ? null : childPersons.iterator().next();
     }
 
     public Collection<Person> getHarmonizationResponsibles() {
@@ -909,26 +948,29 @@ public class UnitSiadapWrapper extends PartyWrapper implements Serializable {
             }
         }
     }
+    
+    public void addAndNotifyResonsibleForHarmonization(Person person) {
+        addResponsibleForHarmonization(person);
+    }
 
     public void addResponsibleForHarmonization(Person person) {
         AccountabilityType harmonizationResponsibleRelation = getConfiguration().getHarmonizationResponsibleRelation();
         Collection<Accountability> childrenAccountabilities = getUnit().getChildrenAccountabilities(
                 Collections.singleton(harmonizationResponsibleRelation));
 
-        LocalDate end = new LocalDate(getYear(), Month.DECEMBER, 31);
 
         if (!childrenAccountabilities.isEmpty()) {
             for (Accountability accountability : childrenAccountabilities) {
-                if (accountability.isActive(end)) {
+                if (accountability.isActive(getConfiguration().getLastDayForAccountabilities())) {
                     // if we already have that person there, let's just return
                     if (accountability.getChild().equals(person))
                         return;
                 } else if (!accountability.getChild().equals(person)) {
-                    accountability.editDates(accountability.getBeginDate(), new LocalDate());
+                    accountability.editDates(accountability.getBeginDate(), getConfiguration().getFirstDay());
                 }
             }
         }
-        getUnit().addChild(person, harmonizationResponsibleRelation, new LocalDate(), end);
+        getUnit().addChild(person, harmonizationResponsibleRelation, getConfiguration().getFirstDay(), null);
     }
 
     public boolean isSiadap2WithQuotasAboveQuota() {
@@ -1596,12 +1638,13 @@ public class UnitSiadapWrapper extends PartyWrapper implements Serializable {
         }
 
         private static boolean isActiveUnit(Accountability accountability, SiadapYearConfiguration configuration) {
-            
+
             final LocalDate dayToUse = SiadapMiscUtilClass.lastDayOfYearWhereAccsAreActive(configuration.getYear());
             return isActive(accountability, dayToUse, configuration.getUnitRelations());
         }
 
-        private static boolean isActiveUnit(Accountability accountability, SiadapYearConfiguration configuration,AccountabilityType unitAcc) {
+        private static boolean isActiveUnit(Accountability accountability, SiadapYearConfiguration configuration,
+                AccountabilityType unitAcc) {
             final LocalDate dayToUse = SiadapMiscUtilClass.lastDayOfYearWhereAccsAreActive(configuration.getYear());
             return isActive(accountability, dayToUse, unitAcc);
         }
@@ -1648,10 +1691,10 @@ public class UnitSiadapWrapper extends PartyWrapper implements Serializable {
         }
 
         private static boolean hasSomeWorker(final Unit unit, final SiadapYearConfiguration configuration,
-          final AccountabilityType unitAcc, final AccountabilityType... employeeAccsType) {
+                final AccountabilityType unitAcc, final AccountabilityType... employeeAccsType) {
             for (final Accountability accountability : unit.getChildAccountabilitiesSet()) {
-                if (isActiveWorker(accountability, configuration,  employeeAccsType)
-                        || (isActiveUnit(accountability, configuration,  unitAcc) && hasSomeWorker(
+                if (isActiveWorker(accountability, configuration, employeeAccsType)
+                        || (isActiveUnit(accountability, configuration, unitAcc) && hasSomeWorker(
                                 (Unit) accountability.getChild(), configuration, unitAcc, employeeAccsType))) {
                     return true;
                 }
@@ -1665,7 +1708,7 @@ public class UnitSiadapWrapper extends PartyWrapper implements Serializable {
             final SortedSet<Accountability> result = new TreeSet<Accountability>(
                     Accountability.COMPARATOR_BY_CHILD_PARTY_NAMES);
             for (final Accountability accountability : unit.getChildAccountabilitiesSet()) {
-                if (isActiveWorker(accountability, configuration )) {
+                if (isActiveWorker(accountability, configuration)) {
                     result.add(accountability);
                 }
             }

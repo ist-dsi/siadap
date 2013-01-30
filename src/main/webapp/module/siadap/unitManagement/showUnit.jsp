@@ -1,3 +1,4 @@
+<%@page import="module.siadap.domain.wrappers.UnitSiadapWrapper"%>
 <%@page import="module.siadap.presentationTier.actions.UnitManagementInterfaceAction.Mode"%>
 <%@page import="module.siadap.presentationTier.actions.UnitManagementInterfaceAction"%>
 <%@page import="java.util.Map.Entry"%>
@@ -22,8 +23,9 @@
 	final Mode mode = (Mode) request.getAttribute("mode");
 %>
 
-<bean:define id="year" name="siadapYearWrapper" property="chosenYear"/>
+<bean:define id="year" name="siadapYearWrapper" property="chosenYear" type="java.lang.Integer"/>
 <%-- the mode chooser: --%>
+<%-- 
 <p>
 	<%
 	if (UnitManagementInterfaceAction.Mode.HARMONIZATION_UNIT_MODE == mode) {
@@ -42,6 +44,14 @@
 			<bean:message bundle="SIADAP_RESOURCES" key="link.unitManagementInterface.harmonizationUnitMode"/>
 		</html:link>
 	<% } %>
+</p>
+--%>
+
+<%-- the temporary mode chooser, because the regular unit mode is disabled: --%>
+<p>
+			<bean:message bundle="SIADAP_RESOURCES" key="link.unitManagementInterface.regularUnitMode"/> (desactivado)
+		| 
+			<b><bean:message bundle="SIADAP_RESOURCES" key="link.unitManagementInterface.harmonizationUnitMode"/></b>
 </p>
 <%-- The year chooser: --%>
 <fr:form action="<%="/unitManagementInterface.do?method=showUnit&mode=" + mode.name()%>" >
@@ -66,6 +76,9 @@
 %>
 <logic:present name="configuration">
 <bean:define id="unit" type="module.organization.domain.Unit" name="chart" property="element"/>
+<% UnitSiadapWrapper unitWrapper  = new UnitSiadapWrapper(unit,year);
+   request.setAttribute("unitWrapper", unitWrapper);
+%>
 
 <h2>
 	<fr:view name="unit" property="presentationName"/>
@@ -233,11 +246,17 @@ int j =0;
 								paramId="personId" paramName="unitHarmonizer" paramProperty="externalId"
 									styleClass="secondaryLink">
 								<bean:write name="unitHarmonizer" property="presentationName"/>
-							</html:link> | 
-							<html:link page="<%= "/siadapPersonnelManagement.do?method=terminateUnitHarmonization&year=" + configuration.getYear()+"&unitId="+ unit.getExternalId() + "&personId=" + ((Person)unitHarmonizer).getExternalId()%>" 
-								paramId="personId" paramName="unitHarmonizer" paramProperty="externalId">
-								 (Remover)
-							</html:link>
+							</html:link> 
+							<%--let's only allow removal/edition of reponsibles if we are in an harmonization unit --%>
+							<logic:equal value="true" name="unitWrapper" property="harmonizationUnit">
+								| 
+								<html:link page="<%= "/unitManagementInterface.do?method=terminateUnitHarmonization&year=" +
+								configuration.getYear()+"&unitId="+ unit.getExternalId() +
+								"&personId=" + ((Person)unitHarmonizer).getExternalId() + "&mode=" + mode.name()%>" 
+									paramId="personId" paramName="unitHarmonizer" paramProperty="externalId">
+									 (Remover)
+								</html:link>
+							</logic:equal>
 							</p>
 						</logic:iterate>
 					</logic:notEmpty>
@@ -246,12 +265,14 @@ int j =0;
 						<p><bean:message key="label.not.defined" bundle="SIADAP_RESOURCES"/></p>
 					</logic:empty>
 					<%
-					if (mode.equals(Mode.HARMONIZATION_UNIT_MODE)) {
+					//let's only allow edition/removal if we are in a harmonization unit
+					if (mode.equals(Mode.HARMONIZATION_UNIT_MODE) && unitWrapper.isHarmonizationUnit() ) {
 					%>
 					<div id="addHarmonizationUnitResponsibleDiv" >
 						<div class="highlightBox">
 		
-						<fr:form action="<%= "/unitManagementInterface.do?method=addHarmonizationUnitResponsible&year=" + year.toString() + "&mode=" + mode.name() + "&unitId=" + unit.getExternalId() %>">
+						<fr:form action="<%= "/unitManagementInterface.do?method=addHarmonizationUnitResponsible&year=" + 
+						year.toString() + "&mode=" + mode.name() + "&unitId=" + unit.getExternalId() %>">
 		
 							<fr:edit id="addHarmonizationUnitResponsible" name="bean" visible="false"/>
 		
@@ -276,7 +297,7 @@ int j =0;
 						</fr:edit>
 						 --%>
 						 
-						<html:submit styleClass="inputbutton"><bean:message key="renderers.form.submit.name" bundle="RENDERER_RESOURCES"/></html:submit>
+						<html:submit styleClass="inputbutton"><bean:message key="button.unitManagementInterface.add.HarmonizationResponsible" bundle="SIADAP_RESOURCES"/></html:submit>
 					</fr:form>
 							
 						</div>
@@ -314,10 +335,10 @@ int j =0;
 
 
 
-<logic:notEmpty name="workerAccountabilities">
+<logic:notEmpty name="activePersons">
 	<br/>
 	<br/>
-	<h3><bean:message key="label.people.to.be.evaluated" bundle="SIADAP_RESOURCES"/></h3>
+	<h3><%=mode.getLabelActivePersons()%></h3>
 	<table class="tstyle3" align="center" style="width: 100%; text-align: center;">
 		<tr>
 			<th>
@@ -337,11 +358,8 @@ int j =0;
 			<th>
 			</th>
 		</tr>
-		<logic:iterate id="accountability" name="workerAccountabilities" type="module.organization.domain.Accountability">
-			<bean:define id="person" type="module.organization.domain.Person" name="accountability" property="child"/>
-			<%
-				final PersonSiadapWrapper personSiadapWrapper = new PersonSiadapWrapper(person, configuration.getYear());
-			%>
+		<logic:iterate id="personSiadapWrapper" name="activePersons" type="module.siadap.domain.wrappers.PersonSiadapWrapper">
+			<bean:define id="person" type="module.organization.domain.Person" name="personSiadapWrapper" property="person"/>
 			<tr>
 				<td>
 					<bean:define id="url" type="java.lang.String">https://fenix.ist.utl.pt/publico/retrievePersonalPhoto.do?method=retrieveByUUID&amp;contentContextPath_PATH=/homepage&amp;uuid=<bean:write name="person" property="user.username"/></bean:define>
@@ -355,11 +373,14 @@ int j =0;
 					</html:link>
 				</td>
 				<td>
+					<logic:present name="personSiadapWrapper" property="evaluator">
 					<html:link page="<%= "/siadapPersonnelManagement.do?method=viewPerson&year=" + configuration.getYear() 
 							+ "&personId=" + personSiadapWrapper.getEvaluator().getPerson().getExternalId() %>"
 							styleClass="secondaryLink">
 							<%= personSiadapWrapper.getEvaluator().getPerson().getName() %>
 					</html:link>
+					</logic:present>
+					<logic:notPresent name="personSiadapWrapper" property="evaluator">-</logic:notPresent>
 					
 				</td>
 				<td>

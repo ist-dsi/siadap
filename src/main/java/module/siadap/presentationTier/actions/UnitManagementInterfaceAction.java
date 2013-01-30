@@ -5,8 +5,10 @@ package module.siadap.presentationTier.actions;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
@@ -23,7 +25,10 @@ import module.siadap.domain.Siadap;
 import module.siadap.domain.SiadapProcessStateEnum;
 import module.siadap.domain.SiadapRootModule;
 import module.siadap.domain.SiadapYearConfiguration;
+import module.siadap.domain.exceptions.SiadapException;
 import module.siadap.domain.util.SiadapMiscUtilClass;
+import module.siadap.domain.util.actions.SiadapUtilActions;
+import module.siadap.domain.wrappers.PersonSiadapWrapper;
 import module.siadap.domain.wrappers.SiadapProcessStateEnumWrapper;
 import module.siadap.domain.wrappers.SiadapYearWrapper;
 import module.siadap.domain.wrappers.UnitSiadapWrapper;
@@ -38,7 +43,9 @@ import org.joda.time.LocalDate;
 
 import pt.ist.bennu.core.presentationTier.actions.ContextBaseAction;
 import pt.ist.bennu.core.presentationTier.component.OrganizationChart;
+import pt.ist.bennu.core.util.BundleUtil;
 import pt.ist.bennu.core.util.VariantBean;
+import pt.ist.fenixWebFramework.renderers.utils.RenderUtils;
 import pt.ist.fenixWebFramework.struts.annotations.Mapping;
 
 @Mapping(path = "/unitManagementInterface")
@@ -75,6 +82,18 @@ public class UnitManagementInterfaceAction extends ContextBaseAction {
                 return new AccountabilityType[] { configuration.getWorkingRelation(),
                         configuration.getWorkingRelationWithNoQuota() };
             }
+
+            @Override
+            public Set<PersonSiadapWrapper> getActivePersonsUnder(SiadapYearConfiguration configuration, Unit unit) {
+                // TODO Auto-generated method stub
+                return null;
+            }
+
+            @Override
+            public String getLabelActivePersons() {
+                // TODO Auto-generated method stub
+                return null;
+            }
         },
         HARMONIZATION_UNIT_MODE {
             @Override
@@ -87,18 +106,65 @@ public class UnitManagementInterfaceAction extends ContextBaseAction {
                 return new AccountabilityType[] { configuration.getSiadap2HarmonizationRelation(),
                         configuration.getSiadap3HarmonizationRelation() };
             }
+
+            @Override
+            public Set<PersonSiadapWrapper> getActivePersonsUnder(SiadapYearConfiguration configuration, Unit unit) {
+                UnitSiadapWrapper unitSiadapWrapper = new UnitSiadapWrapper(unit, configuration.getYear());
+                return unitSiadapWrapper.getPeopleHarmonizedInThisUnit(true);
+            }
+
+            @Override
+            public String getLabelActivePersons() {
+                return BundleUtil.getStringFromResourceBundle(Siadap.SIADAP_BUNDLE_STRING, "label.unitManagementInterface.harmonizedActivePersons");
+            }
+            
+
         };
 
         public abstract AccountabilityType getUnitAccType(SiadapYearConfiguration configuration);
 
         public abstract AccountabilityType[] getEmployeeAccTypes(SiadapYearConfiguration configuration);
+
+        public abstract Set<PersonSiadapWrapper> getActivePersonsUnder(SiadapYearConfiguration configuration, Unit unit);
+        
+        public abstract String getLabelActivePersons();
     }
     public ActionForward addHarmonizationUnitResponsible(ActionMapping mapping, ActionForm form, HttpServletRequest request,
             HttpServletResponse response) throws Exception {
-        request.getAttribute("addHarmonizationUnitResponsible");
+        VariantBean bean = getRenderedObject("addHarmonizationUnitResponsible");
+        Unit unit = getDomainObject(request, "unitId");
+        int year = Integer.parseInt(request.getParameter("year"));
+        
+        UnitSiadapWrapper harmUnit = new UnitSiadapWrapper(unit,year);
+        if (!harmUnit.isValidHarmonizationUnit())
+            throw new SiadapException("must only make changes for a valid harmonization unit. Unit: " + unit.getPresentationName());
+        
+        Person person = bean.getDomainObject();
+        harmUnit.addResponsibleForHarmonization(person);
+        
+        RenderUtils.invalidateViewState("addHarmonizationUnitResponsible");
+        
+        // notify the users who have access to this interface
+        SiadapUtilActions.notifyAdditionOfHarmonizationResponsible(person, unit, year, request);
         
         return showUnit(mapping, form, request, response);
         
+    }
+    
+    public final ActionForward terminateUnitHarmonization(final ActionMapping mapping, final ActionForm form,
+            final HttpServletRequest request, final HttpServletResponse response) throws Exception {
+
+        LocalDate now = new LocalDate();
+        int year = Integer.parseInt(request.getParameter("year"));
+        Unit unit = getDomainObject(request, "unitId");
+        Person person = getDomainObject(request, "personId");
+
+        
+        new PersonSiadapWrapper(person,year).removeAndNotifyHarmonizationResponsability(unit, person, year, request);
+        
+      
+
+        return showUnit(mapping, form, request, response);
     }
 
     public ActionForward showUnit(ActionMapping mapping, ActionForm form, HttpServletRequest request,
@@ -109,7 +175,8 @@ public class UnitManagementInterfaceAction extends ContextBaseAction {
         if (modeString != null)
             mode = Mode.valueOf(modeString);
         else
-            mode = Mode.REGULAR_UNIT_MODE;
+//            mode = Mode.REGULAR_UNIT_MODE;
+            mode = Mode.HARMONIZATION_UNIT_MODE; //by default, for now, let's use the Harmonization unit mode
 
         request.setAttribute("mode", mode);
 
@@ -184,10 +251,14 @@ public class UnitManagementInterfaceAction extends ContextBaseAction {
 
         OrganizationChart<Party> chart = new OrganizationChart<Party>(unit, parents, children, 3);
         request.setAttribute("chart", chart);
-
-        final Collection<Accountability> workerAccountabilities = UnitSiadapWrapper.UnitTransverseUtil
-                .getActiveChildrenWorkers(unit, configuration);
-        request.setAttribute("workerAccountabilities", workerAccountabilities);
+        
+        Collection<PersonSiadapWrapper> activePersons = Collections.EMPTY_SET;
+        if (!unit.equals(configuration.getSiadapStructureTopUnit()))
+        {
+            //if we are on the top unit, we don't want all of the people
+            activePersons = mode.getActivePersonsUnder(configuration, unit);
+        }
+        request.setAttribute("activePersons", activePersons);
 
         final Person unitResponsible = unitSiadapWrapper.getEvaluationResponsible();
         request.setAttribute("unitResponsible", unitResponsible);

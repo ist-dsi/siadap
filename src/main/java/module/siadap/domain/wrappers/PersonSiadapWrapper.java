@@ -28,6 +28,7 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -35,6 +36,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
+
+import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.collections.Predicate;
 import org.joda.time.LocalDate;
@@ -55,6 +58,7 @@ import module.siadap.domain.ExceedingQuotaProposal;
 import module.siadap.domain.ObjectiveEvaluation;
 import module.siadap.domain.ObjectiveEvaluationIndicator;
 import module.siadap.domain.Siadap;
+import module.siadap.domain.SiadapAccountabilityCreationScript;
 import module.siadap.domain.SiadapEvaluationUniverse;
 import module.siadap.domain.SiadapProcess;
 import module.siadap.domain.SiadapProcessStateEnum;
@@ -64,6 +68,7 @@ import module.siadap.domain.SiadapYearConfiguration;
 import module.siadap.domain.exceptions.SiadapException;
 import module.siadap.domain.scoring.SiadapGlobalEvaluation;
 import module.siadap.domain.util.SiadapMiscUtilClass;
+import module.siadap.domain.util.actions.SiadapUtilActions;
 import module.siadap.presentationTier.actions.SiadapManagement;
 import module.siadap.presentationTier.actions.SiadapPersonnelManagement;
 
@@ -484,6 +489,24 @@ public class PersonSiadapWrapper extends PartyWrapper implements Serializable {
 
 	public Collection<UnitSiadapWrapper> getHarmozationUnits() {
 		return getHarmozationUnits(true);
+	}
+	
+	public void removeAndNotifyHarmonizationResponsability(Unit unit, Person person, int year, HttpServletRequest request) {
+	    removeHarmonizationResponsability(unit);
+	    SiadapUtilActions.notifyRemovalOfHarmonizationResponsible(person, unit, year, request);
+	}
+	
+	public void removeHarmonizationResponsability(Unit unit) {
+	    Set<AccountabilityType> accountabilityTypes = Collections.singleton(SiadapYearConfiguration
+                .getSiadapYearConfiguration(getYear()).getHarmonizationResponsibleRelation());
+        Collection<Accountability> parentAccountabilities = getPerson().getParentAccountabilities(accountabilityTypes);
+
+        for (Accountability accountability : parentAccountabilities) {
+            if (accountability.getParent() == unit && accountability.isActive(getConfiguration().getLastDayForAccountabilities()) ) {
+                accountability.editDates(accountability.getBeginDate(), getConfiguration().getFirstDay().plusDays(1));
+            }
+        }
+	    
 	}
 
 	public boolean hasPendingActions() {
