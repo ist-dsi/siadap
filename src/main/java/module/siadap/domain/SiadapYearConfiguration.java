@@ -31,14 +31,17 @@ import java.util.TreeSet;
 
 import javax.annotation.Nullable;
 
+import jvstm.cps.ConsistencyPredicate;
+import module.organization.domain.Person;
+import module.organization.domain.Unit;
+import module.siadap.domain.groups.SiadapCCAGroup;
+import module.siadap.domain.groups.SiadapStructureManagementGroup;
+import module.siadap.domain.wrappers.PersonSiadapWrapper;
+import module.siadap.domain.wrappers.UnitSiadapWrapper;
+
 import org.jfree.data.time.Month;
 import org.joda.time.LocalDate;
 
-import com.google.common.base.Predicate;
-import com.google.common.collect.Collections2;
-import com.google.common.collect.Iterators;
-
-import jvstm.cps.ConsistencyPredicate;
 import pt.ist.bennu.core.applicationTier.Authenticate.UserView;
 import pt.ist.bennu.core.domain.MyOrg;
 import pt.ist.bennu.core.domain.User;
@@ -46,12 +49,9 @@ import pt.ist.bennu.core.domain.groups.NamedGroup;
 import pt.ist.bennu.core.domain.groups.PersistentGroup;
 import pt.ist.fenixWebFramework.services.Service;
 
-import module.organization.domain.Person;
-import module.organization.domain.Unit;
-import module.siadap.domain.groups.SiadapCCAGroup;
-import module.siadap.domain.groups.SiadapStructureManagementGroup;
-import module.siadap.domain.wrappers.PersonSiadapWrapper;
-import module.siadap.domain.wrappers.UnitSiadapWrapper;
+import com.google.common.base.Predicate;
+import com.google.common.collect.Collections2;
+import com.google.common.collect.Iterators;
 
 /**
  * 
@@ -90,29 +90,27 @@ public class SiadapYearConfiguration extends SiadapYearConfiguration_Base {
 	initGroups();
 	return homologationMembersGroup;
     }
-    
+
     /**
      * 
      * @return {@link #getLastDay()} minus 1 day = 30th December
      */
-    public LocalDate getLastDayForAccountabilities()
-    {
-    	return getLastDay().minusDays(1);
+    public LocalDate getLastDayForAccountabilities() {
+	return getLastDay().minusDays(1);
     }
-    public LocalDate getLastDay()
-    {
-	    return new LocalDate(getYear(), Month.DECEMBER, 31);
+
+    public LocalDate getLastDay() {
+	return new LocalDate(getYear(), Month.DECEMBER, 31);
     }
-    
-    public LocalDate getFirstDay()
-    {
-	    return new LocalDate(getYear(), Month.JANUARY, 1);
-    
+
+    public LocalDate getFirstDay() {
+	return new LocalDate(getYear(), Month.JANUARY, 1);
+
     }
-    
+
     public boolean isHarmonizationPeriodOpenNow() {
-    	return getFirstLevelHarmonizationBegin() != null && getFirstLevelHarmonizationBegin().isBefore(new LocalDate());
-    	
+	return getFirstLevelHarmonizationBegin() != null && getFirstLevelHarmonizationBegin().isBefore(new LocalDate());
+
     }
 
     private static NamedGroup homologationMembersGroup;
@@ -185,7 +183,7 @@ public class SiadapYearConfiguration extends SiadapYearConfiguration_Base {
 
 	setSiadap3CompetencesPonderation(siadap3CompetencesPonderdation);
 	setSiadap3ObjectivesPonderation(siadap3ObjectivesPonderation);
-	
+
 	setReviewCommissionWaitingPeriod(reviewCommissionWaitingPeriod);
 
 	setSiadapRootModule(SiadapRootModule.getInstance());
@@ -260,11 +258,11 @@ public class SiadapYearConfiguration extends SiadapYearConfiguration_Base {
     }
 
     @ConsistencyPredicate
-    boolean checkQuotasPredicate() {
+    public boolean checkQuotasPredicate() {
 	Integer quotaExcellencySiadap2WithoutQuota = getQuotaExcellencySiadap2WithoutQuota();
 	Integer quotaRelevantSiadap2WithoutQuota = getQuotaRelevantSiadap2WithoutQuota();
 	Integer quotaRegularSiadap2WithoutQuota = getQuotaRegularSiadap2WithoutQuota();
-	
+
 	Integer quotaExcellencySiadap2WithQuota = getQuotaExcellencySiadap2WithQuota();
 	Integer quotaRelevantSiadap2WithQuota = getQuotaRelevantSiadap2WithQuota();
 	Integer quotaRegularSiadap2WithQuota = getQuotaRegularSiadap2WithQuota();
@@ -423,27 +421,29 @@ public class SiadapYearConfiguration extends SiadapYearConfiguration_Base {
     public boolean isPersonResponsibleForHomologation(Person person) {
 	return getHomologationMembers().contains(person);
     }
-    
+
     public static final Predicate<Siadap> SIADAP_WITHOUT_VALID_HARM_UNIT = new Predicate<Siadap>() {
 
-		@Override
-		public boolean apply(@Nullable Siadap input) {
-			if (input == null)
-				return false;
-			PersonSiadapWrapper personSiadapWrapper = new PersonSiadapWrapper(input);
-			Unit unitWhereIsHarmonized = personSiadapWrapper.getValidUnitWhereIsHarmonized();
-			if (unitWhereIsHarmonized == null)
-				return true;
-			else return false;
-		}
-	};
-    
+	@Override
+	public boolean apply(@Nullable
+	Siadap input) {
+	    if (input == null)
+		return false;
+	    PersonSiadapWrapper personSiadapWrapper = new PersonSiadapWrapper(input);
+	    Unit unitWhereIsHarmonized = personSiadapWrapper.getValidUnitWhereIsHarmonized();
+	    if (unitWhereIsHarmonized == null)
+		return true;
+	    else
+		return false;
+	}
+    };
+
     public boolean hasSiadapsWithoutValidHarmonizationUnit() {
-    	return Iterators.any(getSiadaps().iterator(), SIADAP_WITHOUT_VALID_HARM_UNIT);
+	return Iterators.any(getSiadaps().iterator(), SIADAP_WITHOUT_VALID_HARM_UNIT);
     }
-    
+
     public Set<Siadap> getSiadapsWithoutValidHarmonizationUnit() {
-    	return new HashSet<Siadap>(Collections2.filter(getSiadaps() , SIADAP_WITHOUT_VALID_HARM_UNIT));
+	return new HashSet<Siadap>(Collections2.filter(getSiadaps(), SIADAP_WITHOUT_VALID_HARM_UNIT));
     }
 
     public boolean isCurrentUserResponsibleForHomologation() {
