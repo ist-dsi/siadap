@@ -142,17 +142,18 @@ request.setAttribute("isCCAMember", isCCAMember);
 		</html:link>
 	</logic:notPresent>
 	<logic:present name="personWrapper" property="siadap">
-		<p> <a href="#" id="changeUnit"> <bean:message key="label.changeWorkingUnit" bundle="SIADAP_RESOURCES"/> </a> | <a href="#" id="changeHarmonizationUnit"> <bean:message key="label.changeHarmonizationUnit" bundle="SIADAP_RESOURCES"/> </a> | <a href="#" id="changeEvaluator"> <bean:message key="label.changeEvaluator" bundle="SIADAP_RESOURCES"/> </a>
+		<p> <a class="toggableLink" toggleDiv="changeSiadapUniverseDiv" href="#" id="changeUnit"> <bean:message key="label.changeWorkingUnit" bundle="SIADAP_RESOURCES"/> </a> | <a class="toggableLink" toggleDiv="changeHarmonizationUnitDiv" href="#" id="changeHarmonizationUnit"> <bean:message key="label.changeHarmonizationUnit" bundle="SIADAP_RESOURCES"/> </a> | <a class="toggableLink" toggleDiv="changeEvaluatorDiv" href="#" id="changeEvaluator"> <bean:message key="label.changeEvaluator" bundle="SIADAP_RESOURCES"/> </a>
 			<logic:equal name="person" property="customEvaluatorDefined" value="true">
 			| <html:link page="<%="/siadapPersonnelManagement.do?method=removeCustomEvaluator&activity=ChangePersonnelSituation&year=" + year.toString()%>" paramId="personId"  paramName="person"  paramProperty="person.externalId">
 				<bean:message key="label.removeCustomEvaluator" bundle="SIADAP_RESOURCES"/>
 			  </html:link> 
 			</logic:equal>
-			| <a href="#" id="changeSiadapUniverse"> <bean:message key="label.changeSiadapUniverse" bundle="SIADAP_RESOURCES"/> </a>
-			| <a href="#" id="changeCompetenceTypeLink"> <bean:message key="label.changeCompetenceType" bundle="SIADAP_RESOURCES"/> </a>
+			| <a class="toggableLink" toggleDiv="changeSiadapUniverseDiv" href="#" id="changeSiadapUniverse"> <bean:message key="label.changeSiadapUniverse" bundle="SIADAP_RESOURCES"/> </a>
+			| <a class="toggableLink" toggleDiv="changeCompetenceTypeDiv" href="#" id="changeCompetenceTypeLink"> <bean:message key="label.changeCompetenceType" bundle="SIADAP_RESOURCES"/> </a>
+			| <a class="toggableLink" toggleDiv="forceChangeCompetenceTypeDiv" href="#" id="forceChangeCompetenceTypeLink"> <bean:message key="label.forceChangeCompetenceType" bundle="SIADAP_RESOURCES"/> </a>
 		   
 		    <logic:equal value="true" name="isCCAMember">
-		    	| <a href="#" id="forceChangeSiadapUniverse"> <bean:message key="label.forceChangeSiadapUniverse" bundle="SIADAP_RESOURCES"/> </a>
+		    	| <a class="toggableLink" toggleDiv="forceChangeSiadapUniverseDiv" href="#" id="forceChangeSiadapUniverse"> <bean:message key="label.forceChangeSiadapUniverse" bundle="SIADAP_RESOURCES"/> </a>
 		    </logic:equal>
 		</p>
 	</logic:present> 
@@ -170,7 +171,7 @@ request.setAttribute("isCCAMember", isCCAMember);
 	</p>
 	</logic:notPresent>
 	
-	<div id="createSiadapDiv" style="display: none;">
+	<div class="toggableDiv" id="createSiadapDiv" style="display: none;">
 		<div class="highlightBox">
 			<p>Criar SIADAP:</p>
 			<fr:form action="<%="/siadapPersonnelManagement.do?method=createNewSiadapProcess&personId=" + personId + "&year=" + year.toString()%>">
@@ -191,7 +192,7 @@ request.setAttribute("isCCAMember", isCCAMember);
 		</div>
 	</div>
 	
-	<div id="changeCompetenceTypeDiv" style="display: none;">
+	<div class="toggableDiv" id="changeCompetenceTypeDiv" style="display: none;">
 		<div class="highlightBox">
 			<p>Mudar a carreira:</p>
 			<fr:form action="<%="/siadapPersonnelManagement.do?method=changeCompetenceType&activity=ChangePersonnelSituation&personId=" + personId + "&year=" + year.toString()%>">
@@ -212,7 +213,28 @@ request.setAttribute("isCCAMember", isCCAMember);
 		</div>
 	</div>
 	
-	<div id="changeUnitDiv" style="display: none;">
+	<div class="toggableDiv" id="forceChangeCompetenceTypeDiv" style="display: none;">
+		<div class="highlightBox">
+			<p>Forçar a mudança da carreira:</p>
+			<fr:form action="<%="/siadapPersonnelManagement.do?method=forceChangeCompetenceType&activity=ChangePersonnelSituation&personId=" + personId + "&year=" + year.toString()%>">
+				<fr:edit id="forceChangeCompetenceTypeBean" name="forceChangeCompetenceTypeBean" visible="false"/>
+				
+				<fr:edit id="forceChangeCompetenceTypeBean1" name="forceChangeCompetenceTypeBean">
+					<fr:schema bundle="SIADAP_RESOURCES" type="module.siadap.presentationTier.actions.SiadapPersonnelManagement$ForceChangeCompetenceTypeBean">
+						<fr:slot name="competenceType" layout="menu-select">
+							<fr:property name="providerClass" value="module.siadap.presentationTier.renderers.providers.CompetenceTypeProvider" />
+							<fr:property name="format" value="${name}" />
+							<fr:property name="sortBy" value="name" />
+						</fr:slot>
+					</fr:schema>
+				</fr:edit>
+			<html:submit styleClass="inputbutton"><bean:message key="renderers.form.submit.name" bundle="RENDERER_RESOURCES"/></html:submit>
+			</fr:form>
+			
+		</div>
+	</div>
+	
+	<div class="toggableDiv" id="changeUnitDiv" style="display: none;">
 		<div class="highlightBox">
 		<fr:form action="<%= "/siadapPersonnelManagement.do?method=changeWorkingUnit&activity=ChangePersonnelSituation&personId=" + personId + "&year=" + year.toString() %>">
 		<fr:edit id="changeWorkingUnit" name="changeWorkingUnit" visible="false"/>
@@ -260,7 +282,7 @@ request.setAttribute("isCCAMember", isCCAMember);
 		</div>
 	</div>
 	
-	<div id="changeHarmonizationUnitDiv" style="display: none;">
+	<div class="toggableDiv" id="changeHarmonizationUnitDiv" style="display: none;">
 		<div class="highlightBox">
 		<fr:form action="<%= "/siadapPersonnelManagement.do?method=changeHarmonizationUnit&activity=ChangePersonnelSituation&personId=" + personId + "&year=" + year.toString() %>">
 		<fr:edit id="changeHarmonizationUnit" name="changeHarmonizationUnit" visible="false"/>
@@ -302,7 +324,7 @@ request.setAttribute("isCCAMember", isCCAMember);
 		</div>
 	</div>
 	
-	<div id="changeSiadapUniverseDiv" style="display: none;">
+	<div class="toggableDiv" id="changeSiadapUniverseDiv" style="display: none;">
 		<div class="highlightBox">
 			<fr:form action="<%= "/siadapPersonnelManagement.do?method=changeSiadapUniverse&activity=ChangePersonnelSituation&personId=" + personId + "&year=" + year.toString() %>">
 				<fr:edit id="changeSiadapUniverse" name="changeSiadapUniverse">
@@ -319,7 +341,7 @@ request.setAttribute("isCCAMember", isCCAMember);
 	</div>
 	
 	<logic:equal value="true" name="isCCAMember">
-		<div id="forceChangeSiadapUniverseDiv" style="display: none;">
+		<div class="toggableDiv" id="forceChangeSiadapUniverseDiv" style="display: none;">
 			<div class="highlightBox">
 				<fr:form action="<%= "/siadapPersonnelManagement.do?method=changeSiadapUniverse&activity=ChangePersonnelSituation&force=true&personId=" + personId + "&year=" + year.toString() %>">
 					<fr:edit id="forceChangeSiadapUniverse" name="forceChangeSiadapUniverse">
@@ -338,7 +360,7 @@ request.setAttribute("isCCAMember", isCCAMember);
 			</div>
 		</div>
 	</logic:equal>
-	<div id="changeEvaluatorDiv" style="display: none;" >
+	<div class="toggableDiv" id="changeEvaluatorDiv" style="display: none;" >
 		<div class="highlightBox">
 		
 		<fr:form action="<%= "/siadapPersonnelManagement.do?method=changeEvaluator&activity=ChangePersonnelSituation&personId=" + personId + "&year=" + year.toString() %>">
@@ -372,73 +394,15 @@ request.setAttribute("isCCAMember", isCCAMember);
 </logic:equal>
 <script type="text/javascript">
 
-	$("#changeHarmonizationUnit").click(function() {
-		$("#changeEvaluatorDiv").hide();
-		$("#changeSiadapUniverseDiv").hide();
-		$("#forceChangeSiadapUniverseDiv").hide();
-		$("#createSiadapDiv").hide();
-		$("#changeCompetenceTypeDiv").hide();
-		$("#changeUnitDiv").hide();
-		$("#changeHarmonizationUnitDiv").slideToggle();
-	});
-	$("#changeUnit").click(function() {
-		$("#changeEvaluatorDiv").hide();
-		$("#changeSiadapUniverseDiv").hide();
-		$("#forceChangeSiadapUniverseDiv").hide();
-		$("#createSiadapDiv").hide();
-		$("#changeCompetenceTypeDiv").hide();
-		$("#changeHarmonizationUnitDiv").hide();
-		$("#changeUnitDiv").slideToggle();
-	});
-	$("#createSiadapLink").click(function(){
-		$("#changeEvaluatorDiv").hide();
-		$("#changeSiadapUniverseDiv").hide();
-		$("#forceChangeSiadapUniverseDiv").hide();
-		$("#changeUnitDiv").hide();
-		$("#changeCompetenceTypeDiv").hide();
-		$("#changeHarmonizationUnitDiv").hide();
-		$("#createSiadapDiv").slideToggle();
-		return false;
-	});
-	$("#changeCompetenceTypeLink").click(function(){
-		$("#changeEvaluatorDiv").hide();
-		$("#changeSiadapUniverseDiv").hide();
-		$("#forceChangeSiadapUniverseDiv").hide();
-		$("#changeUnitDiv").hide();
-		$("#createSiadapDiv").hide();
-		$("#changeHarmonizationUnitDiv").hide();
-		$("#changeCompetenceTypeDiv").slideToggle();
-		return false;
-	});
+	$('.toggableLink').each(function(index, Element){
+		  console.log('coisas' + $(this).attr('togglediv'));
 	
-	$("#changeSiadapUniverse").click(function() {
-		$("#changeEvaluatorDiv").hide();
-		$("#changeUnitDiv").hide();
-		$("#createSiadapDiv").hide();
-		$("#changeCompetenceTypeDiv").hide();
-		$("#forceChangeSiadapUniverseDiv").hide();
-		$("#changeSiadapUniverseDiv").slideToggle();
-		$("#changeHarmonizationUnitDiv").hide();
-	});
-
-	$("#changeEvaluator").click(function() {
-		$("#changeUnitDiv").hide();
-		$("#changeSiadapUniverseDiv").hide();
-		$("#createSiadapDiv").hide();
-		$("#changeCompetenceTypeDiv").hide();
-		$("#forceChangeSiadapUniverseDiv").hide();
-		$("#changeHarmonizationUnitDiv").hide();
-		$("#changeEvaluatorDiv").slideToggle();
-	});
-	
-	$("#forceChangeSiadapUniverse").click(function() {
-		$("#changeEvaluatorDiv").hide();
-		$("#changeUnitDiv").hide();
-		$("#createSiadapDiv").hide();
-		$("#changeCompetenceTypeDiv").hide();
-		$("#changeSiadapUniverseDiv").hide();
-		$("#changeHarmonizationUnitDiv").hide();
-		$("#forceChangeSiadapUniverseDiv").slideToggle();
+		 $(this).click(function(){
+		   var div = '#' + $(this).attr('togglediv');
+		   $('.toggableDiv').hide();
+		   $(div).slideToggle();
+		
+		  });
 	});
 
 </script>
