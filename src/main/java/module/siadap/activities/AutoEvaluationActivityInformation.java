@@ -38,132 +38,132 @@ import module.workflow.domain.WorkflowProcess;
  */
 public class AutoEvaluationActivityInformation extends ActivityInformation<SiadapProcess> {
 
-    private String objectivesJustification;
-    private String competencesJustification;
-    private String otherFactorsJustification;
-    private String extremesJustification;
-    private String commentsAndProposals;
+	private String objectivesJustification;
+	private String competencesJustification;
+	private String otherFactorsJustification;
+	private String extremesJustification;
+	private String commentsAndProposals;
 
-    private Integer factorOneClassification;
-    private Integer factorTwoClassification;
-    private Integer factorThreeClassification;
-    private Integer factorFourClassification;
-    private Integer factorFiveClassification;
-    private Integer factorSixClassification;
+	private Integer factorOneClassification;
+	private Integer factorTwoClassification;
+	private Integer factorThreeClassification;
+	private Integer factorFourClassification;
+	private Integer factorFiveClassification;
+	private Integer factorSixClassification;
 
-    public AutoEvaluationActivityInformation(SiadapProcess process,
-	    WorkflowActivity<? extends WorkflowProcess, ? extends ActivityInformation> activity) {
-	super(process, activity);
-	SiadapAutoEvaluation autoEvaluationData = process.getSiadap().getAutoEvaluationData2();
+	public AutoEvaluationActivityInformation(SiadapProcess process,
+			WorkflowActivity<? extends WorkflowProcess, ? extends ActivityInformation> activity) {
+		super(process, activity);
+		SiadapAutoEvaluation autoEvaluationData = process.getSiadap().getAutoEvaluationData2();
 
-	if (autoEvaluationData != null) {
+		if (autoEvaluationData != null) {
 
-	    setFactorOneClassification(autoEvaluationData.getFactorOneClassification());
-	    setFactorTwoClassification(autoEvaluationData.getFactorTwoClassification());
-	    setFactorThreeClassification(autoEvaluationData.getFactorThreeClassification());
-	    setFactorFourClassification(autoEvaluationData.getFactorFourClassification());
-	    setFactorFiveClassification(autoEvaluationData.getFactorFiveClassification());
-	    setFactorSixClassification(autoEvaluationData.getFactorSixClassification());
+			setFactorOneClassification(autoEvaluationData.getFactorOneClassification());
+			setFactorTwoClassification(autoEvaluationData.getFactorTwoClassification());
+			setFactorThreeClassification(autoEvaluationData.getFactorThreeClassification());
+			setFactorFourClassification(autoEvaluationData.getFactorFourClassification());
+			setFactorFiveClassification(autoEvaluationData.getFactorFiveClassification());
+			setFactorSixClassification(autoEvaluationData.getFactorSixClassification());
 
-	    setObjectivesJustification(autoEvaluationData.getObjectivesJustification());
-	    setCompetencesJustification(autoEvaluationData.getCompetencesJustification());
-	    setOtherFactorsJustification(autoEvaluationData.getOtherFactorsJustification());
-	    setExtremesJustification(autoEvaluationData.getExtremesJustification());
-	    setCommentsAndProposals(autoEvaluationData.getCommentsAndProposals());
+			setObjectivesJustification(autoEvaluationData.getObjectivesJustification());
+			setCompetencesJustification(autoEvaluationData.getCompetencesJustification());
+			setOtherFactorsJustification(autoEvaluationData.getOtherFactorsJustification());
+			setExtremesJustification(autoEvaluationData.getExtremesJustification());
+			setCommentsAndProposals(autoEvaluationData.getCommentsAndProposals());
+		}
 	}
-    }
 
-    public String getObjectivesJustification() {
-	return objectivesJustification;
-    }
+	public String getObjectivesJustification() {
+		return objectivesJustification;
+	}
 
-    public void setObjectivesJustification(String objectivesJustification) {
-	this.objectivesJustification = objectivesJustification;
-    }
+	public void setObjectivesJustification(String objectivesJustification) {
+		this.objectivesJustification = objectivesJustification;
+	}
 
-    public String getCompetencesJustification() {
-	return competencesJustification;
-    }
+	public String getCompetencesJustification() {
+		return competencesJustification;
+	}
 
-    public void setCompetencesJustification(String competencesJustification) {
-	this.competencesJustification = competencesJustification;
-    }
+	public void setCompetencesJustification(String competencesJustification) {
+		this.competencesJustification = competencesJustification;
+	}
 
-    public String getOtherFactorsJustification() {
-	return otherFactorsJustification;
-    }
+	public String getOtherFactorsJustification() {
+		return otherFactorsJustification;
+	}
 
-    public void setOtherFactorsJustification(String otherFactorsJustification) {
-	this.otherFactorsJustification = otherFactorsJustification;
-    }
+	public void setOtherFactorsJustification(String otherFactorsJustification) {
+		this.otherFactorsJustification = otherFactorsJustification;
+	}
 
-    public String getExtremesJustification() {
-	return extremesJustification;
-    }
+	public String getExtremesJustification() {
+		return extremesJustification;
+	}
 
-    public void setExtremesJustification(String extremesJustification) {
-	this.extremesJustification = extremesJustification;
-    }
+	public void setExtremesJustification(String extremesJustification) {
+		this.extremesJustification = extremesJustification;
+	}
 
-    public String getCommentsAndProposals() {
-	return commentsAndProposals;
-    }
+	public String getCommentsAndProposals() {
+		return commentsAndProposals;
+	}
 
-    public void setCommentsAndProposals(String commentsAndProposals) {
-	this.commentsAndProposals = commentsAndProposals;
-    }
+	public void setCommentsAndProposals(String commentsAndProposals) {
+		this.commentsAndProposals = commentsAndProposals;
+	}
 
-    public Integer getFactorOneClassification() {
-	return factorOneClassification;
-    }
+	public Integer getFactorOneClassification() {
+		return factorOneClassification;
+	}
 
-    public void setFactorOneClassification(Integer factorOneClassification) {
-	this.factorOneClassification = factorOneClassification;
-    }
+	public void setFactorOneClassification(Integer factorOneClassification) {
+		this.factorOneClassification = factorOneClassification;
+	}
 
-    public Integer getFactorTwoClassification() {
-	return factorTwoClassification;
-    }
+	public Integer getFactorTwoClassification() {
+		return factorTwoClassification;
+	}
 
-    public void setFactorTwoClassification(Integer factorTwoClassification) {
-	this.factorTwoClassification = factorTwoClassification;
-    }
+	public void setFactorTwoClassification(Integer factorTwoClassification) {
+		this.factorTwoClassification = factorTwoClassification;
+	}
 
-    public Integer getFactorThreeClassification() {
-	return factorThreeClassification;
-    }
+	public Integer getFactorThreeClassification() {
+		return factorThreeClassification;
+	}
 
-    public void setFactorThreeClassification(Integer factorThreeClassification) {
-	this.factorThreeClassification = factorThreeClassification;
-    }
+	public void setFactorThreeClassification(Integer factorThreeClassification) {
+		this.factorThreeClassification = factorThreeClassification;
+	}
 
-    public Integer getFactorFourClassification() {
-	return factorFourClassification;
-    }
+	public Integer getFactorFourClassification() {
+		return factorFourClassification;
+	}
 
-    public void setFactorFourClassification(Integer factorFourClassification) {
-	this.factorFourClassification = factorFourClassification;
-    }
+	public void setFactorFourClassification(Integer factorFourClassification) {
+		this.factorFourClassification = factorFourClassification;
+	}
 
-    public Integer getFactorFiveClassification() {
-	return factorFiveClassification;
-    }
+	public Integer getFactorFiveClassification() {
+		return factorFiveClassification;
+	}
 
-    public void setFactorFiveClassification(Integer factorFiveClassification) {
-	this.factorFiveClassification = factorFiveClassification;
-    }
+	public void setFactorFiveClassification(Integer factorFiveClassification) {
+		this.factorFiveClassification = factorFiveClassification;
+	}
 
-    public Integer getFactorSixClassification() {
-	return factorSixClassification;
-    }
+	public Integer getFactorSixClassification() {
+		return factorSixClassification;
+	}
 
-    public void setFactorSixClassification(Integer factorSixClassification) {
-	this.factorSixClassification = factorSixClassification;
-    }
+	public void setFactorSixClassification(Integer factorSixClassification) {
+		this.factorSixClassification = factorSixClassification;
+	}
 
-    @Override
-    public boolean hasAllneededInfo() {
-	return isForwardedFromInput();
-    }
+	@Override
+	public boolean hasAllneededInfo() {
+		return isForwardedFromInput();
+	}
 
 }

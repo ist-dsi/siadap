@@ -29,14 +29,13 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
-import pt.ist.bennu.core.presentationTier.renderers.autoCompleteProvider.AutoCompleteProvider;
-import pt.ist.fenixframework.pstm.AbstractDomainObject;
-import pt.utl.ist.fenix.tools.util.StringNormalizer;
-
 import module.organization.domain.Person;
 import module.organization.domain.Unit;
 import module.siadap.domain.wrappers.PersonSiadapWrapper;
 import module.siadap.domain.wrappers.UnitSiadapWrapper;
+import pt.ist.bennu.core.presentationTier.renderers.autoCompleteProvider.AutoCompleteProvider;
+import pt.ist.fenixframework.pstm.AbstractDomainObject;
+import pt.utl.ist.fenix.tools.util.StringNormalizer;
 
 /**
  * 
@@ -45,39 +44,39 @@ import module.siadap.domain.wrappers.UnitSiadapWrapper;
  */
 public class ExceedingQuotaSuggestionProvider implements AutoCompleteProvider {
 
-    @Override
-    public Collection getSearchResults(Map<String, String> argsMap, String value, int maxCount) {
-	Unit unit = AbstractDomainObject.fromExternalId(argsMap.get("unitId"));
-	int year = Integer.parseInt(argsMap.get("year"));
+	@Override
+	public Collection getSearchResults(Map<String, String> argsMap, String value, int maxCount) {
+		Unit unit = AbstractDomainObject.fromExternalId(argsMap.get("unitId"));
+		int year = Integer.parseInt(argsMap.get("year"));
 
-	//we have to get the people with any kind of no given
-	List<PersonSiadapWrapper> unitCandidatesForSuggestion = new UnitSiadapWrapper(unit, year)
-		.getPeopleHarmonizedWithAnyNoAssessment();
-	List<Person> person = new ArrayList<Person>();
+		//we have to get the people with any kind of no given
+		List<PersonSiadapWrapper> unitCandidatesForSuggestion =
+				new UnitSiadapWrapper(unit, year).getPeopleHarmonizedWithAnyNoAssessment();
+		List<Person> person = new ArrayList<Person>();
 
-	String[] values = StringNormalizer.normalize(value).toLowerCase().split(" ");
+		String[] values = StringNormalizer.normalize(value).toLowerCase().split(" ");
 
-	for (PersonSiadapWrapper wrapper : unitCandidatesForSuggestion) {
-	    final String normalizedName = StringNormalizer.normalize(wrapper.getPerson().getName()).toLowerCase();
-	    if (hasMatch(values, normalizedName)) {
-		person.add(wrapper.getPerson());
-	    }
+		for (PersonSiadapWrapper wrapper : unitCandidatesForSuggestion) {
+			final String normalizedName = StringNormalizer.normalize(wrapper.getPerson().getName()).toLowerCase();
+			if (hasMatch(values, normalizedName)) {
+				person.add(wrapper.getPerson());
+			}
+		}
+
+		return person;
 	}
 
-	return person;
-    }
-
-    public static boolean willProviderReturnResults(Unit unit, int year) {
-	return !new UnitSiadapWrapper(unit, year).getPeopleHarmonizedWithAnyNoAssessment().isEmpty();
-    }
-
-    private boolean hasMatch(String[] input, String personNameParts) {
-	for (final String namePart : input) {
-	    if (personNameParts.indexOf(namePart) == -1) {
-		return false;
-	    }
+	public static boolean willProviderReturnResults(Unit unit, int year) {
+		return !new UnitSiadapWrapper(unit, year).getPeopleHarmonizedWithAnyNoAssessment().isEmpty();
 	}
-	return true;
-    }
+
+	private boolean hasMatch(String[] input, String personNameParts) {
+		for (final String namePart : input) {
+			if (personNameParts.indexOf(namePart) == -1) {
+				return false;
+			}
+		}
+		return true;
+	}
 
 }

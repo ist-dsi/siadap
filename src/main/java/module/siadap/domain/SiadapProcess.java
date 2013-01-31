@@ -30,19 +30,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.MissingResourceException;
 
-import org.joda.time.LocalDate;
-
-import pt.ist.bennu.core.applicationTier.Authenticate.UserView;
-import pt.ist.bennu.core.domain.RoleType;
-import pt.ist.bennu.core.domain.User;
-import pt.ist.bennu.core.domain.VirtualHost;
-import pt.ist.bennu.core.domain.exceptions.DomainException;
-import pt.ist.bennu.core.domain.groups.Role;
-import pt.ist.bennu.core.util.BundleUtil;
-import pt.ist.bennu.core.util.ClassNameBundle;
-import pt.ist.emailNotifier.domain.Email;
-import pt.ist.fenixWebFramework.services.Service;
-
 import module.organization.domain.Person;
 import module.organizationIst.domain.listner.LoginListner;
 import module.siadap.activities.AcknowledgeEvaluationObjectives;
@@ -87,6 +74,19 @@ import module.workflow.domain.WorkflowLog;
 import module.workflow.domain.WorkflowProcess;
 import module.workflow.domain.WorkflowSystem;
 
+import org.joda.time.LocalDate;
+
+import pt.ist.bennu.core.applicationTier.Authenticate.UserView;
+import pt.ist.bennu.core.domain.RoleType;
+import pt.ist.bennu.core.domain.User;
+import pt.ist.bennu.core.domain.VirtualHost;
+import pt.ist.bennu.core.domain.exceptions.DomainException;
+import pt.ist.bennu.core.domain.groups.Role;
+import pt.ist.bennu.core.util.BundleUtil;
+import pt.ist.bennu.core.util.ClassNameBundle;
+import pt.ist.emailNotifier.domain.Email;
+import pt.ist.fenixWebFramework.services.Service;
+
 /**
  * 
  * @author João Antunes
@@ -97,391 +97,400 @@ import module.workflow.domain.WorkflowSystem;
 @ClassNameBundle(bundle = "resources/SiadapResources", key = "label.process.siadap")
 public class SiadapProcess extends SiadapProcess_Base {
 
-    private static List<WorkflowActivity<SiadapProcess, ? extends ActivityInformation<SiadapProcess>>> activities = new ArrayList<WorkflowActivity<SiadapProcess, ? extends ActivityInformation<SiadapProcess>>>();
+	private static List<WorkflowActivity<SiadapProcess, ? extends ActivityInformation<SiadapProcess>>> activities =
+			new ArrayList<WorkflowActivity<SiadapProcess, ? extends ActivityInformation<SiadapProcess>>>();
 
-    static {
-	activities.add(new NullifyProcess());
-	activities.add(new RectifyNullifiedProcess());
+	static {
+		activities.add(new NullifyProcess());
+		activities.add(new RectifyNullifiedProcess());
 
-	activities.add(new ChangeCustomSchedule());
-	activities.add(new RevertState());
-	activities.add(new RemoveCustomSchedule());
-	activities.add(new CreateObjectiveEvaluation());
-	activities.add(new RemoveObjectiveEvaluation());
-	activities.add(new CreateCompetenceEvaluation());
-	activities.add(new EditCompetenceEvaluation());
-	activities.add(new SealObjectivesAndCompetences());
-	activities.add(new AcknowledgeEvaluationObjectives());
-	activities.add(new AutoEvaluation());
-	activities.add(new SubmitAutoEvaluation());
-	activities.add(new Evaluation());
-	activities.add(new SubmitEvaluation());
-	activities.add(new CurricularPonderationAttribution());
-	activities.add(new ValidateEvaluation());
-	activities.add(new ForceReadinessToHomologate());
-	activities.add(new SubmitValidatedEvaluation());
-	activities.add(new AcknowledgeEvaluationValidation());
-	activities.add(new Homologate());
-	activities.add(new AcknowledgeHomologation());
-	activities.add(new EditObjectiveEvaluation());
-	activities.add(new SubmitForObjectivesAcknowledge());
-	// activities.add(new NotValidateEvaluation());
-	activities.add(new NoEvaluation());
-	activities.add(new RevertNoEvaluation());
-	// activities.add(new GrantExcellencyAward());
-	// activities.add(new RevokeExcellencyAward());
+		activities.add(new ChangeCustomSchedule());
+		activities.add(new RevertState());
+		activities.add(new RemoveCustomSchedule());
+		activities.add(new CreateObjectiveEvaluation());
+		activities.add(new RemoveObjectiveEvaluation());
+		activities.add(new CreateCompetenceEvaluation());
+		activities.add(new EditCompetenceEvaluation());
+		activities.add(new SealObjectivesAndCompetences());
+		activities.add(new AcknowledgeEvaluationObjectives());
+		activities.add(new AutoEvaluation());
+		activities.add(new SubmitAutoEvaluation());
+		activities.add(new Evaluation());
+		activities.add(new SubmitEvaluation());
+		activities.add(new CurricularPonderationAttribution());
+		activities.add(new ValidateEvaluation());
+		activities.add(new ForceReadinessToHomologate());
+		activities.add(new SubmitValidatedEvaluation());
+		activities.add(new AcknowledgeEvaluationValidation());
+		activities.add(new Homologate());
+		activities.add(new AcknowledgeHomologation());
+		activities.add(new EditObjectiveEvaluation());
+		activities.add(new SubmitForObjectivesAcknowledge());
+		// activities.add(new NotValidateEvaluation());
+		activities.add(new NoEvaluation());
+		activities.add(new RevertNoEvaluation());
+		// activities.add(new GrantExcellencyAward());
+		// activities.add(new RevokeExcellencyAward());
 
-	activities.add(new ForceEditCompetenceSlashCareerEvaluationByCCA());
+		activities.add(new ForceEditCompetenceSlashCareerEvaluationByCCA());
 
-	activities.add(new Validation());
+		activities.add(new Validation());
 
-	// SiadapPersonnelManagement activities:
-	activities.add(new ChangePersonnelSituation());
+		// SiadapPersonnelManagement activities:
+		activities.add(new ChangePersonnelSituation());
 
-	activities.add(new SendToReviewCommission());
+		activities.add(new SendToReviewCommission());
 
-	activities.add(new ChangeGradeAnytimeAfterValidationByCCA());
+		activities.add(new ChangeGradeAnytimeAfterValidationByCCA());
 
-    }
-
-    private HashMap<User, ArrayList<String>> userWarningsKey = new HashMap<User, ArrayList<String>>();
-
-    public SiadapProcess(Integer year, Person evaluated, SiadapUniverse siadapUniverse, CompetenceType competenceType) {
-	super();
-
-	if (competenceType == null || siadapUniverse == null)
-	    throw new SiadapException("error.create.siadap.must.fill.competenceType.and.SiadapUniverse");
-
-	User currentUser = UserView.getCurrentUser();
-	Person possibleEvaluator = currentUser.getPerson();
-	PersonSiadapWrapper evaluator = new PersonSiadapWrapper(evaluated, year).getEvaluator();
-	SiadapYearConfiguration configuration = SiadapYearConfiguration.getSiadapYearConfiguration(year);
-
-	boolean belongsToASuperGroup = false;
-	if ((configuration.getCcaMembers() != null && configuration.getCcaMembers().contains(currentUser.getPerson()))
-		|| (configuration.getScheduleEditors() != null && configuration.getScheduleEditors().contains(
-			currentUser.getPerson())) || Role.getRole(RoleType.MANAGER).isMember(currentUser)
-		|| configuration.getStructureManagementGroupMembers().contains(currentUser.getPerson())) {
-	    belongsToASuperGroup = true;
-	}
-	if (!belongsToASuperGroup) {
-	    if (evaluator == null || evaluator.getPerson() != possibleEvaluator) {
-		throw new DomainException("error.onlyEvaluatorCanCreateSiadap");
-	    }
 	}
 
-	setWorkflowSystem(WorkflowSystem.getInstance());
-	setSiadap(new Siadap(year, evaluated, siadapUniverse, competenceType));
-	setProcessNumber("S" + year + "/" + evaluated.getUser().getUsername());
+	private HashMap<User, ArrayList<String>> userWarningsKey = new HashMap<User, ArrayList<String>>();
 
-	new LabelLog(this, currentUser, this.getClass().getName() + ".creation", "resources/SiadapResources",
-		evaluated.getName(), year.toString(), siadapUniverse.getLocalizedName(), competenceType.getName());
-    }
+	public SiadapProcess(Integer year, Person evaluated, SiadapUniverse siadapUniverse, CompetenceType competenceType) {
+		super();
 
-    public List<String> getAndClearWarningMessages() {
-	List<String> warningMessages = getWarningMessages();
-	clearWarningMessagesForCurrentUser();
-	return warningMessages;
-    }
-
-    @Override
-    public boolean isCreatedByAvailable() {
-	return false;
-    }
-
-    public List<String> getWarningMessages() {
-	User currentUser = UserView.getCurrentUser();
-	ArrayList<String> warningMessagesToReturn = new ArrayList<String>();
-	// for each let's try to translate it using the resources, case it can't
-	// be found we print it as it is
-	ArrayList<String> warningMessages = getUserWarningsKey().get(currentUser);
-	if (warningMessages == null) {
-	    warningMessages = new ArrayList<String>();
-	    getUserWarningsKey().put(currentUser, warningMessages);
-	}
-	for (String string : warningMessages) {
-	    try {
-		warningMessagesToReturn.add(BundleUtil.getFormattedStringFromResourceBundle("resources/SiadapResources", string));
-	    } catch (MissingResourceException e) {
-		warningMessagesToReturn.add(string);
-	    }
-	}
-
-	return warningMessagesToReturn;
-    }
-
-    public void addWarningMessage(String messageKeyOrContent) {
-	User currentUser = UserView.getCurrentUser();
-	addWarningMessage(currentUser, messageKeyOrContent);
-    }
-
-    protected void addWarningMessage(User user, String messageKeyOrContent) {
-	ArrayList<String> warningMessages = getUserWarningsKey().get(user);
-	if (warningMessages == null) {
-	    warningMessages = new ArrayList<String>();
-	}
-	warningMessages.add(messageKeyOrContent);
-	getUserWarningsKey().put(user, warningMessages);
-    }
-
-    protected void clearWarningMessagesForCurrentUser() {
-	User currentUser = UserView.getCurrentUser();
-	clearWarningMessages(currentUser);
-    }
-
-    protected void clearWarningMessages(User user) {
-	getUserWarningsKey().put(user, new ArrayList<String>());
-    }
-
-    @Override
-    public <T extends WorkflowActivity<? extends WorkflowProcess, ? extends ActivityInformation>> List<T> getActivities() {
-	return (List<T>) activities;
-    }
-
-    public static WorkflowActivity<? extends WorkflowProcess, ? extends ActivityInformation<?>> getActivityStaticly(
-	    String activityName) {
-	for (WorkflowActivity<? extends WorkflowProcess, ? extends ActivityInformation<?>> activity : activities) {
-	    if (activity.getName().equals(activityName)) {
-		return activity;
-	    }
-	}
-	return null;
-    }
-
-    @Override
-    public User getProcessCreator() {
-	return getSiadap().getEvaluator().getPerson().getUser();
-    }
-
-    @Override
-    public boolean isActive() {
-	if (getSiadap().getState().equals(SiadapProcessStateEnum.NULLED))
-	    return false;
-	return true;
-    }
-
-    @Override
-    public void notifyUserDueToComment(User user, String comment) {
-	// TODO Auto-generated method stub
-    }
-
-    @Service
-    public static SiadapProcess createNewProcess(Person evaluated, Integer year, SiadapUniverse siadapUniverse,
-	    CompetenceType competenceType) throws SiadapException {
-	return new SiadapProcess(year, evaluated, siadapUniverse, competenceType);
-    }
-
-    @Override
-    public boolean isAccessible(User user) {
-	Person person = user.getPerson();
-	SiadapYearConfiguration configuration = getSiadap().getSiadapYearConfiguration();
-	return person == getSiadap().getEvaluated() || person == getSiadap().getEvaluator().getPerson()
-		|| isResponsibleForHarmonization(person, getSiadap().getEvaluated()) || configuration.isPersonMemberOfCCA(person)
-		|| configuration.isPersonResponsibleForHomologation(person)
-		|| configuration.isPersonMemberOfScheduleExtenders(person);
-    }
-
-    private boolean isResponsibleForHarmonization(Person accessor, Person evaluated) {
-	PersonSiadapWrapper wrapper = new PersonSiadapWrapper(evaluated, getSiadap().getYear());
-	return wrapper.isResponsibleForHarmonization(accessor);
-    }
-
-    public void markAsHarmonized(SiadapEvaluationUniverse evaluationUniverse) {
-	String siadapUniverseLocalizedName = evaluationUniverse.getSiadapUniverse().getLocalizedName();
-	if (evaluationUniverse.isCurriculumPonderation()) {
-	    siadapUniverseLocalizedName += " ("
-		    + BundleUtil.getStringFromResourceBundle(Siadap.SIADAP_BUNDLE_STRING, "label.curricularPonderation") + " )";
-	}
-	new LabelLog(this, UserView.getCurrentUser(), "label.terminateHarmonization.for", "resources/SiadapResources",
-		siadapUniverseLocalizedName);
-    }
-
-    protected void markAsHarmonizationAssessmentGiven(SiadapEvaluationUniverse evaluationUniverse) {
-	String siadapUniverseLocalizedName = evaluationUniverse.getSiadapUniverse().getLocalizedName();
-	if (evaluationUniverse.isCurriculumPonderation()) {
-	    siadapUniverseLocalizedName += " ("
-		    + BundleUtil.getStringFromResourceBundle(Siadap.SIADAP_BUNDLE_STRING, "label.curricularPonderation") + " )";
-	}
-	new LabelLog(this, UserView.getCurrentUser(), "label.givenHarmonizationAssessment.for", "resources/SiadapResources",
-		siadapUniverseLocalizedName);
-    }
-
-    public void removeHarmonizationMark(SiadapEvaluationUniverse evaluationUniverse) {
-	String siadapUniverseLocalizedName = evaluationUniverse.getSiadapUniverse().getLocalizedName();
-	if (evaluationUniverse.isCurriculumPonderation()) {
-	    siadapUniverseLocalizedName += " ("
-		    + BundleUtil.getStringFromResourceBundle(Siadap.SIADAP_BUNDLE_STRING, "label.curricularPonderation") + " )";
-	}
-	new LabelLog(this, UserView.getCurrentUser(), "label.reOpenHarmonization.for", "resources/SiadapResources",
-		siadapUniverseLocalizedName);
-    }
-
-    public boolean isUserEvaluated(User user) {
-	return getSiadap().getEvaluated().getUser() == user;
-    }
-
-    public boolean isProcessSealed() {
-	return getSiadap().getObjectivesAndCompetencesSealedDate() != null;
-    }
-
-    public boolean isCurrentUserEvaluated() {
-	return isUserEvaluated(UserView.getCurrentUser());
-    }
-
-    public static void checkEmailExistenceImportAndWarnOnError(Person person) {
-	// if we have no info about the person, let's import it
-	if (Siadap.getRemoteEmail(person) == null) {
-	    LoginListner.importUserInformation(person.getUser().getUsername());
-	}
-	// if that didn't solved it, let's warn the admin by e-mail
-	if (Siadap.getRemoteEmail(person) == null) {
-	    StringBuilder message = new StringBuilder("Error, could not import e-mail/info for person " + person.getName() + "\n");
-	    if (person.getUser() != null && person.getUser().getUsername() != null) {
-		message.append("the username is: " + person.getUser().getUsername() + "\n");
-
-	    }
-	    message.append("Please take appropriate actions\n");
-	    notifyAdmin("[Bennu/Myorg] - Error retrieving remote information from fenix for a user", message.toString());
-	}
-    }
-
-    // TODO change this so that the e-mail isn't hardcoded and there is a batch
-    // sent not for each error an e-mail
-    private static void notifyAdmin(String subject, String message) {
-	ArrayList<String> toAddress = new ArrayList<String>();
-	toAddress.add("joao.antunes@tagus.ist.utl.pt");
-	final VirtualHost virtualHost = VirtualHost.getVirtualHostForThread();
-	new Email(virtualHost.getApplicationSubTitle().getContent(), virtualHost.getSystemEmailAddress(), new String[] {},
-		toAddress, Collections.EMPTY_LIST, Collections.EMPTY_LIST, subject, message);
-    }
-
-    @Override
-    public boolean isTicketSupportAvailable() {
-	return false;
-    }
-
-    public boolean isNotSubmittedForConfirmation() {
-	return SiadapProcessStateEnum.isNotSubmittedForConfirmation(getSiadap());
-    }
-
-    public HashMap<User, ArrayList<String>> getUserWarningsKey() {
-	if (userWarningsKey == null)
-	    userWarningsKey = new HashMap<User, ArrayList<String>>();
-	return userWarningsKey;
-    }
-
-    @Override
-    public List<Class<? extends ProcessFile>> getDisplayableFileTypes() {
-	List<Class<? extends ProcessFile>> availableClasses = new ArrayList<Class<? extends ProcessFile>>();
-	availableClasses.add(ProcessFile.class);
-	availableClasses.add(HomologationDocumentFile.class);
-	return availableClasses;
-    }
-
-    /**
-     * Changes the custom deadlines as specified by the parameter
-     * processSchedulesEnum which must be one of
-     * {@link SiadapProcessSchedulesEnum}
-     * 
-     * @param processSchedulesEnum
-     *            the representation of which schedule
-     *            {@link SiadapProcessSchedulesEnum}
-     * @param newDate
-     *            the new date to use for this schedule
-     */
-    @Service
-    public void changeCustomSiadapSchedule(SiadapProcessSchedulesEnum processSchedulesEnum, LocalDate newDate) {
-	Siadap siadap = getSiadap();
-	switch (processSchedulesEnum) {
-	case OBJECTIVES_SPECIFICATION_BEGIN_DATE:
-	    siadap.setCustomObjectiveSpecificationBegin(newDate);
-	    break;
-	case OBJECTIVES_SPECIFICATION_END_DATE:
-	    siadap.setCustomObjectiveSpecificationEnd(newDate);
-	    break;
-	case AUTOEVALUATION_BEGIN_DATE:
-	    siadap.setCustomAutoEvaluationBegin(newDate);
-	    break;
-	case AUTOEVALUATION_END_DATE:
-	    siadap.setCustomAutoEvaluationEnd(newDate);
-	    break;
-	case EVALUATION_BEGIN_DATE:
-	    siadap.setCustomEvaluationBegin(newDate);
-	    break;
-	case EVALUATION_END_DATE:
-	    siadap.setCustomEvaluationEnd(newDate);
-	    break;
-	default:
-	    throw new DomainException();
-	}
-
-    }
-
-    /**
-     * Method that is called whenever there are changes to the evaluation
-     * objectives (either the objectives or the competences got deleted/edited)
-     * in which case, this method triggers the side effects of doing so. At the
-     * moment it will only revert the status from submitted to the evaluatee to
-     * not submitted and possibly warn the user about it
-     */
-    public void signalChangesInEvaluationObjectives() {
-	int stateOrdinal = SiadapProcessStateEnum.getState(getSiadap()).ordinal();
-	if (stateOrdinal == SiadapProcessStateEnum.WAITING_EVAL_OBJ_ACK.ordinal()
-		|| stateOrdinal == SiadapProcessStateEnum.WAITING_SELF_EVALUATION.ordinal()) {
-	    RevertState revertState = null;
-	    for (WorkflowActivity activity : activities) {
-		if (RevertState.class.isAssignableFrom(activity.getClass())) {
-		    revertState = (RevertState) activity;
-		    break;
+		if (competenceType == null || siadapUniverse == null) {
+			throw new SiadapException("error.create.siadap.must.fill.competenceType.and.SiadapUniverse");
 		}
-	    }
-	    if (revertState == null)
-		revertState = new RevertState();
-	    revertState.setSideEffect(true);
-	    RevertStateActivityInformation activityInformation = (RevertStateActivityInformation) revertState
-		    .getActivityInformation(this);
-	    activityInformation.setSiadapProcessStateEnum(SiadapProcessStateEnum.NOT_YET_SUBMITTED_FOR_ACK);
-	    activityInformation.setJustification("Edição/remoção de objectivos/competências");
-	    revertState.execute(activityInformation);
-	    return;
+
+		User currentUser = UserView.getCurrentUser();
+		Person possibleEvaluator = currentUser.getPerson();
+		PersonSiadapWrapper evaluator = new PersonSiadapWrapper(evaluated, year).getEvaluator();
+		SiadapYearConfiguration configuration = SiadapYearConfiguration.getSiadapYearConfiguration(year);
+
+		boolean belongsToASuperGroup = false;
+		if ((configuration.getCcaMembers() != null && configuration.getCcaMembers().contains(currentUser.getPerson()))
+				|| (configuration.getScheduleEditors() != null && configuration.getScheduleEditors().contains(
+						currentUser.getPerson())) || Role.getRole(RoleType.MANAGER).isMember(currentUser)
+				|| configuration.getStructureManagementGroupMembers().contains(currentUser.getPerson())) {
+			belongsToASuperGroup = true;
+		}
+		if (!belongsToASuperGroup) {
+			if (evaluator == null || evaluator.getPerson() != possibleEvaluator) {
+				throw new DomainException("error.onlyEvaluatorCanCreateSiadap");
+			}
+		}
+
+		setWorkflowSystem(WorkflowSystem.getInstance());
+		setSiadap(new Siadap(year, evaluated, siadapUniverse, competenceType));
+		setProcessNumber("S" + year + "/" + evaluated.getUser().getUsername());
+
+		new LabelLog(this, currentUser, this.getClass().getName() + ".creation", "resources/SiadapResources",
+				evaluated.getName(), year.toString(), siadapUniverse.getLocalizedName(), competenceType.getName());
 	}
-    }
 
-    public boolean isSubmittedForEvalObjsConfirmation() {
-	return getSiadap().getRequestedAcknowledgeDate() != null;
-    }
-
-    public boolean isEvalObjectivesAcknowledged() {
-	return getSiadap().isEvaluatedWithKnowledgeOfObjectives();
-    }
-
-    public void removeHarmonizationAssessments(SiadapEvaluationUniverse siadapEvaluationUniverse) {
-	String siadapUniverseLocalizedName = siadapEvaluationUniverse.getSiadapUniverse().getLocalizedName();
-	if (siadapEvaluationUniverse.isCurriculumPonderation()) {
-	    siadapUniverseLocalizedName += " ("
-		    + BundleUtil.getStringFromResourceBundle(Siadap.SIADAP_BUNDLE_STRING, "label.curricularPonderation") + " )";
+	public List<String> getAndClearWarningMessages() {
+		List<String> warningMessages = getWarningMessages();
+		clearWarningMessagesForCurrentUser();
+		return warningMessages;
 	}
-	new LabelLog(this, UserView.getCurrentUser(), "label.removedHarmonizationAssessment.for", "resources/SiadapResources",
-		siadapUniverseLocalizedName);
 
-    }
-
-    /**
-     * Deletes the proccess if it has no relevant info on it (more than one
-     * logged activity, any comment, etc)
-     */
-    protected void delete(boolean neglectLogSize) {
-	releaseProcess();
-	List<WorkflowLog> executionLogs = getExecutionLogs();
-	if (!neglectLogSize && executionLogs.size() > 1)
-	    throw new SiadapException("error.has.items.in.it");
-	for (WorkflowLog exLog : executionLogs) {
-	    removeExecutionLogs(exLog);
+	@Override
+	public boolean isCreatedByAvailable() {
+		return false;
 	}
-	removeSiadap();
-	removeWorkflowSystem();
-	deleteDomainObject();
 
-    }
+	public List<String> getWarningMessages() {
+		User currentUser = UserView.getCurrentUser();
+		ArrayList<String> warningMessagesToReturn = new ArrayList<String>();
+		// for each let's try to translate it using the resources, case it can't
+		// be found we print it as it is
+		ArrayList<String> warningMessages = getUserWarningsKey().get(currentUser);
+		if (warningMessages == null) {
+			warningMessages = new ArrayList<String>();
+			getUserWarningsKey().put(currentUser, warningMessages);
+		}
+		for (String string : warningMessages) {
+			try {
+				warningMessagesToReturn.add(BundleUtil.getFormattedStringFromResourceBundle("resources/SiadapResources", string));
+			} catch (MissingResourceException e) {
+				warningMessagesToReturn.add(string);
+			}
+		}
+
+		return warningMessagesToReturn;
+	}
+
+	public void addWarningMessage(String messageKeyOrContent) {
+		User currentUser = UserView.getCurrentUser();
+		addWarningMessage(currentUser, messageKeyOrContent);
+	}
+
+	protected void addWarningMessage(User user, String messageKeyOrContent) {
+		ArrayList<String> warningMessages = getUserWarningsKey().get(user);
+		if (warningMessages == null) {
+			warningMessages = new ArrayList<String>();
+		}
+		warningMessages.add(messageKeyOrContent);
+		getUserWarningsKey().put(user, warningMessages);
+	}
+
+	protected void clearWarningMessagesForCurrentUser() {
+		User currentUser = UserView.getCurrentUser();
+		clearWarningMessages(currentUser);
+	}
+
+	protected void clearWarningMessages(User user) {
+		getUserWarningsKey().put(user, new ArrayList<String>());
+	}
+
+	@Override
+	public <T extends WorkflowActivity<? extends WorkflowProcess, ? extends ActivityInformation>> List<T> getActivities() {
+		return (List<T>) activities;
+	}
+
+	public static WorkflowActivity<? extends WorkflowProcess, ? extends ActivityInformation<?>> getActivityStaticly(
+			String activityName) {
+		for (WorkflowActivity<? extends WorkflowProcess, ? extends ActivityInformation<?>> activity : activities) {
+			if (activity.getName().equals(activityName)) {
+				return activity;
+			}
+		}
+		return null;
+	}
+
+	@Override
+	public User getProcessCreator() {
+		return getSiadap().getEvaluator().getPerson().getUser();
+	}
+
+	@Override
+	public boolean isActive() {
+		if (getSiadap().getState().equals(SiadapProcessStateEnum.NULLED)) {
+			return false;
+		}
+		return true;
+	}
+
+	@Override
+	public void notifyUserDueToComment(User user, String comment) {
+		// TODO Auto-generated method stub
+	}
+
+	@Service
+	public static SiadapProcess createNewProcess(Person evaluated, Integer year, SiadapUniverse siadapUniverse,
+			CompetenceType competenceType) throws SiadapException {
+		return new SiadapProcess(year, evaluated, siadapUniverse, competenceType);
+	}
+
+	@Override
+	public boolean isAccessible(User user) {
+		Person person = user.getPerson();
+		SiadapYearConfiguration configuration = getSiadap().getSiadapYearConfiguration();
+		return person == getSiadap().getEvaluated() || person == getSiadap().getEvaluator().getPerson()
+				|| isResponsibleForHarmonization(person, getSiadap().getEvaluated()) || configuration.isPersonMemberOfCCA(person)
+				|| configuration.isPersonResponsibleForHomologation(person)
+				|| configuration.isPersonMemberOfScheduleExtenders(person);
+	}
+
+	private boolean isResponsibleForHarmonization(Person accessor, Person evaluated) {
+		PersonSiadapWrapper wrapper = new PersonSiadapWrapper(evaluated, getSiadap().getYear());
+		return wrapper.isResponsibleForHarmonization(accessor);
+	}
+
+	public void markAsHarmonized(SiadapEvaluationUniverse evaluationUniverse) {
+		String siadapUniverseLocalizedName = evaluationUniverse.getSiadapUniverse().getLocalizedName();
+		if (evaluationUniverse.isCurriculumPonderation()) {
+			siadapUniverseLocalizedName +=
+					" (" + BundleUtil.getStringFromResourceBundle(Siadap.SIADAP_BUNDLE_STRING, "label.curricularPonderation")
+							+ " )";
+		}
+		new LabelLog(this, UserView.getCurrentUser(), "label.terminateHarmonization.for", "resources/SiadapResources",
+				siadapUniverseLocalizedName);
+	}
+
+	protected void markAsHarmonizationAssessmentGiven(SiadapEvaluationUniverse evaluationUniverse) {
+		String siadapUniverseLocalizedName = evaluationUniverse.getSiadapUniverse().getLocalizedName();
+		if (evaluationUniverse.isCurriculumPonderation()) {
+			siadapUniverseLocalizedName +=
+					" (" + BundleUtil.getStringFromResourceBundle(Siadap.SIADAP_BUNDLE_STRING, "label.curricularPonderation")
+							+ " )";
+		}
+		new LabelLog(this, UserView.getCurrentUser(), "label.givenHarmonizationAssessment.for", "resources/SiadapResources",
+				siadapUniverseLocalizedName);
+	}
+
+	public void removeHarmonizationMark(SiadapEvaluationUniverse evaluationUniverse) {
+		String siadapUniverseLocalizedName = evaluationUniverse.getSiadapUniverse().getLocalizedName();
+		if (evaluationUniverse.isCurriculumPonderation()) {
+			siadapUniverseLocalizedName +=
+					" (" + BundleUtil.getStringFromResourceBundle(Siadap.SIADAP_BUNDLE_STRING, "label.curricularPonderation")
+							+ " )";
+		}
+		new LabelLog(this, UserView.getCurrentUser(), "label.reOpenHarmonization.for", "resources/SiadapResources",
+				siadapUniverseLocalizedName);
+	}
+
+	public boolean isUserEvaluated(User user) {
+		return getSiadap().getEvaluated().getUser() == user;
+	}
+
+	public boolean isProcessSealed() {
+		return getSiadap().getObjectivesAndCompetencesSealedDate() != null;
+	}
+
+	public boolean isCurrentUserEvaluated() {
+		return isUserEvaluated(UserView.getCurrentUser());
+	}
+
+	public static void checkEmailExistenceImportAndWarnOnError(Person person) {
+		// if we have no info about the person, let's import it
+		if (Siadap.getRemoteEmail(person) == null) {
+			LoginListner.importUserInformation(person.getUser().getUsername());
+		}
+		// if that didn't solved it, let's warn the admin by e-mail
+		if (Siadap.getRemoteEmail(person) == null) {
+			StringBuilder message =
+					new StringBuilder("Error, could not import e-mail/info for person " + person.getName() + "\n");
+			if (person.getUser() != null && person.getUser().getUsername() != null) {
+				message.append("the username is: " + person.getUser().getUsername() + "\n");
+
+			}
+			message.append("Please take appropriate actions\n");
+			notifyAdmin("[Bennu/Myorg] - Error retrieving remote information from fenix for a user", message.toString());
+		}
+	}
+
+	// TODO change this so that the e-mail isn't hardcoded and there is a batch
+	// sent not for each error an e-mail
+	private static void notifyAdmin(String subject, String message) {
+		ArrayList<String> toAddress = new ArrayList<String>();
+		toAddress.add("joao.antunes@tagus.ist.utl.pt");
+		final VirtualHost virtualHost = VirtualHost.getVirtualHostForThread();
+		new Email(virtualHost.getApplicationSubTitle().getContent(), virtualHost.getSystemEmailAddress(), new String[] {},
+				toAddress, Collections.EMPTY_LIST, Collections.EMPTY_LIST, subject, message);
+	}
+
+	@Override
+	public boolean isTicketSupportAvailable() {
+		return false;
+	}
+
+	public boolean isNotSubmittedForConfirmation() {
+		return SiadapProcessStateEnum.isNotSubmittedForConfirmation(getSiadap());
+	}
+
+	public HashMap<User, ArrayList<String>> getUserWarningsKey() {
+		if (userWarningsKey == null) {
+			userWarningsKey = new HashMap<User, ArrayList<String>>();
+		}
+		return userWarningsKey;
+	}
+
+	@Override
+	public List<Class<? extends ProcessFile>> getDisplayableFileTypes() {
+		List<Class<? extends ProcessFile>> availableClasses = new ArrayList<Class<? extends ProcessFile>>();
+		availableClasses.add(ProcessFile.class);
+		availableClasses.add(HomologationDocumentFile.class);
+		return availableClasses;
+	}
+
+	/**
+	 * Changes the custom deadlines as specified by the parameter
+	 * processSchedulesEnum which must be one of {@link SiadapProcessSchedulesEnum}
+	 * 
+	 * @param processSchedulesEnum
+	 *            the representation of which schedule {@link SiadapProcessSchedulesEnum}
+	 * @param newDate
+	 *            the new date to use for this schedule
+	 */
+	@Service
+	public void changeCustomSiadapSchedule(SiadapProcessSchedulesEnum processSchedulesEnum, LocalDate newDate) {
+		Siadap siadap = getSiadap();
+		switch (processSchedulesEnum) {
+		case OBJECTIVES_SPECIFICATION_BEGIN_DATE:
+			siadap.setCustomObjectiveSpecificationBegin(newDate);
+			break;
+		case OBJECTIVES_SPECIFICATION_END_DATE:
+			siadap.setCustomObjectiveSpecificationEnd(newDate);
+			break;
+		case AUTOEVALUATION_BEGIN_DATE:
+			siadap.setCustomAutoEvaluationBegin(newDate);
+			break;
+		case AUTOEVALUATION_END_DATE:
+			siadap.setCustomAutoEvaluationEnd(newDate);
+			break;
+		case EVALUATION_BEGIN_DATE:
+			siadap.setCustomEvaluationBegin(newDate);
+			break;
+		case EVALUATION_END_DATE:
+			siadap.setCustomEvaluationEnd(newDate);
+			break;
+		default:
+			throw new DomainException();
+		}
+
+	}
+
+	/**
+	 * Method that is called whenever there are changes to the evaluation
+	 * objectives (either the objectives or the competences got deleted/edited)
+	 * in which case, this method triggers the side effects of doing so. At the
+	 * moment it will only revert the status from submitted to the evaluatee to
+	 * not submitted and possibly warn the user about it
+	 */
+	public void signalChangesInEvaluationObjectives() {
+		int stateOrdinal = SiadapProcessStateEnum.getState(getSiadap()).ordinal();
+		if (stateOrdinal == SiadapProcessStateEnum.WAITING_EVAL_OBJ_ACK.ordinal()
+				|| stateOrdinal == SiadapProcessStateEnum.WAITING_SELF_EVALUATION.ordinal()) {
+			RevertState revertState = null;
+			for (WorkflowActivity activity : activities) {
+				if (RevertState.class.isAssignableFrom(activity.getClass())) {
+					revertState = (RevertState) activity;
+					break;
+				}
+			}
+			if (revertState == null) {
+				revertState = new RevertState();
+			}
+			revertState.setSideEffect(true);
+			RevertStateActivityInformation activityInformation =
+					(RevertStateActivityInformation) revertState.getActivityInformation(this);
+			activityInformation.setSiadapProcessStateEnum(SiadapProcessStateEnum.NOT_YET_SUBMITTED_FOR_ACK);
+			activityInformation.setJustification("Edição/remoção de objectivos/competências");
+			revertState.execute(activityInformation);
+			return;
+		}
+	}
+
+	public boolean isSubmittedForEvalObjsConfirmation() {
+		return getSiadap().getRequestedAcknowledgeDate() != null;
+	}
+
+	public boolean isEvalObjectivesAcknowledged() {
+		return getSiadap().isEvaluatedWithKnowledgeOfObjectives();
+	}
+
+	public void removeHarmonizationAssessments(SiadapEvaluationUniverse siadapEvaluationUniverse) {
+		String siadapUniverseLocalizedName = siadapEvaluationUniverse.getSiadapUniverse().getLocalizedName();
+		if (siadapEvaluationUniverse.isCurriculumPonderation()) {
+			siadapUniverseLocalizedName +=
+					" (" + BundleUtil.getStringFromResourceBundle(Siadap.SIADAP_BUNDLE_STRING, "label.curricularPonderation")
+							+ " )";
+		}
+		new LabelLog(this, UserView.getCurrentUser(), "label.removedHarmonizationAssessment.for", "resources/SiadapResources",
+				siadapUniverseLocalizedName);
+
+	}
+
+	/**
+	 * Deletes the proccess if it has no relevant info on it (more than one
+	 * logged activity, any comment, etc)
+	 */
+	protected void delete(boolean neglectLogSize) {
+		releaseProcess();
+		List<WorkflowLog> executionLogs = getExecutionLogs();
+		if (!neglectLogSize && executionLogs.size() > 1) {
+			throw new SiadapException("error.has.items.in.it");
+		}
+		for (WorkflowLog exLog : executionLogs) {
+			removeExecutionLogs(exLog);
+		}
+		removeSiadap();
+		removeWorkflowSystem();
+		deleteDomainObject();
+
+	}
 
 }

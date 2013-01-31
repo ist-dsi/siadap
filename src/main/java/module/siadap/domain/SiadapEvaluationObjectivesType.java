@@ -35,11 +35,11 @@ import pt.ist.fenixWebFramework.rendererExtensions.util.IPresentableEnum;
  */
 public enum SiadapEvaluationObjectivesType implements IPresentableEnum {
 
-    EFICIENCY, PERFORMANCE, QUALITY;
+	EFICIENCY, PERFORMANCE, QUALITY;
 
-    @Override
-    public String getLocalizedName() {
-	return BundleUtil.getStringFromResourceBundle("resources/SiadapResources", getClass().getName() + "." + name());
-    }
+	@Override
+	public String getLocalizedName() {
+		return BundleUtil.getStringFromResourceBundle("resources/SiadapResources", getClass().getName() + "." + name());
+	}
 
 }

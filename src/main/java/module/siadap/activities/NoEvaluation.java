@@ -24,13 +24,12 @@
  */
 package module.siadap.activities;
 
-import pt.ist.bennu.core.domain.User;
-
 import module.siadap.domain.Siadap;
 import module.siadap.domain.SiadapEvaluation;
 import module.siadap.domain.SiadapProcess;
 import module.workflow.activities.ActivityInformation;
 import module.workflow.activities.WorkflowActivity;
+import pt.ist.bennu.core.domain.User;
 
 /**
  * 
@@ -40,46 +39,46 @@ import module.workflow.activities.WorkflowActivity;
  */
 public class NoEvaluation extends WorkflowActivity<SiadapProcess, NoEvaluationActivityInformation> {
 
-    @Override
-    public boolean isActive(SiadapProcess process, User user) {
-	if (!process.isActive())
-	    return false;
-	Siadap siadap = process.getSiadap();
-	return !siadap.isWithSkippedEvaluation()
-		&& !siadap.isDefaultEvaluationDone()
-		&& ((siadap.getEvaluator() != null && siadap.getEvaluator().getPerson().getUser() == user) || siadap
-			.getSiadapYearConfiguration().getCcaMembers()
-.contains(user.getPerson()))
-		&& siadap.getValidationDateOfDefaultEvaluation() == null
-		&& (siadap.getSiadapYearConfiguration().getCcaMembers().contains(user.getPerson())
-			|| siadap.getEvaluationInterval().containsNow() || siadap.getObjectiveSpecificationInterval()
-			.containsNow());
-    }
+	@Override
+	public boolean isActive(SiadapProcess process, User user) {
+		if (!process.isActive()) {
+			return false;
+		}
+		Siadap siadap = process.getSiadap();
+		return !siadap.isWithSkippedEvaluation()
+				&& !siadap.isDefaultEvaluationDone()
+				&& ((siadap.getEvaluator() != null && siadap.getEvaluator().getPerson().getUser() == user) || siadap
+						.getSiadapYearConfiguration().getCcaMembers().contains(user.getPerson()))
+				&& siadap.getValidationDateOfDefaultEvaluation() == null
+				&& (siadap.getSiadapYearConfiguration().getCcaMembers().contains(user.getPerson())
+						|| siadap.getEvaluationInterval().containsNow() || siadap.getObjectiveSpecificationInterval()
+						.containsNow());
+	}
 
-    @Override
-    public ActivityInformation<SiadapProcess> getActivityInformation(SiadapProcess process) {
-	return new NoEvaluationActivityInformation(process, this);
-    }
+	@Override
+	public ActivityInformation<SiadapProcess> getActivityInformation(SiadapProcess process) {
+		return new NoEvaluationActivityInformation(process, this);
+	}
 
-    @Override
-    protected void process(NoEvaluationActivityInformation activityInformation) {
-	Siadap siadap = activityInformation.getProcess().getSiadap();
-	new SiadapEvaluation(siadap, activityInformation.getNoEvaluationJustification(),
-		siadap.getDefaultSiadapEvaluationUniverse());
-    }
+	@Override
+	protected void process(NoEvaluationActivityInformation activityInformation) {
+		Siadap siadap = activityInformation.getProcess().getSiadap();
+		new SiadapEvaluation(siadap, activityInformation.getNoEvaluationJustification(),
+				siadap.getDefaultSiadapEvaluationUniverse());
+	}
 
-    @Override
-    public boolean isConfirmationNeeded(SiadapProcess process) {
-	return true;
-    }
+	@Override
+	public boolean isConfirmationNeeded(SiadapProcess process) {
+		return true;
+	}
 
-    @Override
-    public boolean isUserAwarenessNeeded(SiadapProcess process, User user) {
-	return false;
-    }
+	@Override
+	public boolean isUserAwarenessNeeded(SiadapProcess process, User user) {
+		return false;
+	}
 
-    @Override
-    public String getUsedBundle() {
-	return "resources/SiadapResources";
-    }
+	@Override
+	public String getUsedBundle() {
+		return "resources/SiadapResources";
+	}
 }

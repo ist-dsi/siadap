@@ -37,27 +37,27 @@ import module.workflow.domain.WorkflowProcess;
  */
 public class ChangePersonnelSituationActivityInformation extends ActivityInformation<SiadapProcess> {
 
-    /**
-     * Default serial version ID
-     */
-    private static final long serialVersionUID = 1L;
+	/**
+	 * Default serial version ID
+	 */
+	private static final long serialVersionUID = 1L;
 
-    private final ActivityInformationBeanWrapper beanWrapper;
+	private final ActivityInformationBeanWrapper beanWrapper;
 
-    public ChangePersonnelSituationActivityInformation(SiadapProcess process,
-	    WorkflowActivity<? extends WorkflowProcess, ? extends ActivityInformation> activity,
-	    ActivityInformationBeanWrapper beanWrapper) {
-	super(process, activity);
-	this.beanWrapper = beanWrapper;
-    }
+	public ChangePersonnelSituationActivityInformation(SiadapProcess process,
+			WorkflowActivity<? extends WorkflowProcess, ? extends ActivityInformation> activity,
+			ActivityInformationBeanWrapper beanWrapper) {
+		super(process, activity);
+		this.beanWrapper = beanWrapper;
+	}
 
-    public ActivityInformationBeanWrapper getBeanWrapper() {
-	return beanWrapper;
-    }
+	public ActivityInformationBeanWrapper getBeanWrapper() {
+		return beanWrapper;
+	}
 
-    @Override
-    public boolean hasAllneededInfo() {
-	return getBeanWrapper().hasAllNeededInfo();
-    }
+	@Override
+	public boolean hasAllneededInfo() {
+		return getBeanWrapper().hasAllNeededInfo();
+	}
 
 }

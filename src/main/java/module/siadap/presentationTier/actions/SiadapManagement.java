@@ -34,20 +34,6 @@ import java.util.Set;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.lang.StringUtils;
-import org.apache.struts.action.ActionForm;
-import org.apache.struts.action.ActionForward;
-import org.apache.struts.action.ActionMapping;
-import org.joda.time.LocalDate;
-
-import pt.ist.bennu.core.applicationTier.Authenticate.UserView;
-import pt.ist.bennu.core.domain.exceptions.DomainException;
-import pt.ist.bennu.core.presentationTier.actions.ContextBaseAction;
-import pt.ist.bennu.core.util.BundleUtil;
-import pt.ist.bennu.core.util.VariantBean;
-import pt.ist.fenixWebFramework.renderers.utils.RenderUtils;
-import pt.ist.fenixWebFramework.struts.annotations.Mapping;
-
 import module.organization.domain.Person;
 import module.organization.domain.Unit;
 import module.siadap.activities.ForceReadinessToHomologate;
@@ -63,7 +49,6 @@ import module.siadap.domain.SiadapUniverse;
 import module.siadap.domain.SiadapYearConfiguration;
 import module.siadap.domain.exceptions.SiadapException;
 import module.siadap.domain.exceptions.ValidationTerminationException;
-import module.siadap.domain.util.SiadapProcessCounter;
 import module.siadap.domain.wrappers.PersonSiadapWrapper;
 import module.siadap.domain.wrappers.SiadapSuggestionBean;
 import module.siadap.domain.wrappers.SiadapUniverseWrapper;
@@ -74,6 +59,20 @@ import module.siadap.presentationTier.renderers.providers.SiadapYearsFromExistin
 import module.workflow.activities.ActivityException;
 import module.workflow.activities.ActivityInformation;
 import module.workflow.domain.WorkflowProcess;
+
+import org.apache.commons.lang.StringUtils;
+import org.apache.struts.action.ActionForm;
+import org.apache.struts.action.ActionForward;
+import org.apache.struts.action.ActionMapping;
+import org.joda.time.LocalDate;
+
+import pt.ist.bennu.core.applicationTier.Authenticate.UserView;
+import pt.ist.bennu.core.domain.exceptions.DomainException;
+import pt.ist.bennu.core.presentationTier.actions.ContextBaseAction;
+import pt.ist.bennu.core.util.BundleUtil;
+import pt.ist.bennu.core.util.VariantBean;
+import pt.ist.fenixWebFramework.renderers.utils.RenderUtils;
+import pt.ist.fenixWebFramework.struts.annotations.Mapping;
 
 @Mapping(path = "/siadapManagement")
 /**
@@ -86,24 +85,21 @@ public class SiadapManagement extends ContextBaseAction {
 
 	// TODO joantune: assert if this is used at all! (and what it was used
 	// for..)
-	public final ActionForward prepareToCreateNewSiadapProcess(
-			final ActionMapping mapping, final ActionForm form,
+	public final ActionForward prepareToCreateNewSiadapProcess(final ActionMapping mapping, final ActionForm form,
 			final HttpServletRequest request, final HttpServletResponse response) {
 
 		Person evaluator = UserView.getCurrentUser().getPerson();
 		int year = 0;
-		if (request.getParameter("year") == null)
+		if (request.getParameter("year") == null) {
 			year = new LocalDate().getYear();
-		else {
+		} else {
 			year = Integer.parseInt(request.getParameter("year"));
 		}
 		request.setAttribute("year", year);
 
 		if (SiadapYearConfiguration.getSiadapYearConfiguration(year) != null) {
-			PersonSiadapWrapper wrapper = new PersonSiadapWrapper(evaluator,
-					year);
-			request.setAttribute("peopleToEvaluate",
-					wrapper.getPeopleToEvaluate());
+			PersonSiadapWrapper wrapper = new PersonSiadapWrapper(evaluator, year);
+			request.setAttribute("peopleToEvaluate", wrapper.getPeopleToEvaluate());
 		}
 
 		return forward(request, "/module/siadap/prepareCreateSiadap.jsp");
@@ -124,48 +120,39 @@ public class SiadapManagement extends ContextBaseAction {
 	// return ProcessManagement.forwardToProcess(siadapProcess);
 	// }
 
-	public final ActionForward manageSiadap(final ActionMapping mapping,
-			final ActionForm form, final HttpServletRequest request,
+	public final ActionForward manageSiadap(final ActionMapping mapping, final ActionForm form, final HttpServletRequest request,
 			final HttpServletResponse response) {
 
 		SiadapYearWrapper siadapYearWrapper = (SiadapYearWrapper) getRenderedObject("siadapYearWrapper");
 		if (siadapYearWrapper == null) {
-			ArrayList<Integer> yearsWithConfigs = SiadapYearsFromExistingSiadapConfigurations
-					.getYearsWithExistingConfigs();
-			if (yearsWithConfigs
-					.contains(new Integer(new LocalDate().getYear()))) {
+			ArrayList<Integer> yearsWithConfigs = SiadapYearsFromExistingSiadapConfigurations.getYearsWithExistingConfigs();
+			if (yearsWithConfigs.contains(new Integer(new LocalDate().getYear()))) {
 				int year = new LocalDate().getYear();
 				siadapYearWrapper = new SiadapYearWrapper(year);
 			} else {
-				siadapYearWrapper = new SiadapYearWrapper(
-						yearsWithConfigs.get(yearsWithConfigs.size() - 1));
+				siadapYearWrapper = new SiadapYearWrapper(yearsWithConfigs.get(yearsWithConfigs.size() - 1));
 			}
 		}
-		
+
 		return manageSiadapForGivenYear(mapping, form, request, response, siadapYearWrapper);
-		
-	}
-	
-	public final ActionForward manageSiadapForGivenYear(final ActionMapping mapping,
-			final ActionForm form, final HttpServletRequest request,
-			final HttpServletResponse response, SiadapYearWrapper siadapYearWrapper) {
-		request.setAttribute("siadapYearWrapper", siadapYearWrapper);
-		SiadapYearConfiguration siadapYearConfiguration = siadapYearWrapper
-				.getSiadapYearConfiguration();
-		if (siadapYearConfiguration != null) {
-			request.setAttribute("person",
-					new PersonSiadapWrapper(UserView.getCurrentUser()
-							.getPerson(), siadapYearConfiguration.getYear()));
-			request.setAttribute("siadaps",
-					WorkflowProcess.getAllProcesses(SiadapProcess.class));
-		}
-		return forward(request, "/module/siadap/listSiadaps.jsp");
-		
+
 	}
 
-	public final ActionForward showConfiguration(final ActionMapping mapping,
-			final ActionForm form, final HttpServletRequest request,
-			final HttpServletResponse response) {
+	public final ActionForward manageSiadapForGivenYear(final ActionMapping mapping, final ActionForm form,
+			final HttpServletRequest request, final HttpServletResponse response, SiadapYearWrapper siadapYearWrapper) {
+		request.setAttribute("siadapYearWrapper", siadapYearWrapper);
+		SiadapYearConfiguration siadapYearConfiguration = siadapYearWrapper.getSiadapYearConfiguration();
+		if (siadapYearConfiguration != null) {
+			request.setAttribute("person",
+					new PersonSiadapWrapper(UserView.getCurrentUser().getPerson(), siadapYearConfiguration.getYear()));
+			request.setAttribute("siadaps", WorkflowProcess.getAllProcesses(SiadapProcess.class));
+		}
+		return forward(request, "/module/siadap/listSiadaps.jsp");
+
+	}
+
+	public final ActionForward showConfiguration(final ActionMapping mapping, final ActionForm form,
+			final HttpServletRequest request, final HttpServletResponse response) {
 		SiadapYearWrapper siadapYearWrapper = (SiadapYearWrapper) getRenderedObject("siadapYearWrapper");
 		if (siadapYearWrapper == null) {
 			int year = new LocalDate().getYear();
@@ -173,23 +160,19 @@ public class SiadapManagement extends ContextBaseAction {
 		}
 		RenderUtils.invalidateViewState();
 		request.setAttribute("siadapYearWrapper", siadapYearWrapper);
-		SiadapYearConfiguration siadapYearConfiguration = siadapYearWrapper
-				.getSiadapYearConfiguration();
+		SiadapYearConfiguration siadapYearConfiguration = siadapYearWrapper.getSiadapYearConfiguration();
 		request.setAttribute("configuration", siadapYearConfiguration);
 		request.setAttribute("addCCAMember", new VariantBean());
 		request.setAttribute("addHomologationMember", new VariantBean());
 		request.setAttribute("addScheduleExtenderMember", new VariantBean());
-		request.setAttribute("addStructureManagementGroupMember",
-				new VariantBean());
+		request.setAttribute("addStructureManagementGroupMember", new VariantBean());
 		return forward(request, "/module/siadap/management/configuration.jsp");
 	}
 
-	public final ActionForward addCCAMember(final ActionMapping mapping,
-			final ActionForm form, final HttpServletRequest request,
+	public final ActionForward addCCAMember(final ActionMapping mapping, final ActionForm form, final HttpServletRequest request,
 			final HttpServletResponse response) {
 
-		SiadapYearConfiguration configuration = getDomainObject(request,
-				"configurationId");
+		SiadapYearConfiguration configuration = getDomainObject(request, "configurationId");
 		VariantBean bean = getRenderedObject("ccaMember");
 		configuration.addCcaMembers(((Person) bean.getDomainObject()));
 		// TODO make the nodes access list to be updated
@@ -197,12 +180,10 @@ public class SiadapManagement extends ContextBaseAction {
 		return showConfiguration(mapping, form, request, response);
 	}
 
-	public final ActionForward addScheduleExtenderMember(
-			final ActionMapping mapping, final ActionForm form,
+	public final ActionForward addScheduleExtenderMember(final ActionMapping mapping, final ActionForm form,
 			final HttpServletRequest request, final HttpServletResponse response) {
 
-		SiadapYearConfiguration configuration = getDomainObject(request,
-				"configurationId");
+		SiadapYearConfiguration configuration = getDomainObject(request, "configurationId");
 		VariantBean bean = getRenderedObject("scheduleExtenderMember");
 		configuration.addScheduleEditors(((Person) bean.getDomainObject()));
 		// TODO make the nodes access list to be updated
@@ -210,111 +191,90 @@ public class SiadapManagement extends ContextBaseAction {
 		return showConfiguration(mapping, form, request, response);
 	}
 
-	public final ActionForward addRevertStateMember(
-			final ActionMapping mapping, final ActionForm form,
+	public final ActionForward addRevertStateMember(final ActionMapping mapping, final ActionForm form,
 			final HttpServletRequest request, final HttpServletResponse response) {
 
-		SiadapYearConfiguration configuration = getDomainObject(request,
-				"configurationId");
+		SiadapYearConfiguration configuration = getDomainObject(request, "configurationId");
 		VariantBean bean = getRenderedObject("scheduleExtenderMember");
-		configuration.addRevertStateGroupMember(((Person) bean
-				.getDomainObject()));
+		configuration.addRevertStateGroupMember(((Person) bean.getDomainObject()));
 		RenderUtils.invalidateViewState("scheduleExtenderMember");
 		return showConfiguration(mapping, form, request, response);
 	}
 
-	public final ActionForward addHomologationMember(
-			final ActionMapping mapping, final ActionForm form,
+	public final ActionForward addHomologationMember(final ActionMapping mapping, final ActionForm form,
 			final HttpServletRequest request, final HttpServletResponse response) {
 
-		SiadapYearConfiguration configuration = getDomainObject(request,
-				"configurationId");
+		SiadapYearConfiguration configuration = getDomainObject(request, "configurationId");
 		VariantBean bean = getRenderedObject("homologationMember");
 		configuration.addHomologationMembers(((Person) bean.getDomainObject()));
 		// add them also to the unique (for now TODO) group
-		SiadapYearConfiguration.addHomologationMember(((Person) bean
-				.getDomainObject()).getUser());
+		SiadapYearConfiguration.addHomologationMember(((Person) bean.getDomainObject()).getUser());
 		// TODO make the nodes access list to be updated
 		RenderUtils.invalidateViewState("homologationMember");
 		return showConfiguration(mapping, form, request, response);
 	}
 
-	public final ActionForward addStructureManagementMember(
-			final ActionMapping mapping, final ActionForm form,
+	public final ActionForward addStructureManagementMember(final ActionMapping mapping, final ActionForm form,
 			final HttpServletRequest request, final HttpServletResponse response) {
 
-		SiadapYearConfiguration configuration = getDomainObject(request,
-				"configurationId");
+		SiadapYearConfiguration configuration = getDomainObject(request, "configurationId");
 		VariantBean bean = getRenderedObject("structureManagementMember");
-		configuration.addStructureManagementGroupMembers(((Person) bean
-				.getDomainObject()));
+		configuration.addStructureManagementGroupMembers(((Person) bean.getDomainObject()));
 		RenderUtils.invalidateViewState("homologationMember");
 		return showConfiguration(mapping, form, request, response);
 	}
 
-	public final ActionForward removeStructureManagementMember(
-			final ActionMapping mapping, final ActionForm form,
+	public final ActionForward removeStructureManagementMember(final ActionMapping mapping, final ActionForm form,
 			final HttpServletRequest request, final HttpServletResponse response) {
 
-		SiadapYearConfiguration configuration = getDomainObject(request,
-				"configurationId");
+		SiadapYearConfiguration configuration = getDomainObject(request, "configurationId");
 		Person person = getDomainObject(request, "personId");
 		configuration.removeStructureManagementGroupMembers(person);
 		return showConfiguration(mapping, form, request, response);
 	}
 
-	public final ActionForward removeCCAMember(final ActionMapping mapping,
-			final ActionForm form, final HttpServletRequest request,
-			final HttpServletResponse response) {
+	public final ActionForward removeCCAMember(final ActionMapping mapping, final ActionForm form,
+			final HttpServletRequest request, final HttpServletResponse response) {
 
-		SiadapYearConfiguration configuration = getDomainObject(request,
-				"configurationId");
+		SiadapYearConfiguration configuration = getDomainObject(request, "configurationId");
 		Person person = getDomainObject(request, "personId");
 		configuration.removeCcaMembers(person);
 		return showConfiguration(mapping, form, request, response);
 	}
 
-	public final ActionForward removeSchedulerExtendersMember(
-			final ActionMapping mapping, final ActionForm form,
+	public final ActionForward removeSchedulerExtendersMember(final ActionMapping mapping, final ActionForm form,
 			final HttpServletRequest request, final HttpServletResponse response) {
 
-		SiadapYearConfiguration configuration = getDomainObject(request,
-				"configurationId");
+		SiadapYearConfiguration configuration = getDomainObject(request, "configurationId");
 		Person person = getDomainObject(request, "personId");
 		configuration.removeScheduleEditors(person);
 		// remove them from the persistent group as well
 		return showConfiguration(mapping, form, request, response);
 	}
 
-	public final ActionForward removeSchedulerExtenderMember(
-			final ActionMapping mapping, final ActionForm form,
+	public final ActionForward removeSchedulerExtenderMember(final ActionMapping mapping, final ActionForm form,
 			final HttpServletRequest request, final HttpServletResponse response) {
 
-		SiadapYearConfiguration configuration = getDomainObject(request,
-				"configurationId");
+		SiadapYearConfiguration configuration = getDomainObject(request, "configurationId");
 		Person person = getDomainObject(request, "personId");
 		configuration.removeScheduleEditors(person);
 		return showConfiguration(mapping, form, request, response);
 	}
 
-	public final ActionForward removeRevertStateMember(
-			final ActionMapping mapping, final ActionForm form,
+	public final ActionForward removeRevertStateMember(final ActionMapping mapping, final ActionForm form,
 			final HttpServletRequest request, final HttpServletResponse response) {
 
-		SiadapYearConfiguration configuration = getDomainObject(request,
-				"configurationId");
+		SiadapYearConfiguration configuration = getDomainObject(request, "configurationId");
 		Person person = getDomainObject(request, "personId");
 		configuration.removeRevertStateGroupMember(person);
 		// remove them from the persistent group as well
 		return showConfiguration(mapping, form, request, response);
 	}
 
-	public final ActionForward removeHomologationMember(
-			final ActionMapping mapping, final ActionForm form,
+	public final ActionForward removeHomologationMember(final ActionMapping mapping, final ActionForm form,
 			final HttpServletRequest request, final HttpServletResponse response) {
 
-		SiadapYearConfiguration configuration = getDomainObject(request,
-				"configurationId");
+		SiadapYearConfiguration configuration = getDomainObject(request, "configurationId");
 		Person person = getDomainObject(request, "personId");
 		configuration.removeHomologationMembers(person);
 		// remove them from the persistent group as well
@@ -322,8 +282,7 @@ public class SiadapManagement extends ContextBaseAction {
 		return showConfiguration(mapping, form, request, response);
 	}
 
-	public final ActionForward createNewSiadapYearConfiguration(
-			final ActionMapping mapping, final ActionForm form,
+	public final ActionForward createNewSiadapYearConfiguration(final ActionMapping mapping, final ActionForm form,
 			final HttpServletRequest request, final HttpServletResponse response) {
 
 		Integer year = new Integer(request.getParameter("year"));
@@ -332,8 +291,7 @@ public class SiadapManagement extends ContextBaseAction {
 		return manageSiadap(mapping, form, request, response);
 	}
 
-	public final ActionForward setUnitHarmonizationAssessmentData(
-			final ActionMapping mapping, final ActionForm form,
+	public final ActionForward setUnitHarmonizationAssessmentData(final ActionMapping mapping, final ActionForm form,
 			final HttpServletRequest request, final HttpServletResponse response) {
 		try {
 
@@ -350,24 +308,17 @@ public class SiadapManagement extends ContextBaseAction {
 			// SiadapUniverseWrapper peopleWithoutQuotasSiadap3 =
 			// (SiadapUniverseWrapper)
 			// getRenderedObject("people-withoutQuotas-SIADAP3");
-			siadapUniverseWrappers
-					.add((SiadapUniverseWrapper) getRenderedObject("people-withQuotas-SIADAP2"));
-			siadapUniverseWrappers
-					.add((SiadapUniverseWrapper) getRenderedObject("people-withQuotas-SIADAP3"));
-			siadapUniverseWrappers
-					.add((SiadapUniverseWrapper) getRenderedObject("people-withoutQuotas-SIADAP2"));
-			siadapUniverseWrappers
-					.add((SiadapUniverseWrapper) getRenderedObject("people-withoutQuotas-SIADAP3"));
+			siadapUniverseWrappers.add((SiadapUniverseWrapper) getRenderedObject("people-withQuotas-SIADAP2"));
+			siadapUniverseWrappers.add((SiadapUniverseWrapper) getRenderedObject("people-withQuotas-SIADAP3"));
+			siadapUniverseWrappers.add((SiadapUniverseWrapper) getRenderedObject("people-withoutQuotas-SIADAP2"));
+			siadapUniverseWrappers.add((SiadapUniverseWrapper) getRenderedObject("people-withoutQuotas-SIADAP3"));
 
 			for (SiadapUniverseWrapper siadapUniverseWrapper : siadapUniverseWrappers) {
 				if (siadapUniverseWrapper != null) {
 
-					SiadapUniverse siadapUniverseEnum = siadapUniverseWrapper
-							.getSiadapUniverseEnum();
-					for (PersonSiadapWrapper personSiadapWrapper : siadapUniverseWrapper
-							.getSiadapUniverse()) {
-						personSiadapWrapper
-								.setHarmonizationCurrentAssessments(siadapUniverseEnum);
+					SiadapUniverse siadapUniverseEnum = siadapUniverseWrapper.getSiadapUniverseEnum();
+					for (PersonSiadapWrapper personSiadapWrapper : siadapUniverseWrapper.getSiadapUniverse()) {
+						personSiadapWrapper.setHarmonizationCurrentAssessments(siadapUniverseEnum);
 					}
 				}
 
@@ -400,9 +351,8 @@ public class SiadapManagement extends ContextBaseAction {
 		return viewUnitHarmonizationData(mapping, form, request, response);
 	}
 
-	public final ActionForward applyValidationData(final ActionMapping mapping,
-			final ActionForm form, final HttpServletRequest request,
-			final HttpServletResponse response) {
+	public final ActionForward applyValidationData(final ActionMapping mapping, final ActionForm form,
+			final HttpServletRequest request, final HttpServletResponse response) {
 		int year = Integer.parseInt(request.getParameter("year"));
 		Unit unit = getDomainObject(request, "unitId");
 
@@ -410,88 +360,71 @@ public class SiadapManagement extends ContextBaseAction {
 
 		RenderUtils.invalidateViewState();
 
-		return executeValidation(mapping, form, request, response,
-				siadapUniverseWrapperList,
-				ValidationSubActivity.SET_VALIDATION_DATA,
-				new UnitSiadapWrapper(unit, year));
+		return executeValidation(mapping, form, request, response, siadapUniverseWrapperList,
+				ValidationSubActivity.SET_VALIDATION_DATA, new UnitSiadapWrapper(unit, year));
 
 	}
 
-	private final ActionForward executeValidation(final ActionMapping mapping,
-			final ActionForm form, final HttpServletRequest request,
-			final HttpServletResponse response,
-			Collection<SiadapUniverseWrapper> siadapUniverseWrappers,
-			ValidationSubActivity validationSubActivity,
+	private final ActionForward executeValidation(final ActionMapping mapping, final ActionForm form,
+			final HttpServletRequest request, final HttpServletResponse response,
+			Collection<SiadapUniverseWrapper> siadapUniverseWrappers, ValidationSubActivity validationSubActivity,
 			UnitSiadapWrapper unitWrapper) {
 
 		ArrayList<SiadapException> warningMessages = new ArrayList<SiadapException>();
 		try {
-			warningMessages = unitWrapper.executeValidation(
-					siadapUniverseWrappers, validationSubActivity);
+			warningMessages = unitWrapper.executeValidation(siadapUniverseWrappers, validationSubActivity);
 
 		} catch (ValidationTerminationException ex) {
 			addLocalizedMessage(request, ex.getLocalizedMessage());
-			return validateUnit(mapping, form, request, response, unitWrapper,
-					null);
+			return validateUnit(mapping, form, request, response, unitWrapper, null);
 		} catch (DomainException ex) {
 			addLocalizedMessage(request, ex.getLocalizedMessage());
-			return validateUnit(mapping, form, request, response, unitWrapper,
-					siadapUniverseWrappers);
+			return validateUnit(mapping, form, request, response, unitWrapper, siadapUniverseWrappers);
 		} catch (ActivityException ex) {
 			addLocalizedMessage(request, ex.getMessage());
-			return validateUnit(mapping, form, request, response, unitWrapper,
-					siadapUniverseWrappers);
+			return validateUnit(mapping, form, request, response, unitWrapper, siadapUniverseWrappers);
 		}
 
 		for (SiadapException warningMessage : warningMessages) {
-			addLocalizedWarningMessage(request,
-					warningMessage.getLocalizedMessage());
+			addLocalizedWarningMessage(request, warningMessage.getLocalizedMessage());
 		}
 
 		return validateUnit(mapping, form, request, response, unitWrapper, null);
 
 	}
 
-	public final ActionForward validate(final ActionMapping mapping,
-			final ActionForm form, final HttpServletRequest request,
+	public final ActionForward validate(final ActionMapping mapping, final ActionForm form, final HttpServletRequest request,
 			final HttpServletResponse response) {
 
-		Integer yearInteger = request.getParameter("year") == null ? null
-				: Integer.parseInt(request.getParameter("year"));
+		Integer yearInteger = request.getParameter("year") == null ? null : Integer.parseInt(request.getParameter("year"));
 		SiadapYearWrapper siadapYearWrapper = (SiadapYearWrapper) getRenderedObject("siadapYearWrapper");
 		if (siadapYearWrapper == null && yearInteger == null) {
-			ArrayList<Integer> yearsWithConfigs = SiadapYearsFromExistingSiadapConfigurations
-					.getYearsWithExistingConfigs();
-			if (yearsWithConfigs
-					.contains(new Integer(new LocalDate().getYear()))) {
+			ArrayList<Integer> yearsWithConfigs = SiadapYearsFromExistingSiadapConfigurations.getYearsWithExistingConfigs();
+			if (yearsWithConfigs.contains(new Integer(new LocalDate().getYear()))) {
 				int year = new LocalDate().getYear();
 				siadapYearWrapper = new SiadapYearWrapper(year);
 			} else {
-				siadapYearWrapper = new SiadapYearWrapper(
-						yearsWithConfigs.get(yearsWithConfigs.size() - 1));
+				siadapYearWrapper = new SiadapYearWrapper(yearsWithConfigs.get(yearsWithConfigs.size() - 1));
 			}
 		} else if (yearInteger != null) {
 			siadapYearWrapper = new SiadapYearWrapper(yearInteger);
 		}
-		Unit unit = (Unit) (getDomainObject(request, "unitId") == null ? siadapYearWrapper
-				.getSiadapYearConfiguration().getSiadapStructureTopUnit()
-				: getDomainObject(request, "unitId"));
+		Unit unit =
+				(Unit) (getDomainObject(request, "unitId") == null ? siadapYearWrapper.getSiadapYearConfiguration()
+						.getSiadapStructureTopUnit() : getDomainObject(request, "unitId"));
 
 		RenderUtils.invalidateViewState();
 
-		return validateUnit(mapping, form, request, response,
-				new UnitSiadapWrapper(unit, siadapYearWrapper.getChosenYear()),
+		return validateUnit(mapping, form, request, response, new UnitSiadapWrapper(unit, siadapYearWrapper.getChosenYear()),
 				null);
 
 	}
 
-	public final ActionForward validateUnit(final ActionMapping mapping,
-			final ActionForm form, final HttpServletRequest request,
+	public final ActionForward validateUnit(final ActionMapping mapping, final ActionForm form, final HttpServletRequest request,
 			final HttpServletResponse response, UnitSiadapWrapper unitWrapper,
 			Collection<SiadapUniverseWrapper> siadapUniverseWrappers) {
 
-		request.setAttribute("siadapYearWrapper", new SiadapYearWrapper(
-				unitWrapper.getYear()));
+		request.setAttribute("siadapYearWrapper", new SiadapYearWrapper(unitWrapper.getYear()));
 
 		// if (unitWrapper == null) {
 		// Unit unit = (Unit) (getDomainObject(request, "unitId") == null ?
@@ -501,76 +434,57 @@ public class SiadapManagement extends ContextBaseAction {
 		// }
 
 		request.setAttribute("unit", unitWrapper);
-		if (siadapUniverseWrappers == null)
-			request.setAttribute("siadapUniverseWrappers",
-					unitWrapper.getValidationUniverseWrappers());
-		else {
-			request.setAttribute("siadapUniverseWrappers",
-					siadapUniverseWrappers);
+		if (siadapUniverseWrappers == null) {
+			request.setAttribute("siadapUniverseWrappers", unitWrapper.getValidationUniverseWrappers());
+		} else {
+			request.setAttribute("siadapUniverseWrappers", siadapUniverseWrappers);
 		}
 
 		return forward(request, "/module/siadap/validation/validation.jsp");
 	}
 
-	public final ActionForward viewUnitHarmonizationData(
-			final ActionMapping mapping, final ActionForm form,
+	public final ActionForward viewUnitHarmonizationData(final ActionMapping mapping, final ActionForm form,
 			final HttpServletRequest request, final HttpServletResponse response) {
 
 		int year = Integer.parseInt(request.getParameter("year"));
 
 		Unit unit = getDomainObject(request, "unitId");
-		return viewUnitHarmonizationData(mapping, form, request, response,
-				year, unit);
+		return viewUnitHarmonizationData(mapping, form, request, response, year, unit);
 
 	}
 
-	private final ActionForward viewUnitHarmonizationData(
-			final ActionMapping mapping, final ActionForm form,
-			final HttpServletRequest request,
-			final HttpServletResponse response, int year, Unit unit) {
+	private final ActionForward viewUnitHarmonizationData(final ActionMapping mapping, final ActionForm form,
+			final HttpServletRequest request, final HttpServletResponse response, int year, Unit unit) {
 		UnitSiadapWrapper wrapper = new UnitSiadapWrapper(unit, year);
 
 		RenderUtils.invalidateViewState();
 
 		request.setAttribute("currentUnit", wrapper);
 
-		SiadapYearConfiguration configuration = SiadapYearConfiguration
-				.getSiadapYearConfiguration(year);
+		SiadapYearConfiguration configuration = SiadapYearConfiguration.getSiadapYearConfiguration(year);
 
 		UniverseDisplayMode displayMode = UniverseDisplayMode.HARMONIZATION;
-		SiadapUniverseWrapper peopleWithQuotasSIADAP2 = new SiadapUniverseWrapper(
-				wrapper.getSiadap2AndWorkingRelationWithQuotaUniverse(),
-				"siadap2WithQuotas", SiadapUniverse.SIADAP2,
-				configuration.getQuotaExcellencySiadap2WithQuota(),
-				configuration.getQuotaRelevantSiadap2WithQuota(), displayMode,
-				null, null);
-		SiadapUniverseWrapper peopleWithQuotasSIADAP3 = new SiadapUniverseWrapper(
-				wrapper.getSiadap3AndWorkingRelationWithQuotaUniverse(),
-				"siadap3WithQuotas", SiadapUniverse.SIADAP3,
-				configuration.getQuotaExcellencySiadap3WithQuota(),
-				configuration.getQuotaRelevantSiadap3WithQuota(), displayMode,
-				null, null);
-		SiadapUniverseWrapper peopleWithoutQuotasSIADAP2 = new SiadapUniverseWrapper(
-				wrapper.getSiadap2AndWorkingRelationWithoutQuotaUniverse(),
-				"siadap2WithoutQuotas", SiadapUniverse.SIADAP2,
-				configuration.getQuotaExcellencySiadap2WithoutQuota(),
-				configuration.getQuotaRelevantSiadap2WithoutQuota(),
-				displayMode, null, null);
-		SiadapUniverseWrapper peopleWithoutQuotasSIADAP3 = new SiadapUniverseWrapper(
-				wrapper.getSiadap3AndWorkingRelationWithoutQuotaUniverse(),
-				"siadap3WithoutQuotas", SiadapUniverse.SIADAP3,
-				configuration.getQuotaExcellencySiadap3WithoutQuota(),
-				configuration.getQuotaRelevantSiadap3WithoutQuota(),
-				displayMode, null, null);
+		SiadapUniverseWrapper peopleWithQuotasSIADAP2 =
+				new SiadapUniverseWrapper(wrapper.getSiadap2AndWorkingRelationWithQuotaUniverse(), "siadap2WithQuotas",
+						SiadapUniverse.SIADAP2, configuration.getQuotaExcellencySiadap2WithQuota(),
+						configuration.getQuotaRelevantSiadap2WithQuota(), displayMode, null, null);
+		SiadapUniverseWrapper peopleWithQuotasSIADAP3 =
+				new SiadapUniverseWrapper(wrapper.getSiadap3AndWorkingRelationWithQuotaUniverse(), "siadap3WithQuotas",
+						SiadapUniverse.SIADAP3, configuration.getQuotaExcellencySiadap3WithQuota(),
+						configuration.getQuotaRelevantSiadap3WithQuota(), displayMode, null, null);
+		SiadapUniverseWrapper peopleWithoutQuotasSIADAP2 =
+				new SiadapUniverseWrapper(wrapper.getSiadap2AndWorkingRelationWithoutQuotaUniverse(), "siadap2WithoutQuotas",
+						SiadapUniverse.SIADAP2, configuration.getQuotaExcellencySiadap2WithoutQuota(),
+						configuration.getQuotaRelevantSiadap2WithoutQuota(), displayMode, null, null);
+		SiadapUniverseWrapper peopleWithoutQuotasSIADAP3 =
+				new SiadapUniverseWrapper(wrapper.getSiadap3AndWorkingRelationWithoutQuotaUniverse(), "siadap3WithoutQuotas",
+						SiadapUniverse.SIADAP3, configuration.getQuotaExcellencySiadap3WithoutQuota(),
+						configuration.getQuotaRelevantSiadap3WithoutQuota(), displayMode, null, null);
 
-		request.setAttribute("people-withQuotas-SIADAP2",
-				peopleWithQuotasSIADAP2);
-		request.setAttribute("people-withQuotas-SIADAP3",
-				peopleWithQuotasSIADAP3);
-		request.setAttribute("people-withoutQuotas-SIADAP2",
-				peopleWithoutQuotasSIADAP2);
-		request.setAttribute("people-withoutQuotas-SIADAP3",
-				peopleWithoutQuotasSIADAP3);
+		request.setAttribute("people-withQuotas-SIADAP2", peopleWithQuotasSIADAP2);
+		request.setAttribute("people-withQuotas-SIADAP3", peopleWithQuotasSIADAP3);
+		request.setAttribute("people-withoutQuotas-SIADAP2", peopleWithoutQuotasSIADAP2);
+		request.setAttribute("people-withoutQuotas-SIADAP3", peopleWithoutQuotasSIADAP3);
 		// request.setAttribute("people-withQuotas",
 		// wrapper.getUnitEmployeesWithQuotas(false));
 		// request.setAttribute("people-withoutQuotas",
@@ -631,44 +545,34 @@ public class SiadapManagement extends ContextBaseAction {
 	// });
 	// }
 
-	public final ActionForward removeHarmonizationAssessments(
-			final ActionMapping mapping, final ActionForm form,
+	public final ActionForward removeHarmonizationAssessments(final ActionMapping mapping, final ActionForm form,
 			final HttpServletRequest request, final HttpServletResponse response) {
 		Person person = getDomainObject(request, "personId");
 		Unit unit = getDomainObject(request, "unitId");
 		int year = Integer.parseInt(request.getParameter("year"));
-		SiadapUniverse enumToUse = SiadapUniverse.valueOf(request
-				.getParameter("siadapUniverse"));
+		SiadapUniverse enumToUse = SiadapUniverse.valueOf(request.getParameter("siadapUniverse"));
 
-		PersonSiadapWrapper personWrapper = new PersonSiadapWrapper(person,
-				year);
+		PersonSiadapWrapper personWrapper = new PersonSiadapWrapper(person, year);
 		UnitSiadapWrapper unitWrapper = new UnitSiadapWrapper(unit, year);
 
-		personWrapper.removeHarmonizationAssessments(enumToUse,
-				unitWrapper.getHarmonizationUnit());
-		return viewUnitHarmonizationData(mapping, form, request, response,
-				year, unit);
+		personWrapper.removeHarmonizationAssessments(enumToUse, unitWrapper.getHarmonizationUnit());
+		return viewUnitHarmonizationData(mapping, form, request, response, year, unit);
 
 	}
 
-	public final ActionForward terminateValidation(final ActionMapping mapping,
-			final ActionForm form, final HttpServletRequest request,
-			final HttpServletResponse response) {
+	public final ActionForward terminateValidation(final ActionMapping mapping, final ActionForm form,
+			final HttpServletRequest request, final HttpServletResponse response) {
 		int year = Integer.parseInt(request.getParameter("year"));
 
-		SiadapYearConfiguration siadapYearConfiguration = SiadapYearConfiguration
-				.getSiadapYearConfiguration(year);
-		UnitSiadapWrapper unitWrapper = new UnitSiadapWrapper(
-				siadapYearConfiguration.getSiadapStructureTopUnit(), year);
+		SiadapYearConfiguration siadapYearConfiguration = SiadapYearConfiguration.getSiadapYearConfiguration(year);
+		UnitSiadapWrapper unitWrapper = new UnitSiadapWrapper(siadapYearConfiguration.getSiadapStructureTopUnit(), year);
 
-		return executeValidation(mapping, form, request, response,
-				unitWrapper.getAllUniverseWrappersOfAllPeopleInSubUnits(),
+		return executeValidation(mapping, form, request, response, unitWrapper.getAllUniverseWrappersOfAllPeopleInSubUnits(),
 				ValidationSubActivity.TERMINATE_VALIDATION, unitWrapper);
 
 	}
 
-	public final ActionForward terminateHarmonization(
-			final ActionMapping mapping, final ActionForm form,
+	public final ActionForward terminateHarmonization(final ActionMapping mapping, final ActionForm form,
 			final HttpServletRequest request, final HttpServletResponse response) {
 
 		Unit unit = getDomainObject(request, "unitId");
@@ -692,9 +596,8 @@ public class SiadapManagement extends ContextBaseAction {
 		return viewUnitHarmonizationData(mapping, form, request, response);
 	}
 
-	public final ActionForward reOpenHarmonization(final ActionMapping mapping,
-			final ActionForm form, final HttpServletRequest request,
-			final HttpServletResponse response) {
+	public final ActionForward reOpenHarmonization(final ActionMapping mapping, final ActionForm form,
+			final HttpServletRequest request, final HttpServletResponse response) {
 
 		Unit unit = getDomainObject(request, "unitId");
 		int year = Integer.parseInt(request.getParameter("year"));
@@ -708,46 +611,38 @@ public class SiadapManagement extends ContextBaseAction {
 		return viewUnitHarmonizationData(mapping, form, request, response);
 	}
 
-	public final ActionForward manageHarmonizationUnitsForMode(
-			final ActionMapping mapping, final ActionForm form,
+	public final ActionForward manageHarmonizationUnitsForMode(final ActionMapping mapping, final ActionForm form,
 			final HttpServletRequest request, final HttpServletResponse response) {
 
 		SiadapYearWrapper siadapYearWrapper = (SiadapYearWrapper) getRenderedObject("siadapYearWrapper");
 		if (siadapYearWrapper == null) {
-			ArrayList<Integer> yearsWithConfigs = SiadapYearsFromExistingSiadapConfigurations
-					.getYearsWithExistingConfigs();
-			if (yearsWithConfigs.contains(new Integer(
-					new LocalDate().getYear() - 1))) {
+			ArrayList<Integer> yearsWithConfigs = SiadapYearsFromExistingSiadapConfigurations.getYearsWithExistingConfigs();
+			if (yearsWithConfigs.contains(new Integer(new LocalDate().getYear() - 1))) {
 				int year = new LocalDate().getYear() - 1;
 				siadapYearWrapper = new SiadapYearWrapper(year);
 			} else {
-				if (yearsWithConfigs.contains(new Integer(new LocalDate()
-						.getYear()))) {
+				if (yearsWithConfigs.contains(new Integer(new LocalDate().getYear()))) {
 					int year = new LocalDate().getYear();
 					siadapYearWrapper = new SiadapYearWrapper(year);
 				} else {
-					siadapYearWrapper = new SiadapYearWrapper(
-							yearsWithConfigs.get(yearsWithConfigs.size() - 1));
+					siadapYearWrapper = new SiadapYearWrapper(yearsWithConfigs.get(yearsWithConfigs.size() - 1));
 				}
 			}
 		}
 		RenderUtils.invalidateViewState();
 
 		request.setAttribute("siadapYearWrapper", siadapYearWrapper);
-		request.setAttribute("harmonizationUnits", SiadapYearConfiguration
-				.getAllHarmonizationUnitsExceptSpecialUnit(siadapYearWrapper
-						.getChosenYear()));
+		request.setAttribute("harmonizationUnits",
+				SiadapYearConfiguration.getAllHarmonizationUnitsExceptSpecialUnit(siadapYearWrapper.getChosenYear()));
 		// String mode = request.getParameter("mode");
 		// if (mode == null) {
 		// mode = (String) request.getAttribute("mode");
 		// }
 		// request.setAttribute("mode", mode);
-		return forward(request,
-				"/module/siadap/bulkManagement/listHarmonizationUnits.jsp");
+		return forward(request, "/module/siadap/bulkManagement/listHarmonizationUnits.jsp");
 	}
 
-	public final ActionForward batchForceReadinessToHomologation(
-			final ActionMapping mapping, final ActionForm form,
+	public final ActionForward batchForceReadinessToHomologation(final ActionMapping mapping, final ActionForm form,
 			final HttpServletRequest request, final HttpServletResponse response) {
 		int forceReadinessToHomologationCount = 0;
 
@@ -755,18 +650,15 @@ public class SiadapManagement extends ContextBaseAction {
 
 		ArrayList<SiadapException> warningMessages = new ArrayList<SiadapException>();
 
-		SiadapYearConfiguration siadapYearConfiguration = SiadapYearConfiguration
-				.getSiadapYearConfiguration(year);
+		SiadapYearConfiguration siadapYearConfiguration = SiadapYearConfiguration.getSiadapYearConfiguration(year);
 
 		try {
-			if (!siadapYearConfiguration.getCcaMembers().contains(
-					UserView.getCurrentUser().getPerson())) {
-				throw new SiadapException(
-						"error.onlyCCA.can.force.readiness.to.homologation");
+			if (!siadapYearConfiguration.getCcaMembers().contains(UserView.getCurrentUser().getPerson())) {
+				throw new SiadapException("error.onlyCCA.can.force.readiness.to.homologation");
 			}
 
-			ForceReadinessToHomologate forceReadinessToHomologate = (ForceReadinessToHomologate) SiadapProcess
-					.getActivityStaticly(ForceReadinessToHomologate.class
+			ForceReadinessToHomologate forceReadinessToHomologate =
+					(ForceReadinessToHomologate) SiadapProcess.getActivityStaticly(ForceReadinessToHomologate.class
 							.getSimpleName());
 			// let's get all of the siadaps for a given year
 			Set<Siadap> siadapsSet = siadapYearConfiguration.getSiadapsSet();
@@ -774,8 +666,8 @@ public class SiadapManagement extends ContextBaseAction {
 			for (Siadap siadap : siadapsSet) {
 				SiadapProcess siadapProcess = siadap.getProcess();
 				if (forceReadinessToHomologate.isActive(siadapProcess)) {
-					ActivityInformation<SiadapProcess> activityInformation = new ActivityInformation<SiadapProcess>(
-							siadapProcess, forceReadinessToHomologate);
+					ActivityInformation<SiadapProcess> activityInformation =
+							new ActivityInformation<SiadapProcess>(siadapProcess, forceReadinessToHomologate);
 					forceReadinessToHomologate.execute(activityInformation);
 					forceReadinessToHomologationCount++;
 				}
@@ -788,16 +680,12 @@ public class SiadapManagement extends ContextBaseAction {
 			addLocalizedMessage(request, ex.getMessage());
 		}
 		for (SiadapException warningMessage : warningMessages) {
-			addLocalizedWarningMessage(request,
-					warningMessage.getLocalizedMessage());
+			addLocalizedWarningMessage(request, warningMessage.getLocalizedMessage());
 		}
 
 		if (forceReadinessToHomologationCount != 0) {
-			addLocalizedSuccessMessage(request,
-					BundleUtil.getFormattedStringFromResourceBundle(
-							Siadap.SIADAP_BUNDLE_STRING,
-							"label.batchForceReadinessForhomologation.success",
-							String.valueOf(forceReadinessToHomologationCount)));
+			addLocalizedSuccessMessage(request, BundleUtil.getFormattedStringFromResourceBundle(Siadap.SIADAP_BUNDLE_STRING,
+					"label.batchForceReadinessForhomologation.success", String.valueOf(forceReadinessToHomologationCount)));
 
 		}
 
@@ -805,9 +693,8 @@ public class SiadapManagement extends ContextBaseAction {
 
 	}
 
-	public final ActionForward batchHomologation(final ActionMapping mapping,
-			final ActionForm form, final HttpServletRequest request,
-			final HttpServletResponse response) {
+	public final ActionForward batchHomologation(final ActionMapping mapping, final ActionForm form,
+			final HttpServletRequest request, final HttpServletResponse response) {
 
 		HomologationActivityInformation homologateInfo = null;
 		int homologationCount = 0;
@@ -815,26 +702,20 @@ public class SiadapManagement extends ContextBaseAction {
 		ArrayList<SiadapException> warningMessages = new ArrayList<SiadapException>();
 
 		try {
-			if (!SiadapYearConfiguration.getHomologationMembersGroup()
-					.isMember(UserView.getCurrentUser())) {
+			if (!SiadapYearConfiguration.getHomologationMembersGroup().isMember(UserView.getCurrentUser())) {
 				throw new SiadapException("error.onlyCCA.can.homologate");
 			}
 
-			Homologate homologateActivity = (Homologate) SiadapProcess
-					.getActivityStaticly(Homologate.class.getSimpleName());
+			Homologate homologateActivity = (Homologate) SiadapProcess.getActivityStaticly(Homologate.class.getSimpleName());
 			List<PersonSiadapWrapper> employees = getRenderedObject("employees");
 			for (PersonSiadapWrapper personWrapper : employees) {
 				if (personWrapper.isSelectedForHomologation()) {
-					if (!homologateActivity.isActive(personWrapper.getSiadap()
-							.getProcess())) {
-						warningMessages.add(new SiadapException(
-								"error.couldnt.batch.homologate.for.proccess",
-								personWrapper.getSiadap().getProcess()
-										.getProcessNumber()));
+					if (!homologateActivity.isActive(personWrapper.getSiadap().getProcess())) {
+						warningMessages.add(new SiadapException("error.couldnt.batch.homologate.for.proccess", personWrapper
+								.getSiadap().getProcess().getProcessNumber()));
 					} else {
-						homologateInfo = new HomologationActivityInformation(
-								personWrapper.getSiadap().getProcess(),
-								homologateActivity);
+						homologateInfo =
+								new HomologationActivityInformation(personWrapper.getSiadap().getProcess(), homologateActivity);
 						homologateInfo.setShouldShowChangeGradeInterface(false);
 						homologateActivity.execute(homologateInfo);
 						homologationCount++;
@@ -849,24 +730,19 @@ public class SiadapManagement extends ContextBaseAction {
 			addLocalizedMessage(request, ex.getMessage());
 		}
 		for (SiadapException warningMessage : warningMessages) {
-			addLocalizedWarningMessage(request,
-					warningMessage.getLocalizedMessage());
+			addLocalizedWarningMessage(request, warningMessage.getLocalizedMessage());
 		}
 
 		if (homologationCount != 0) {
-			addLocalizedSuccessMessage(request,
-					BundleUtil.getFormattedStringFromResourceBundle(
-							Siadap.SIADAP_BUNDLE_STRING,
-							"label.homologation.success",
-							String.valueOf(homologationCount)));
+			addLocalizedSuccessMessage(request, BundleUtil.getFormattedStringFromResourceBundle(Siadap.SIADAP_BUNDLE_STRING,
+					"label.homologation.success", String.valueOf(homologationCount)));
 
 		}
 		request.setAttribute("mode", "homologationDone");
 		return manageHarmonizationUnitsForMode(mapping, form, request, response);
 	}
 
-	public final ActionForward viewPendingHomologationProcesses(
-			final ActionMapping mapping, final ActionForm form,
+	public final ActionForward viewPendingHomologationProcesses(final ActionMapping mapping, final ActionForm form,
 			final HttpServletRequest request, final HttpServletResponse response) {
 
 		int year = Integer.parseInt(request.getParameter("year"));
@@ -874,15 +750,12 @@ public class SiadapManagement extends ContextBaseAction {
 
 		UnitSiadapWrapper unitSiadapWrapper = new UnitSiadapWrapper(unit, year);
 		request.setAttribute("unit", unitSiadapWrapper);
-		request.setAttribute("employees", unitSiadapWrapper
-				.getUnitEmployeesWithProcessesPendingHomologation());
-		return forward(request,
-				"/module/siadap/bulkManagement/viewPendingHomologationProcesses.jsp");
+		request.setAttribute("employees", unitSiadapWrapper.getUnitEmployeesWithProcessesPendingHomologation());
+		return forward(request, "/module/siadap/bulkManagement/viewPendingHomologationProcesses.jsp");
 	}
 
-	public final ActionForward viewOnlyProcesses(final ActionMapping mapping,
-			final ActionForm form, final HttpServletRequest request,
-			final HttpServletResponse response) {
+	public final ActionForward viewOnlyProcesses(final ActionMapping mapping, final ActionForm form,
+			final HttpServletRequest request, final HttpServletResponse response) {
 
 		int year = Integer.parseInt(request.getParameter("year"));
 		String mode = request.getParameter("mode");
@@ -891,21 +764,17 @@ public class SiadapManagement extends ContextBaseAction {
 		UnitSiadapWrapper unitSiadapWrapper = new UnitSiadapWrapper(unit, year);
 		request.setAttribute("unit", unitSiadapWrapper);
 		if (StringUtils.equals(mode, "viewHomologatedProcesses")) {
-			request.setAttribute("employees", unitSiadapWrapper
-					.getUnitEmployeesWithProcessesHomologated());
+			request.setAttribute("employees", unitSiadapWrapper.getUnitEmployeesWithProcessesHomologated());
 
 		} else if (StringUtils.equals(mode, "viewReviewCommission")) {
-			request.setAttribute("employees", unitSiadapWrapper
-					.getUnitEmployeesWithProcessesInReviewCommission());
+			request.setAttribute("employees", unitSiadapWrapper.getUnitEmployeesWithProcessesInReviewCommission());
 
 		} else if (StringUtils.equals(mode, "viewOngoingProcesses")) {
-			request.setAttribute("employees",
-					unitSiadapWrapper.getUnitEmployeesWithOngoingProcesses());
+			request.setAttribute("employees", unitSiadapWrapper.getUnitEmployeesWithOngoingProcesses());
 
 		}
 		request.setAttribute("mode", mode);
-		return forward(request,
-				"/module/siadap/bulkManagement/viewOnlyProcesses.jsp");
+		return forward(request, "/module/siadap/bulkManagement/viewOnlyProcesses.jsp");
 	}
 
 	// NOTE: Interface with the sequential numbers thing
@@ -950,14 +819,12 @@ public class SiadapManagement extends ContextBaseAction {
 	// unit);
 	// }
 
-	public final ActionForward prepareAddExceedingQuotaSuggestion(
-			final ActionMapping mapping, final ActionForm form,
+	public final ActionForward prepareAddExceedingQuotaSuggestion(final ActionMapping mapping, final ActionForm form,
 			final HttpServletRequest request, final HttpServletResponse response) {
 		int year = Integer.parseInt(request.getParameter("year"));
 		Unit unit = getDomainObject(request, "unitId");
 		UnitSiadapWrapper wrapper = new UnitSiadapWrapper(unit, year);
-		return prepareAddExceedingQuotaSuggestion(mapping, form, request,
-				response, year, wrapper, null);
+		return prepareAddExceedingQuotaSuggestion(mapping, form, request, response, year, wrapper, null);
 
 	}
 
@@ -1008,11 +875,8 @@ public class SiadapManagement extends ContextBaseAction {
 	// "/module/siadap/bulkManagement/addSugestionToUnit.jsp");
 	// }
 
-	private final ActionForward prepareAddExceedingQuotaSuggestion(
-			final ActionMapping mapping, final ActionForm form,
-			final HttpServletRequest request,
-			final HttpServletResponse response, int year,
-			UnitSiadapWrapper unitWrapper,
+	private final ActionForward prepareAddExceedingQuotaSuggestion(final ActionMapping mapping, final ActionForm form,
+			final HttpServletRequest request, final HttpServletResponse response, int year, UnitSiadapWrapper unitWrapper,
 			List<SiadapUniverseWrapper> universeWrappers) {
 
 		List<SiadapUniverseWrapper> siadapUniverseWrappers = null;
@@ -1021,82 +885,65 @@ public class SiadapManagement extends ContextBaseAction {
 
 			// let's get all of the quota proposals and put them in the right
 			// beans
-			List<ExceedingQuotaProposal> quotaProposals = ExceedingQuotaProposal
-					.getQuotaProposalsFor(unitWrapper.getUnit(), year);
+			List<ExceedingQuotaProposal> quotaProposals =
+					ExceedingQuotaProposal.getQuotaProposalsFor(unitWrapper.getUnit(), year);
 
-			Map<ExceedingQuotaSuggestionType, List<ExceedingQuotaProposal>> siadap2WithQuotas = new HashMap<ExceedingQuotaSuggestionType, List<ExceedingQuotaProposal>>();
+			Map<ExceedingQuotaSuggestionType, List<ExceedingQuotaProposal>> siadap2WithQuotas =
+					new HashMap<ExceedingQuotaSuggestionType, List<ExceedingQuotaProposal>>();
 
-			Map<ExceedingQuotaSuggestionType, List<ExceedingQuotaProposal>> siadap3WithQuotas = new HashMap<ExceedingQuotaSuggestionType, List<ExceedingQuotaProposal>>();
+			Map<ExceedingQuotaSuggestionType, List<ExceedingQuotaProposal>> siadap3WithQuotas =
+					new HashMap<ExceedingQuotaSuggestionType, List<ExceedingQuotaProposal>>();
 
-			Map<ExceedingQuotaSuggestionType, List<ExceedingQuotaProposal>> siadap3WithoutQuotas = new HashMap<ExceedingQuotaSuggestionType, List<ExceedingQuotaProposal>>();
+			Map<ExceedingQuotaSuggestionType, List<ExceedingQuotaProposal>> siadap3WithoutQuotas =
+					new HashMap<ExceedingQuotaSuggestionType, List<ExceedingQuotaProposal>>();
 
-			Map<ExceedingQuotaSuggestionType, List<ExceedingQuotaProposal>> siadap2WithoutQuotas = new HashMap<ExceedingQuotaSuggestionType, List<ExceedingQuotaProposal>>();
+			Map<ExceedingQuotaSuggestionType, List<ExceedingQuotaProposal>> siadap2WithoutQuotas =
+					new HashMap<ExceedingQuotaSuggestionType, List<ExceedingQuotaProposal>>();
 
-			ExceedingQuotaProposal.organizeAndFillExceedingQuotaProposals(
-					unitWrapper.getUnit(), year, siadap2WithQuotas,
-					siadap3WithoutQuotas, siadap2WithoutQuotas,
-					siadap3WithQuotas);
+			ExceedingQuotaProposal.organizeAndFillExceedingQuotaProposals(unitWrapper.getUnit(), year, siadap2WithQuotas,
+					siadap3WithoutQuotas, siadap2WithoutQuotas, siadap3WithQuotas);
 
 			// TODO (?) REFACTOR: joantune - this can be remade to use the maps
 			// that are used for the validation, it would be cleaner
 			// let's make the several universes and add them to be rendered in
 			// the page
-			siadapUniverseWrappers
-					.add(new SiadapUniverseWrapper(
-							siadap2WithQuotas
-									.get(ExceedingQuotaSuggestionType.EXCELLENCY_SUGGESTION),
-							SiadapUniverseWrapper.SIADAP2_WITH_QUOTAS_EXCELLENT_SUGGESTION,
-							SiadapUniverse.SIADAP2, unitWrapper, true));
+			siadapUniverseWrappers.add(new SiadapUniverseWrapper(siadap2WithQuotas
+					.get(ExceedingQuotaSuggestionType.EXCELLENCY_SUGGESTION),
+					SiadapUniverseWrapper.SIADAP2_WITH_QUOTAS_EXCELLENT_SUGGESTION, SiadapUniverse.SIADAP2, unitWrapper, true));
 
-			siadapUniverseWrappers.add(new SiadapUniverseWrapper(
-					siadap2WithQuotas
-							.get(ExceedingQuotaSuggestionType.HIGH_SUGGESTION),
-					SiadapUniverseWrapper.SIADAP2_WITH_QUOTAS_HIGH_SUGGESTION,
-					SiadapUniverse.SIADAP2, unitWrapper, true));
+			siadapUniverseWrappers.add(new SiadapUniverseWrapper(siadap2WithQuotas
+					.get(ExceedingQuotaSuggestionType.HIGH_SUGGESTION),
+					SiadapUniverseWrapper.SIADAP2_WITH_QUOTAS_HIGH_SUGGESTION, SiadapUniverse.SIADAP2, unitWrapper, true));
 
 			siadapUniverseWrappers
-					.add(new SiadapUniverseWrapper(
-							siadap2WithoutQuotas
-									.get(ExceedingQuotaSuggestionType.EXCELLENCY_SUGGESTION),
-							SiadapUniverseWrapper.SIADAP2_WITHOUT_QUOTAS_EXCELLENT_SUGGESTION,
-							SiadapUniverse.SIADAP2, unitWrapper, false));
+					.add(new SiadapUniverseWrapper(siadap2WithoutQuotas.get(ExceedingQuotaSuggestionType.EXCELLENCY_SUGGESTION),
+							SiadapUniverseWrapper.SIADAP2_WITHOUT_QUOTAS_EXCELLENT_SUGGESTION, SiadapUniverse.SIADAP2,
+							unitWrapper, false));
+
+			siadapUniverseWrappers.add(new SiadapUniverseWrapper(siadap2WithoutQuotas
+					.get(ExceedingQuotaSuggestionType.HIGH_SUGGESTION),
+					SiadapUniverseWrapper.SIADAP2_WITHOUT_QUOTAS_HIGH_SUGGESTION, SiadapUniverse.SIADAP2, unitWrapper, false));
+
+			siadapUniverseWrappers.add(new SiadapUniverseWrapper(siadap3WithQuotas
+					.get(ExceedingQuotaSuggestionType.EXCELLENCY_SUGGESTION),
+					SiadapUniverseWrapper.SIADAP3_WITH_QUOTAS_EXCELLENT_SUGGESTION, SiadapUniverse.SIADAP3, unitWrapper, true));
+
+			siadapUniverseWrappers.add(new SiadapUniverseWrapper(siadap3WithQuotas
+					.get(ExceedingQuotaSuggestionType.HIGH_SUGGESTION),
+					SiadapUniverseWrapper.SIADAP3_WITH_QUOTAS_HIGH_SUGGESTION, SiadapUniverse.SIADAP3, unitWrapper, true));
 
 			siadapUniverseWrappers
-					.add(new SiadapUniverseWrapper(
-							siadap2WithoutQuotas
-									.get(ExceedingQuotaSuggestionType.HIGH_SUGGESTION),
-							SiadapUniverseWrapper.SIADAP2_WITHOUT_QUOTAS_HIGH_SUGGESTION,
-							SiadapUniverse.SIADAP2, unitWrapper, false));
+					.add(new SiadapUniverseWrapper(siadap3WithoutQuotas.get(ExceedingQuotaSuggestionType.EXCELLENCY_SUGGESTION),
+							SiadapUniverseWrapper.SIADAP3_WITHOUT_QUOTAS_EXCELLENT_SUGGESTION, SiadapUniverse.SIADAP3,
+							unitWrapper, false));
 
-			siadapUniverseWrappers
-					.add(new SiadapUniverseWrapper(
-							siadap3WithQuotas
-									.get(ExceedingQuotaSuggestionType.EXCELLENCY_SUGGESTION),
-							SiadapUniverseWrapper.SIADAP3_WITH_QUOTAS_EXCELLENT_SUGGESTION,
-							SiadapUniverse.SIADAP3, unitWrapper, true));
+			siadapUniverseWrappers.add(new SiadapUniverseWrapper(siadap3WithoutQuotas
+					.get(ExceedingQuotaSuggestionType.HIGH_SUGGESTION),
+					SiadapUniverseWrapper.SIADAP3_WITHOUT_QUOTAS_HIGH_SUGGESTION, SiadapUniverse.SIADAP3, unitWrapper, false));
 
-			siadapUniverseWrappers.add(new SiadapUniverseWrapper(
-					siadap3WithQuotas
-							.get(ExceedingQuotaSuggestionType.HIGH_SUGGESTION),
-					SiadapUniverseWrapper.SIADAP3_WITH_QUOTAS_HIGH_SUGGESTION,
-					SiadapUniverse.SIADAP3, unitWrapper, true));
-
-			siadapUniverseWrappers
-					.add(new SiadapUniverseWrapper(
-							siadap3WithoutQuotas
-									.get(ExceedingQuotaSuggestionType.EXCELLENCY_SUGGESTION),
-							SiadapUniverseWrapper.SIADAP3_WITHOUT_QUOTAS_EXCELLENT_SUGGESTION,
-							SiadapUniverse.SIADAP3, unitWrapper, false));
-
-			siadapUniverseWrappers
-					.add(new SiadapUniverseWrapper(
-							siadap3WithoutQuotas
-									.get(ExceedingQuotaSuggestionType.HIGH_SUGGESTION),
-							SiadapUniverseWrapper.SIADAP3_WITHOUT_QUOTAS_HIGH_SUGGESTION,
-							SiadapUniverse.SIADAP3, unitWrapper, false));
-
-		} else
+		} else {
 			siadapUniverseWrappers = universeWrappers;
+		}
 		request.setAttribute("unit", unitWrapper);
 		request.setAttribute("siadapUniverseWrappers", siadapUniverseWrappers);
 
@@ -1104,24 +951,20 @@ public class SiadapManagement extends ContextBaseAction {
 		// suggestions
 		request.setAttribute("bean", new SiadapSuggestionBean(unitWrapper));
 
-		return forward(request,
-				"/module/siadap/bulkManagement/addSugestionToUnit.jsp");
+		return forward(request, "/module/siadap/bulkManagement/addSugestionToUnit.jsp");
 
 	}
 
-	public final ActionForward invalidateAddExceedingQuotaSuggestion(
-			final ActionMapping mapping, final ActionForm form,
+	public final ActionForward invalidateAddExceedingQuotaSuggestion(final ActionMapping mapping, final ActionForm form,
 			final HttpServletRequest request, final HttpServletResponse response) {
 
 		SiadapSuggestionBean bean = getRenderedObject("bean");
 		request.setAttribute("bean", bean);
 
-		return forward(request,
-				"/module/siadap/bulkManagement/addSugestionToUnit.jsp");
+		return forward(request, "/module/siadap/bulkManagement/addSugestionToUnit.jsp");
 	}
 
-	public final ActionForward removeExceedingQuotaProposal(
-			final ActionMapping mapping, final ActionForm form,
+	public final ActionForward removeExceedingQuotaProposal(final ActionMapping mapping, final ActionForm form,
 			final HttpServletRequest request, final HttpServletResponse response) {
 		ExceedingQuotaProposal proposal = getDomainObject(request, "proposalId");
 		Unit unit = getDomainObject(request, "unitId");
@@ -1133,13 +976,11 @@ public class SiadapManagement extends ContextBaseAction {
 
 		proposal.remove();
 
-		return prepareAddExceedingQuotaSuggestion(mapping, form, request,
-				response, year, new UnitSiadapWrapper(unit, year), null);
+		return prepareAddExceedingQuotaSuggestion(mapping, form, request, response, year, new UnitSiadapWrapper(unit, year), null);
 
 	}
 
-	public final ActionForward addExceedingQuotaSuggestion(
-			final ActionMapping mapping, final ActionForm form,
+	public final ActionForward addExceedingQuotaSuggestion(final ActionMapping mapping, final ActionForm form,
 			final HttpServletRequest request, final HttpServletResponse response) {
 		int year = Integer.parseInt(request.getParameter("year"));
 		SiadapSuggestionBean bean = getRenderedObject("bean");
@@ -1150,16 +991,14 @@ public class SiadapManagement extends ContextBaseAction {
 
 		UnitSiadapWrapper unitSiadapWrapper = bean.getUnitWrapper();
 
-		PersonSiadapWrapper personWrapper = new PersonSiadapWrapper(
-				bean.getAutoCompletePerson(), bean.getYear());
+		PersonSiadapWrapper personWrapper = new PersonSiadapWrapper(bean.getAutoCompletePerson(), bean.getYear());
 
-		ExceedingQuotaProposal.createAndAppendProposal(personWrapper
-				.getSiadapUniverseWhichIsBeingHarmonized(unitSiadapWrapper
-						.getUnit()), personWrapper.isQuotaAware(), bean
-				.getType(), year, unitSiadapWrapper, personWrapper.getPerson());
+		ExceedingQuotaProposal.createAndAppendProposal(
+				personWrapper.getSiadapUniverseWhichIsBeingHarmonized(unitSiadapWrapper.getUnit()), personWrapper.isQuotaAware(),
+				bean.getType(), year, unitSiadapWrapper, personWrapper.getPerson());
 
-		return prepareAddExceedingQuotaSuggestion(mapping, form, request,
-				response, year, unitSiadapWrapper, siadapUniverseWrapperList);
+		return prepareAddExceedingQuotaSuggestion(mapping, form, request, response, year, unitSiadapWrapper,
+				siadapUniverseWrapperList);
 
 	}
 
@@ -1174,24 +1013,18 @@ public class SiadapManagement extends ContextBaseAction {
 	// return viewUnitHarmonizationData(mapping, form, request, response);
 	// }
 
-	public final ActionForward downloadAndGenerateSiadapDocument(
-			final ActionMapping mapping, final ActionForm form,
-			final HttpServletRequest request, final HttpServletResponse response)
-			throws Exception {
+	public final ActionForward downloadAndGenerateSiadapDocument(final ActionMapping mapping, final ActionForm form,
+			final HttpServletRequest request, final HttpServletResponse response) throws Exception {
 
 		SiadapProcess process = getDomainObject(request, "processId");
 
-		PersonSiadapWrapper personSiadapWrapper = new PersonSiadapWrapper(
-				process.getSiadap().getEvaluated(), process.getSiadap()
-						.getYear());
+		PersonSiadapWrapper personSiadapWrapper =
+				new PersonSiadapWrapper(process.getSiadap().getEvaluated(), process.getSiadap().getYear());
 
-		byte[] byteArray = HomologationDocumentFile
-				.generateHomologationDocument(personSiadapWrapper, BundleUtil
-						.getStringFromResourceBundle(
-								Siadap.SIADAP_BUNDLE_STRING,
-								"SiadapProcessDocument.motive.userOrder"));
-		return download(response, "SIADAP_" + process.getProcessNumber()
-				+ ".pdf", byteArray, "application/pdf");
+		byte[] byteArray =
+				HomologationDocumentFile.generateHomologationDocument(personSiadapWrapper, BundleUtil
+						.getStringFromResourceBundle(Siadap.SIADAP_BUNDLE_STRING, "SiadapProcessDocument.motive.userOrder"));
+		return download(response, "SIADAP_" + process.getProcessNumber() + ".pdf", byteArray, "application/pdf");
 
 	}
 }

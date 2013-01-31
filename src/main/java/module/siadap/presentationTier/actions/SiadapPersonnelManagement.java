@@ -27,8 +27,6 @@ package module.siadap.presentationTier.actions;
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
@@ -36,33 +34,6 @@ import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.struts.action.ActionForm;
-import org.apache.struts.action.ActionForward;
-import org.apache.struts.action.ActionMapping;
-import org.joda.time.LocalDate;
-
-import pt.ist.bennu.core.applicationTier.Authenticate.UserView;
-import pt.ist.bennu.core.domain.VirtualHost;
-import pt.ist.bennu.core.domain.exceptions.DomainException;
-import pt.ist.bennu.core.presentationTier.actions.ContextBaseAction;
-import pt.ist.bennu.core.util.BundleUtil;
-import pt.ist.bennu.core.util.VariantBean;
-import pt.ist.emailNotifier.domain.Email;
-import pt.ist.fenixWebFramework.renderers.utils.RenderUtils;
-import pt.ist.fenixWebFramework.services.Service;
-import pt.ist.fenixWebFramework.struts.annotations.Mapping;
-import pt.utl.ist.fenix.tools.util.excel.Spreadsheet;
-import pt.utl.ist.fenix.tools.util.excel.Spreadsheet.Row;
-
-import module.contacts.domain.EmailAddress;
-import module.fileManagement.domain.task.AddWebdavNode;
-import module.organization.domain.Accountability;
-import module.organization.domain.AccountabilityType;
-import module.organization.domain.Party;
-import module.organization.domain.PartyType;
 import module.organization.domain.Person;
 import module.organization.domain.Unit;
 import module.siadap.activities.ChangePersonnelSituationActivityInformation;
@@ -76,7 +47,6 @@ import module.siadap.domain.SiadapRootModule;
 import module.siadap.domain.SiadapUniverse;
 import module.siadap.domain.SiadapYearConfiguration;
 import module.siadap.domain.exceptions.SiadapException;
-import module.siadap.domain.groups.SiadapStructureManagementGroup;
 import module.siadap.domain.util.actions.SiadapUtilActions;
 import module.siadap.domain.wrappers.PersonSiadapWrapper;
 import module.siadap.domain.wrappers.SiadapYearWrapper;
@@ -86,6 +56,24 @@ import module.workflow.activities.ActivityException;
 import module.workflow.activities.ActivityInformation;
 import module.workflow.activities.WorkflowActivity;
 import module.workflow.domain.WorkflowProcess;
+
+import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.struts.action.ActionForm;
+import org.apache.struts.action.ActionForward;
+import org.apache.struts.action.ActionMapping;
+import org.joda.time.LocalDate;
+
+import pt.ist.bennu.core.applicationTier.Authenticate.UserView;
+import pt.ist.bennu.core.domain.exceptions.DomainException;
+import pt.ist.bennu.core.presentationTier.actions.ContextBaseAction;
+import pt.ist.bennu.core.util.BundleUtil;
+import pt.ist.bennu.core.util.VariantBean;
+import pt.ist.fenixWebFramework.renderers.utils.RenderUtils;
+import pt.ist.fenixWebFramework.struts.annotations.Mapping;
+import pt.utl.ist.fenix.tools.util.excel.Spreadsheet;
+import pt.utl.ist.fenix.tools.util.excel.Spreadsheet.Row;
 
 /**
  * 
@@ -187,8 +175,9 @@ public class SiadapPersonnelManagement extends ContextBaseAction {
 			}
 			activity.execute(activityInformation);
 
-			if (informationBeanWrapper.getSuccessWarningMessage() != null)
+			if (informationBeanWrapper.getSuccessWarningMessage() != null) {
 				addLocalizedWarningMessage(request, informationBeanWrapper.getSuccessWarningMessage());
+			}
 
 		} catch (DomainException ex) {
 			addLocalizedMessage(request, ex.getLocalizedMessage());
@@ -614,10 +603,11 @@ public class SiadapPersonnelManagement extends ContextBaseAction {
 		ChangeSiadapUniverseBean(Person person, int year, boolean forceChange) {
 			SiadapYearConfiguration siadapYearConfiguration = SiadapYearConfiguration.getSiadapYearConfiguration(year);
 			Siadap siadapFor = (siadapYearConfiguration == null) ? null : siadapYearConfiguration.getSiadapFor(person);
-			if (siadapFor == null)
+			if (siadapFor == null) {
 				this.setSiadapUniverse(null);
-			else
+			} else {
 				this.setSiadapUniverse(siadapFor.getDefaultSiadapUniverse());
+			}
 			this.forceChange = forceChange;
 		}
 
@@ -647,8 +637,9 @@ public class SiadapPersonnelManagement extends ContextBaseAction {
 		public void execute(SiadapProcess process) throws SiadapException {
 			Siadap siadap = process.getSiadap();
 			// extra verification
-			if (forceChange && !SiadapRootModule.getInstance().getSiadapCCAGroup().isMember(UserView.getCurrentUser()))
+			if (forceChange && !SiadapRootModule.getInstance().getSiadapCCAGroup().isMember(UserView.getCurrentUser())) {
 				throw new SiadapException("only.cca.should.be.able.to.force.change");
+			}
 
 			new PersonSiadapWrapper(siadap.getEvaluated(), siadap.getYear()).changeDefaultUniverseTo(getSiadapUniverse(),
 					getDateOfChange(), forceChange);
@@ -657,14 +648,15 @@ public class SiadapPersonnelManagement extends ContextBaseAction {
 
 		@Override
 		public String[] getArgumentsDescription(SiadapProcess process) {
-			if (!forceChange)
+			if (!forceChange) {
 				return new String[] { BundleUtil.getFormattedStringFromResourceBundle(Siadap.SIADAP_BUNDLE_STRING,
 						ChangeSiadapUniverseBean.class.getSimpleName(), getSiadapUniverse().getLocalizedName(), getDateOfChange()
 								.toString()) };
-			else
+			} else {
 				return new String[] { BundleUtil.getFormattedStringFromResourceBundle(Siadap.SIADAP_BUNDLE_STRING,
 						ChangeSiadapUniverseBean.class.getSimpleName() + ".forced", getSiadapUniverse().getLocalizedName(),
 						getDateOfChange().toString(), getJustificationForForcingChange()) };
+			}
 		}
 
 		public String getJustificationForForcingChange() {
@@ -745,8 +737,9 @@ public class SiadapPersonnelManagement extends ContextBaseAction {
 		@Override
 		public void execute(SiadapProcess process) throws SiadapException {
 			Siadap siadap = process.getSiadap();
-			if (siadap.isDefaultEvaluationDone())
+			if (siadap.isDefaultEvaluationDone()) {
 				throw new SiadapException("error.cannot.change.evaluator.evaluation.already.done");
+			}
 			new PersonSiadapWrapper(siadap.getEvaluated(), siadap.getYear()).changeEvaluatorTo(getEvaluator(), getDateOfChange());
 
 		}
@@ -789,15 +782,17 @@ public class SiadapPersonnelManagement extends ContextBaseAction {
 			if (process.getSiadap().getCompetences() != null
 					&& process.getSiadap().getCompetences().isEmpty() == false
 					&& SiadapProcessStateEnum.getState(process.getSiadap()).ordinal() > SiadapProcessStateEnum.NOT_YET_SUBMITTED_FOR_ACK
-							.ordinal())
+							.ordinal()) {
 				throw new SiadapException("error.changing.competence.type.cant.due.to.existing.competences.defined");
+			}
 			SiadapEvaluationUniverse defaultSiadapEvaluationUniverse = process.getSiadap().getDefaultSiadapEvaluationUniverse();
 			defaultSiadapEvaluationUniverse.setCompetenceSlashCareerType(getCompetenceType());
 			// we should also remove any existing competences (as long as they
 			// have no grades associated with them)
 			for (CompetenceEvaluation competenceEvaluation : defaultSiadapEvaluationUniverse.getCompetenceEvaluations()) {
-				if (competenceEvaluation.getItemAutoEvaluation() != null || competenceEvaluation.getItemEvaluation() != null)
+				if (competenceEvaluation.getItemAutoEvaluation() != null || competenceEvaluation.getItemEvaluation() != null) {
 					throw new SiadapException("error.changing.competence.type.due.to.existing.evaluation");
+				}
 				competenceEvaluation.delete();
 			}
 		}
@@ -837,8 +832,9 @@ public class SiadapPersonnelManagement extends ContextBaseAction {
 		@Override
 		public void execute(SiadapProcess process) throws SiadapException {
 			if (SiadapProcessStateEnum.getState(process.getSiadap()).ordinal() <= SiadapProcessStateEnum.NOT_YET_SUBMITTED_FOR_ACK
-					.ordinal())
+					.ordinal()) {
 				throw new SiadapException("error.changing.competence.type.use.regular.change");
+			}
 
 			process.getSiadap().getDefaultSiadapEvaluationUniverse().setCompetenceSlashCareerType(getCompetenceType());
 		}

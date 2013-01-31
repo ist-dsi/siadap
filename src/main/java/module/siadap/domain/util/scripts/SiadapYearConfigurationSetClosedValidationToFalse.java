@@ -24,37 +24,35 @@
  */
 package module.siadap.domain.util.scripts;
 
-import pt.ist.bennu.core.domain.scheduler.WriteCustomTask;
-
 import module.siadap.domain.SiadapRootModule;
 import module.siadap.domain.SiadapYearConfiguration;
+import pt.ist.bennu.core.domain.scheduler.WriteCustomTask;
 
 /**
  * 
- *         This is a simple script that will make the new slot on the
- *         {@link SiadapYearConfiguration}
- *         SiadapYearConfiguration#getClosedValidation to false
+ * This is a simple script that will make the new slot on the {@link SiadapYearConfiguration}
+ * SiadapYearConfiguration#getClosedValidation to false
  * 
  * @author João Antunes
  * 
  */
 public class SiadapYearConfigurationSetClosedValidationToFalse extends WriteCustomTask {
 
-    /* (non-Javadoc)
-     * @see pt.ist.bennu.core.domain.scheduler.WriteCustomTask#doService()
-     */
-    @Override
-    protected void doService() {
-	int nrOfBoolsSet = 0;
-	for (SiadapYearConfiguration siadapYearConfiguration : SiadapRootModule.getInstance().getYearConfigurations()) {
-	    if (siadapYearConfiguration.getClosedValidation() == null) {
-		siadapYearConfiguration.setClosedValidation(Boolean.FALSE);
-		nrOfBoolsSet++;
-	    }
+	/* (non-Javadoc)
+	 * @see pt.ist.bennu.core.domain.scheduler.WriteCustomTask#doService()
+	 */
+	@Override
+	protected void doService() {
+		int nrOfBoolsSet = 0;
+		for (SiadapYearConfiguration siadapYearConfiguration : SiadapRootModule.getInstance().getYearConfigurations()) {
+			if (siadapYearConfiguration.getClosedValidation() == null) {
+				siadapYearConfiguration.setClosedValidation(Boolean.FALSE);
+				nrOfBoolsSet++;
+			}
+		}
+
+		out.println("Number of bools that were set: " + nrOfBoolsSet);
+
 	}
-
-	out.println("Number of bools that were set: " + nrOfBoolsSet);
-
-    }
 
 }

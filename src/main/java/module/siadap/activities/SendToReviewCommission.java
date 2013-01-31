@@ -24,16 +24,16 @@
  */
 package module.siadap.activities;
 
-import org.joda.time.LocalDate;
-
-import pt.ist.bennu.core.domain.User;
-
 import module.siadap.domain.Siadap;
 import module.siadap.domain.SiadapProcess;
 import module.siadap.domain.SiadapProcessStateEnum;
 import module.siadap.domain.SiadapRootModule;
 import module.workflow.activities.ActivityInformation;
 import module.workflow.activities.WorkflowActivity;
+
+import org.joda.time.LocalDate;
+
+import pt.ist.bennu.core.domain.User;
 
 /**
  * 
@@ -44,31 +44,32 @@ import module.workflow.activities.WorkflowActivity;
  */
 public class SendToReviewCommission extends WorkflowActivity<SiadapProcess, ActivityInformation<SiadapProcess>> {
 
-    @Override
-    public boolean isActive(SiadapProcess process, User user) {
-	if (!process.isActive())
-	    return false;
-	int year = process.getSiadap().getYear();
-	if (SiadapRootModule.getInstance().getSiadapCCAGroup().isMember(user)
-		&& (process.getSiadap().getState().equals(SiadapProcessStateEnum.VALIDATION_ACKNOWLEDGED) || process.getSiadap()
-			.getState().equals(SiadapProcessStateEnum.WAITING_HOMOLOGATION))) {
-	    return true;
+	@Override
+	public boolean isActive(SiadapProcess process, User user) {
+		if (!process.isActive()) {
+			return false;
+		}
+		int year = process.getSiadap().getYear();
+		if (SiadapRootModule.getInstance().getSiadapCCAGroup().isMember(user)
+				&& (process.getSiadap().getState().equals(SiadapProcessStateEnum.VALIDATION_ACKNOWLEDGED) || process.getSiadap()
+						.getState().equals(SiadapProcessStateEnum.WAITING_HOMOLOGATION))) {
+			return true;
+		}
+		return false;
 	}
-	return false;
-    }
 
-    @Override
-    public String getUsedBundle() {
-	return Siadap.SIADAP_BUNDLE_STRING;
-    }
+	@Override
+	public String getUsedBundle() {
+		return Siadap.SIADAP_BUNDLE_STRING;
+	}
 
-    @Override
-    public boolean isUserAwarenessNeeded(SiadapProcess process) {
-	return false;
-    }
+	@Override
+	public boolean isUserAwarenessNeeded(SiadapProcess process) {
+		return false;
+	}
 
-    @Override
-    protected void process(ActivityInformation<SiadapProcess> activityInformation) {
-	activityInformation.getProcess().getSiadap().setAssignedToReviewCommissionDate(new LocalDate());
-    }
+	@Override
+	protected void process(ActivityInformation<SiadapProcess> activityInformation) {
+		activityInformation.getProcess().getSiadap().setAssignedToReviewCommissionDate(new LocalDate());
+	}
 }

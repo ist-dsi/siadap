@@ -37,21 +37,21 @@ import pt.ist.fenixWebFramework.rendererExtensions.util.IPresentableEnum;
  */
 public enum SiadapCompetencesEvaluation implements IPresentableEnum, IScoring {
 
-    HIGH(5), MEDIUM(3), LOW(1);
+	HIGH(5), MEDIUM(3), LOW(1);
 
-    private BigDecimal points;
+	private BigDecimal points;
 
-    SiadapCompetencesEvaluation(int points) {
-	this.points = new BigDecimal(points);
-    }
+	SiadapCompetencesEvaluation(int points) {
+		this.points = new BigDecimal(points);
+	}
 
-    @Override
-    public BigDecimal getPoints() {
-	return points;
-    }
+	@Override
+	public BigDecimal getPoints() {
+		return points;
+	}
 
-    @Override
-    public String getLocalizedName() {
-	return BundleUtil.getStringFromResourceBundle("resources/SiadapResources", getClass().getName() + "." + name());
-    }
+	@Override
+	public String getLocalizedName() {
+		return BundleUtil.getStringFromResourceBundle("resources/SiadapResources", getClass().getName() + "." + name());
+	}
 }

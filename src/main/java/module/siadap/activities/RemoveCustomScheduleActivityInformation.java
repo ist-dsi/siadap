@@ -37,48 +37,49 @@ import module.workflow.domain.WorkflowProcess;
  * 
  */
 public class RemoveCustomScheduleActivityInformation extends ActivityInformation<SiadapProcess> {
-    
-    private String siadapProcessSchedulesEnumToRemove;
-    private Siadap siadap;
 
-    public RemoveCustomScheduleActivityInformation(SiadapProcess process,
-	    WorkflowActivity<? extends WorkflowProcess, ? extends ActivityInformation> activity) {
-	super(process, activity);
-    }
+	private String siadapProcessSchedulesEnumToRemove;
+	private Siadap siadap;
 
-    public void setSiadapProcessSchedulesEnumToRemove(String siadapProcessSchedulesEnumToRemove) {
-	this.siadapProcessSchedulesEnumToRemove = siadapProcessSchedulesEnumToRemove;
-    }
+	public RemoveCustomScheduleActivityInformation(SiadapProcess process,
+			WorkflowActivity<? extends WorkflowProcess, ? extends ActivityInformation> activity) {
+		super(process, activity);
+	}
 
-    public String getSiadapProcessSchedulesEnumToRemove() {
-	return siadapProcessSchedulesEnumToRemove;
-    }
+	public void setSiadapProcessSchedulesEnumToRemove(String siadapProcessSchedulesEnumToRemove) {
+		this.siadapProcessSchedulesEnumToRemove = siadapProcessSchedulesEnumToRemove;
+	}
 
-    @Override
-    public boolean hasAllneededInfo() {
-	if (getSiadapProcessSchedulesEnumToRemove() != null
-		&& SiadapProcessSchedulesEnum.valueOf(getSiadapProcessSchedulesEnumToRemove()) instanceof SiadapProcessSchedulesEnum)
-	    return true;
-	return false;
-    }
+	public String getSiadapProcessSchedulesEnumToRemove() {
+		return siadapProcessSchedulesEnumToRemove;
+	}
 
-    @Override
-    public void setProcess(SiadapProcess process) {
-	super.setProcess(process);
-	setSiadap(process.getSiadap());
-    }
+	@Override
+	public boolean hasAllneededInfo() {
+		if (getSiadapProcessSchedulesEnumToRemove() != null
+				&& SiadapProcessSchedulesEnum.valueOf(getSiadapProcessSchedulesEnumToRemove()) instanceof SiadapProcessSchedulesEnum) {
+			return true;
+		}
+		return false;
+	}
 
-    public Siadap getSiadap() {
-	return siadap;
-    }
+	@Override
+	public void setProcess(SiadapProcess process) {
+		super.setProcess(process);
+		setSiadap(process.getSiadap());
+	}
 
-    public void setSiadap(Siadap siadap) {
-	this.siadap = siadap;
-    }
+	public Siadap getSiadap() {
+		return siadap;
+	}
 
-    /**
+	public void setSiadap(Siadap siadap) {
+		this.siadap = siadap;
+	}
+
+	/**
      * 
      */
-    private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 1L;
 
 }

@@ -39,14 +39,6 @@ import java.util.TreeSet;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.commons.collections.Predicate;
-import org.joda.time.LocalDate;
-
-import pt.ist.bennu.core.applicationTier.Authenticate.UserView;
-import pt.ist.bennu.core.domain.User;
-import pt.ist.bennu.core.domain.exceptions.DomainException;
-import pt.ist.fenixWebFramework.services.Service;
-
 import module.organization.domain.Accountability;
 import module.organization.domain.AccountabilityType;
 import module.organization.domain.Party;
@@ -58,7 +50,6 @@ import module.siadap.domain.ExceedingQuotaProposal;
 import module.siadap.domain.ObjectiveEvaluation;
 import module.siadap.domain.ObjectiveEvaluationIndicator;
 import module.siadap.domain.Siadap;
-import module.siadap.domain.SiadapAccountabilityCreationScript;
 import module.siadap.domain.SiadapEvaluationUniverse;
 import module.siadap.domain.SiadapProcess;
 import module.siadap.domain.SiadapProcessStateEnum;
@@ -70,7 +61,14 @@ import module.siadap.domain.scoring.SiadapGlobalEvaluation;
 import module.siadap.domain.util.SiadapMiscUtilClass;
 import module.siadap.domain.util.actions.SiadapUtilActions;
 import module.siadap.presentationTier.actions.SiadapManagement;
-import module.siadap.presentationTier.actions.SiadapPersonnelManagement;
+
+import org.apache.commons.collections.Predicate;
+import org.joda.time.LocalDate;
+
+import pt.ist.bennu.core.applicationTier.Authenticate.UserView;
+import pt.ist.bennu.core.domain.User;
+import pt.ist.bennu.core.domain.exceptions.DomainException;
+import pt.ist.fenixWebFramework.services.Service;
 
 /**
  * 
@@ -81,20 +79,20 @@ import module.siadap.presentationTier.actions.SiadapPersonnelManagement;
  */
 public class PersonSiadapWrapper extends PartyWrapper implements Serializable {
 
-	public static final Comparator<PersonSiadapWrapper> PERSON_COMPARATOR_BY_NAME_FALLBACK_YEAR_THEN_PERSON_OID = new Comparator<PersonSiadapWrapper>() {
+	public static final Comparator<PersonSiadapWrapper> PERSON_COMPARATOR_BY_NAME_FALLBACK_YEAR_THEN_PERSON_OID =
+			new Comparator<PersonSiadapWrapper>() {
 
-		@Override
-		public int compare(PersonSiadapWrapper o1, PersonSiadapWrapper o2) {
-			int nameComparison = o1.getName().compareTo(o2.getName());
-			if (nameComparison == 0)
-				return (o1.getYear() - o2.getYear()) == 0 ? o1.getPerson()
-						.getExternalId()
-						.compareTo(o2.getPerson().getExternalId()) : o1
-						.getYear() - o2.getYear();
+				@Override
+				public int compare(PersonSiadapWrapper o1, PersonSiadapWrapper o2) {
+					int nameComparison = o1.getName().compareTo(o2.getName());
+					if (nameComparison == 0) {
+						return (o1.getYear() - o2.getYear()) == 0 ? o1.getPerson().getExternalId()
+								.compareTo(o2.getPerson().getExternalId()) : o1.getYear() - o2.getYear();
+					}
 
-			return nameComparison;
-		}
-	};
+					return nameComparison;
+				}
+			};
 
 	private Person person;
 
@@ -126,8 +124,9 @@ public class PersonSiadapWrapper extends PartyWrapper implements Serializable {
 		super(year);
 		this.person = person;
 		// initing the harmonization booleans
-		if (person != null)
+		if (person != null) {
 			initIntermediateValues();
+		}
 
 	}
 
@@ -135,15 +134,15 @@ public class PersonSiadapWrapper extends PartyWrapper implements Serializable {
 		super(siadap.getYear());
 		this.person = siadap.getEvaluated();
 
-		if (person != null)
+		if (person != null) {
 			initIntermediateValues();
+		}
 
 	}
 
 	/**
 	 * Inits the intermediate values used for display purposes. More
-	 * specifically: {@link #harmonizationCurrentAssessmentForSIADAP2},
-	 * {@link #harmonizationCurrentAssessmentForSIADAP3}, and
+	 * specifically: {@link #harmonizationCurrentAssessmentForSIADAP2}, {@link #harmonizationCurrentAssessmentForSIADAP3}, and
 	 * {@link #exceedingQuotaPriorityNumber}
 	 */
 	private void initIntermediateValues() {
@@ -151,12 +150,10 @@ public class PersonSiadapWrapper extends PartyWrapper implements Serializable {
 			this.harmonizationCurrentAssessmentForSIADAP2 = null;
 			this.harmonizationCurrentAssessmentForSIADAP3 = null;
 		} else {
-			SiadapEvaluationUniverse siadapEvaluationUniverseForSIADAP3 = getSiadap()
-					.getSiadapEvaluationUniverseForSiadapUniverse(
-							SiadapUniverse.SIADAP3);
-			SiadapEvaluationUniverse siadapEvaluationUniverseForSIADAP2 = getSiadap()
-					.getSiadapEvaluationUniverseForSiadapUniverse(
-							SiadapUniverse.SIADAP2);
+			SiadapEvaluationUniverse siadapEvaluationUniverseForSIADAP3 =
+					getSiadap().getSiadapEvaluationUniverseForSiadapUniverse(SiadapUniverse.SIADAP3);
+			SiadapEvaluationUniverse siadapEvaluationUniverseForSIADAP2 =
+					getSiadap().getSiadapEvaluationUniverseForSiadapUniverse(SiadapUniverse.SIADAP2);
 			if (siadapEvaluationUniverseForSIADAP2 == null) {
 				this.harmonizationCurrentAssessmentForSIADAP2 = null;
 				setValidationCurrentAssessmentForSIADAP2(null);
@@ -164,18 +161,14 @@ public class PersonSiadapWrapper extends PartyWrapper implements Serializable {
 				setValidationClassificationForSIADAP2(null);
 				setEvaluatorClassificationForSIADAP2(null);
 			} else {
-				setValidationCurrentAssessmentForSIADAP2(siadapEvaluationUniverseForSIADAP2
-						.getCcaAssessment());
+				setValidationCurrentAssessmentForSIADAP2(siadapEvaluationUniverseForSIADAP2.getCcaAssessment());
 				setValidationCurrentAssessmentForExcellencyAwardForSIADAP2(siadapEvaluationUniverseForSIADAP2
 						.getCcaClassificationExcellencyAward());
-				setValidationClassificationForSIADAP2(siadapEvaluationUniverseForSIADAP2
-						.getCcaClassification());
-				setEvaluatorClassificationForSIADAP2(siadapEvaluationUniverseForSIADAP2
-						.getEvaluatorClassification());
-				this.harmonizationCurrentAssessmentForSIADAP2 = siadapEvaluationUniverseForSIADAP2
-						.getHarmonizationAssessment();
-				this.harmonizationCurrentAssessmentForExcellencyAwardForSIADAP2 = siadapEvaluationUniverseForSIADAP2
-						.getHarmonizationAssessmentForExcellencyAward();
+				setValidationClassificationForSIADAP2(siadapEvaluationUniverseForSIADAP2.getCcaClassification());
+				setEvaluatorClassificationForSIADAP2(siadapEvaluationUniverseForSIADAP2.getEvaluatorClassification());
+				this.harmonizationCurrentAssessmentForSIADAP2 = siadapEvaluationUniverseForSIADAP2.getHarmonizationAssessment();
+				this.harmonizationCurrentAssessmentForExcellencyAwardForSIADAP2 =
+						siadapEvaluationUniverseForSIADAP2.getHarmonizationAssessmentForExcellencyAward();
 			}
 
 			setSelectedForHomologation(false);
@@ -186,18 +179,14 @@ public class PersonSiadapWrapper extends PartyWrapper implements Serializable {
 				setValidationClassificationForSIADAP3(null);
 				setEvaluatorClassificationForSIADAP3(null);
 			} else {
-				setValidationCurrentAssessmentForSIADAP3(siadapEvaluationUniverseForSIADAP3
-						.getCcaAssessment());
+				setValidationCurrentAssessmentForSIADAP3(siadapEvaluationUniverseForSIADAP3.getCcaAssessment());
 				setValidationCurrentAssessmentForExcellencyAwardForSIADAP3(siadapEvaluationUniverseForSIADAP3
 						.getCcaClassificationExcellencyAward());
-				setValidationClassificationForSIADAP3(siadapEvaluationUniverseForSIADAP3
-						.getCcaClassification());
-				setEvaluatorClassificationForSIADAP3(siadapEvaluationUniverseForSIADAP3
-						.getEvaluatorClassification());
-				this.harmonizationCurrentAssessmentForSIADAP3 = siadapEvaluationUniverseForSIADAP3
-						.getHarmonizationAssessment();
-				this.harmonizationCurrentAssessmentForExcellencyAwardForSIADAP3 = siadapEvaluationUniverseForSIADAP3
-						.getHarmonizationAssessmentForExcellencyAward();
+				setValidationClassificationForSIADAP3(siadapEvaluationUniverseForSIADAP3.getCcaClassification());
+				setEvaluatorClassificationForSIADAP3(siadapEvaluationUniverseForSIADAP3.getEvaluatorClassification());
+				this.harmonizationCurrentAssessmentForSIADAP3 = siadapEvaluationUniverseForSIADAP3.getHarmonizationAssessment();
+				this.harmonizationCurrentAssessmentForExcellencyAwardForSIADAP3 =
+						siadapEvaluationUniverseForSIADAP3.getHarmonizationAssessmentForExcellencyAward();
 			}
 		}
 	}
@@ -206,8 +195,7 @@ public class PersonSiadapWrapper extends PartyWrapper implements Serializable {
 		return validationCurrentAssessmentForSIADAP3;
 	}
 
-	public void setValidationCurrentAssessmentForSIADAP3(
-			Boolean validationCurrentAssessmentForSIADAP3) {
+	public void setValidationCurrentAssessmentForSIADAP3(Boolean validationCurrentAssessmentForSIADAP3) {
 		this.validationCurrentAssessmentForSIADAP3 = validationCurrentAssessmentForSIADAP3;
 	}
 
@@ -215,8 +203,7 @@ public class PersonSiadapWrapper extends PartyWrapper implements Serializable {
 		return validationCurrentAssessmentForSIADAP2;
 	}
 
-	public void setValidationCurrentAssessmentForSIADAP2(
-			Boolean validationCurrentAssessmentForSIADAP2) {
+	public void setValidationCurrentAssessmentForSIADAP2(Boolean validationCurrentAssessmentForSIADAP2) {
 		this.validationCurrentAssessmentForSIADAP2 = validationCurrentAssessmentForSIADAP2;
 	}
 
@@ -242,8 +229,7 @@ public class PersonSiadapWrapper extends PartyWrapper implements Serializable {
 		return validationClassificationForSIADAP3;
 	}
 
-	public void setValidationClassificationForSIADAP3(
-			BigDecimal validationClassificationForSIADAP3) {
+	public void setValidationClassificationForSIADAP3(BigDecimal validationClassificationForSIADAP3) {
 		this.validationClassificationForSIADAP3 = validationClassificationForSIADAP3;
 	}
 
@@ -251,8 +237,7 @@ public class PersonSiadapWrapper extends PartyWrapper implements Serializable {
 		return validationClassificationForSIADAP2;
 	}
 
-	public void setValidationClassificationForSIADAP2(
-			BigDecimal validationClassificationForSIADAP2) {
+	public void setValidationClassificationForSIADAP2(BigDecimal validationClassificationForSIADAP2) {
 		this.validationClassificationForSIADAP2 = validationClassificationForSIADAP2;
 	}
 
@@ -265,10 +250,11 @@ public class PersonSiadapWrapper extends PartyWrapper implements Serializable {
 	}
 
 	public BigDecimal getLatestClassification(SiadapUniverse siadapUniverse) {
-		SiadapEvaluationUniverse siadapEvaluationUniverse = getSiadap()
-				.getSiadapEvaluationUniverseForSiadapUniverse(siadapUniverse);
-		if (siadapEvaluationUniverse == null)
+		SiadapEvaluationUniverse siadapEvaluationUniverse =
+				getSiadap().getSiadapEvaluationUniverseForSiadapUniverse(siadapUniverse);
+		if (siadapEvaluationUniverse == null) {
 			return null;
+		}
 		return siadapEvaluationUniverse.getCurrentGrade();
 
 	}
@@ -281,12 +267,12 @@ public class PersonSiadapWrapper extends PartyWrapper implements Serializable {
 		return getLatestSiadapGlobalEvaluation(SiadapUniverse.SIADAP3);
 	}
 
-	public SiadapGlobalEvaluation getLatestSiadapGlobalEvaluation(
-			SiadapUniverse siadapUniverse) {
-		SiadapEvaluationUniverse siadapEvaluationUniverse = getSiadap()
-				.getSiadapEvaluationUniverseForSiadapUniverse(siadapUniverse);
-		if (siadapEvaluationUniverse == null)
+	public SiadapGlobalEvaluation getLatestSiadapGlobalEvaluation(SiadapUniverse siadapUniverse) {
+		SiadapEvaluationUniverse siadapEvaluationUniverse =
+				getSiadap().getSiadapEvaluationUniverseForSiadapUniverse(siadapUniverse);
+		if (siadapEvaluationUniverse == null) {
 			return null;
+		}
 		return siadapEvaluationUniverse.getLatestSiadapGlobalEvaluationEnum();
 
 	}
@@ -316,13 +302,13 @@ public class PersonSiadapWrapper extends PartyWrapper implements Serializable {
 	 *         false otherwise
 	 */
 	private boolean isAbleToBeValidated(SiadapUniverse universe) {
-		SiadapEvaluationUniverse siadapEvaluationUniverseForSiadapUniverse = getSiadap()
-				.getSiadapEvaluationUniverseForSiadapUniverse(universe);
-		if (siadapEvaluationUniverseForSiadapUniverse == null)
+		SiadapEvaluationUniverse siadapEvaluationUniverseForSiadapUniverse =
+				getSiadap().getSiadapEvaluationUniverseForSiadapUniverse(universe);
+		if (siadapEvaluationUniverseForSiadapUniverse == null) {
 			return false;
+		}
 		return siadapEvaluationUniverseForSiadapUniverse.getValidationDate() == null
-				&& siadapEvaluationUniverseForSiadapUniverse
-						.getHarmonizationDate() != null;
+				&& siadapEvaluationUniverseForSiadapUniverse.getHarmonizationDate() != null;
 
 	}
 
@@ -335,8 +321,7 @@ public class PersonSiadapWrapper extends PartyWrapper implements Serializable {
 	}
 
 	public Siadap getSiadap() {
-		return getConfiguration() == null ? null : getConfiguration()
-				.getSiadapFor(getPerson(), getYear());
+		return getConfiguration() == null ? null : getConfiguration().getSiadapFor(getPerson(), getYear());
 	}
 
 	/**
@@ -352,18 +337,15 @@ public class PersonSiadapWrapper extends PartyWrapper implements Serializable {
 	 *         on the user, if he is an evaluator or an evaluated
 	 */
 	public String getNextStep() {
-		return SiadapProcessStateEnum.getNextStep(getSiadap(),
-				UserView.getCurrentUser());
+		return SiadapProcessStateEnum.getNextStep(getSiadap(), UserView.getCurrentUser());
 
 	}
 
 	public boolean isWithSkippedEval(SiadapUniverse siadapUniverse) {
-		if (getSiadap() == null
-				|| getSiadap().getSiadapEvaluationUniverseForSiadapUniverse(
-						siadapUniverse) == null)
+		if (getSiadap() == null || getSiadap().getSiadapEvaluationUniverseForSiadapUniverse(siadapUniverse) == null) {
 			return false;
-		return getSiadap().getSiadapEvaluationUniverseForSiadapUniverse(
-				siadapUniverse).isWithSkippedEvaluation();
+		}
+		return getSiadap().getSiadapEvaluationUniverseForSiadapUniverse(siadapUniverse).isWithSkippedEvaluation();
 	}
 
 	public boolean getWithoutExcellencyAwardForSiadap2() {
@@ -375,14 +357,13 @@ public class PersonSiadapWrapper extends PartyWrapper implements Serializable {
 	}
 
 	private boolean isWithoutExcellencyAwardFor(SiadapUniverse siadapUniverse) {
-		SiadapEvaluationUniverse siadapEvaluationUniverseForSiadapUniverse = getSiadap()
-				.getSiadapEvaluationUniverseForSiadapUniverse(siadapUniverse);
-		if (siadapEvaluationUniverseForSiadapUniverse == null)
+		SiadapEvaluationUniverse siadapEvaluationUniverseForSiadapUniverse =
+				getSiadap().getSiadapEvaluationUniverseForSiadapUniverse(siadapUniverse);
+		if (siadapEvaluationUniverseForSiadapUniverse == null) {
 			return true;
-		return siadapEvaluationUniverseForSiadapUniverse
-				.getEvaluatorClassificationExcellencyAward() == null
-				|| !siadapEvaluationUniverseForSiadapUniverse
-						.getEvaluatorClassificationExcellencyAward();
+		}
+		return siadapEvaluationUniverseForSiadapUniverse.getEvaluatorClassificationExcellencyAward() == null
+				|| !siadapEvaluationUniverseForSiadapUniverse.getEvaluatorClassificationExcellencyAward();
 	}
 
 	public boolean getWithSkippedEvalForSiadap2() {
@@ -405,14 +386,15 @@ public class PersonSiadapWrapper extends PartyWrapper implements Serializable {
 			if (isResponsibleForHarmonization(currentUser.getPerson())) {
 				return true;
 			}
-			if (configuration.getCcaMembers().contains(currentUser.getPerson()))
+			if (configuration.getCcaMembers().contains(currentUser.getPerson())) {
 				return true;
-			if (configuration.getHomologationMembers().contains(
-					currentUser.getPerson()))
+			}
+			if (configuration.getHomologationMembers().contains(currentUser.getPerson())) {
 				return true;
-			if (getEvaluator().getPerson().equals(currentUser.getPerson())
-					|| getPerson().equals(currentUser.getPerson()))
+			}
+			if (getEvaluator().getPerson().equals(currentUser.getPerson()) || getPerson().equals(currentUser.getPerson())) {
 				return true;
+			}
 		}
 		return false;
 	}
@@ -438,14 +420,16 @@ public class PersonSiadapWrapper extends PartyWrapper implements Serializable {
 				return true;
 			}
 
-		} else
+		} else {
 			return true;
+		}
 
 	}
 
 	public SiadapUniverse getDefaultSiadapUniverse() {
-		if (getSiadap() == null)
+		if (getSiadap() == null) {
 			return null;
+		}
 		return getSiadap().getDefaultSiadapUniverse();
 	}
 
@@ -456,57 +440,53 @@ public class PersonSiadapWrapper extends PartyWrapper implements Serializable {
 	 */
 	public boolean getShouldShowObjectivesAndCompetences() {
 		return getSiadap().getObjectivesAndCompetencesSealedDate() != null
-				|| getSiadap().getEvaluator().getPerson().getUser()
-						.equals(UserView.getCurrentUser());
+				|| getSiadap().getEvaluator().getPerson().getUser().equals(UserView.getCurrentUser());
 	}
 
 	public PersonSiadapWrapper getEvaluator() {
 		Person evaluator = null;
 
-		Collection<Person> possibleCustomEvaluator = getParentPersons(getConfiguration()
-				.getEvaluationRelation());
+		Collection<Person> possibleCustomEvaluator = getParentPersons(getConfiguration().getEvaluationRelation());
 
 		if (!possibleCustomEvaluator.isEmpty()) {
 			evaluator = possibleCustomEvaluator.iterator().next();
 		} else {
 			if (getWorkingUnit() != null) {
-				Collection<Unit> workingPlaces = getParentUnits(
-						getConfiguration().getWorkingRelation(),
-						getConfiguration().getWorkingRelationWithNoQuota());
+				Collection<Unit> workingPlaces =
+						getParentUnits(getConfiguration().getWorkingRelation(), getConfiguration()
+								.getWorkingRelationWithNoQuota());
 				Unit workingUnit = workingPlaces.iterator().next();
-				Collection<Person> childPersons = workingUnit
-						.getChildPersons(getConfiguration()
-								.getEvaluationRelation());
+				Collection<Person> childPersons = workingUnit.getChildPersons(getConfiguration().getEvaluationRelation());
 				if (!childPersons.isEmpty()) {
 					evaluator = childPersons.iterator().next();
 				}
 			}
 		}
 
-		return evaluator != null ? new PersonSiadapWrapper(evaluator, getYear())
-				: null;
+		return evaluator != null ? new PersonSiadapWrapper(evaluator, getYear()) : null;
 	}
 
 	public Collection<UnitSiadapWrapper> getHarmozationUnits() {
 		return getHarmozationUnits(true);
 	}
-	
-	public void removeAndNotifyHarmonizationResponsability(Unit unit, Person person, int year, HttpServletRequest request) {
-	    removeHarmonizationResponsability(unit);
-	    SiadapUtilActions.notifyRemovalOfHarmonizationResponsible(person, unit, year, request);
-	}
-	
-	public void removeHarmonizationResponsability(Unit unit) {
-	    Set<AccountabilityType> accountabilityTypes = Collections.singleton(SiadapYearConfiguration
-                .getSiadapYearConfiguration(getYear()).getHarmonizationResponsibleRelation());
-        Collection<Accountability> parentAccountabilities = getPerson().getParentAccountabilities(accountabilityTypes);
 
-        for (Accountability accountability : parentAccountabilities) {
-            if (accountability.getParent() == unit && accountability.isActive(getConfiguration().getLastDayForAccountabilities()) ) {
-                accountability.editDates(accountability.getBeginDate(), getConfiguration().getFirstDay().plusDays(1));
-            }
-        }
-	    
+	public void removeAndNotifyHarmonizationResponsability(Unit unit, Person person, int year, HttpServletRequest request) {
+		removeHarmonizationResponsability(unit);
+		SiadapUtilActions.notifyRemovalOfHarmonizationResponsible(person, unit, year, request);
+	}
+
+	public void removeHarmonizationResponsability(Unit unit) {
+		Set<AccountabilityType> accountabilityTypes =
+				Collections.singleton(SiadapYearConfiguration.getSiadapYearConfiguration(getYear())
+						.getHarmonizationResponsibleRelation());
+		Collection<Accountability> parentAccountabilities = getPerson().getParentAccountabilities(accountabilityTypes);
+
+		for (Accountability accountability : parentAccountabilities) {
+			if (accountability.getParent() == unit && accountability.isActive(getConfiguration().getLastDayForAccountabilities())) {
+				accountability.editDates(accountability.getBeginDate(), getConfiguration().getFirstDay().plusDays(1));
+			}
+		}
+
 	}
 
 	public boolean hasPendingActions() {
@@ -527,8 +507,9 @@ public class PersonSiadapWrapper extends PartyWrapper implements Serializable {
 	public int getNrPersonsWithUnreadComments() {
 		int counter = 0;
 		for (PersonSiadapWrapper personSiadapWrapper : getPeopleToEvaluate()) {
-			if (personSiadapWrapper.getHasUnreadComments())
+			if (personSiadapWrapper.getHasUnreadComments()) {
 				counter++;
+			}
 		}
 		return counter;
 
@@ -536,46 +517,42 @@ public class PersonSiadapWrapper extends PartyWrapper implements Serializable {
 
 	public int getNrPendingProcessActions() {
 		int counterPendingActions = 0;
-		ArrayList<PersonSiadapWrapper> personSiadapWrappers = SiadapRootModule
-				.getInstance().getAssociatedSiadaps(getPerson(), getYear(),
-						false);
+		ArrayList<PersonSiadapWrapper> personSiadapWrappers =
+				SiadapRootModule.getInstance().getAssociatedSiadaps(getPerson(), getYear(), false);
 		for (PersonSiadapWrapper personSiadapWrapper : personSiadapWrappers) {
-			if (personSiadapWrapper.hasPendingActions())
+			if (personSiadapWrapper.hasPendingActions()) {
 				counterPendingActions++;
+			}
 		}
 		return counterPendingActions;
 	}
 
-	public String getTotalQualitativeEvaluationScoring(
-			SiadapUniverse siadapUniverse) {
-		return getTotalQualitativeEvaluationScoringObject(siadapUniverse)
-				.getLocalizedName();
+	public String getTotalQualitativeEvaluationScoring(SiadapUniverse siadapUniverse) {
+		return getTotalQualitativeEvaluationScoringObject(siadapUniverse).getLocalizedName();
 	}
 
-	public SiadapGlobalEvaluation getTotalQualitativeEvaluationScoringObject(
-			SiadapUniverse siadapUniverse) {
+	public SiadapGlobalEvaluation getTotalQualitativeEvaluationScoringObject(SiadapUniverse siadapUniverse) {
 		boolean excellencyGiven = false;
 		Siadap siadap = getSiadap();
-		if (siadap == null)
-			return SiadapGlobalEvaluation.NONEXISTING;
-		SiadapEvaluationUniverse siadapEvaluationUniverseForSiadapUniverse = siadap
-				.getSiadapEvaluationUniverseForSiadapUniverse(siadapUniverse);
-		if (siadapEvaluationUniverseForSiadapUniverse == null)
-			return SiadapGlobalEvaluation.NONEXISTING;
-		else
-			excellencyGiven = siadapEvaluationUniverseForSiadapUniverse
-					.hasExcellencyAwarded();
-		if (!siadap.isEvaluationDone(siadapUniverse)
-				&& !siadapEvaluationUniverseForSiadapUniverse
-						.isWithSkippedEvaluation()) {
+		if (siadap == null) {
 			return SiadapGlobalEvaluation.NONEXISTING;
 		}
-		if (siadapEvaluationUniverseForSiadapUniverse.isWithSkippedEvaluation())
+		SiadapEvaluationUniverse siadapEvaluationUniverseForSiadapUniverse =
+				siadap.getSiadapEvaluationUniverseForSiadapUniverse(siadapUniverse);
+		if (siadapEvaluationUniverseForSiadapUniverse == null) {
+			return SiadapGlobalEvaluation.NONEXISTING;
+		} else {
+			excellencyGiven = siadapEvaluationUniverseForSiadapUniverse.hasExcellencyAwarded();
+		}
+		if (!siadap.isEvaluationDone(siadapUniverse) && !siadapEvaluationUniverseForSiadapUniverse.isWithSkippedEvaluation()) {
+			return SiadapGlobalEvaluation.NONEXISTING;
+		}
+		if (siadapEvaluationUniverseForSiadapUniverse.isWithSkippedEvaluation()) {
 			return SiadapGlobalEvaluation.WITHSKIPPEDEVAL;
+		}
 
-		return SiadapGlobalEvaluation.getGlobalEvaluation(
-				siadapEvaluationUniverseForSiadapUniverse
-						.getTotalEvaluationScoring(), excellencyGiven);
+		return SiadapGlobalEvaluation.getGlobalEvaluation(siadapEvaluationUniverseForSiadapUniverse.getTotalEvaluationScoring(),
+				excellencyGiven);
 	}
 
 	public String getTotalQualitativeEvaluationScoringSiadap2() {
@@ -586,12 +563,10 @@ public class PersonSiadapWrapper extends PartyWrapper implements Serializable {
 		return getTotalQualitativeEvaluationScoring(SiadapUniverse.SIADAP3);
 	}
 
-	public Collection<UnitSiadapWrapper> getHarmozationUnits(
-			boolean skipClosedAccountabilities) {
+	public Collection<UnitSiadapWrapper> getHarmozationUnits(boolean skipClosedAccountabilities) {
 		List<UnitSiadapWrapper> units = new ArrayList<UnitSiadapWrapper>();
 
-		for (Unit unit : getParentUnits(getConfiguration()
-				.getHarmonizationResponsibleRelation())) {
+		for (Unit unit : getParentUnits(getConfiguration().getHarmonizationResponsibleRelation())) {
 			units.add(new UnitSiadapWrapper(unit, getYear()));
 		}
 		return units;
@@ -604,56 +579,58 @@ public class PersonSiadapWrapper extends PartyWrapper implements Serializable {
 	public Unit getUnitWhereIsHarmonized() {
 		return getUnitWhereIsHarmonized(getDefaultSiadapUniverse());
 	}
+
 	public Unit getUnitWhereIsHarmonized(SiadapUniverse siadapUniverse) {
-		if (siadapUniverse == null)
+		if (siadapUniverse == null) {
 			return null;
-		List<Unit> parentUnits = getParentUnits(getParty(),
-				siadapUniverse.getHarmonizationRelation(getConfiguration()));
-		if (parentUnits.isEmpty())
+		}
+		List<Unit> parentUnits = getParentUnits(getParty(), siadapUniverse.getHarmonizationRelation(getConfiguration()));
+		if (parentUnits.isEmpty()) {
 			return null;
+		}
 		if (parentUnits.size() > 1) {
 			throw new SiadapException("inconsistent.harmonization.units");
 
 		} else {
-			UnitSiadapWrapper unitWrapper = new UnitSiadapWrapper(
-					parentUnits.get(0), getYear());
-			if (unitWrapper.isHarmonizationUnit())
+			UnitSiadapWrapper unitWrapper = new UnitSiadapWrapper(parentUnits.get(0), getYear());
+			if (unitWrapper.isHarmonizationUnit()) {
 				return unitWrapper.getUnit();
-			else {
+			} else {
 				return unitWrapper.getHarmonizationUnit();
 			}
 		}
 	}
-	
+
 	/**
 	 * 
-	 * @return the unit where is harmonized for the default harmonization universe. The harmoniztion unit must be a valid one, i.e. connected to the top structure unit for this year
+	 * @return the unit where is harmonized for the default harmonization universe. The harmoniztion unit must be a valid one,
+	 *         i.e. connected to the top structure unit for this year
 	 * @see UnitSiadapWrapper#isValidHarmonizationUnit();
 	 */
 	public Unit getValidUnitWhereIsHarmonized() {
 		return getValidUnitWhereIsHarmonized(getDefaultSiadapUniverse());
 	}
+
 	public Unit getValidUnitWhereIsHarmonized(SiadapUniverse siadapUniverse) {
-		if (siadapUniverse == null)
+		if (siadapUniverse == null) {
 			return null;
-		List<Unit> parentUnits = getParentUnits(getParty(),
-				siadapUniverse.getHarmonizationRelation(getConfiguration()));
-		if (parentUnits.isEmpty())
+		}
+		List<Unit> parentUnits = getParentUnits(getParty(), siadapUniverse.getHarmonizationRelation(getConfiguration()));
+		if (parentUnits.isEmpty()) {
 			return null;
+		}
 		if (parentUnits.size() > 1) {
 			throw new SiadapException("inconsistent.harmonization.units");
 
 		} else {
-			UnitSiadapWrapper unitWrapper = new UnitSiadapWrapper(
-					parentUnits.get(0), getYear());
-			if (unitWrapper.isValidHarmonizationUnit())
+			UnitSiadapWrapper unitWrapper = new UnitSiadapWrapper(parentUnits.get(0), getYear());
+			if (unitWrapper.isValidHarmonizationUnit()) {
 				return unitWrapper.getUnit();
-			else {
+			} else {
 				return unitWrapper.getValidHarmonizationUnit();
 			}
 		}
 	}
-	
 
 	public Unit getHarmonizationUnitForSIADAP2() {
 		return getUnitWhereIsHarmonized(SiadapUniverse.SIADAP2);
@@ -665,11 +642,11 @@ public class PersonSiadapWrapper extends PartyWrapper implements Serializable {
 
 	public boolean isPersonWorkingInValidSIADAPUnit() {
 		UnitSiadapWrapper workingUnit = getWorkingUnit();
-		if (workingUnit == null)
+		if (workingUnit == null) {
 			return false;
+		}
 
-		return UnitSiadapWrapper.isValidSIADAPUnit(
-				workingUnit.getUnit(), getYear());
+		return UnitSiadapWrapper.isValidSIADAPUnit(workingUnit.getUnit(), getYear());
 	}
 
 	public boolean isAccessibleToCurrentUser() {
@@ -681,9 +658,7 @@ public class PersonSiadapWrapper extends PartyWrapper implements Serializable {
 	}
 
 	public boolean isCurrentUserAbleToEvaluate() {
-		return getEvaluator() != null
-				&& getEvaluator().getPerson() == UserView.getCurrentUser()
-						.getPerson();
+		return getEvaluator() != null && getEvaluator().getPerson() == UserView.getCurrentUser().getPerson();
 	}
 
 	public boolean isCurrentUserAbleToCreateProcess() {
@@ -692,12 +667,15 @@ public class PersonSiadapWrapper extends PartyWrapper implements Serializable {
 
 	public boolean isCurrentUserAbleToSeeAutoEvaluationDetails() {
 		User currentUser = UserView.getCurrentUser();
-		if (!isCurrentUserAbleToSeeDetails())
+		if (!isCurrentUserAbleToSeeDetails()) {
 			return false;
-		if (getSiadap().getEvaluated().equals(currentUser.getPerson()))
+		}
+		if (getSiadap().getEvaluated().equals(currentUser.getPerson())) {
 			return true;
-		if (getSiadap().isAutoEvaliationDone())
+		}
+		if (getSiadap().isAutoEvaliationDone()) {
 			return true;
+		}
 		return false;
 	}
 
@@ -723,8 +701,7 @@ public class PersonSiadapWrapper extends PartyWrapper implements Serializable {
 
 		private ObjectiveEvaluation objectiveEvaluation;
 
-		public ObjectiveEvaluationWrapperBean(
-				ObjectiveEvaluation objectiveEvaluation) {
+		public ObjectiveEvaluationWrapperBean(ObjectiveEvaluation objectiveEvaluation) {
 			if (objectiveEvaluation == null) {
 				// do nothing
 			} else {
@@ -738,23 +715,16 @@ public class PersonSiadapWrapper extends PartyWrapper implements Serializable {
 				StringBuilder stringBuilderEvaluation = new StringBuilder();
 				StringBuilder stringBuilderPonderationFactor = new StringBuilder();
 
-				for (ObjectiveEvaluationIndicator objectiveEvaluationIndicator : objectiveEvaluation
-						.getIndicators()) {
+				for (ObjectiveEvaluationIndicator objectiveEvaluationIndicator : objectiveEvaluation.getIndicators()) {
 					int maxNrLines = 0;
 					linesPerString = new HashMap<String, Integer>();
 					// asserting the string that has the max. number of lines
 					linesPerString.put(
-							objectiveEvaluationIndicator
-									.getMeasurementIndicator(),
-							countNrLines(objectiveEvaluationIndicator
-									.getMeasurementIndicator(),
+							objectiveEvaluationIndicator.getMeasurementIndicator(),
+							countNrLines(objectiveEvaluationIndicator.getMeasurementIndicator(),
 									MEASUREMENT_INDICATOR_MAX_NR_CHARS));
-					linesPerString.put(
-							objectiveEvaluationIndicator
-									.getSuperationCriteria(),
-							countNrLines(objectiveEvaluationIndicator
-									.getSuperationCriteria(),
-									SUPERATION_CRITERIA_MAX_NR_CHARS));
+					linesPerString.put(objectiveEvaluationIndicator.getSuperationCriteria(),
+							countNrLines(objectiveEvaluationIndicator.getSuperationCriteria(), SUPERATION_CRITERIA_MAX_NR_CHARS));
 
 					for (Integer nrLines : linesPerString.values()) {
 						if (maxNrLines < nrLines.intValue()) {
@@ -764,58 +734,41 @@ public class PersonSiadapWrapper extends PartyWrapper implements Serializable {
 					// StringUtils.countMatches(objectiveEvaluationIndicator.get
 
 					appendLineAndNrLines(stringBuilderSuperationCriteria,
-							linesPerString.get(objectiveEvaluationIndicator
-									.getSuperationCriteria()),
-							objectiveEvaluationIndicator
-									.getSuperationCriteria(), maxNrLines);
+							linesPerString.get(objectiveEvaluationIndicator.getSuperationCriteria()),
+							objectiveEvaluationIndicator.getSuperationCriteria(), maxNrLines);
 					appendLineAndNrLines(stringBuilderMeasurementIndicator,
-							linesPerString.get(objectiveEvaluationIndicator
-									.getMeasurementIndicator()),
-							objectiveEvaluationIndicator
-									.getMeasurementIndicator(), maxNrLines);
+							linesPerString.get(objectiveEvaluationIndicator.getMeasurementIndicator()),
+							objectiveEvaluationIndicator.getMeasurementIndicator(), maxNrLines);
 
 					if (objectiveEvaluationIndicator.getAutoEvaluation() != null) {
-						appendLineAndNrLines(
-								stringBuilderAutoEvaluation,
-								1,
-								objectiveEvaluationIndicator
-										.getAutoEvaluation().getLocalizedName(),
-								maxNrLines);
+						appendLineAndNrLines(stringBuilderAutoEvaluation, 1, objectiveEvaluationIndicator.getAutoEvaluation()
+								.getLocalizedName(), maxNrLines);
 					} else {
-						appendLineAndNrLines(stringBuilderAutoEvaluation, 1,
-								"", maxNrLines);
+						appendLineAndNrLines(stringBuilderAutoEvaluation, 1, "", maxNrLines);
 					}
 
 					if (objectiveEvaluationIndicator.getEvaluation() != null) {
-						appendLineAndNrLines(stringBuilderEvaluation, 1,
-								objectiveEvaluationIndicator.getEvaluation()
-										.getLocalizedName(), maxNrLines);
+						appendLineAndNrLines(stringBuilderEvaluation, 1, objectiveEvaluationIndicator.getEvaluation()
+								.getLocalizedName(), maxNrLines);
 					} else {
-						appendLineAndNrLines(stringBuilderEvaluation, 1, "",
-								maxNrLines);
+						appendLineAndNrLines(stringBuilderEvaluation, 1, "", maxNrLines);
 					}
 
-					appendLineAndNrLines(stringBuilderPonderationFactor, 1,
-							objectiveEvaluationIndicator.getPonderationFactor()
-									.movePointRight(2).toString()
-									+ "%", maxNrLines);
+					appendLineAndNrLines(stringBuilderPonderationFactor, 1, objectiveEvaluationIndicator.getPonderationFactor()
+							.movePointRight(2).toString()
+							+ "%", maxNrLines);
 
 				}
-				aggregatedMeasurementIndicator = stringBuilderMeasurementIndicator
-						.toString().trim();
-				aggregatedSuperationCriteria = stringBuilderSuperationCriteria
-						.toString().trim();
-				aggregatedAutoEvaluation = stringBuilderAutoEvaluation
-						.toString().trim();
-				aggregatedEvaluation = stringBuilderEvaluation.toString()
-						.trim();
-				aggregatedPonderationFactor = stringBuilderPonderationFactor
-						.toString().trim();
+				aggregatedMeasurementIndicator = stringBuilderMeasurementIndicator.toString().trim();
+				aggregatedSuperationCriteria = stringBuilderSuperationCriteria.toString().trim();
+				aggregatedAutoEvaluation = stringBuilderAutoEvaluation.toString().trim();
+				aggregatedEvaluation = stringBuilderEvaluation.toString().trim();
+				aggregatedPonderationFactor = stringBuilderPonderationFactor.toString().trim();
 			}
 		}
 
-		private void appendLineAndNrLines(StringBuilder stringBuilderToAffect,
-				int nrLinesOccupiedByString, String string, int maxNrLines) {
+		private void appendLineAndNrLines(StringBuilder stringBuilderToAffect, int nrLinesOccupiedByString, String string,
+				int maxNrLines) {
 			// let's add the excedent nr of lines
 			stringBuilderToAffect.append(string);
 			for (int i = nrLinesOccupiedByString; i < maxNrLines; i++) {
@@ -873,13 +826,11 @@ public class PersonSiadapWrapper extends PartyWrapper implements Serializable {
 			return objectiveEvaluation;
 		}
 
-		public void setAggregatedMeasurementIndicator(
-				String aggregatedMeasurementIndicator) {
+		public void setAggregatedMeasurementIndicator(String aggregatedMeasurementIndicator) {
 			this.aggregatedMeasurementIndicator = aggregatedMeasurementIndicator;
 		}
 
-		public void setAggregatedSuperationCriteria(
-				String aggregatedSuperationCriteria) {
+		public void setAggregatedSuperationCriteria(String aggregatedSuperationCriteria) {
 			this.aggregatedSuperationCriteria = aggregatedSuperationCriteria;
 		}
 
@@ -891,13 +842,11 @@ public class PersonSiadapWrapper extends PartyWrapper implements Serializable {
 			this.aggregatedEvaluation = aggregatedEvaluation;
 		}
 
-		public void setAggregatedPonderationFactor(
-				String aggregatedPonderationFactor) {
+		public void setAggregatedPonderationFactor(String aggregatedPonderationFactor) {
 			this.aggregatedPonderationFactor = aggregatedPonderationFactor;
 		}
 
-		public void setObjectiveEvaluation(
-				ObjectiveEvaluation objectiveEvaluation) {
+		public void setObjectiveEvaluation(ObjectiveEvaluation objectiveEvaluation) {
 			this.objectiveEvaluation = objectiveEvaluation;
 		}
 
@@ -906,8 +855,7 @@ public class PersonSiadapWrapper extends PartyWrapper implements Serializable {
 	public List<ObjectiveEvaluationWrapperBean> getAllObjEvaluationWrapperBeansOfDefaultEval() {
 		ArrayList<ObjectiveEvaluationWrapperBean> objBeans = new ArrayList<PersonSiadapWrapper.ObjectiveEvaluationWrapperBean>();
 
-		for (ObjectiveEvaluation objectiveEvaluation : getSiadap()
-				.getDefaultSiadapEvaluationUniverse().getObjectiveEvaluations()) {
+		for (ObjectiveEvaluation objectiveEvaluation : getSiadap().getDefaultSiadapEvaluationUniverse().getObjectiveEvaluations()) {
 			objBeans.add(new ObjectiveEvaluationWrapperBean(objectiveEvaluation));
 		}
 		if (objBeans.size() == 0) {
@@ -927,13 +875,11 @@ public class PersonSiadapWrapper extends PartyWrapper implements Serializable {
 	 */
 	public List<ObjectiveEvaluationIndicator> getAllObjEvalIndicatorsOfDefaultEval() {
 		ArrayList<ObjectiveEvaluationIndicator> listToReturn = new ArrayList<ObjectiveEvaluationIndicator>();
-		if (getSiadap() == null
-				|| getSiadap().getDefaultSiadapEvaluationUniverse() == null
-				|| getSiadap().getDefaultSiadapEvaluationUniverse()
-						.getObjectiveEvaluations() == null)
+		if (getSiadap() == null || getSiadap().getDefaultSiadapEvaluationUniverse() == null
+				|| getSiadap().getDefaultSiadapEvaluationUniverse().getObjectiveEvaluations() == null) {
 			return listToReturn;
-		for (ObjectiveEvaluation objectiveEvaluation : getSiadap()
-				.getDefaultSiadapEvaluationUniverse().getObjectiveEvaluations()) {
+		}
+		for (ObjectiveEvaluation objectiveEvaluation : getSiadap().getDefaultSiadapEvaluationUniverse().getObjectiveEvaluations()) {
 			listToReturn.addAll(objectiveEvaluation.getIndicators());
 		}
 		return listToReturn;
@@ -942,21 +888,22 @@ public class PersonSiadapWrapper extends PartyWrapper implements Serializable {
 
 	public boolean isCurrentUserAbleToSeeEvaluationDetails() {
 		User currentUser = UserView.getCurrentUser();
-		if (!isCurrentUserAbleToSeeDetails())
+		if (!isCurrentUserAbleToSeeDetails()) {
 			return false;
-		if (getSiadap().getEvaluator().getPerson()
-				.equals(currentUser.getPerson()))
+		}
+		if (getSiadap().getEvaluator().getPerson().equals(currentUser.getPerson())) {
 			return true;
-		if (getSiadap().isDefaultEvaluationDone()
-				&& getSiadap().getEvaluated().equals(currentUser.getPerson())
-				&& getSiadap().getRequestedAcknowledegeValidationDate() != null)
+		}
+		if (getSiadap().isDefaultEvaluationDone() && getSiadap().getEvaluated().equals(currentUser.getPerson())
+				&& getSiadap().getRequestedAcknowledegeValidationDate() != null) {
 			return true;
-		if (getSiadap().isDefaultEvaluationDone()
-				&& isResponsibleForHarmonization(currentUser.getPerson()))
+		}
+		if (getSiadap().isDefaultEvaluationDone() && isResponsibleForHarmonization(currentUser.getPerson())) {
 			return true;
-		if (getSiadap().isDefaultEvaluationDone()
-				&& getConfiguration().isCurrentUserMemberOfCCA())
+		}
+		if (getSiadap().isDefaultEvaluationDone() && getConfiguration().isCurrentUserMemberOfCCA()) {
 			return true;
+		}
 		return false;
 	}
 
@@ -967,11 +914,10 @@ public class PersonSiadapWrapper extends PartyWrapper implements Serializable {
 
 	public BigDecimal getTotalEvaluationScoring(SiadapUniverse siadapUniverse) {
 		Siadap siadap = getSiadap();
-		SiadapEvaluationUniverse siadapEvaluationUniverse = siadap
-				.getSiadapEvaluationUniverseForSiadapUniverse(siadapUniverse);
-		if (siadap == null || siadapEvaluationUniverse == null
-				|| !siadap.isEvaluationDone(siadapUniverse))
+		SiadapEvaluationUniverse siadapEvaluationUniverse = siadap.getSiadapEvaluationUniverseForSiadapUniverse(siadapUniverse);
+		if (siadap == null || siadapEvaluationUniverse == null || !siadap.isEvaluationDone(siadapUniverse)) {
 			return null;
+		}
 
 		return siadapEvaluationUniverse.getTotalEvaluationScoring();
 	}
@@ -985,17 +931,13 @@ public class PersonSiadapWrapper extends PartyWrapper implements Serializable {
 	}
 
 	public UnitSiadapWrapper getWorkingUnit() {
-		Collection<Unit> parentUnits = getParentUnits(getConfiguration()
-				.getWorkingRelation(), getConfiguration()
-				.getWorkingRelationWithNoQuota());
-		return parentUnits.isEmpty() ? null : new UnitSiadapWrapper(parentUnits
-				.iterator().next(), getConfiguration().getYear());
+		Collection<Unit> parentUnits =
+				getParentUnits(getConfiguration().getWorkingRelation(), getConfiguration().getWorkingRelationWithNoQuota());
+		return parentUnits.isEmpty() ? null : new UnitSiadapWrapper(parentUnits.iterator().next(), getConfiguration().getYear());
 	}
 
 	public boolean isQuotaAware() {
-		return getParentUnits(
-				getConfiguration().getWorkingRelationWithNoQuota()).isEmpty() ? true
-				: false;
+		return getParentUnits(getConfiguration().getWorkingRelationWithNoQuota()).isEmpty() ? true : false;
 	}
 
 	public boolean isResponsibleForHarmonization(Person accessor) {
@@ -1005,45 +947,41 @@ public class PersonSiadapWrapper extends PartyWrapper implements Serializable {
 	public Set<PersonSiadapWrapper> getPeopleToEvaluate() {
 		// if no configuration has been set for the current year, we retrieve
 		// null!
-		if (SiadapYearConfiguration.getSiadapYearConfiguration(Integer
-				.valueOf(getYear())) == null)
+		if (SiadapYearConfiguration.getSiadapYearConfiguration(Integer.valueOf(getYear())) == null) {
 			return null;
+		}
 		Set<PersonSiadapWrapper> people = new HashSet<PersonSiadapWrapper>();
-		final PersonSiadapWrapper evaluator = new PersonSiadapWrapper(
-				getPerson(), getYear());
-		final AccountabilityType evaluationRelation = getConfiguration()
-				.getEvaluationRelation();
+		final PersonSiadapWrapper evaluator = new PersonSiadapWrapper(getPerson(), getYear());
+		final AccountabilityType evaluationRelation = getConfiguration().getEvaluationRelation();
 
 		for (Person person : evaluator.getChildPersons(evaluationRelation)) {
 			people.add(new PersonSiadapWrapper(person, getYear()));
 		}
 		for (Unit unit : evaluator.getParentUnits(evaluationRelation)) {
-			people.addAll(new UnitSiadapWrapper(unit, getYear())
-					.getUnitEmployees(new Predicate() {
+			people.addAll(new UnitSiadapWrapper(unit, getYear()).getUnitEmployees(new Predicate() {
 
-						@Override
-						public boolean evaluate(Object arg0) {
-							PersonSiadapWrapper wrapper = (PersonSiadapWrapper) arg0;
-							PersonSiadapWrapper evaluatorWrapper = wrapper
-									.getEvaluator();
-							return evaluatorWrapper != null
-									&& evaluatorWrapper.equals(evaluator);
-						}
+				@Override
+				public boolean evaluate(Object arg0) {
+					PersonSiadapWrapper wrapper = (PersonSiadapWrapper) arg0;
+					PersonSiadapWrapper evaluatorWrapper = wrapper.getEvaluator();
+					return evaluatorWrapper != null && evaluatorWrapper.equals(evaluator);
+				}
 
-					}));
+			}));
 		}
 		return people;
 
 	}
 
 	public boolean getHasUnreadComments() {
-		if (getSiadap() == null || getSiadap().getProcess() == null)
+		if (getSiadap() == null || getSiadap().getProcess() == null) {
 			return false;
-		if (getSiadap().getProcess().getUnreadCommentsForCurrentUser()
-				.isEmpty())
+		}
+		if (getSiadap().getProcess().getUnreadCommentsForCurrentUser().isEmpty()) {
 			return false;
-		else
+		} else {
 			return true;
+		}
 	}
 
 	public Set<Siadap> getAllSiadaps() {
@@ -1081,18 +1019,15 @@ public class PersonSiadapWrapper extends PartyWrapper implements Serializable {
 	}
 
 	/**
-	 * Verifies that the given date is indeed within the {@link #getYear()}
-	 * year. If it isn't, it will throw a DomainException
+	 * Verifies that the given date is indeed within the {@link #getYear()} year. If it isn't, it will throw a DomainException
 	 * 
 	 * @param dateToVerify
 	 *            the date to verify
 	 */
 	private void verifyDate(LocalDate dateToVerify) {
 		if (dateToVerify.getYear() != getYear()) {
-			throw new DomainException(
-					"manage.workingUnitOrEvaluator.invalid.date",
-					DomainException.getResourceFor("resources/SiadapResources"),
-					String.valueOf(getYear()));
+			throw new DomainException("manage.workingUnitOrEvaluator.invalid.date",
+					DomainException.getResourceFor("resources/SiadapResources"), String.valueOf(getYear()));
 		}
 	}
 
@@ -1103,23 +1038,20 @@ public class PersonSiadapWrapper extends PartyWrapper implements Serializable {
 		SiadapYearConfiguration configuration = getConfiguration();
 
 		if (!UnitSiadapWrapper.isValidSIADAPHarmonizationUnit(unit, getYear())) {
-			throw new SiadapException(
-					"error.changing.harmonization.unit.to.an.invalid.one", unit.getPresentationName());
+			throw new SiadapException("error.changing.harmonization.unit.to.an.invalid.one", unit.getPresentationName());
 		}
 
 		// find out what is the accountability we should be changing
-		AccountabilityType defaultUniverseHarmonizationRelation = getDefaultSiadapUniverse()
-				.getHarmonizationRelation(configuration);
+		AccountabilityType defaultUniverseHarmonizationRelation =
+				getDefaultSiadapUniverse().getHarmonizationRelation(configuration);
 
 		// let's change the harmonization unit then
 		for (Accountability accountability : getParentAccountabilityTypes(defaultUniverseHarmonizationRelation)) {
 			if (accountability.isActiveNow()) {
-				accountability.editDates(accountability.getBeginDate(),
-						dateOfChange, justification);
+				accountability.editDates(accountability.getBeginDate(), dateOfChange, justification);
 			}
 		}
-		unit.addChild(getPerson(), defaultUniverseHarmonizationRelation,
-				dateOfChange, null, justification);
+		unit.addChild(getPerson(), defaultUniverseHarmonizationRelation, dateOfChange, null, justification);
 
 	}
 
@@ -1128,57 +1060,47 @@ public class PersonSiadapWrapper extends PartyWrapper implements Serializable {
 	 * @throws SiadapException
 	 *             if the user is already under harmonization
 	 */
-	private void verifyWorkingAndHarmonizationUnitChange()
-			throws SiadapException {
+	private void verifyWorkingAndHarmonizationUnitChange() throws SiadapException {
 
 		int currentStateOrdinal = getSiadap().getState().ordinal();
-		if (currentStateOrdinal > SiadapProcessStateEnum.WAITING_HARMONIZATION
-				.ordinal()
-				|| (currentStateOrdinal == SiadapProcessStateEnum.WAITING_HARMONIZATION
-						.ordinal()
-						&& getConfiguration().isHarmonizationPeriodOpenNow())) {
-			throw new SiadapException(
-					"error.changing.working.unit.cant.change.quotas.on.user.waiting.to.be.harmonized");
+		if (currentStateOrdinal > SiadapProcessStateEnum.WAITING_HARMONIZATION.ordinal()
+				|| (currentStateOrdinal == SiadapProcessStateEnum.WAITING_HARMONIZATION.ordinal() && getConfiguration()
+						.isHarmonizationPeriodOpenNow())) {
+			throw new SiadapException("error.changing.working.unit.cant.change.quotas.on.user.waiting.to.be.harmonized");
 		}
 
 	}
 
 	@Service
-	public void changeWorkingUnitTo(Unit unit, Boolean withQuotas,
-			LocalDate dateOfChange, String justification) {
+	public void changeWorkingUnitTo(Unit unit, Boolean withQuotas, LocalDate dateOfChange, String justification) {
 		verifyDate(dateOfChange);
 		// we must check if the quotas can be changed i.e. he is
 		// waiting harmonization or not.
-			verifyWorkingAndHarmonizationUnitChange();
-			
-			SiadapYearConfiguration configuration = getConfiguration();
+		verifyWorkingAndHarmonizationUnitChange();
+
+		SiadapYearConfiguration configuration = getConfiguration();
 
 		if (getWorkingUnit() != null) {
 			// let's check the state
 
-
 			if (!UnitSiadapWrapper.isValidSIADAPUnit(unit, getYear())) {
-				throw new SiadapException(
-						"error.changing.working.unit.to.an.unregistered.one");
+				throw new SiadapException("error.changing.working.unit.to.an.unregistered.one");
 			}
 
-			for (Accountability accountability : getParentAccountabilityTypes(
-					configuration.getWorkingRelation(),
+			for (Accountability accountability : getParentAccountabilityTypes(configuration.getWorkingRelation(),
 					configuration.getWorkingRelationWithNoQuota())) {
 				if (accountability.isActiveNow()) {
-					accountability.editDates(accountability.getBeginDate(),
-							dateOfChange);
+					accountability.editDates(accountability.getBeginDate(), dateOfChange);
 				}
 			}
 		}
-			unit.addChild(getPerson(),
-					withQuotas ? configuration.getWorkingRelation()
-							: configuration.getWorkingRelationWithNoQuota(),
-					dateOfChange, null);
+		unit.addChild(getPerson(),
+				withQuotas ? configuration.getWorkingRelation() : configuration.getWorkingRelationWithNoQuota(), dateOfChange,
+				null);
 
-			// let's also change the harmonization unit
-			changeHarmonizationUnitTo(unit, dateOfChange, justification);
-		}
+		// let's also change the harmonization unit
+		changeHarmonizationUnitTo(unit, dateOfChange, justification);
+	}
 
 	// use the version that allows a date instead (may not apply to all of the
 	// cases. If so, please delete the Deprecated tag)
@@ -1200,17 +1122,14 @@ public class PersonSiadapWrapper extends PartyWrapper implements Serializable {
 		LocalDate startOfYear = new LocalDate(dateOfChange.getYear(), 1, 1);
 		LocalDate endOfYear = new LocalDate(dateOfChange.getYear(), 12, 31);
 		SiadapYearConfiguration configuration = getConfiguration();
-		AccountabilityType evaluationRelation = configuration
-				.getEvaluationRelation();
+		AccountabilityType evaluationRelation = configuration.getEvaluationRelation();
 		boolean needToAddAcc = true;
 		for (Accountability accountability : getParentAccountabilityTypes(evaluationRelation)) {
-			if (accountability.isActiveNow()
-					&& accountability.getParent() instanceof Person
+			if (accountability.isActiveNow() && accountability.getParent() instanceof Person
 					&& accountability.getChild() instanceof Person) {
 				// let's close it if we have a different person here
 				if (!accountability.getParent().equals(newEvaluator)) {
-					accountability.editDates(accountability.getBeginDate(),
-							dateOfChange);
+					accountability.editDates(accountability.getBeginDate(), dateOfChange);
 				} else {
 					needToAddAcc = false;
 				}
@@ -1218,8 +1137,7 @@ public class PersonSiadapWrapper extends PartyWrapper implements Serializable {
 		}
 		if (needToAddAcc) {
 			// let's
-			newEvaluator.addChild(getPerson(), evaluationRelation,
-					dateOfChange, null);
+			newEvaluator.addChild(getPerson(), evaluationRelation, dateOfChange, null);
 
 		}
 
@@ -1238,70 +1156,63 @@ public class PersonSiadapWrapper extends PartyWrapper implements Serializable {
 		// descend if we are an harmonization unit
 		UnitSiadapWrapper unitWrapper = new UnitSiadapWrapper(unit, getYear());
 		if (!unitWrapper.isHarmonizationUnit()) {
-			throw new IllegalArgumentException(
-					"you're doing it wrong :D harmonization units only");
+			throw new IllegalArgumentException("you're doing it wrong :D harmonization units only");
 		}
 		return getSiadapUniverseInGivenUnit(unit);
 	}
 
 	private SiadapUniverse getSiadapUniverseInGivenUnit(Unit unit) {
 		SiadapYearConfiguration siadapYearConfiguration = getConfiguration();
-		AccountabilityType siadap2HarmonizationRelation = siadapYearConfiguration
-				.getSiadap2HarmonizationRelation();
-		AccountabilityType siadap3HarmonizationRelation = siadapYearConfiguration
-				.getSiadap3HarmonizationRelation();
+		AccountabilityType siadap2HarmonizationRelation = siadapYearConfiguration.getSiadap2HarmonizationRelation();
+		AccountabilityType siadap3HarmonizationRelation = siadapYearConfiguration.getSiadap3HarmonizationRelation();
 		UnitSiadapWrapper unitWrapper = new UnitSiadapWrapper(unit, getYear());
-		List<Accountability> childAccountabilities = unitWrapper
-				.getChildAccountabilityTypes(siadap2HarmonizationRelation,
-						siadap3HarmonizationRelation);
+		List<Accountability> childAccountabilities =
+				unitWrapper.getChildAccountabilityTypes(siadap2HarmonizationRelation, siadap3HarmonizationRelation);
 		for (Accountability acc : childAccountabilities) {
 			if (acc.getChild().equals(getPerson())) {
 
-				if (acc.hasAccountabilityType(siadap2HarmonizationRelation))
+				if (acc.hasAccountabilityType(siadap2HarmonizationRelation)) {
 					return SiadapUniverse.SIADAP2;
-				if (acc.hasAccountabilityType(siadap3HarmonizationRelation))
+				}
+				if (acc.hasAccountabilityType(siadap3HarmonizationRelation)) {
 					return SiadapUniverse.SIADAP3;
+				}
 
 			}
 		}
 		// let's descend
 		SiadapUniverse siadapUniverseToReturn = null;
-		for (Unit childUnit : unitWrapper.getChildUnits(siadapYearConfiguration
-				.getHarmonizationUnitRelations())) {
+		for (Unit childUnit : unitWrapper.getChildUnits(siadapYearConfiguration.getHarmonizationUnitRelations())) {
 			SiadapUniverse siadapUniverseInGivenUnit = getSiadapUniverseInGivenUnit(childUnit);
-			if (siadapUniverseInGivenUnit != null)
+			if (siadapUniverseInGivenUnit != null) {
 				siadapUniverseToReturn = siadapUniverseInGivenUnit;
+			}
 		}
 		return siadapUniverseToReturn;
 
 	}
 
 	public boolean isCustomEvaluatorDefined() {
-		return !getParentPersons(getConfiguration().getEvaluationRelation())
-				.isEmpty();
+		return !getParentPersons(getConfiguration().getEvaluationRelation()).isEmpty();
 	}
 
 	@Service
 	public void removeCustomEvaluator() {
-		AccountabilityType evaluationRelation = getConfiguration()
-				.getEvaluationRelation();
+		AccountabilityType evaluationRelation = getConfiguration().getEvaluationRelation();
 		for (Accountability accountability : getParentAccountabilityTypes(evaluationRelation)) {
-			if (accountability.isActiveNow()
-					&& accountability.getChild() instanceof Person
+			if (accountability.isActiveNow() && accountability.getChild() instanceof Person
 					&& accountability.getParent() instanceof Person) {
 				// ok, so we have the acc.
 				LocalDate dateToEndTheAcc = new LocalDate();
 				if (accountability.getBeginDate().getYear() == getYear()) {
-					if (dateToEndTheAcc.isBefore(accountability.getBeginDate()
-							.plusDays(1))) {
+					if (dateToEndTheAcc.isBefore(accountability.getBeginDate().plusDays(1))) {
 						// then we actually have to 'delete' it
 						accountability.delete();
 					}
 					dateToEndTheAcc = accountability.getBeginDate().plusDays(1);
 				} else {
 					// let's close it on the last day of the previous year
-					dateToEndTheAcc = SiadapMiscUtilClass
-							.lastDayOfYear(getYear() - 1);
+					dateToEndTheAcc = SiadapMiscUtilClass.lastDayOfYear(getYear() - 1);
 				}
 				if (!accountability.isErased()) {
 					accountability.setEndDate(dateToEndTheAcc);
@@ -1311,46 +1222,43 @@ public class PersonSiadapWrapper extends PartyWrapper implements Serializable {
 	}
 
 	@Service
-	public void removeHarmonizationAssessments(SiadapUniverse siadapUniverse,
-			Unit harmonizationUnit) {
-		if (getSiadap() == null || harmonizationUnit == null)
+	public void removeHarmonizationAssessments(SiadapUniverse siadapUniverse, Unit harmonizationUnit) {
+		if (getSiadap() == null || harmonizationUnit == null) {
 			throw new SiadapException("error.invalid.data");
+		}
 
-		SiadapEvaluationUniverse evaluationUniverse = getSiadap()
-				.getSiadapEvaluationUniverseForSiadapUniverse(siadapUniverse);
-		if ((evaluationUniverse.getHarmonizationAssessment() != null && !evaluationUniverse
-				.getHarmonizationAssessment())
-				|| (evaluationUniverse
-						.getHarmonizationAssessmentForExcellencyAward() != null && !evaluationUniverse
+		SiadapEvaluationUniverse evaluationUniverse = getSiadap().getSiadapEvaluationUniverseForSiadapUniverse(siadapUniverse);
+		if ((evaluationUniverse.getHarmonizationAssessment() != null && !evaluationUniverse.getHarmonizationAssessment())
+				|| (evaluationUniverse.getHarmonizationAssessmentForExcellencyAward() != null && !evaluationUniverse
 						.getHarmonizationAssessmentForExcellencyAward())) {
 			// if we had a No on the harmonizationAssessment or in the regular
 			// one we might have an ExceedingQuotaProposal
 			// so let's check if it is so, and if it is, remove it and adjust
 			// the priority numbers of the rest of them
-			ExceedingQuotaProposal quotaProposalFor = ExceedingQuotaProposal
-					.getQuotaProposalFor(harmonizationUnit, getYear(),
-							getPerson(), siadapUniverse, isQuotaAware());
-			if (quotaProposalFor != null)
+			ExceedingQuotaProposal quotaProposalFor =
+					ExceedingQuotaProposal.getQuotaProposalFor(harmonizationUnit, getYear(), getPerson(), siadapUniverse,
+							isQuotaAware());
+			if (quotaProposalFor != null) {
 				quotaProposalFor.remove();
+			}
 
 		}
 		evaluationUniverse.removeHarmonizationAssessments();
 	}
 
 	public String getCareerName() {
-		if (getDefaultCompetenceTypeObject() == null)
+		if (getDefaultCompetenceTypeObject() == null) {
 			return "";
+		}
 		return getDefaultCompetenceTypeObject().getName();
 	}
 
 	public CompetenceType getDefaultCompetenceTypeObject() {
-		if (getSiadap() == null
-				|| getSiadap().getDefaultSiadapEvaluationUniverse() == null
-				|| getSiadap().getDefaultSiadapEvaluationUniverse()
-						.getCompetenceSlashCareerType() == null)
+		if (getSiadap() == null || getSiadap().getDefaultSiadapEvaluationUniverse() == null
+				|| getSiadap().getDefaultSiadapEvaluationUniverse().getCompetenceSlashCareerType() == null) {
 			return null;
-		return getSiadap().getDefaultSiadapEvaluationUniverse()
-				.getCompetenceSlashCareerType();
+		}
+		return getSiadap().getDefaultSiadapEvaluationUniverse().getCompetenceSlashCareerType();
 
 	}
 
@@ -1360,13 +1268,11 @@ public class PersonSiadapWrapper extends PartyWrapper implements Serializable {
 	}
 
 	public boolean isCCAMember() {
-		return SiadapRootModule.getInstance().getSiadapCCAGroup()
-				.isMember(getPerson().getUser());
+		return SiadapRootModule.getInstance().getSiadapCCAGroup().isMember(getPerson().getUser());
 	}
 
 	public boolean isHomologationMember() {
-		return getConfiguration().getHomologationMembers()
-				.contains(getPerson());
+		return getConfiguration().getHomologationMembers().contains(getPerson());
 	}
 
 	public boolean isHarmonizationPeriodOpen() {
@@ -1375,34 +1281,23 @@ public class PersonSiadapWrapper extends PartyWrapper implements Serializable {
 
 	public Set<Accountability> getAccountabilitiesHistory() {
 		Person person = getPerson();
-		Set<Accountability> history = new TreeSet<Accountability>(
-				new Comparator<Accountability>() {
+		Set<Accountability> history = new TreeSet<Accountability>(new Comparator<Accountability>() {
 
-					@Override
-					public int compare(Accountability o1, Accountability o2) {
-						int compareBegin = o1.getBeginDate().compareTo(
-								o2.getBeginDate());
-						LocalDate endDate = o1.getEndDate();
-						LocalDate endDate2 = o2.getEndDate();
-						return compareBegin != 0 ? compareBegin
-								: endDate != null && endDate2 != null ? o1
-										.getEndDate()
-										.compareTo(o2.getEndDate())
-										: endDate == null && endDate2 != null ? 1
-												: endDate2 == null
-														&& endDate != null ? -1
-														: o1.getExternalId()
-																.compareTo(
-																		o2.getExternalId());
-					}
+			@Override
+			public int compare(Accountability o1, Accountability o2) {
+				int compareBegin = o1.getBeginDate().compareTo(o2.getBeginDate());
+				LocalDate endDate = o1.getEndDate();
+				LocalDate endDate2 = o2.getEndDate();
+				return compareBegin != 0 ? compareBegin : endDate != null && endDate2 != null ? o1.getEndDate().compareTo(
+						o2.getEndDate()) : endDate == null && endDate2 != null ? 1 : endDate2 == null && endDate != null ? -1 : o1
+						.getExternalId().compareTo(o2.getExternalId());
+			}
 
-				});
+		});
 		int year = getYear();
-		for (SiadapYearConfiguration configuration = SiadapYearConfiguration
-				.getSiadapYearConfiguration(year); configuration != null; configuration = SiadapYearConfiguration
-				.getSiadapYearConfiguration(--year)) {
-			history.addAll(person.getParentAccountabilities(
-					configuration.getWorkingRelation(),
+		for (SiadapYearConfiguration configuration = SiadapYearConfiguration.getSiadapYearConfiguration(year); configuration != null; configuration =
+				SiadapYearConfiguration.getSiadapYearConfiguration(--year)) {
+			history.addAll(person.getParentAccountabilities(configuration.getWorkingRelation(),
 					configuration.getWorkingRelationWithNoQuota()));
 		}
 
@@ -1421,8 +1316,7 @@ public class PersonSiadapWrapper extends PartyWrapper implements Serializable {
 	 * @see #changeDefaultUniverseTo(SiadapUniverse, LocalDate, boolean) - it's
 	 *      equal but with a force of false
 	 */
-	public void changeDefaultUniverseTo(
-			SiadapUniverse siadapUniverseToChangeTo, LocalDate dateOfChange) {
+	public void changeDefaultUniverseTo(SiadapUniverse siadapUniverseToChangeTo, LocalDate dateOfChange) {
 		changeDefaultUniverseTo(siadapUniverseToChangeTo, dateOfChange, false);
 	}
 
@@ -1438,45 +1332,36 @@ public class PersonSiadapWrapper extends PartyWrapper implements Serializable {
 	 *            validated
 	 */
 	@Service
-	public void changeDefaultUniverseTo(
-			SiadapUniverse siadapUniverseToChangeTo, LocalDate dateOfChange,
-			boolean forceChange) {
-		SiadapUniverse defaultSiadapUniverse = getSiadap()
-				.getDefaultSiadapUniverse();
+	public void changeDefaultUniverseTo(SiadapUniverse siadapUniverseToChangeTo, LocalDate dateOfChange, boolean forceChange) {
+		SiadapUniverse defaultSiadapUniverse = getSiadap().getDefaultSiadapUniverse();
 
 		verifyDate(dateOfChange);
 		if (!forceChange) {
 			// let's check if we have a closed harmonization, if so, we
 			// shouldn't allow the change
 			Unit unitWhereIsHarmonized = getUnitWhereIsHarmonized(defaultSiadapUniverse);
-			if (new UnitSiadapWrapper(unitWhereIsHarmonized, getYear())
-					.isHarmonizationFinished())
-				throw new SiadapException(
-						"error.cant.change.siadap.universe.because.it.has.closed.harmonization");
+			if (new UnitSiadapWrapper(unitWhereIsHarmonized, getYear()).isHarmonizationFinished()) {
+				throw new SiadapException("error.cant.change.siadap.universe.because.it.has.closed.harmonization");
+			}
 		} else {
 			// let's make sure it is not validated
 			if (getSiadap().getDefaultSiadapEvaluationUniverse() != null) {
-				if (getSiadap().getDefaultSiadapEvaluationUniverse()
-						.getValidationDate() != null)
-					throw new SiadapException(
-							"error.cant.change.siadap.universe.because.it.has.closed.validation");
+				if (getSiadap().getDefaultSiadapEvaluationUniverse().getValidationDate() != null) {
+					throw new SiadapException("error.cant.change.siadap.universe.because.it.has.closed.validation");
+				}
 			}
 		}
 
 		// let's also change the Harmonization relation
-		Accountability retrieveDefaultHarmAccForGivenSiadapUniverse = retrieveDefaultHarmAccForGivenSiadapUniverse(getSiadap()
-				.getDefaultSiadapUniverse());
+		Accountability retrieveDefaultHarmAccForGivenSiadapUniverse =
+				retrieveDefaultHarmAccForGivenSiadapUniverse(getSiadap().getDefaultSiadapUniverse());
 		if (retrieveDefaultHarmAccForGivenSiadapUniverse != null) {
 			// if we had one, let's close it
-			retrieveDefaultHarmAccForGivenSiadapUniverse
-					.setEndDate(dateOfChange);
+			retrieveDefaultHarmAccForGivenSiadapUniverse.setEndDate(dateOfChange);
 
 			// and now let's create a new one
-			retrieveDefaultHarmAccForGivenSiadapUniverse.getParent().addChild(
-					getPerson(),
-					siadapUniverseToChangeTo
-							.getHarmonizationRelation(getYear()), dateOfChange,
-					null);
+			retrieveDefaultHarmAccForGivenSiadapUniverse.getParent().addChild(getPerson(),
+					siadapUniverseToChangeTo.getHarmonizationRelation(getYear()), dateOfChange, null);
 		}
 
 		getSiadap().setDefaultSiadapUniverse(siadapUniverseToChangeTo);
@@ -1489,21 +1374,21 @@ public class PersonSiadapWrapper extends PartyWrapper implements Serializable {
 	 * @return the {@link Accountability} responsible for giving the hint on the
 	 *         HarmUnit
 	 */
-	private Accountability retrieveDefaultHarmAccForGivenSiadapUniverse(
-			SiadapUniverse siadapUniverse) {
+	private Accountability retrieveDefaultHarmAccForGivenSiadapUniverse(SiadapUniverse siadapUniverse) {
 		if (siadapUniverse == null) {
 			return null;
 		}
-		AccountabilityType harmonizationRelation = siadapUniverse
-				.getHarmonizationRelation(getConfiguration());
+		AccountabilityType harmonizationRelation = siadapUniverse.getHarmonizationRelation(getConfiguration());
 
 		List<Accountability> parentAccountabilityTypes = getParentAccountabilityTypes(harmonizationRelation);
 		// if it retrieved more than one, it actually shouldn't, as it shows
 		// that we are being evaluated with the same universe
-		if (parentAccountabilityTypes.size() > 1)
+		if (parentAccountabilityTypes.size() > 1) {
 			throw new SiadapException("inconsistent.harmonization.units");
-		if (parentAccountabilityTypes.size() == 1)
+		}
+		if (parentAccountabilityTypes.size() == 1) {
 			return parentAccountabilityTypes.get(0);
+		}
 
 		return null;
 
@@ -1532,7 +1417,8 @@ public class PersonSiadapWrapper extends PartyWrapper implements Serializable {
 
 	public void setHarmonizationCurrentAssessmentForExcellencyAwardForSIADAP2(
 			Boolean harmonizationCurrentAssessmentForExcellencyAwardForSIADAP2) {
-		this.harmonizationCurrentAssessmentForExcellencyAwardForSIADAP2 = harmonizationCurrentAssessmentForExcellencyAwardForSIADAP2;
+		this.harmonizationCurrentAssessmentForExcellencyAwardForSIADAP2 =
+				harmonizationCurrentAssessmentForExcellencyAwardForSIADAP2;
 	}
 
 	public Boolean getHarmonizationCurrentAssessmentForExcellencyAwardForSIADAP3() {
@@ -1541,19 +1427,17 @@ public class PersonSiadapWrapper extends PartyWrapper implements Serializable {
 
 	public void setHarmonizationCurrentAssessmentForExcellencyAwardForSIADAP3(
 			Boolean harmonizationCurrentAssessmentForExcellencyAwardForSIADAP3) {
-		this.harmonizationCurrentAssessmentForExcellencyAwardForSIADAP3 = harmonizationCurrentAssessmentForExcellencyAwardForSIADAP3;
+		this.harmonizationCurrentAssessmentForExcellencyAwardForSIADAP3 =
+				harmonizationCurrentAssessmentForExcellencyAwardForSIADAP3;
 	}
 
-	protected Boolean getHarmonizationCurrentAssessmentFor(
-			SiadapUniverse siadapUniverse) {
-		return getSiadap().getSiadapEvaluationUniverseForSiadapUniverse(
-				siadapUniverse).getHarmonizationAssessment();
+	protected Boolean getHarmonizationCurrentAssessmentFor(SiadapUniverse siadapUniverse) {
+		return getSiadap().getSiadapEvaluationUniverseForSiadapUniverse(siadapUniverse).getHarmonizationAssessment();
 	}
 
-	protected Boolean getHarmonizationCurrentExcellencyAssessmentFor(
-			SiadapUniverse siadapUniverse) {
-		return getSiadap().getSiadapEvaluationUniverseForSiadapUniverse(
-				siadapUniverse).getHarmonizationAssessmentForExcellencyAward();
+	protected Boolean getHarmonizationCurrentExcellencyAssessmentFor(SiadapUniverse siadapUniverse) {
+		return getSiadap().getSiadapEvaluationUniverseForSiadapUniverse(siadapUniverse)
+				.getHarmonizationAssessmentForExcellencyAward();
 	}
 
 	public Boolean getHarmonizationCurrentAssessmentForSIADAP2() {
@@ -1565,16 +1449,15 @@ public class PersonSiadapWrapper extends PartyWrapper implements Serializable {
 	}
 
 	private boolean isAbleToRemoveAssessmentsFor(SiadapUniverse siadapUniverse) {
-		SiadapEvaluationUniverse siadapEvaluationUniverseForSiadapUniverse = getSiadap()
-				.getSiadapEvaluationUniverseForSiadapUniverse(siadapUniverse);
+		SiadapEvaluationUniverse siadapEvaluationUniverseForSiadapUniverse =
+				getSiadap().getSiadapEvaluationUniverseForSiadapUniverse(siadapUniverse);
 
-		if (siadapEvaluationUniverseForSiadapUniverse == null)
+		if (siadapEvaluationUniverseForSiadapUniverse == null) {
 			return false;
+		}
 		return isHarmonizationPeriodOpen()
-				&& siadapEvaluationUniverseForSiadapUniverse
-						.getHarmonizationDate() == null
-				&& (siadapEvaluationUniverseForSiadapUniverse
-						.getHarmonizationAssessment() != null || siadapEvaluationUniverseForSiadapUniverse
+				&& siadapEvaluationUniverseForSiadapUniverse.getHarmonizationDate() == null
+				&& (siadapEvaluationUniverseForSiadapUniverse.getHarmonizationAssessment() != null || siadapEvaluationUniverseForSiadapUniverse
 						.getHarmonizationAssessmentForExcellencyAward() != null);
 	}
 
@@ -1588,8 +1471,8 @@ public class PersonSiadapWrapper extends PartyWrapper implements Serializable {
 
 	@Service
 	public void setHarmonizationCurrentAssessments(SiadapUniverse siadapUniverse) {
-		SiadapEvaluationUniverse siadapEvaluationUniverseForSiadapUniverse = getSiadap()
-				.getSiadapEvaluationUniverseForSiadapUniverse(siadapUniverse);
+		SiadapEvaluationUniverse siadapEvaluationUniverseForSiadapUniverse =
+				getSiadap().getSiadapEvaluationUniverseForSiadapUniverse(siadapUniverse);
 		Boolean harmonizationCurrentAssessment = null;
 		Boolean harmonizationCurrentAssessmentForExcellencyAward = null;
 		if (siadapUniverse.equals(SiadapUniverse.SIADAP2)) {
@@ -1614,28 +1497,22 @@ public class PersonSiadapWrapper extends PartyWrapper implements Serializable {
 		// siadapEvaluationUniverseForSiadapUniverse
 		// .getHarmonizationAssessment().booleanValue())
 		{
-			ExceedingQuotaProposal quotaProposalFor = ExceedingQuotaProposal
-					.getQuotaProposalFor(
-							getUnitWhereIsHarmonized(siadapUniverse),
-							getYear(), person, siadapUniverse, isQuotaAware());
+			ExceedingQuotaProposal quotaProposalFor =
+					ExceedingQuotaProposal.getQuotaProposalFor(getUnitWhereIsHarmonized(siadapUniverse), getYear(), person,
+							siadapUniverse, isQuotaAware());
 			if (quotaProposalFor != null) {
 				quotaProposalFor.remove();
 			}
 		}
 
 		// we must have an excellent of false if we have a regular of true
-		if (siadapEvaluationUniverseForSiadapUniverse
-				.hasExcellencyAwardedFromEvaluator()) {
-			if (harmonizationCurrentAssessmentForExcellencyAward != null
-					&& harmonizationCurrentAssessmentForExcellencyAward
-					&& harmonizationCurrentAssessment != null
-					&& !harmonizationCurrentAssessment) {
-				throw new SiadapException(
-						"error.harmonization.inconsistency.between.excellency.and.regular.assessment");
+		if (siadapEvaluationUniverseForSiadapUniverse.hasExcellencyAwardedFromEvaluator()) {
+			if (harmonizationCurrentAssessmentForExcellencyAward != null && harmonizationCurrentAssessmentForExcellencyAward
+					&& harmonizationCurrentAssessment != null && !harmonizationCurrentAssessment) {
+				throw new SiadapException("error.harmonization.inconsistency.between.excellency.and.regular.assessment");
 			}
 		}
-		siadapEvaluationUniverseForSiadapUniverse.setHarmonizationAssessments(
-				harmonizationCurrentAssessment,
+		siadapEvaluationUniverseForSiadapUniverse.setHarmonizationAssessments(harmonizationCurrentAssessment,
 				harmonizationCurrentAssessmentForExcellencyAward);
 	}
 
@@ -1650,8 +1527,7 @@ public class PersonSiadapWrapper extends PartyWrapper implements Serializable {
 	/**
 	 * 
 	 * @throws SiadapException
-	 *             if the SIADAP proccess exists. Then it should be nullified (
-	 *             {@link NullifyProcess}) instead
+	 *             if the SIADAP proccess exists. Then it should be nullified ( {@link NullifyProcess}) instead
 	 */
 	@Service
 	public void removeFromSiadapStructure() throws SiadapException {
@@ -1660,16 +1536,11 @@ public class PersonSiadapWrapper extends PartyWrapper implements Serializable {
 			// shouldn't remove the structure, simply nullify it
 			throw new SiadapException("error.should.nullify.not.remove");
 		}
-		for (Accountability acc : getPerson().getParentAccountabilities(
-				getConfiguration().getUnitRelations(),
-				getConfiguration().getHarmonizationUnitRelations(),
-				getConfiguration().getWorkingRelation(),
-				getConfiguration().getWorkingRelationWithNoQuota(),
-				getConfiguration().getEvaluationRelation(),
-				getConfiguration().getSiadap2HarmonizationRelation(),
-				getConfiguration().getSiadap3HarmonizationRelation())) {
-			if (acc.isActive(SiadapMiscUtilClass
-					.lastDayOfYearWhereAccsAreActive(getYear()))) {
+		for (Accountability acc : getPerson().getParentAccountabilities(getConfiguration().getUnitRelations(),
+				getConfiguration().getHarmonizationUnitRelations(), getConfiguration().getWorkingRelation(),
+				getConfiguration().getWorkingRelationWithNoQuota(), getConfiguration().getEvaluationRelation(),
+				getConfiguration().getSiadap2HarmonizationRelation(), getConfiguration().getSiadap3HarmonizationRelation())) {
+			if (acc.isActive(SiadapMiscUtilClass.lastDayOfYearWhereAccsAreActive(getYear()))) {
 
 				// let's close it on the last day of the previous year, or, in
 				// case it has a beginning year equal to this one, let's delete
@@ -1677,8 +1548,7 @@ public class PersonSiadapWrapper extends PartyWrapper implements Serializable {
 				if (acc.getBeginDate().getYear() == getYear()) {
 					acc.delete();
 				} else {
-					acc.setEndDate(SiadapMiscUtilClass
-							.lastDayOfYear(getYear() - 1));
+					acc.setEndDate(SiadapMiscUtilClass.lastDayOfYear(getYear() - 1));
 				}
 			}
 		}
@@ -1688,8 +1558,7 @@ public class PersonSiadapWrapper extends PartyWrapper implements Serializable {
 		return evaluatorClassificationForSIADAP2;
 	}
 
-	public void setEvaluatorClassificationForSIADAP2(
-			BigDecimal evaluatorClassificationForSIADAP2) {
+	public void setEvaluatorClassificationForSIADAP2(BigDecimal evaluatorClassificationForSIADAP2) {
 		this.evaluatorClassificationForSIADAP2 = evaluatorClassificationForSIADAP2;
 	}
 
@@ -1697,8 +1566,7 @@ public class PersonSiadapWrapper extends PartyWrapper implements Serializable {
 		return evaluatorClassificationForSIADAP3;
 	}
 
-	public void setEvaluatorClassificationForSIADAP3(
-			BigDecimal evaluatorClassificationForSIADAP3) {
+	public void setEvaluatorClassificationForSIADAP3(BigDecimal evaluatorClassificationForSIADAP3) {
 		this.evaluatorClassificationForSIADAP3 = evaluatorClassificationForSIADAP3;
 	}
 

@@ -27,14 +27,13 @@ package module.siadap.domain;
 import java.util.List;
 import java.util.ResourceBundle;
 
+import module.organization.domain.Accountability;
+import module.organization.domain.AccountabilityType;
+import module.organization.domain.Party;
 import pt.ist.fenixWebFramework.rendererExtensions.util.IPresentableEnum;
 import pt.utl.ist.fenix.tools.util.i18n.Language;
 import dml.runtime.Relation;
 import dml.runtime.RelationListener;
-
-import module.organization.domain.Accountability;
-import module.organization.domain.AccountabilityType;
-import module.organization.domain.Party;
 
 /**
  * 
@@ -42,63 +41,64 @@ import module.organization.domain.Party;
  * 
  */
 public enum SiadapUniverse implements IPresentableEnum {
-    SIADAP2 {
+	SIADAP2 {
 
-	@Override
-	public AccountabilityType getHarmonizationRelation(SiadapYearConfiguration siadapYearConfiguration) {
-	    return siadapYearConfiguration.getSiadap2HarmonizationRelation();
-	}
-    },
-    SIADAP3 {
+		@Override
+		public AccountabilityType getHarmonizationRelation(SiadapYearConfiguration siadapYearConfiguration) {
+			return siadapYearConfiguration.getSiadap2HarmonizationRelation();
+		}
+	},
+	SIADAP3 {
 
-	@Override
-	public AccountabilityType getHarmonizationRelation(SiadapYearConfiguration siadapYearConfiguration) {
-	    return siadapYearConfiguration.getSiadap3HarmonizationRelation();
-	}
-    };
+		@Override
+		public AccountabilityType getHarmonizationRelation(SiadapYearConfiguration siadapYearConfiguration) {
+			return siadapYearConfiguration.getSiadap3HarmonizationRelation();
+		}
+	};
 
-    static public List<SiadapUniverse> getQuotasUniverse(Siadap siadap) {
-	//TODO joantune: take into account the fact that some SIADAP2 users might also count as SIADAP3!!
-	return null;
-    }
-
-    @Override
-    public String getLocalizedName() {
-	final ResourceBundle resourceBundle = ResourceBundle.getBundle("resources.SiadapResources", Language.getLocale());
-	return resourceBundle.getString(SiadapUniverse.class.getSimpleName() + "." + name());
-    }
-    
-    public AccountabilityType getHarmonizationRelation(int year) {
-	return getHarmonizationRelation(SiadapYearConfiguration.getSiadapYearConfiguration(year));
-    }
-
-    public abstract AccountabilityType getHarmonizationRelation(SiadapYearConfiguration siadapYearConfiguration);
-
-    //TODO joantune SIADAP-155
-    public static final RelationListener<Accountability, Party> siadapHarmonizationRelationListener = new RelationListener<Accountability, Party>() {
-
-	@Override
-	public void afterAdd(Relation<Accountability, Party> arg0, Accountability arg1, Party arg2) {
-	    // TODO Auto-generated method stub
-
+	static public List<SiadapUniverse> getQuotasUniverse(Siadap siadap) {
+		//TODO joantune: take into account the fact that some SIADAP2 users might also count as SIADAP3!!
+		return null;
 	}
 
 	@Override
-	public void afterRemove(Relation<Accountability, Party> arg0, Accountability arg1, Party arg2) {
-	    // TODO Auto-generated method stub
-
+	public String getLocalizedName() {
+		final ResourceBundle resourceBundle = ResourceBundle.getBundle("resources.SiadapResources", Language.getLocale());
+		return resourceBundle.getString(SiadapUniverse.class.getSimpleName() + "." + name());
 	}
 
-	@Override
-	public void beforeAdd(Relation<Accountability, Party> arg0, Accountability arg1, Party arg2) {
-	    // TODO Auto-generated method stub
-
+	public AccountabilityType getHarmonizationRelation(int year) {
+		return getHarmonizationRelation(SiadapYearConfiguration.getSiadapYearConfiguration(year));
 	}
 
-	@Override
-	public void beforeRemove(Relation<Accountability, Party> arg0, Accountability arg1, Party arg2) {
-	    // TODO Auto-generated method stub
+	public abstract AccountabilityType getHarmonizationRelation(SiadapYearConfiguration siadapYearConfiguration);
 
-	}
-    };
+	//TODO joantune SIADAP-155
+	public static final RelationListener<Accountability, Party> siadapHarmonizationRelationListener =
+			new RelationListener<Accountability, Party>() {
+
+				@Override
+				public void afterAdd(Relation<Accountability, Party> arg0, Accountability arg1, Party arg2) {
+					// TODO Auto-generated method stub
+
+				}
+
+				@Override
+				public void afterRemove(Relation<Accountability, Party> arg0, Accountability arg1, Party arg2) {
+					// TODO Auto-generated method stub
+
+				}
+
+				@Override
+				public void beforeAdd(Relation<Accountability, Party> arg0, Accountability arg1, Party arg2) {
+					// TODO Auto-generated method stub
+
+				}
+
+				@Override
+				public void beforeRemove(Relation<Accountability, Party> arg0, Accountability arg1, Party arg2) {
+					// TODO Auto-generated method stub
+
+				}
+			};
 }

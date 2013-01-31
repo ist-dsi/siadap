@@ -24,10 +24,6 @@
  */
 package module.siadap.activities;
 
-import pt.ist.bennu.core.domain.RoleType;
-import pt.ist.bennu.core.domain.User;
-import pt.ist.bennu.core.domain.groups.Role;
-
 import module.siadap.domain.CompetenceType;
 import module.siadap.domain.Siadap;
 import module.siadap.domain.SiadapProcess;
@@ -35,66 +31,68 @@ import module.siadap.domain.SiadapUniverse;
 import module.siadap.domain.SiadapYearConfiguration;
 import module.workflow.activities.ActivityInformation;
 import module.workflow.activities.WorkflowActivity;
+import pt.ist.bennu.core.domain.RoleType;
+import pt.ist.bennu.core.domain.User;
+import pt.ist.bennu.core.domain.groups.Role;
 
 /**
  * 
- *         Activity used to change a person's:
- *         <ul>
- *         <li>Working unit;
- *         <li>Default SIADAPUniverse {@link SiadapUniverse};
- *         <li>Evaluator;
- *         <li>Default {@link CompetenceType} / Career name;
- *         </ul>
+ * Activity used to change a person's:
+ * <ul>
+ * <li>Working unit;
+ * <li>Default SIADAPUniverse {@link SiadapUniverse};
+ * <li>Evaluator;
+ * <li>Default {@link CompetenceType} / Career name;
+ * </ul>
  * 
- *         Thus logging the action and providing the extra control that we might
- *         need instead of doing this directly
- *         
+ * Thus logging the action and providing the extra control that we might
+ * need instead of doing this directly
+ * 
  * @author João Antunes
  * 
  */
-public class ChangePersonnelSituation extends
- WorkflowActivity<SiadapProcess, ChangePersonnelSituationActivityInformation> {
+public class ChangePersonnelSituation extends WorkflowActivity<SiadapProcess, ChangePersonnelSituationActivityInformation> {
 
-    @Override
-    public boolean isActive(SiadapProcess process, User user) {
-	if (!process.isActive())
-	    return false;
-	SiadapYearConfiguration configuration = SiadapYearConfiguration.getSiadapYearConfiguration(process.getSiadap().getYear());
-	return Role.getRole(RoleType.MANAGER).isMember(user) || configuration.isUserMemberOfStructureManagementGroup(user);
-    }
-    
-    @Override
-    public String getUsedBundle() {
-        return Siadap.SIADAP_BUNDLE_STRING;
-    }
+	@Override
+	public boolean isActive(SiadapProcess process, User user) {
+		if (!process.isActive()) {
+			return false;
+		}
+		SiadapYearConfiguration configuration = SiadapYearConfiguration.getSiadapYearConfiguration(process.getSiadap().getYear());
+		return Role.getRole(RoleType.MANAGER).isMember(user) || configuration.isUserMemberOfStructureManagementGroup(user);
+	}
 
-    @Override
-    public boolean isUserAwarenessNeeded(SiadapProcess process) {
-	return false;
-    }
+	@Override
+	public String getUsedBundle() {
+		return Siadap.SIADAP_BUNDLE_STRING;
+	}
 
-    @Override
-    public boolean isVisible() {
-	return false;
-    }
+	@Override
+	public boolean isUserAwarenessNeeded(SiadapProcess process) {
+		return false;
+	}
 
-    @Override
-    protected void process(ChangePersonnelSituationActivityInformation activityInformation) {
+	@Override
+	public boolean isVisible() {
+		return false;
+	}
 
-	activityInformation.getBeanWrapper().execute(activityInformation.getProcess());
+	@Override
+	protected void process(ChangePersonnelSituationActivityInformation activityInformation) {
 
-    }
+		activityInformation.getBeanWrapper().execute(activityInformation.getProcess());
 
-    @Override
-    protected String[] getArgumentsDescription(ChangePersonnelSituationActivityInformation activityInformation) {
-	return (activityInformation.getBeanWrapper().getArgumentsDescription(activityInformation.getProcess()));
-    }
+	}
 
+	@Override
+	protected String[] getArgumentsDescription(ChangePersonnelSituationActivityInformation activityInformation) {
+		return (activityInformation.getBeanWrapper().getArgumentsDescription(activityInformation.getProcess()));
+	}
 
-    @Override
-    @Deprecated
-    public ActivityInformation<SiadapProcess> getActivityInformation(SiadapProcess process) {
-	throw new UnsupportedOperationException("activity.not.to.be.used.in.the.regular.way.use.AI.constructor.instead");
-    }
+	@Override
+	@Deprecated
+	public ActivityInformation<SiadapProcess> getActivityInformation(SiadapProcess process) {
+		throw new UnsupportedOperationException("activity.not.to.be.used.in.the.regular.way.use.AI.constructor.instead");
+	}
 
 }

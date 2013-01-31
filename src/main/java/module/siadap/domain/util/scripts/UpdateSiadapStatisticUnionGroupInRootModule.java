@@ -24,11 +24,10 @@
  */
 package module.siadap.domain.util.scripts;
 
+import module.siadap.domain.SiadapRootModule;
 import pt.ist.bennu.core.domain.groups.PersistentGroup;
 import pt.ist.bennu.core.domain.groups.UnionGroup;
 import pt.ist.bennu.core.domain.scheduler.WriteCustomTask;
-
-import module.siadap.domain.SiadapRootModule;
 
 /**
  * 
@@ -37,15 +36,15 @@ import module.siadap.domain.SiadapRootModule;
  */
 public class UpdateSiadapStatisticUnionGroupInRootModule extends WriteCustomTask {
 
-    @Override
-    protected void doService() {
-	UnionGroup statisticsGroup = SiadapRootModule.getInstance().getStatisticsAccessUnionGroup();
-	for (PersistentGroup group : statisticsGroup.getPersistentGroups()) {
-	    statisticsGroup.removePersistentGroups(group);
-	}
-	SiadapRootModule.getInstance().removeStatisticsAccessUnionGroup();
-	statisticsGroup.delete();
+	@Override
+	protected void doService() {
+		UnionGroup statisticsGroup = SiadapRootModule.getInstance().getStatisticsAccessUnionGroup();
+		for (PersistentGroup group : statisticsGroup.getPersistentGroups()) {
+			statisticsGroup.removePersistentGroups(group);
+		}
+		SiadapRootModule.getInstance().removeStatisticsAccessUnionGroup();
+		statisticsGroup.delete();
 
-    }
+	}
 
 }

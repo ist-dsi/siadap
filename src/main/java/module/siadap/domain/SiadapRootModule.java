@@ -32,6 +32,15 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import module.organization.domain.Person;
+import module.organization.domain.Unit;
+import module.siadap.domain.exceptions.SiadapException;
+import module.siadap.domain.groups.SiadapCCAGroup;
+import module.siadap.domain.groups.SiadapScheduleEditorsGroup;
+import module.siadap.domain.groups.SiadapStructureManagementGroup;
+import module.siadap.domain.wrappers.PersonSiadapWrapper;
+import module.siadap.domain.wrappers.UnitSiadapWrapper;
+
 import org.apache.log4j.Logger;
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFCellStyle;
@@ -61,15 +70,6 @@ import pt.ist.bennu.core.domain.groups.NamedGroup;
 import pt.ist.bennu.core.domain.groups.PersistentGroup;
 import pt.ist.bennu.core.domain.groups.UnionGroup;
 import pt.ist.fenixWebFramework.services.Service;
-
-import module.organization.domain.Person;
-import module.organization.domain.Unit;
-import module.siadap.domain.exceptions.SiadapException;
-import module.siadap.domain.groups.SiadapCCAGroup;
-import module.siadap.domain.groups.SiadapScheduleEditorsGroup;
-import module.siadap.domain.groups.SiadapStructureManagementGroup;
-import module.siadap.domain.wrappers.PersonSiadapWrapper;
-import module.siadap.domain.wrappers.UnitSiadapWrapper;
 
 /**
  * 
@@ -154,8 +154,9 @@ public class SiadapRootModule extends SiadapRootModule_Base implements ModuleIni
 
 	private void migrateDataSoThatTheYearsHaveNewPonderationPercentages() {
 		for (SiadapYearConfiguration siadapYearConfiguration : getYearConfigurations()) {
-			if (siadapYearConfiguration.initializePonderationsIfNeeded())
+			if (siadapYearConfiguration.initializePonderationsIfNeeded()) {
 				LOGGER.warn("MIGRATED SiadapYearConfiguration for year: " + siadapYearConfiguration.getYear());
+			}
 		}
 
 	}
@@ -348,8 +349,9 @@ public class SiadapRootModule extends SiadapRootModule_Base implements ModuleIni
 		User user = UserView.getCurrentUser();
 
 		// let's first verify the current user can actually get the information
-		if (!SiadapStructureManagementGroup.isMember(user, year))
+		if (!SiadapStructureManagementGroup.isMember(user, year)) {
 			throw new SiadapException("user.not.allowed.to.access.data");
+		}
 
 		// let's get the SIADAP information
 

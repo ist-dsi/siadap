@@ -28,11 +28,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import org.apache.commons.collections.Predicate;
-
-import pt.ist.bennu.core.domain.User;
-import pt.ist.bennu.core.domain.scheduler.ReadCustomTask;
-
 import module.organization.domain.Accountability;
 import module.organization.domain.AccountabilityType;
 import module.organization.domain.Party;
@@ -42,6 +37,11 @@ import module.siadap.domain.SiadapYearConfiguration;
 import module.siadap.domain.wrappers.PartyWrapper.FilterAccountabilities;
 import module.siadap.domain.wrappers.UnitSiadapWrapper;
 
+import org.apache.commons.collections.Predicate;
+
+import pt.ist.bennu.core.domain.User;
+import pt.ist.bennu.core.domain.scheduler.ReadCustomTask;
+
 /**
  * Debug script to be used in the production/fenix-tests version
  * 
@@ -49,98 +49,98 @@ import module.siadap.domain.wrappers.UnitSiadapWrapper;
  * 
  */
 public class CheckUserXAccRelationDebugScript extends ReadCustomTask {
-    User user;
+	User user;
 
-    private SiadapYearConfiguration getConfiguration() {
-	return SiadapYearConfiguration.getSiadapYearConfiguration(new Integer(2011));
-    }
+	private SiadapYearConfiguration getConfiguration() {
+		return SiadapYearConfiguration.getSiadapYearConfiguration(new Integer(2011));
+	}
 
-    protected List<Person> getParentPersons(AccountabilityType... types) {
-	return getParentPersons(new FilterAccountabilities(2011, true), types);
-    }
+	protected List<Person> getParentPersons(AccountabilityType... types) {
+		return getParentPersons(new FilterAccountabilities(2011, true), types);
+	}
 
-    private List<Person> getParentPersons(Predicate predicate, AccountabilityType... types) {
-	List<Person> person = new ArrayList<Person>();
-	for (Accountability accountability : user.getPerson().getParentAccountabilities(types)) {
-	    if (predicate == null || predicate.evaluate(accountability)) {
-		Party parent = accountability.getParent();
-		if (parent.isPerson()) {
-		    person.add(((Person) parent));
+	private List<Person> getParentPersons(Predicate predicate, AccountabilityType... types) {
+		List<Person> person = new ArrayList<Person>();
+		for (Accountability accountability : user.getPerson().getParentAccountabilities(types)) {
+			if (predicate == null || predicate.evaluate(accountability)) {
+				Party parent = accountability.getParent();
+				if (parent.isPerson()) {
+					person.add(((Person) parent));
+				}
+			}
 		}
-	    }
+		return person;
 	}
-	return person;
-    }
 
-    public UnitSiadapWrapper getWorkingUnit() {
-	Collection<Unit> parentUnits = getParentUnits(getConfiguration().getWorkingRelation(), getConfiguration()
-		.getWorkingRelationWithNoQuota());
-	return parentUnits.isEmpty() ? null : new UnitSiadapWrapper(parentUnits.iterator().next(), getConfiguration().getYear());
-    }
+	public UnitSiadapWrapper getWorkingUnit() {
+		Collection<Unit> parentUnits =
+				getParentUnits(getConfiguration().getWorkingRelation(), getConfiguration().getWorkingRelationWithNoQuota());
+		return parentUnits.isEmpty() ? null : new UnitSiadapWrapper(parentUnits.iterator().next(), getConfiguration().getYear());
+	}
 
-    protected List<Unit> getParentUnits(AccountabilityType... types) {
-	return getParentUnits(new FilterAccountabilities(2011, true), types);
-    }
+	protected List<Unit> getParentUnits(AccountabilityType... types) {
+		return getParentUnits(new FilterAccountabilities(2011, true), types);
+	}
 
-    private List<Unit> getParentUnits(Predicate predicate, AccountabilityType... types) {
-	List<Unit> units = new ArrayList<Unit>();
-	for (Accountability accountability : user.getPerson().getParentAccountabilities(types)) {
-	    if (predicate == null || predicate.evaluate(accountability)) {
-		Party parent = accountability.getParent();
-		if (parent.isUnit()) {
-		    units.add(((Unit) parent));
+	private List<Unit> getParentUnits(Predicate predicate, AccountabilityType... types) {
+		List<Unit> units = new ArrayList<Unit>();
+		for (Accountability accountability : user.getPerson().getParentAccountabilities(types)) {
+			if (predicate == null || predicate.evaluate(accountability)) {
+				Party parent = accountability.getParent();
+				if (parent.isUnit()) {
+					units.add(((Unit) parent));
+				}
+			}
 		}
-	    }
-	}
-	return units;
-    }
-
-    private void printAllAcc(User user) {
-	out.println("Username: " + user.getUsername() + " Name: " + user.getPerson().getName());
-	out.println("Parent:");
-
-	for (Accountability acc : user.getPerson().getParentAccountabilities()) {
-	    out.println("\t" + acc.getDetailsString() + " Parent:" + acc.getParent().getPartyName());
-	    
-	}
-	out.println("Child:");
-	for (Accountability acc : user.getPerson().getChildAccountabilities()) {
-	    out.println("\t" + acc.getDetailsString() + " Parent:" + acc.getChild().getPartyName());
+		return units;
 	}
 
-    }
+	private void printAllAcc(User user) {
+		out.println("Username: " + user.getUsername() + " Name: " + user.getPerson().getName());
+		out.println("Parent:");
 
-    @Override
-    public void doIt() {
-	//get the user to check
-	User userA = User.findByUsername("ist12048");
-	User userB = User.findByUsername("ist21846");
+		for (Accountability acc : user.getPerson().getParentAccountabilities()) {
+			out.println("\t" + acc.getDetailsString() + " Parent:" + acc.getParent().getPartyName());
 
-	User userC = User.findByUsername("ist24439");
-	User userD = User.findByUsername("ist24616");
+		}
+		out.println("Child:");
+		for (Accountability acc : user.getPerson().getChildAccountabilities()) {
+			out.println("\t" + acc.getDetailsString() + " Parent:" + acc.getChild().getPartyName());
+		}
 
-	User userE = User.findByUsername("ist149676");
-	User userF = User.findByUsername("ist151339");
+	}
 
-	User userG = User.findByUsername("ist12889");
-	User userH = User.findByUsername("ist22353");
+	@Override
+	public void doIt() {
+		//get the user to check
+		User userA = User.findByUsername("ist12048");
+		User userB = User.findByUsername("ist21846");
 
-	//	User userI = User.findByUsername("ist12470");
-	//	User userJ = User.findByUsername("ist23053");
-	//	User userK = User.findByUsername("ist22237");
+		User userC = User.findByUsername("ist24439");
+		User userD = User.findByUsername("ist24616");
 
-	printAllAcc(userA);
-	printAllAcc(userB);
-	printAllAcc(userC);
-	printAllAcc(userD);
-	printAllAcc(userE);
-	printAllAcc(userF);
-	printAllAcc(userG);
-	printAllAcc(userH);
-	//	printAllAcc(userI);
-	//	printAllAcc(userJ);
-	//	printAllAcc(userK);
+		User userE = User.findByUsername("ist149676");
+		User userF = User.findByUsername("ist151339");
 
-    }
+		User userG = User.findByUsername("ist12889");
+		User userH = User.findByUsername("ist22353");
+
+		//	User userI = User.findByUsername("ist12470");
+		//	User userJ = User.findByUsername("ist23053");
+		//	User userK = User.findByUsername("ist22237");
+
+		printAllAcc(userA);
+		printAllAcc(userB);
+		printAllAcc(userC);
+		printAllAcc(userD);
+		printAllAcc(userE);
+		printAllAcc(userF);
+		printAllAcc(userG);
+		printAllAcc(userH);
+		//	printAllAcc(userI);
+		//	printAllAcc(userJ);
+		//	printAllAcc(userK);
+
+	}
 
 }

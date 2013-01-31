@@ -16,15 +16,13 @@ import java.util.Set;
 
 import javax.annotation.Nullable;
 
-import org.apache.commons.lang.StringUtils;
-
-import com.google.common.base.Function;
-import com.google.common.collect.Collections2;
-
 import module.fileManagement.domain.FileNode;
 import module.organization.domain.Unit;
 import module.siadap.domain.exceptions.SiadapException;
 import module.siadap.domain.wrappers.UnitSiadapWrapper;
+
+import org.apache.commons.lang.StringUtils;
+
 import pt.ist.bennu.core.domain.VirtualHost;
 import pt.ist.bennu.core.domain.exceptions.DomainException;
 import pt.ist.bennu.core.domain.scheduler.WriteCustomTask;
@@ -32,6 +30,9 @@ import pt.ist.expenditureTrackingSystem.domain.organization.CostCenter;
 import pt.ist.fenixframework.pstm.AbstractDomainObject;
 import pt.utl.ist.fenix.tools.util.i18n.Language;
 import pt.utl.ist.fenix.tools.util.i18n.MultiLanguageString;
+
+import com.google.common.base.Function;
+import com.google.common.collect.Collections2;
 
 /**
  * @author João Antunes (joao.antunes@tagus.ist.utl.pt) - 21 de Jan de 2013
@@ -51,8 +52,7 @@ import pt.utl.ist.fenix.tools.util.i18n.MultiLanguageString;
  */
 public class ImportHarmztnStructureForYear extends WriteCustomTask {
 
-	private static final FileNode dataFileNode = AbstractDomainObject
-			.fromExternalId("7073811496915");
+	private static final FileNode dataFileNode = AbstractDomainObject.fromExternalId("7073811496915");
 
 	private static final int year = 2012;
 
@@ -66,7 +66,8 @@ public class ImportHarmztnStructureForYear extends WriteCustomTask {
 
 	private static final String CHARSET_NAME = "iso-8859-1";
 
-	private static final String JUSTIFICATION = "Importação dos dados de harmonização facultados pela DRH, com o nome Harmonizacao SIADAP 17-01-2013 e alterações as bibliotecas";
+	private static final String JUSTIFICATION =
+			"Importação dos dados de harmonização facultados pela DRH, com o nome Harmonizacao SIADAP 17-01-2013 e alterações as bibliotecas";
 
 	/*
 	 * (non-Javadoc)
@@ -79,19 +80,18 @@ public class ImportHarmztnStructureForYear extends WriteCustomTask {
 		int nrLinesInFile = 0;
 		try {
 
-			VirtualHost virtualHost = VirtualHost
-					.setVirtualHostForThread(VIRTUAL_HOST_SERVER_NAME);
+			VirtualHost virtualHost = VirtualHost.setVirtualHostForThread(VIRTUAL_HOST_SERVER_NAME);
 
 			// let's get the file content into a string
-			BufferedReader contentReader = new BufferedReader(
-					new InputStreamReader(dataFileNode.getDocument()
-							.getLastVersionedFile().getStream(),
+			BufferedReader contentReader =
+					new BufferedReader(new InputStreamReader(dataFileNode.getDocument().getLastVersionedFile().getStream(),
 							Charset.forName(CHARSET_NAME)));
 			String strLine;
 			try {
 				while ((strLine = contentReader.readLine()) != null) {
-					if (DEBUG)
+					if (DEBUG) {
 						out.println(strLine);
+					}
 					readLine(strLine);
 					nrLinesInFile++;
 				}
@@ -106,10 +106,10 @@ public class ImportHarmztnStructureForYear extends WriteCustomTask {
 
 				if (!DRY_RUN) {
 					Map<Unit, Set<Unit>> abandonedUnits = commitChanges();
-					
+
 					//let's print the abandonedUnits
 					print(abandonedUnits);
-					
+
 				}
 
 			}
@@ -120,105 +120,106 @@ public class ImportHarmztnStructureForYear extends WriteCustomTask {
 
 	private void print(Map<Unit, Set<Unit>> abandonedUnits) {
 		for (Unit deactivatedHUnit : abandonedUnits.keySet()) {
-			out.println("Abandoned units for H.U.: " + deactivatedHUnit.getPresentationName()+ " :");
+			out.println("Abandoned units for H.U.: " + deactivatedHUnit.getPresentationName() + " :");
 			for (Unit abadonedUnit : abandonedUnits.get(deactivatedHUnit)) {
-				out.println(abadonedUnit.getPresentationName() + " people working there: " + new UnitSiadapWrapper(abadonedUnit, year).getTotalPeopleWorkingInUnitIncludingNoQuotaPeople());
+				out.println(abadonedUnit.getPresentationName() + " people working there: "
+						+ new UnitSiadapWrapper(abadonedUnit, year).getTotalPeopleWorkingInUnitIncludingNoQuotaPeople());
 			}
 		}
-		
+
 	}
 
-	private Map<Unit,Set<Unit>> commitChanges() {
+	private Map<Unit, Set<Unit>> commitChanges() {
 		Set<Unit> unitsToDeactivate = new HashSet<Unit>();
 		for (HarmonizationUnit harmonizationUnit : importedHarmonizationUnits.values()) {
 			harmonizationUnit.fillOrCreateUnit();
-			
+
 			Unit realUnit = harmonizationUnit.getRealUnit();
-			
+
 			//let's do the deactivated units later, to see if we have pending units connected to this one or not
-			if (harmonizationUnit.isDeactivated())
-			{
+			if (harmonizationUnit.isDeactivated()) {
 				unitsToDeactivate.add(realUnit);
 				continue;
 			}
-				
-			
+
 			UnitSiadapWrapper unitSiadapWrapper = new UnitSiadapWrapper(realUnit, year);
-			
+
 			//let's make sure it is connected for that given year
 			unitSiadapWrapper.connectToTopHarmonizationUnit(JUSTIFICATION);
-			
-			List<UnitSiadapWrapper> currentUnitsHarmonized = unitSiadapWrapper.getSubHarmonizationUnits();
-			
-			//let's get the new set of units
-			Collection<UnitSiadapWrapper> newListOfUnits = Collections2.transform(harmonizationUnit.getUnitsHarmonized(), new Function<CCUnit, UnitSiadapWrapper>() {
 
-				@Override
-				@Nullable
-				public UnitSiadapWrapper apply(@Nullable CCUnit ccUnit) {
-					if (ccUnit == null)
-						return null;
-					ccUnit.fillUnit();
-					return new UnitSiadapWrapper(ccUnit.getRealUnit(), year);
-					
-				}
-			});
-			
-			
+			List<UnitSiadapWrapper> currentUnitsHarmonized = unitSiadapWrapper.getSubHarmonizationUnits();
+
+			//let's get the new set of units
+			Collection<UnitSiadapWrapper> newListOfUnits =
+					Collections2.transform(harmonizationUnit.getUnitsHarmonized(), new Function<CCUnit, UnitSiadapWrapper>() {
+
+						@Override
+						@Nullable
+						public UnitSiadapWrapper apply(@Nullable CCUnit ccUnit) {
+							if (ccUnit == null) {
+								return null;
+							}
+							ccUnit.fillUnit();
+							return new UnitSiadapWrapper(ccUnit.getRealUnit(), year);
+
+						}
+					});
+
 			//let's get the list of units to remove from being harmonized:
 			currentUnitsHarmonized.removeAll(newListOfUnits);
-			
+
 			//let's remove all of the units that are already harmonized by this H.U.
 			newListOfUnits.removeAll(unitSiadapWrapper.getSubHarmonizationUnits());
-			
+
 			addSubHarmonizationUnits(realUnit, new HashSet(newListOfUnits));
-			
+
 			deleteSubHarmonizationUnits(realUnit, new HashSet(currentUnitsHarmonized));
-			
+
 		}
-		
-		Map<Unit,Set<Unit>> abandonedUnits = new HashMap<Unit, Set<Unit>>();
+
+		Map<Unit, Set<Unit>> abandonedUnits = new HashMap<Unit, Set<Unit>>();
 		//now let's take care of the deactivated units
 		for (Unit unitToDeactivate : unitsToDeactivate) {
 			//let's get all of the sub units and 
 			UnitSiadapWrapper unitToDeactivateWrapper = new UnitSiadapWrapper(unitToDeactivate, year);
 			List<UnitSiadapWrapper> subHarmonizationWrappedUnits = unitToDeactivateWrapper.getSubHarmonizationUnits();
-			if (!subHarmonizationWrappedUnits.isEmpty())
-			{
-				Collection<Unit> units = Collections2.transform(subHarmonizationWrappedUnits, new Function<UnitSiadapWrapper, Unit>() {
+			if (!subHarmonizationWrappedUnits.isEmpty()) {
+				Collection<Unit> units =
+						Collections2.transform(subHarmonizationWrappedUnits, new Function<UnitSiadapWrapper, Unit>() {
 
-					@Override
-					@Nullable
-					public Unit apply(@Nullable UnitSiadapWrapper input) {
-						if (input == null)
-							return null;
-						return input.getUnit();
-					}
-				});
+							@Override
+							@Nullable
+							public Unit apply(@Nullable UnitSiadapWrapper input) {
+								if (input == null) {
+									return null;
+								}
+								return input.getUnit();
+							}
+						});
 				//let's add it to the abandonedUnits
 				abandonedUnits.put(unitToDeactivate, new HashSet<Unit>(units));
-				
+
 				//let's disconnect it from the top unit
 				unitToDeactivateWrapper.deactivateHarmonizationUnit(JUSTIFICATION);
 			}
 		}
-		
+
 		return abandonedUnits;
-		
+
 	}
-	
+
 	private void deleteSubHarmonizationUnits(Unit harmonizationUnit, Set<UnitSiadapWrapper> unitsToRemove) {
 		for (UnitSiadapWrapper unitToRemove : unitsToRemove) {
 			UnitSiadapWrapper.removeHarmonizationUnitRelation(harmonizationUnit, unitToRemove.getUnit(), year, JUSTIFICATION);
 		}
-		
+
 	}
 
 	public void addSubHarmonizationUnits(Unit harmonizationUnit, Set<UnitSiadapWrapper> unitsToHarmonize) {
 		for (UnitSiadapWrapper unitToAdd : unitsToHarmonize) {
 			UnitSiadapWrapper.addHarmonizationUnitRelation(harmonizationUnit, unitToAdd.getUnit(), year, JUSTIFICATION);
 		}
-		
+
 	}
 
 	boolean printAndValidateImportedResults() {
@@ -230,8 +231,7 @@ public class ImportHarmztnStructureForYear extends WriteCustomTask {
 		int totalEntries = 0;
 
 		// let's also print out the information we have
-		for (HarmonizationUnit harmonizationUnit : importedHarmonizationUnits
-				.values()) {
+		for (HarmonizationUnit harmonizationUnit : importedHarmonizationUnits.values()) {
 			nrHarmonizationUnits++;
 			if (harmonizationUnit.isDeactivated()) {
 				totalEntries++;
@@ -262,12 +262,9 @@ public class ImportHarmztnStructureForYear extends WriteCustomTask {
 
 		}
 		// let's print the summary information
-		out.println("Total entries detected: " + totalEntries + " of which "
-				+ nrIncorrectData + " are incorrect");
-		out.println("Total nr of harmonization units found : "
-				+ nrHarmonizationUnits + " Harmonization units to create: "
-				+ nrUnitsToCreate + " nr harmonization units to disable: "
-				+ nrUnitsToDisable);
+		out.println("Total entries detected: " + totalEntries + " of which " + nrIncorrectData + " are incorrect");
+		out.println("Total nr of harmonization units found : " + nrHarmonizationUnits + " Harmonization units to create: "
+				+ nrUnitsToCreate + " nr harmonization units to disable: " + nrUnitsToDisable);
 
 		return nrIncorrectData == 0;
 	}
@@ -290,8 +287,7 @@ public class ImportHarmztnStructureForYear extends WriteCustomTask {
 
 		public void validate() {
 
-			String costCenterNumberString = String
-					.valueOf(getCostCenterNumber());
+			String costCenterNumberString = String.valueOf(getCostCenterNumber());
 
 			if (costCenterNumberString.length() < 4) {
 				// we have to add zeros
@@ -300,26 +296,21 @@ public class ImportHarmztnStructureForYear extends WriteCustomTask {
 				}
 			}
 
-			pt.ist.expenditureTrackingSystem.domain.organization.Unit costCenterUnit = CostCenter
-					.findUnitByCostCenter(String
-							.valueOf(costCenterNumberString));
-			if (costCenterUnit == null)
-				throw new SiadapException("Unit of CC. "
-						+ getCostCenterNumber() + " doesn't exist");
+			pt.ist.expenditureTrackingSystem.domain.organization.Unit costCenterUnit =
+					CostCenter.findUnitByCostCenter(String.valueOf(costCenterNumberString));
+			if (costCenterUnit == null) {
+				throw new SiadapException("Unit of CC. " + getCostCenterNumber() + " doesn't exist");
+			}
 			Unit unit = costCenterUnit.getUnit();
-			if (!IGNORE_DIFFERENT_NAMES_IN_CC_UNITS
-					&& !containsNameIgnoreCase(unit, getName()))
-				throw new SiadapException("Names differ: CC. "
-						+ getCostCenterNumber()
-						+ " name found on import data: " + getName()
-						+ " actual presentation name: "
-						+ unit.getPresentationName());
+			if (!IGNORE_DIFFERENT_NAMES_IN_CC_UNITS && !containsNameIgnoreCase(unit, getName())) {
+				throw new SiadapException("Names differ: CC. " + getCostCenterNumber() + " name found on import data: "
+						+ getName() + " actual presentation name: " + unit.getPresentationName());
+			}
 		}
 
 		public void fillUnit() {
 			validate();
-			String costCenterNumberString = String
-					.valueOf(getCostCenterNumber());
+			String costCenterNumberString = String.valueOf(getCostCenterNumber());
 
 			if (costCenterNumberString.length() < 4) {
 				// we have to add zeros
@@ -328,8 +319,7 @@ public class ImportHarmztnStructureForYear extends WriteCustomTask {
 				}
 			}
 
-			this.realUnit = CostCenter.findUnitByCostCenter(
-					String.valueOf(costCenterNumberString)).getUnit();
+			this.realUnit = CostCenter.findUnitByCostCenter(String.valueOf(costCenterNumberString)).getUnit();
 		}
 
 		public boolean isValid() {
@@ -343,17 +333,21 @@ public class ImportHarmztnStructureForYear extends WriteCustomTask {
 
 		@Override
 		public boolean equals(Object obj) {
-			if ((obj instanceof CCUnit) == false)
+			if ((obj instanceof CCUnit) == false) {
 				return false;
+			}
 			CCUnit ccUnitToCompare = (CCUnit) obj;
-			if (!StringUtils.equals(ccUnitToCompare.getName(), getName()))
+			if (!StringUtils.equals(ccUnitToCompare.getName(), getName())) {
 				return false;
+			}
 
-			if (ccUnitToCompare.getCostCenterNumber() != getCostCenterNumber())
+			if (ccUnitToCompare.getCostCenterNumber() != getCostCenterNumber()) {
 				return false;
+			}
 			return true;
 
 		}
+
 		@Override
 		public int hashCode() {
 			return getCostCenterNumber() + getName().hashCode();
@@ -371,8 +365,9 @@ public class ImportHarmztnStructureForYear extends WriteCustomTask {
 	static boolean containsNameIgnoreCase(Unit unit, String name) {
 		Collection<String> unitNames = unit.getPartyName().getAllContents();
 		for (String unitName : unitNames) {
-			if (unitName.equalsIgnoreCase(name))
+			if (unitName.equalsIgnoreCase(name)) {
 				return true;
+			}
 		}
 		return false;
 	}
@@ -427,24 +422,27 @@ public class ImportHarmztnStructureForYear extends WriteCustomTask {
 					throw new SiadapException(
 							"There was a deactivated unit to be processed, but we couldn't find it in the first place. Unit nr: "
 									+ number);
-				} else
+				} else {
 					return; // this is probably a new Harmonization unit to be
 							// made
+				}
 
 			}
 			Collection<String> unitNames = unit.getPartyName().getAllContents();
-			if (!containsNameIgnoreCase(unit, name))
-				throw new SiadapException("Given name '" + name
-						+ "' not found for H.U. nr: " + number
-						+ " name found: " + unit.getPresentationName());
+			if (!containsNameIgnoreCase(unit, name)) {
+				throw new SiadapException("Given name '" + name + "' not found for H.U. nr: " + number + " name found: "
+						+ unit.getPresentationName());
+			}
 		}
 
 		public boolean isToBeCreated() {
-			if (deactivated)
+			if (deactivated) {
 				return false;
+			}
 			Unit unit = UnitSiadapWrapper.getHarmonizationUnit(number);
-			if (unit == null)
+			if (unit == null) {
 				return true;
+			}
 			return false;
 		}
 
@@ -452,11 +450,11 @@ public class ImportHarmztnStructureForYear extends WriteCustomTask {
 		public void fillOrCreateUnit() {
 			validate();
 			if (isToBeCreated()) {
-				this.realUnit = UnitSiadapWrapper.createSiadapHarmonizationUnit(year,
-						new MultiLanguageString(Language.pt, name), number);
+				this.realUnit =
+						UnitSiadapWrapper.createSiadapHarmonizationUnit(year, new MultiLanguageString(Language.pt, name), number);
 
 			} else {
-				this.realUnit=UnitSiadapWrapper.getHarmonizationUnit(number);
+				this.realUnit = UnitSiadapWrapper.getHarmonizationUnit(number);
 			}
 
 		}
@@ -468,7 +466,6 @@ public class ImportHarmztnStructureForYear extends WriteCustomTask {
 		public Unit getRealUnit() {
 			return realUnit;
 		}
-
 
 	}
 
@@ -496,24 +493,23 @@ public class ImportHarmztnStructureForYear extends WriteCustomTask {
 		} catch (NumberFormatException ex) {
 			if (unitName.equalsIgnoreCase("desactivada")) {
 				deactivatedHarmonizationUnit = true;
-			} else
+			} else {
 				throw ex;
+			}
 		}
 
-		Integer harmonizationUnitNumber = Integer
-				.valueOf(harmonizationUnitNumberString);
+		Integer harmonizationUnitNumber = Integer.valueOf(harmonizationUnitNumberString);
 
-		HarmonizationUnit harmonizationUnit = importedHarmonizationUnits
-				.get(harmonizationUnitNumber);
+		HarmonizationUnit harmonizationUnit = importedHarmonizationUnits.get(harmonizationUnitNumber);
 		if (harmonizationUnit == null) {
-			harmonizationUnit = new HarmonizationUnit(harmonizationUnitName,
-					harmonizationUnitNumber, deactivatedHarmonizationUnit);
-			importedHarmonizationUnits.put(harmonizationUnitNumber,
-					harmonizationUnit);
+			harmonizationUnit =
+					new HarmonizationUnit(harmonizationUnitName, harmonizationUnitNumber, deactivatedHarmonizationUnit);
+			importedHarmonizationUnits.put(harmonizationUnitNumber, harmonizationUnit);
 		}
 
-		if (!deactivatedHarmonizationUnit)
+		if (!deactivatedHarmonizationUnit) {
 			harmonizationUnit.addUnit(new CCUnit(unitName, costCenterNumber));
+		}
 
 	}
 

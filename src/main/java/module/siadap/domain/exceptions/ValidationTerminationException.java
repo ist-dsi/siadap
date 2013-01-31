@@ -31,14 +31,13 @@ package module.siadap.domain.exceptions;
  */
 public class ValidationTerminationException extends SiadapException {
 
-    public ValidationTerminationException(String key, String... args) {
-	super(key, args);
-    }
+	public ValidationTerminationException(String key, String... args) {
+		super(key, args);
+	}
 
-
-    /**
+	/**
      * 
      */
-    private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 1L;
 
 }
