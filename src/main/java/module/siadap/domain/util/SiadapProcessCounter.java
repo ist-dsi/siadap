@@ -95,7 +95,6 @@ public class SiadapProcessCounter implements Serializable {
 			boolean gatherSiadaps) {
 		this(unit, distinguishBetweenUniverses, configuration);
 		this.gatherSiadaps = gatherSiadaps;
-		init(distinguishBetweenUniverses);
 
 	}
 
@@ -133,7 +132,6 @@ public class SiadapProcessCounter implements Serializable {
 	public SiadapProcessCounter(final Unit unit, boolean distinguishBetweenUniverses, SiadapYearConfiguration configuration) {
 		this(unit, distinguishBetweenUniverses, configuration, configuration.getUnitRelations(), configuration
 				.getWorkingRelation(), configuration.getWorkingRelationWithNoQuota());
-		init(distinguishBetweenUniverses);
 
 	}
 
