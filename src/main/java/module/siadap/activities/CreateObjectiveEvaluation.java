@@ -28,6 +28,7 @@ import module.siadap.activities.CreateObjectiveEvaluationActivityInformation.Obj
 import module.siadap.domain.ObjectiveEvaluation;
 import module.siadap.domain.Siadap;
 import module.siadap.domain.SiadapProcess;
+import module.siadap.domain.SiadapProcessStateEnum;
 import module.workflow.activities.ActivityInformation;
 import module.workflow.activities.WorkflowActivity;
 import pt.ist.bennu.core.domain.User;
@@ -50,7 +51,7 @@ public class CreateObjectiveEvaluation extends WorkflowActivity<SiadapProcess, C
 			return false;
 		}
 		return siadap.getObjectiveSpecificationInterval().containsNow() && siadap.getEvaluator().getPerson().getUser() == user
-				&& siadap.getRequestedAcknowledgeDate() == null
+				&& siadap.getState().ordinal() <= SiadapProcessStateEnum.WAITING_EVAL_OBJ_ACK.ordinal()
 				&& (siadap.getEvaluatedOnlyByCompetences() == null || !siadap.getEvaluatedOnlyByCompetences());
 	}
 

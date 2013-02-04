@@ -50,7 +50,7 @@ public class EditObjectiveEvaluation extends WorkflowActivity<SiadapProcess, Edi
 			return false;
 		}
 		return siadap.getObjectiveSpecificationInterval().containsNow()
-				&& SiadapProcessStateEnum.getState(siadap).ordinal() <= SiadapProcessStateEnum.WAITING_SELF_EVALUATION.ordinal()
+				&& SiadapProcessStateEnum.getState(siadap).ordinal() <= SiadapProcessStateEnum.WAITING_EVAL_OBJ_ACK.ordinal()
 				&& siadap.getEvaluator().getPerson().getUser() == user;
 	}
 
