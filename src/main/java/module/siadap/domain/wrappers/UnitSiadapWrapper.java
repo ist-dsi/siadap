@@ -69,6 +69,7 @@ import module.workflow.activities.ActivityInformation;
 import module.workflow.activities.WorkflowActivity;
 
 import org.apache.commons.collections.Predicate;
+import org.apache.commons.lang.StringUtils;
 import org.joda.time.Interval;
 import org.joda.time.LocalDate;
 
@@ -340,6 +341,17 @@ public class UnitSiadapWrapper extends PartyWrapper implements Serializable {
 
 	public String getTotalPeopleWorkingInUnitDescriptionString() {
 		return getTotalPeopleWorkingInUnitDescriptionString(false);
+	}
+	
+	/**
+	 * 
+	 * @return the number of the harmonization unit, or null if there is no H.U.
+	 */
+	public Integer getHarmonizationUnitNumber() {
+		Unit harmonizationUnit = getHarmonizationUnit();
+		if (harmonizationUnit == null)
+			return null;
+		return Integer.valueOf(StringUtils.remove(harmonizationUnit.getAcronym(), HARMONIZATION_UNIT_NAME_PREFIX));
 	}
 
 	public String getTotalPeopleWorkingInUnitDescriptionString(boolean continueToSubUnits) {
@@ -1917,7 +1929,7 @@ public class UnitSiadapWrapper extends PartyWrapper implements Serializable {
 						+ currentHU.getPresentationName() + " and " + subUnit.getPresentationName());
 			}
 			Accountability accToEnd = parentAccountabilities.iterator().next();
-			accToEnd.setEndDate(siadapYearConfiguration.getFirstDay().minusDays(1), justification);
+			accToEnd.setEndDate(accToEnd.getBeginDate(), justification);
 		}
 
 	}

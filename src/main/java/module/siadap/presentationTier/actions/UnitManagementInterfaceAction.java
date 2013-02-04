@@ -3,14 +3,19 @@
  */
 package module.siadap.presentationTier.actions;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
+import javax.annotation.Nullable;
+import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -35,12 +40,19 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.joda.time.LocalDate;
 
+import com.google.common.base.Predicate;
+import com.google.common.collect.Collections2;
+
 import pt.ist.bennu.core.presentationTier.actions.ContextBaseAction;
 import pt.ist.bennu.core.presentationTier.component.OrganizationChart;
 import pt.ist.bennu.core.util.BundleUtil;
 import pt.ist.bennu.core.util.VariantBean;
 import pt.ist.fenixWebFramework.renderers.utils.RenderUtils;
 import pt.ist.fenixWebFramework.struts.annotations.Mapping;
+import pt.utl.ist.fenix.tools.spreadsheet.SheetData;
+import pt.utl.ist.fenix.tools.spreadsheet.SpreadsheetBuilder;
+import pt.utl.ist.fenix.tools.spreadsheet.WorkbookExportFormat;
+import pt.utl.ist.fenix.tools.util.excel.Spreadsheet;
 
 @Mapping(path = "/unitManagementInterface")
 /**
@@ -159,6 +171,88 @@ public class UnitManagementInterfaceAction extends ContextBaseAction {
 		new PersonSiadapWrapper(person, year).removeAndNotifyHarmonizationResponsability(unit, person, year, request);
 
 		return showUnit(mapping, form, request, response);
+	}
+
+	public final ActionForward downloadUnitStructure(final ActionMapping mapping, final ActionForm form,
+			final HttpServletRequest request, final HttpServletResponse response) throws Exception {
+
+		Mode mode = null;
+		String modeString = getAttribute(request, "mode");
+		mode = Mode.valueOf(modeString);
+
+		String yearString = getAttribute(request, "year");
+		final Integer year = Integer.valueOf(yearString);
+
+		SiadapYearConfiguration siadapYearConfiguration = SiadapYearConfiguration.getSiadapYearConfiguration(year);
+		Unit siadapStructureTopUnit = siadapYearConfiguration.getSiadapStructureTopUnit();
+
+		UnitSiadapWrapper topUnitWrapper = new UnitSiadapWrapper(siadapStructureTopUnit, year);
+
+		TreeSet<UnitSiadapWrapper> allWrapperUnits = new TreeSet(UnitSiadapWrapper.COMPARATOR_BY_UNIT_NAME);
+
+		allWrapperUnits.addAll(topUnitWrapper.getAllChildUnits(mode.getUnitAccType(siadapYearConfiguration)));
+		
+		List<UnitSiadapWrapper> filteredWrapperUnits = new ArrayList<UnitSiadapWrapper>(Collections2.filter(allWrapperUnits, new Predicate<UnitSiadapWrapper>() {
+			
+
+			@Override
+			public boolean apply(@Nullable UnitSiadapWrapper input) {
+				if (input == null || input.isHarmonizationUnit())
+					return false;
+				return true;
+			}
+		}));
+		
+		Collections.sort(filteredWrapperUnits, new Comparator<UnitSiadapWrapper>() {
+
+			@Override
+			public int compare(UnitSiadapWrapper o1, UnitSiadapWrapper o2) {
+				return Unit.COMPARATOR_BY_PRESENTATION_NAME.compare(o1.getHarmonizationUnit(),o2.getHarmonizationUnit());
+			}
+		});
+
+		SheetData<UnitSiadapWrapper> sheetData = new SheetData<UnitSiadapWrapper>(filteredWrapperUnits) {
+
+			@Override
+			protected void makeLine(UnitSiadapWrapper unitSiadapWrapper) {
+				if (unitSiadapWrapper == null) {
+					return;
+				}
+				if (unitSiadapWrapper.isHarmonizationUnit()) {
+					return;
+				}
+				addCell("Unidade", unitSiadapWrapper.getUnit().getPartyName());
+				addCell("CC", unitSiadapWrapper.getUnit().getExpenditureUnit().getCostCenterUnit().getCostCenter());
+				addCell("Unidade de Harm.", unitSiadapWrapper.getHarmonizationUnit().getPartyName());
+				addCell("Número da U.H." , unitSiadapWrapper.getHarmonizationUnitNumber());
+
+			}
+
+		};
+
+		LocalDate currentLocalDate = new LocalDate();
+
+		return streamSpreadsheet(
+				response,
+				"SIADAP_" + year + "-EstrHarm-" + currentLocalDate.getDayOfMonth() + "-" + currentLocalDate.getMonthOfYear()
+						+ "-" + currentLocalDate.getYear(),
+				new SpreadsheetBuilder().addSheet(
+						"SIADAP - estructura de harmonização - " + year + " - " + currentLocalDate.toString(), sheetData));
+
+	}
+
+	private ActionForward streamSpreadsheet(final HttpServletResponse response, final String fileName,
+			final SpreadsheetBuilder spreadSheetBuilder) throws IOException {
+		response.setContentType("application/xls ");
+		response.setHeader("Content-disposition", "attachment; filename=" + fileName + ".xls");
+
+		ServletOutputStream outputStream = response.getOutputStream();
+
+		spreadSheetBuilder.build(WorkbookExportFormat.EXCEL, outputStream);
+		outputStream.flush();
+		outputStream.close();
+
+		return null;
 	}
 
 	public ActionForward showUnit(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response)

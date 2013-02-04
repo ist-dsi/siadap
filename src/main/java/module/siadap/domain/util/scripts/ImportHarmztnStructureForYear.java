@@ -52,7 +52,7 @@ import com.google.common.collect.Collections2;
  */
 public class ImportHarmztnStructureForYear extends WriteCustomTask {
 
-	private static final FileNode dataFileNode = AbstractDomainObject.fromExternalId("7073811496915");
+	private static final FileNode dataFileNode = AbstractDomainObject.fromExternalId("7073811498713");
 
 	private static final int year = 2012;
 
@@ -62,12 +62,12 @@ public class ImportHarmztnStructureForYear extends WriteCustomTask {
 
 	private static final boolean IGNORE_DIFFERENT_NAMES_IN_CC_UNITS = true;
 
-	private static final String VIRTUAL_HOST_SERVER_NAME = "dot.ist.utl.pt";
+	private static final String VIRTUAL_HOST_SERVER_NAME = "joantune-workstation";
 
 	private static final String CHARSET_NAME = "iso-8859-1";
 
 	private static final String JUSTIFICATION =
-			"Importação dos dados de harmonização facultados pela DRH, com o nome Harmonizacao SIADAP 17-01-2013 e alterações as bibliotecas";
+			"Importação dos dados de harmonização facultados pela DRH, com o nome Harmonizacao SIADAP 17-01-2013 e alterações as bibliotecas, e RT#364277";
 
 	/*
 	 * (non-Javadoc)
@@ -200,8 +200,8 @@ public class ImportHarmztnStructureForYear extends WriteCustomTask {
 				abandonedUnits.put(unitToDeactivate, new HashSet<Unit>(units));
 
 				//let's disconnect it from the top unit
-				unitToDeactivateWrapper.deactivateHarmonizationUnit(JUSTIFICATION);
 			}
+			unitToDeactivateWrapper.deactivateHarmonizationUnit(JUSTIFICATION);
 		}
 
 		return abandonedUnits;
@@ -296,6 +296,8 @@ public class ImportHarmztnStructureForYear extends WriteCustomTask {
 				}
 			}
 
+			if (StringUtils.isBlank(costCenterNumberString))
+				throw new SiadapException("Caught a blank cost center number string. Unit name: " + name + " CC number: " + costCenterNumberString + " CC string: " + costCenterNumberString);
 			pt.ist.expenditureTrackingSystem.domain.organization.Unit costCenterUnit =
 					CostCenter.findUnitByCostCenter(String.valueOf(costCenterNumberString));
 			if (costCenterUnit == null) {

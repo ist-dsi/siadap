@@ -53,6 +53,12 @@
 		| 
 			<b><bean:message bundle="SIADAP_RESOURCES" key="link.unitManagementInterface.harmonizationUnitMode"/></b>
 </p>
+
+<%-- Structure download link --%>
+<html:link action="<%="/unitManagementInterface.do?method=downloadUnitStructure&year=" + year + "&mode="+mode.name()%>" >
+	Download da listagem da estructura
+</html:link>
+
 <%-- The year chooser: --%>
 <fr:form action="<%="/unitManagementInterface.do?method=showUnit&mode=" + mode.name()%>" >
 	<fr:edit id="siadapYearWrapper" name="siadapYearWrapper" nested="true">
@@ -105,7 +111,7 @@
 						%>
 							<div class="orgTBox orgTBoxLight">
 								<strong>
-									<bean:write name="party" property="partyName"/>
+									<bean:write name="party" property="presentationName"/>
 								</strong>
 							</div>
 						<%			    

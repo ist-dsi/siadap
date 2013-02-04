@@ -576,8 +576,7 @@ public class Siadap extends Siadap_Base {
 	}
 
 	public SiadapGlobalEvaluation getSiadapGlobalEvaluationEnum(SiadapUniverse siadapUniverse, boolean considerValidation) {
-		return getSiadapEvaluationUniverseForSiadapUniverse(siadapUniverse).getSiadapGlobalEvaluationEnum(considerValidation,
-				false);
+		return getSiadapEvaluationUniverseForSiadapUniverse(siadapUniverse).getSiadapGlobalEvaluationEnum(considerValidation, false);
 
 	}
 
