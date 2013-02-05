@@ -42,31 +42,31 @@ import pt.ist.bennu.core.domain.scheduler.WriteCustomTask;
  */
 public class SIADAPSpecialHarmonizationUnitAccCorrection extends WriteCustomTask {
 
-	/* (non-Javadoc)
-	 * @see pt.ist.bennu.core.domain.scheduler.WriteCustomTask#doService()
-	 */
-	private static final int YEAR_TO_START = 2011;
+    /* (non-Javadoc)
+     * @see pt.ist.bennu.core.domain.scheduler.WriteCustomTask#doService()
+     */
+    private static final int YEAR_TO_START = 2011;
 
-	/**
-	 * The year until which the accountability should be extended, or till
-	 * infinity if year =0;
-	 */
-	//    private static final int YEAR_TO_END = 0;
-	@Override
-	protected void doService() {
-		//let's get the year to begin data
-		SiadapYearConfiguration siadapYearToStartConf = SiadapYearConfiguration.getSiadapYearConfiguration(YEAR_TO_START);
-		Unit specialHarmUnit = siadapYearToStartConf.getSiadapSpecialHarmonizationUnit();
-		//WARNING we are just blindly assigning an accountability without checking for an already existing one, so we should only run this script once
-		if (true) {
-			throw new DomainException("please.make.sure.you.want.to.run.this.again");
-		}
+    /**
+     * The year until which the accountability should be extended, or till
+     * infinity if year =0;
+     */
+    //    private static final int YEAR_TO_END = 0;
+    @Override
+    protected void doService() {
+        //let's get the year to begin data
+        SiadapYearConfiguration siadapYearToStartConf = SiadapYearConfiguration.getSiadapYearConfiguration(YEAR_TO_START);
+        Unit specialHarmUnit = siadapYearToStartConf.getSiadapSpecialHarmonizationUnit();
+        //WARNING we are just blindly assigning an accountability without checking for an already existing one, so we should only run this script once
+        if (true) {
+            throw new DomainException("please.make.sure.you.want.to.run.this.again");
+        }
 
-		Unit siadapTopUnit = siadapYearToStartConf.getSiadapStructureTopUnit();
+        Unit siadapTopUnit = siadapYearToStartConf.getSiadapStructureTopUnit();
 
-		specialHarmUnit.addParent(siadapTopUnit, siadapYearToStartConf.getHarmonizationUnitRelations(), new LocalDate(
-				YEAR_TO_START, 12, 20), null);
+        specialHarmUnit.addParent(siadapTopUnit, siadapYearToStartConf.getHarmonizationUnitRelations(), new LocalDate(
+                YEAR_TO_START, 12, 20), null);
 
-	}
+    }
 
 }

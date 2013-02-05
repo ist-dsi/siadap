@@ -49,61 +49,61 @@ import pt.ist.fenixWebFramework.struts.annotations.Mapping;
  */
 public class CompetencesManagement extends ContextBaseAction {
 
-	public ActionForward manageCompetences(final ActionMapping mapping, final ActionForm form, final HttpServletRequest request,
-			final HttpServletResponse response) {
-		SiadapRootModule rootModule = SiadapRootModule.getInstance();
-		request.setAttribute("competenceTypes", rootModule.getCompetenceTypes());
-		request.setAttribute("siadapRoot", rootModule);
-		return forward(request, "/module/siadap/competences/manageCompetences.jsp");
-	}
+    public ActionForward manageCompetences(final ActionMapping mapping, final ActionForm form, final HttpServletRequest request,
+            final HttpServletResponse response) {
+        SiadapRootModule rootModule = SiadapRootModule.getInstance();
+        request.setAttribute("competenceTypes", rootModule.getCompetenceTypes());
+        request.setAttribute("siadapRoot", rootModule);
+        return forward(request, "/module/siadap/competences/manageCompetences.jsp");
+    }
 
-	public ActionForward prepareCompetenceTypeCreation(final ActionMapping mapping, final ActionForm form,
-			final HttpServletRequest request, final HttpServletResponse response) {
+    public ActionForward prepareCompetenceTypeCreation(final ActionMapping mapping, final ActionForm form,
+            final HttpServletRequest request, final HttpServletResponse response) {
 
-		CompetenceTypeBean competenceTypeBean = new CompetenceTypeBean();
-		request.setAttribute("bean", competenceTypeBean);
+        CompetenceTypeBean competenceTypeBean = new CompetenceTypeBean();
+        request.setAttribute("bean", competenceTypeBean);
 
-		return forward(request, "/module/siadap/competences/createCompetenceType.jsp");
-	}
+        return forward(request, "/module/siadap/competences/createCompetenceType.jsp");
+    }
 
-	public ActionForward createCompetenceType(final ActionMapping mapping, final ActionForm form,
-			final HttpServletRequest request, final HttpServletResponse response) {
+    public ActionForward createCompetenceType(final ActionMapping mapping, final ActionForm form,
+            final HttpServletRequest request, final HttpServletResponse response) {
 
-		CompetenceTypeBean competenceTypeBean = getRenderedObject("bean");
-		CompetenceType.createNewCompetenceType(competenceTypeBean.getName());
+        CompetenceTypeBean competenceTypeBean = getRenderedObject("bean");
+        CompetenceType.createNewCompetenceType(competenceTypeBean.getName());
 
-		return manageCompetences(mapping, form, request, response);
-	}
+        return manageCompetences(mapping, form, request, response);
+    }
 
-	public ActionForward prepareCompetenceCreation(final ActionMapping mapping, final ActionForm form,
-			final HttpServletRequest request, final HttpServletResponse response) {
+    public ActionForward prepareCompetenceCreation(final ActionMapping mapping, final ActionForm form,
+            final HttpServletRequest request, final HttpServletResponse response) {
 
-		CompetenceType competenceType = getDomainObject(request, "competenceTypeId");
-		CompetenceBean competenceBean = new CompetenceBean(competenceType);
+        CompetenceType competenceType = getDomainObject(request, "competenceTypeId");
+        CompetenceBean competenceBean = new CompetenceBean(competenceType);
 
-		request.setAttribute("bean", competenceBean);
+        request.setAttribute("bean", competenceBean);
 
-		return forward(request, "/module/siadap/competences/createCompetence.jsp");
-	}
+        return forward(request, "/module/siadap/competences/createCompetence.jsp");
+    }
 
-	public ActionForward createCompetence(final ActionMapping mapping, final ActionForm form, final HttpServletRequest request,
-			final HttpServletResponse response) {
+    public ActionForward createCompetence(final ActionMapping mapping, final ActionForm form, final HttpServletRequest request,
+            final HttpServletResponse response) {
 
-		CompetenceBean competenceBean = getRenderedObject("bean");
-		Competence.createNewCompetence(competenceBean.getCompetenceType(), competenceBean.getName(),
-				competenceBean.getDescription());
+        CompetenceBean competenceBean = getRenderedObject("bean");
+        Competence.createNewCompetence(competenceBean.getCompetenceType(), competenceBean.getName(),
+                competenceBean.getDescription());
 
-		return manageCompetences(mapping, form, request, response);
-	}
+        return manageCompetences(mapping, form, request, response);
+    }
 
-	public ActionForward showCompetences(final ActionMapping mapping, final ActionForm form, final HttpServletRequest request,
-			final HttpServletResponse response) {
+    public ActionForward showCompetences(final ActionMapping mapping, final ActionForm form, final HttpServletRequest request,
+            final HttpServletResponse response) {
 
-		CompetenceType competenceType = getDomainObject(request, "competenceTypeId");
-		request.setAttribute("type", competenceType);
+        CompetenceType competenceType = getDomainObject(request, "competenceTypeId");
+        request.setAttribute("type", competenceType);
 
-		return forward(request, "/module/siadap/competences/listCompetences.jsp");
+        return forward(request, "/module/siadap/competences/listCompetences.jsp");
 
-	}
+    }
 
 }

@@ -38,21 +38,21 @@ import pt.ist.bennu.core.domain.scheduler.WriteCustomTask;
  */
 public class SiadapYearConfigurationSetClosedValidationToFalse extends WriteCustomTask {
 
-	/* (non-Javadoc)
-	 * @see pt.ist.bennu.core.domain.scheduler.WriteCustomTask#doService()
-	 */
-	@Override
-	protected void doService() {
-		int nrOfBoolsSet = 0;
-		for (SiadapYearConfiguration siadapYearConfiguration : SiadapRootModule.getInstance().getYearConfigurations()) {
-			if (siadapYearConfiguration.getClosedValidation() == null) {
-				siadapYearConfiguration.setClosedValidation(Boolean.FALSE);
-				nrOfBoolsSet++;
-			}
-		}
+    /* (non-Javadoc)
+     * @see pt.ist.bennu.core.domain.scheduler.WriteCustomTask#doService()
+     */
+    @Override
+    protected void doService() {
+        int nrOfBoolsSet = 0;
+        for (SiadapYearConfiguration siadapYearConfiguration : SiadapRootModule.getInstance().getYearConfigurations()) {
+            if (siadapYearConfiguration.getClosedValidation() == null) {
+                siadapYearConfiguration.setClosedValidation(Boolean.FALSE);
+                nrOfBoolsSet++;
+            }
+        }
 
-		out.println("Number of bools that were set: " + nrOfBoolsSet);
+        out.println("Number of bools that were set: " + nrOfBoolsSet);
 
-	}
+    }
 
 }

@@ -49,61 +49,61 @@ import pt.ist.bennu.core.util.BundleUtil;
  */
 public class SubmitEvaluation extends WorkflowActivity<SiadapProcess, ActivityInformation<SiadapProcess>> {
 
-	@Override
-	public boolean isActive(SiadapProcess process, User user) {
-		if (!process.isActive()) {
-			return false;
-		}
-		Siadap siadap = process.getSiadap();
-		if (siadap.getEvaluator() == null) {
-			return false;
-		}
-		return siadap.getEvaluator().getPerson().getUser().equals(user) && !siadap.isDefaultEvaluationDone()
-				&& new Evaluation().isActive(process, user) && siadap.getEvaluationData2() != null;
-	}
+    @Override
+    public boolean isActive(SiadapProcess process, User user) {
+        if (!process.isActive()) {
+            return false;
+        }
+        Siadap siadap = process.getSiadap();
+        if (siadap.getEvaluator() == null) {
+            return false;
+        }
+        return siadap.getEvaluator().getPerson().getUser().equals(user) && !siadap.isDefaultEvaluationDone()
+                && new Evaluation().isActive(process, user) && siadap.getEvaluationData2() != null;
+    }
 
-	@Override
-	protected void process(ActivityInformation<SiadapProcess> activityInformation) {
-		//validate the existing evaluation data
-		Siadap siadap = activityInformation.getProcess().getSiadap();
-		for (SiadapEvaluationItem item : siadap.getCurrentEvaluationItems()) {
-			if (item.getItemEvaluation() == null || item.getItemEvaluation().getPoints() == null) {
-				throw new ActivityException(BundleUtil.getStringFromResourceBundle(getUsedBundle(),
-						"error.siadapEvaluation.mustFillAllItems"), getLocalizedName());
-			}
-		}
+    @Override
+    protected void process(ActivityInformation<SiadapProcess> activityInformation) {
+        //validate the existing evaluation data
+        Siadap siadap = activityInformation.getProcess().getSiadap();
+        for (SiadapEvaluationItem item : siadap.getCurrentEvaluationItems()) {
+            if (item.getItemEvaluation() == null || item.getItemEvaluation().getPoints() == null) {
+                throw new ActivityException(BundleUtil.getStringFromResourceBundle(getUsedBundle(),
+                        "error.siadapEvaluation.mustFillAllItems"), getLocalizedName());
+            }
+        }
 
-		//let's make some extra checks on the data inserted
-		siadap.getEvaluationData2().validateData();
+        //let's make some extra checks on the data inserted
+        siadap.getEvaluationData2().validateData();
 
-		activityInformation.getProcess().getSiadap().setEvaluationSealedDate(new LocalDate());
+        activityInformation.getProcess().getSiadap().setEvaluationSealedDate(new LocalDate());
 
-		//let's save that data
-		SiadapEvaluationUniverse defaultSiadapEvalUniverse = siadap.getDefaultSiadapEvaluationUniverse();
-		defaultSiadapEvalUniverse.setEvaluatorClassification(defaultSiadapEvalUniverse.getTotalEvaluationScoring());
-		defaultSiadapEvalUniverse.setEvaluatorClassificationExcellencyAward(defaultSiadapEvalUniverse.getSiadapEvaluation()
-				.getExcellencyAward());
+        //let's save that data
+        SiadapEvaluationUniverse defaultSiadapEvalUniverse = siadap.getDefaultSiadapEvaluationUniverse();
+        defaultSiadapEvalUniverse.setEvaluatorClassification(defaultSiadapEvalUniverse.getTotalEvaluationScoring());
+        defaultSiadapEvalUniverse.setEvaluatorClassificationExcellencyAward(defaultSiadapEvalUniverse.getSiadapEvaluation()
+                .getExcellencyAward());
 
-	}
+    }
 
-	@Override
-	public boolean isConfirmationNeeded(SiadapProcess process) {
-		Siadap siadap = process.getSiadap();
-		return !siadap.isAutoEvaliationDone() && !siadap.isAutoEvaluationIntervalFinished();
-	}
+    @Override
+    public boolean isConfirmationNeeded(SiadapProcess process) {
+        Siadap siadap = process.getSiadap();
+        return !siadap.isAutoEvaliationDone() && !siadap.isAutoEvaluationIntervalFinished();
+    }
 
-	@Override
-	public String getUsedBundle() {
-		return "resources/SiadapResources";
-	}
+    @Override
+    public String getUsedBundle() {
+        return "resources/SiadapResources";
+    }
 
-	protected static void revertProcess(ActivityInformation<SiadapProcess> activityInformation) {
-		Siadap siadap = activityInformation.getProcess().getSiadap();
-		if (siadap.isHarmonizationOfDefaultUniverseDone()) {
-			throw new SiadapException("error.cannot.revert.harmonized.to.no.evaluation");
-		}
-		siadap.setEvaluationSealedDate(null);
-		siadap.getDefaultSiadapEvaluationUniverse().removeHarmonizationAssessments();
-	}
+    protected static void revertProcess(ActivityInformation<SiadapProcess> activityInformation) {
+        Siadap siadap = activityInformation.getProcess().getSiadap();
+        if (siadap.isHarmonizationOfDefaultUniverseDone()) {
+            throw new SiadapException("error.cannot.revert.harmonized.to.no.evaluation");
+        }
+        siadap.setEvaluationSealedDate(null);
+        siadap.getDefaultSiadapEvaluationUniverse().removeHarmonizationAssessments();
+    }
 
 }

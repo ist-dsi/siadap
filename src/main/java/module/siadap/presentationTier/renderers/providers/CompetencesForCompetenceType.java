@@ -38,25 +38,25 @@ import pt.ist.fenixWebFramework.renderers.components.converters.Converter;
  */
 public class CompetencesForCompetenceType implements DataProvider {
 
-	public static interface ContainsCompetenceType {
-		public CompetenceType getCompetenceType();
+    public static interface ContainsCompetenceType {
+        public CompetenceType getCompetenceType();
 
-		public Boolean getEvaluatedOnlyByCompetences();
-	}
+        public Boolean getEvaluatedOnlyByCompetences();
+    }
 
-	@Override
-	public Converter getConverter() {
-		return null;
-	}
+    @Override
+    public Converter getConverter() {
+        return null;
+    }
 
-	@Override
-	public Object provide(Object arg0, Object arg1) {
+    @Override
+    public Object provide(Object arg0, Object arg1) {
 
-		ContainsCompetenceType someObject = (ContainsCompetenceType) arg0;
-		CompetenceType competenceType = someObject.getCompetenceType();
-		Boolean evaluatedOnlyByCompetences = someObject.getEvaluatedOnlyByCompetences();
-		return (competenceType != null && evaluatedOnlyByCompetences != null) ? competenceType.getCompetences() : Collections
-				.emptyList();
-	}
+        ContainsCompetenceType someObject = (ContainsCompetenceType) arg0;
+        CompetenceType competenceType = someObject.getCompetenceType();
+        Boolean evaluatedOnlyByCompetences = someObject.getEvaluatedOnlyByCompetences();
+        return (competenceType != null && evaluatedOnlyByCompetences != null) ? competenceType.getCompetences() : Collections
+                .emptyList();
+    }
 
 }

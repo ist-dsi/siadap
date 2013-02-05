@@ -45,42 +45,42 @@ import pt.ist.bennu.core.domain.User;
  */
 public class SubmitAutoEvaluation extends WorkflowActivity<SiadapProcess, ActivityInformation<SiadapProcess>> {
 
-	@Override
-	public boolean isActive(SiadapProcess process, User user) {
-		if (!process.isActive()) {
-			return false;
-		}
-		Siadap siadap = process.getSiadap();
-		return siadap.getEvaluated().getUser().equals(user) && !siadap.isAutoEvaliationDone()
-				&& new AutoEvaluation().isActive(process, user) && siadap.getAutoEvaluationData2() != null;
-	}
+    @Override
+    public boolean isActive(SiadapProcess process, User user) {
+        if (!process.isActive()) {
+            return false;
+        }
+        Siadap siadap = process.getSiadap();
+        return siadap.getEvaluated().getUser().equals(user) && !siadap.isAutoEvaliationDone()
+                && new AutoEvaluation().isActive(process, user) && siadap.getAutoEvaluationData2() != null;
+    }
 
-	@Override
-	protected void process(ActivityInformation<SiadapProcess> activityInformation) {
-		Siadap siadap = activityInformation.getProcess().getSiadap();
+    @Override
+    protected void process(ActivityInformation<SiadapProcess> activityInformation) {
+        Siadap siadap = activityInformation.getProcess().getSiadap();
 
-		siadap.getAutoEvaluationData2().validateData();
-		activityInformation.getProcess().getSiadap().setAutoEvaluationSealedDate(new LocalDate());
-	}
+        siadap.getAutoEvaluationData2().validateData();
+        activityInformation.getProcess().getSiadap().setAutoEvaluationSealedDate(new LocalDate());
+    }
 
-	@Override
-	public boolean isConfirmationNeeded(SiadapProcess process) {
-		return true;
-	}
+    @Override
+    public boolean isConfirmationNeeded(SiadapProcess process) {
+        return true;
+    }
 
-	@Override
-	public String getUsedBundle() {
-		return "resources/SiadapResources";
-	}
+    @Override
+    public String getUsedBundle() {
+        return "resources/SiadapResources";
+    }
 
-	protected static void revertProcess(ActivityInformation<SiadapProcess> activityInformation) {
-		Siadap siadap = activityInformation.getProcess().getSiadap();
-		if (siadap.isHarmonizationOfDefaultUniverseDone()) {
-			throw new SiadapException("error.cannot.revert.harmonized.to.no.self.evaluation");
-		}
-		siadap.setAutoEvaluationSealedDate(null);
-		siadap.getDefaultSiadapEvaluationUniverse().removeHarmonizationAssessments();
+    protected static void revertProcess(ActivityInformation<SiadapProcess> activityInformation) {
+        Siadap siadap = activityInformation.getProcess().getSiadap();
+        if (siadap.isHarmonizationOfDefaultUniverseDone()) {
+            throw new SiadapException("error.cannot.revert.harmonized.to.no.self.evaluation");
+        }
+        siadap.setAutoEvaluationSealedDate(null);
+        siadap.getDefaultSiadapEvaluationUniverse().removeHarmonizationAssessments();
 
-	}
+    }
 
 }

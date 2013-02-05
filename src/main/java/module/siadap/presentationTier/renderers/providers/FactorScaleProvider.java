@@ -37,18 +37,18 @@ import pt.ist.fenixWebFramework.renderers.components.converters.Converter;
  */
 public class FactorScaleProvider implements DataProvider {
 
-	@Override
-	public Converter getConverter() {
-		return null;
-	}
+    @Override
+    public Converter getConverter() {
+        return null;
+    }
 
-	@Override
-	public Object provide(Object arg0, Object arg1) {
-		List<Integer> scale = new ArrayList<Integer>();
-		for (int i = 1; i <= 6; i++) {
-			scale.add(i);
-		}
-		return scale;
-	}
+    @Override
+    public Object provide(Object arg0, Object arg1) {
+        List<Integer> scale = new ArrayList<Integer>();
+        for (int i = 1; i <= 6; i++) {
+            scale.add(i);
+        }
+        return scale;
+    }
 
 }

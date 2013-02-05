@@ -36,104 +36,104 @@ import pt.ist.bennu.core.util.BundleUtil;
  * 
  */
 public class ChangeGradeAnytimeAfterValidationByCCA extends
-		WorkflowActivity<SiadapProcess, ChangeGradeAnytimeActivityInformation> {
+        WorkflowActivity<SiadapProcess, ChangeGradeAnytimeActivityInformation> {
 
-	@Override
-	public boolean isActive(SiadapProcess process, User user) {
-		if (!process.isActive()) {
-			return false;
-		}
-		Siadap siadap = process.getSiadap();
-		if (siadap.getState().ordinal() < SiadapProcessStateEnum.WAITING_SUBMITTAL_BY_EVALUATOR_AFTER_VALIDATION.ordinal()) {
-			return false;
-		}
-		SiadapYearConfiguration siadapYearConfiguration = SiadapYearConfiguration.getSiadapYearConfiguration(siadap.getYear());
-		return siadapYearConfiguration.isPersonMemberOfCCA(user.getPerson())
-				|| siadapYearConfiguration.isPersonResponsibleForHomologation(user.getPerson());
+    @Override
+    public boolean isActive(SiadapProcess process, User user) {
+        if (!process.isActive()) {
+            return false;
+        }
+        Siadap siadap = process.getSiadap();
+        if (siadap.getState().ordinal() < SiadapProcessStateEnum.WAITING_SUBMITTAL_BY_EVALUATOR_AFTER_VALIDATION.ordinal()) {
+            return false;
+        }
+        SiadapYearConfiguration siadapYearConfiguration = SiadapYearConfiguration.getSiadapYearConfiguration(siadap.getYear());
+        return siadapYearConfiguration.isPersonMemberOfCCA(user.getPerson())
+                || siadapYearConfiguration.isPersonResponsibleForHomologation(user.getPerson());
 
-	}
+    }
 
-	@Override
-	protected void process(ChangeGradeAnytimeActivityInformation activityInformation) {
-		List<GradePerUniverseBean> siadapEvaluationUniversesBeans = activityInformation.getSiadapEvaluationUniversesBeans();
-		boolean foundAValidGrade = false;
-		for (GradePerUniverseBean gradePerUniverseBean : siadapEvaluationUniversesBeans) {
-			BigDecimal gradeToChangeTo = gradePerUniverseBean.getGradeToChangeTo();
-			boolean assignExcellency = gradePerUniverseBean.isAssignExcellency();
-			if (gradeToChangeTo != null) {
-				if (!SiadapGlobalEvaluation.isValidGrade(gradePerUniverseBean.getGradeToChangeTo(), assignExcellency)) {
-					throw new SiadapException("error.ChangeGradeAnytimeAfterValidationByCCA.invalid.valid.grade.found");
-				} else if (!StringUtils.isBlank(gradePerUniverseBean.getJustification())) {
-					foundAValidGrade = true;
-				} else {
-					throw new SiadapException("error.ChangeGradeAnytimeAfterValidationByCCA.no.justification.given");
-				}
+    @Override
+    protected void process(ChangeGradeAnytimeActivityInformation activityInformation) {
+        List<GradePerUniverseBean> siadapEvaluationUniversesBeans = activityInformation.getSiadapEvaluationUniversesBeans();
+        boolean foundAValidGrade = false;
+        for (GradePerUniverseBean gradePerUniverseBean : siadapEvaluationUniversesBeans) {
+            BigDecimal gradeToChangeTo = gradePerUniverseBean.getGradeToChangeTo();
+            boolean assignExcellency = gradePerUniverseBean.isAssignExcellency();
+            if (gradeToChangeTo != null) {
+                if (!SiadapGlobalEvaluation.isValidGrade(gradePerUniverseBean.getGradeToChangeTo(), assignExcellency)) {
+                    throw new SiadapException("error.ChangeGradeAnytimeAfterValidationByCCA.invalid.valid.grade.found");
+                } else if (!StringUtils.isBlank(gradePerUniverseBean.getJustification())) {
+                    foundAValidGrade = true;
+                } else {
+                    throw new SiadapException("error.ChangeGradeAnytimeAfterValidationByCCA.no.justification.given");
+                }
 
-			}
-		}
-		if (!foundAValidGrade) {
-			throw new SiadapException("error.ChangeGradeAnytimeAfterValidationByCCA.no.valid.grade.found");
-		}
-		//so let's get the valid grades to assign and let's assign them
-		for (GradePerUniverseBean gradePerUniverseBean : activityInformation.getSiadapEvaluationUniversesBeans()) {
-			if (SiadapGlobalEvaluation.isValidGrade(gradePerUniverseBean.getGradeToChangeTo(),
-					gradePerUniverseBean.isAssignExcellency())) {
-				gradePerUniverseBean.getSiadapEvaluationUniverse().setCcaAfterValidationGrade(
-						gradePerUniverseBean.getGradeToChangeTo());
-				gradePerUniverseBean.getSiadapEvaluationUniverse().setCcaAfterValidationExcellencyAward(
-						gradePerUniverseBean.isAssignExcellency());
-			}
-		}
-	}
+            }
+        }
+        if (!foundAValidGrade) {
+            throw new SiadapException("error.ChangeGradeAnytimeAfterValidationByCCA.no.valid.grade.found");
+        }
+        //so let's get the valid grades to assign and let's assign them
+        for (GradePerUniverseBean gradePerUniverseBean : activityInformation.getSiadapEvaluationUniversesBeans()) {
+            if (SiadapGlobalEvaluation.isValidGrade(gradePerUniverseBean.getGradeToChangeTo(),
+                    gradePerUniverseBean.isAssignExcellency())) {
+                gradePerUniverseBean.getSiadapEvaluationUniverse().setCcaAfterValidationGrade(
+                        gradePerUniverseBean.getGradeToChangeTo());
+                gradePerUniverseBean.getSiadapEvaluationUniverse().setCcaAfterValidationExcellencyAward(
+                        gradePerUniverseBean.isAssignExcellency());
+            }
+        }
+    }
 
-	@Override
-	protected String[] getArgumentsDescription(ChangeGradeAnytimeActivityInformation activityInformation) {
-		String stringToReturn = null;
-		for (GradePerUniverseBean gradePerUniverseBean : activityInformation.getSiadapEvaluationUniversesBeans()) {
-			if (SiadapGlobalEvaluation.isValidGrade(gradePerUniverseBean.getGradeToChangeTo(),
-					gradePerUniverseBean.isAssignExcellency())) {
-				if (stringToReturn != null) {
-					stringToReturn += ", ";
-				} else {
-					stringToReturn = "";
-				}
-				String currentExcellencyAwardString =
-						BundleUtil.getStringFromResourceBundle("resources/MyorgResources",
-								String.valueOf(gradePerUniverseBean.getSiadapEvaluationUniverse().getCurrentExcellencyAward()));
-				String newExcellencyAwardString =
-						BundleUtil.getStringFromResourceBundle("resources/MyorgResources",
-								String.valueOf(gradePerUniverseBean.isAssignExcellency()));
-				stringToReturn +=
-						BundleUtil.getFormattedStringFromResourceBundle(getUsedBundle(),
-								"label.description.module.siadap.activities.ChangeGradeAnytimeAfterValidationByCCA.gradeChange",
-								gradePerUniverseBean.getSiadapEvaluationUniverse().getSiadapUniverse().getLocalizedName(),
-								gradePerUniverseBean.getSiadapEvaluationUniverse().getCurrentGrade().toString(),
-								currentExcellencyAwardString, gradePerUniverseBean.getGradeToChangeTo().toString(),
-								newExcellencyAwardString, gradePerUniverseBean.getJustification());
+    @Override
+    protected String[] getArgumentsDescription(ChangeGradeAnytimeActivityInformation activityInformation) {
+        String stringToReturn = null;
+        for (GradePerUniverseBean gradePerUniverseBean : activityInformation.getSiadapEvaluationUniversesBeans()) {
+            if (SiadapGlobalEvaluation.isValidGrade(gradePerUniverseBean.getGradeToChangeTo(),
+                    gradePerUniverseBean.isAssignExcellency())) {
+                if (stringToReturn != null) {
+                    stringToReturn += ", ";
+                } else {
+                    stringToReturn = "";
+                }
+                String currentExcellencyAwardString =
+                        BundleUtil.getStringFromResourceBundle("resources/MyorgResources",
+                                String.valueOf(gradePerUniverseBean.getSiadapEvaluationUniverse().getCurrentExcellencyAward()));
+                String newExcellencyAwardString =
+                        BundleUtil.getStringFromResourceBundle("resources/MyorgResources",
+                                String.valueOf(gradePerUniverseBean.isAssignExcellency()));
+                stringToReturn +=
+                        BundleUtil.getFormattedStringFromResourceBundle(getUsedBundle(),
+                                "label.description.module.siadap.activities.ChangeGradeAnytimeAfterValidationByCCA.gradeChange",
+                                gradePerUniverseBean.getSiadapEvaluationUniverse().getSiadapUniverse().getLocalizedName(),
+                                gradePerUniverseBean.getSiadapEvaluationUniverse().getCurrentGrade().toString(),
+                                currentExcellencyAwardString, gradePerUniverseBean.getGradeToChangeTo().toString(),
+                                newExcellencyAwardString, gradePerUniverseBean.getJustification());
 
-			}
-		}
-		return new String[] { stringToReturn };
-	}
+            }
+        }
+        return new String[] { stringToReturn };
+    }
 
-	@Override
-	public boolean isDefaultInputInterfaceUsed() {
-		return false;
-	}
+    @Override
+    public boolean isDefaultInputInterfaceUsed() {
+        return false;
+    }
 
-	@Override
-	public ActivityInformation<SiadapProcess> getActivityInformation(SiadapProcess process) {
-		return new ChangeGradeAnytimeActivityInformation(process, this);
-	}
+    @Override
+    public ActivityInformation<SiadapProcess> getActivityInformation(SiadapProcess process) {
+        return new ChangeGradeAnytimeActivityInformation(process, this);
+    }
 
-	@Override
-	public String getUsedBundle() {
-		return Siadap.SIADAP_BUNDLE_STRING;
-	}
+    @Override
+    public String getUsedBundle() {
+        return Siadap.SIADAP_BUNDLE_STRING;
+    }
 
-	@Override
-	public boolean isUserAwarenessNeeded(SiadapProcess process) {
-		return false;
-	}
+    @Override
+    public boolean isUserAwarenessNeeded(SiadapProcess process) {
+        return false;
+    }
 
 }

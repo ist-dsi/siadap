@@ -44,52 +44,52 @@ import pt.ist.bennu.core.util.BundleUtil;
  */
 public class SiadapScheduleEditorsGroup extends SiadapScheduleEditorsGroup_Base {
 
-	public SiadapScheduleEditorsGroup() {
-		super();
-	}
+    public SiadapScheduleEditorsGroup() {
+        super();
+    }
 
-	public static SiadapScheduleEditorsGroup getInstance() {
-		return SiadapRootModule.getInstance().getSiadapScheduleEditorsGroup();
-	}
+    public static SiadapScheduleEditorsGroup getInstance() {
+        return SiadapRootModule.getInstance().getSiadapScheduleEditorsGroup();
+    }
 
-	@Override
-	public boolean isMember(User user) {
-		//get the current year and use it to assert
-		return isMember(user, SiadapMiscUtilClass.returnLastUsableYear());
-	}
+    @Override
+    public boolean isMember(User user) {
+        //get the current year and use it to assert
+        return isMember(user, SiadapMiscUtilClass.returnLastUsableYear());
+    }
 
-	public boolean isMember(User user, Integer year) {
-		SiadapYearConfiguration configuration = SiadapYearConfiguration.getSiadapYearConfiguration(year);
-		return configuration.isPersonMemberOfScheduleExtenders(user.getPerson());
-	}
+    public boolean isMember(User user, Integer year) {
+        SiadapYearConfiguration configuration = SiadapYearConfiguration.getSiadapYearConfiguration(year);
+        return configuration.isPersonMemberOfScheduleExtenders(user.getPerson());
+    }
 
-	@Override
-	public String getName() {
-		try {
-			return BundleUtil.getStringFromResourceBundle("resources/SiadapResources",
-					"siadap.group.name.SiadapScheduleEditorsGroup");
-		} catch (java.util.MissingResourceException ex) {
-			return this.getClass().getSimpleName();
-		}
-	}
+    @Override
+    public String getName() {
+        try {
+            return BundleUtil.getStringFromResourceBundle("resources/SiadapResources",
+                    "siadap.group.name.SiadapScheduleEditorsGroup");
+        } catch (java.util.MissingResourceException ex) {
+            return this.getClass().getSimpleName();
+        }
+    }
 
-	@Override
-	public Set<User> getMembers() {
-		return getMembers(new LocalDate().getYear());
-	}
+    @Override
+    public Set<User> getMembers() {
+        return getMembers(new LocalDate().getYear());
+    }
 
-	public Set<User> getMembers(Integer year) {
-		SiadapYearConfiguration configuration = SiadapYearConfiguration.getSiadapYearConfiguration(year);
-		Set<Person> groupPersons = configuration.getScheduleEditorsSet();
+    public Set<User> getMembers(Integer year) {
+        SiadapYearConfiguration configuration = SiadapYearConfiguration.getSiadapYearConfiguration(year);
+        Set<Person> groupPersons = configuration.getScheduleEditorsSet();
 
-		Set<User> setToReturn = new HashSet<User>();
+        Set<User> setToReturn = new HashSet<User>();
 
-		for (Person person : groupPersons) {
-			setToReturn.add(person.getUser());
-		}
+        for (Person person : groupPersons) {
+            setToReturn.add(person.getUser());
+        }
 
-		return setToReturn;
+        return setToReturn;
 
-	}
+    }
 
 }

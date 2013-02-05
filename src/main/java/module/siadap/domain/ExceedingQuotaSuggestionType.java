@@ -34,11 +34,11 @@ import pt.ist.fenixWebFramework.rendererExtensions.util.IPresentableEnum;
  */
 public enum ExceedingQuotaSuggestionType implements IPresentableEnum {
 
-	HIGH_SUGGESTION, EXCELLENCY_SUGGESTION;
+    HIGH_SUGGESTION, EXCELLENCY_SUGGESTION;
 
-	@Override
-	public String getLocalizedName() {
-		return BundleUtil.getStringFromResourceBundle("resources/SiadapResources", getClass().getName() + "." + name());
-	}
+    @Override
+    public String getLocalizedName() {
+        return BundleUtil.getStringFromResourceBundle("resources/SiadapResources", getClass().getName() + "." + name());
+    }
 
 }

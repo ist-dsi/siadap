@@ -38,26 +38,26 @@ import pt.ist.bennu.core.domain.User;
  */
 public class ValidateEvaluation extends WorkflowActivity<SiadapProcess, ActivityInformation<SiadapProcess>> {
 
-	@Override
-	public boolean isActive(SiadapProcess process, User user) {
-		if (!process.isActive()) {
-			return false;
-		}
-		Siadap siadap = process.getSiadap();
+    @Override
+    public boolean isActive(SiadapProcess process, User user) {
+        if (!process.isActive()) {
+            return false;
+        }
+        Siadap siadap = process.getSiadap();
 
-		//	return siadap.getSiadapYearConfiguration().isPersonMemberOfCCA(user.getPerson()) && siadap.getHarmonizationDate() != null
-		//		&& siadap.getValidated() == null;
-		//TODO joantune: remove this, it has been replaced by the more generic validation activity
-		return false;
-	}
+        //	return siadap.getSiadapYearConfiguration().isPersonMemberOfCCA(user.getPerson()) && siadap.getHarmonizationDate() != null
+        //		&& siadap.getValidated() == null;
+        //TODO joantune: remove this, it has been replaced by the more generic validation activity
+        return false;
+    }
 
-	@Override
-	protected void process(ActivityInformation<SiadapProcess> activityInformation) {
-		//	activityInformation.getProcess().getSiadap().setValidated(Boolean.TRUE);
-	}
+    @Override
+    protected void process(ActivityInformation<SiadapProcess> activityInformation) {
+        //	activityInformation.getProcess().getSiadap().setValidated(Boolean.TRUE);
+    }
 
-	@Override
-	public String getUsedBundle() {
-		return "resources/SiadapResources";
-	}
+    @Override
+    public String getUsedBundle() {
+        return "resources/SiadapResources";
+    }
 }

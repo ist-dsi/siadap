@@ -45,59 +45,59 @@ import pt.ist.bennu.core.util.BundleUtil;
  */
 public class SiadapStructureManagementGroup extends SiadapStructureManagementGroup_Base {
 
-	public SiadapStructureManagementGroup() {
-		super();
-	}
+    public SiadapStructureManagementGroup() {
+        super();
+    }
 
-	// annotated as deprecated to avoid being wrongly used, because it makes more sense to use the year variant
-	@Override
-	@Deprecated
-	public boolean isMember(User user) {
-		return isMember(user, SiadapMiscUtilClass.returnLastUsableYear());
-	}
+    // annotated as deprecated to avoid being wrongly used, because it makes more sense to use the year variant
+    @Override
+    @Deprecated
+    public boolean isMember(User user) {
+        return isMember(user, SiadapMiscUtilClass.returnLastUsableYear());
+    }
 
-	public static boolean isMember(User user, int year) {
-		SiadapYearConfiguration configuration = SiadapYearConfiguration.getSiadapYearConfiguration(year);
-		if (configuration == null || configuration.getStructureManagementGroupMembers() == null) {
-			return false;
-		}
-		return configuration.getStructureManagementGroupMembers().contains(user.getPerson());
-	}
+    public static boolean isMember(User user, int year) {
+        SiadapYearConfiguration configuration = SiadapYearConfiguration.getSiadapYearConfiguration(year);
+        if (configuration == null || configuration.getStructureManagementGroupMembers() == null) {
+            return false;
+        }
+        return configuration.getStructureManagementGroupMembers().contains(user.getPerson());
+    }
 
-	@Override
-	public String getName() {
-		try {
-			return BundleUtil.getStringFromResourceBundle("resources/SiadapResources",
-					"siadap.group.name.SiadapStructureManagementGroup");
-		} catch (java.util.MissingResourceException ex) {
-			return this.getClass().getSimpleName();
-		}
-	}
+    @Override
+    public String getName() {
+        try {
+            return BundleUtil.getStringFromResourceBundle("resources/SiadapResources",
+                    "siadap.group.name.SiadapStructureManagementGroup");
+        } catch (java.util.MissingResourceException ex) {
+            return this.getClass().getSimpleName();
+        }
+    }
 
-	// annotated as deprecated to avoid being wrongly used, because it makes more sense to use the year variant
-	@Override
-	@Deprecated
-	public Set<User> getMembers() {
-		return getMembers(new LocalDate().getYear());
-	}
+    // annotated as deprecated to avoid being wrongly used, because it makes more sense to use the year variant
+    @Override
+    @Deprecated
+    public Set<User> getMembers() {
+        return getMembers(new LocalDate().getYear());
+    }
 
-	static public List<Person> getListOfMembers(int year) {
-		SiadapYearConfiguration configuration = SiadapYearConfiguration.getSiadapYearConfiguration(year);
-		return configuration.getStructureManagementGroupMembers();
+    static public List<Person> getListOfMembers(int year) {
+        SiadapYearConfiguration configuration = SiadapYearConfiguration.getSiadapYearConfiguration(year);
+        return configuration.getStructureManagementGroupMembers();
 
-	}
+    }
 
-	static public Set<User> getMembers(int year) {
-		SiadapYearConfiguration configuration = SiadapYearConfiguration.getSiadapYearConfiguration(year);
-		Set<Person> groupPersons = configuration.getStructureManagementGroupMembersSet();
+    static public Set<User> getMembers(int year) {
+        SiadapYearConfiguration configuration = SiadapYearConfiguration.getSiadapYearConfiguration(year);
+        Set<Person> groupPersons = configuration.getStructureManagementGroupMembersSet();
 
-		Set<User> setToReturn = new HashSet<User>();
+        Set<User> setToReturn = new HashSet<User>();
 
-		for (Person person : groupPersons) {
-			setToReturn.add(person.getUser());
-		}
+        for (Person person : groupPersons) {
+            setToReturn.add(person.getUser());
+        }
 
-		return setToReturn;
-	}
+        return setToReturn;
+    }
 
 }

@@ -48,115 +48,115 @@ import pt.utl.ist.fenix.tools.util.i18n.Language;
  *         (mistakes)
  */
 public class ForceEditCompetenceSlashCareerEvaluationByCCA extends
-		WorkflowActivity<SiadapProcess, CreateOrEditCompetenceEvaluationActivityInformation> {
+        WorkflowActivity<SiadapProcess, CreateOrEditCompetenceEvaluationActivityInformation> {
 
-	// @Override
-	// public boolean isActive(SiadapProcess process, User user) {
-	// Siadap siadap = process.getSiadap();
-	// return !siadap.isObjectiveSpecificationIntervalFinished()
-	// && siadap.getEvaluator().getPerson().getUser() == user
-	// && siadap.getCompetenceEvaluations().isEmpty();
-	// }
+    // @Override
+    // public boolean isActive(SiadapProcess process, User user) {
+    // Siadap siadap = process.getSiadap();
+    // return !siadap.isObjectiveSpecificationIntervalFinished()
+    // && siadap.getEvaluator().getPerson().getUser() == user
+    // && siadap.getCompetenceEvaluations().isEmpty();
+    // }
 
-	@Override
-	public boolean isActive(SiadapProcess process, User user) {
-		if (!process.isActive()) {
-			return false;
-		}
-		Siadap siadap = process.getSiadap();
-		if (!siadap.getSiadapYearConfiguration().getCcaMembers().contains(user.getPerson())) {
-			return false;
-		}
-		SiadapProcessStateEnum state = SiadapProcessStateEnum.getState(siadap);
-		if (siadap.hasAnyCompetencesSet() && state.ordinal() <= SiadapProcessStateEnum.WAITING_SELF_EVALUATION.ordinal()
-				&& state.ordinal() >= SiadapProcessStateEnum.WAITING_EVAL_OBJ_ACK.ordinal()) {
-			//making sure the competences aren't yet evaluated/self-evaluated as that data would be lost
-			for (CompetenceEvaluation competenceEvaluation : siadap.getCompetenceEvaluations()) {
-				if (competenceEvaluation.getAutoEvaluation() != null || competenceEvaluation.getEvaluation() != null) {
-					return false;
-				}
-			}
-			return true;
-		}
-		return false;
-	}
+    @Override
+    public boolean isActive(SiadapProcess process, User user) {
+        if (!process.isActive()) {
+            return false;
+        }
+        Siadap siadap = process.getSiadap();
+        if (!siadap.getSiadapYearConfiguration().getCcaMembers().contains(user.getPerson())) {
+            return false;
+        }
+        SiadapProcessStateEnum state = SiadapProcessStateEnum.getState(siadap);
+        if (siadap.hasAnyCompetencesSet() && state.ordinal() <= SiadapProcessStateEnum.WAITING_SELF_EVALUATION.ordinal()
+                && state.ordinal() >= SiadapProcessStateEnum.WAITING_EVAL_OBJ_ACK.ordinal()) {
+            //making sure the competences aren't yet evaluated/self-evaluated as that data would be lost
+            for (CompetenceEvaluation competenceEvaluation : siadap.getCompetenceEvaluations()) {
+                if (competenceEvaluation.getAutoEvaluation() != null || competenceEvaluation.getEvaluation() != null) {
+                    return false;
+                }
+            }
+            return true;
+        }
+        return false;
+    }
 
-	@Override
-	protected void process(CreateOrEditCompetenceEvaluationActivityInformation activityInformation) {
-		int nrRequiredItems = 0;
-		if (activityInformation.getEvaluatedOnlyByCompetences() != null) {
-			if (activityInformation.getEvaluatedOnlyByCompetences().booleanValue()) {
-				nrRequiredItems = Siadap.MINIMUM_COMPETENCES_WITHOUT_OBJ_EVAL_NUMBER;
-			} else {
-				nrRequiredItems = Siadap.MINIMUM_COMPETENCES_WITH_OBJ_EVAL_NUMBER;
-			}
-		}
-		if (activityInformation.getEvaluatedOnlyByCompetences() == null
-				|| activityInformation.getCompetences().size() < nrRequiredItems) {
-			throw new DomainException("renderers.validator.invalid.nrCompetences", ResourceBundle.getBundle(
-					"resources/SiadapResources", Language.getLocale()), Integer.toString(nrRequiredItems));
-		}
+    @Override
+    protected void process(CreateOrEditCompetenceEvaluationActivityInformation activityInformation) {
+        int nrRequiredItems = 0;
+        if (activityInformation.getEvaluatedOnlyByCompetences() != null) {
+            if (activityInformation.getEvaluatedOnlyByCompetences().booleanValue()) {
+                nrRequiredItems = Siadap.MINIMUM_COMPETENCES_WITHOUT_OBJ_EVAL_NUMBER;
+            } else {
+                nrRequiredItems = Siadap.MINIMUM_COMPETENCES_WITH_OBJ_EVAL_NUMBER;
+            }
+        }
+        if (activityInformation.getEvaluatedOnlyByCompetences() == null
+                || activityInformation.getCompetences().size() < nrRequiredItems) {
+            throw new DomainException("renderers.validator.invalid.nrCompetences", ResourceBundle.getBundle(
+                    "resources/SiadapResources", Language.getLocale()), Integer.toString(nrRequiredItems));
+        }
 
-		Siadap siadap = activityInformation.getSiadap();
+        Siadap siadap = activityInformation.getSiadap();
 
-		//let's check all of the new competences to make sure that they have a corresponding item on the new one
+        //let's check all of the new competences to make sure that they have a corresponding item on the new one
 
-		List<CompetenceEvaluation> previousCompetences = siadap.getDefaultSiadapEvaluationUniverse().getCompetenceEvaluations();
+        List<CompetenceEvaluation> previousCompetences = siadap.getDefaultSiadapEvaluationUniverse().getCompetenceEvaluations();
 
-		if (previousCompetences.size() != activityInformation.getCompetences().size()) {
-			throw new SiadapException("ForceEditCompetenceSlashCareerEvaluationByCCA.mismatch.on.the.number.of.competences");
-		}
+        if (previousCompetences.size() != activityInformation.getCompetences().size()) {
+            throw new SiadapException("ForceEditCompetenceSlashCareerEvaluationByCCA.mismatch.on.the.number.of.competences");
+        }
 
-		for (CompetenceEvaluation previousEvaluationCompetence : previousCompetences) {
-			if (!activityInformation.hasEquivalentCompetence(previousEvaluationCompetence.getCompetence())) {
-				throw new SiadapException("ForceEditCompetenceSlashCareerEvaluationByCCA.could.not.find.matching.competence.for",
-						previousEvaluationCompetence.getCompetence().getName());
-			}
-		}
+        for (CompetenceEvaluation previousEvaluationCompetence : previousCompetences) {
+            if (!activityInformation.hasEquivalentCompetence(previousEvaluationCompetence.getCompetence())) {
+                throw new SiadapException("ForceEditCompetenceSlashCareerEvaluationByCCA.could.not.find.matching.competence.for",
+                        previousEvaluationCompetence.getCompetence().getName());
+            }
+        }
 
-		//this means that we have equivalent competences :), let's remove and add them
-		List<Competence> competencesToAdd = activityInformation.getCompetences();
-		for (CompetenceEvaluation competence : previousCompetences) {
-			if (!competencesToAdd.contains(competence.getCompetence())) {
-				competence.delete();
-			} else {
-				competencesToAdd.remove(competence.getCompetence());
-			}
-		}
-		for (Competence competence : competencesToAdd) {
-			new CompetenceEvaluation(activityInformation.getSiadap(), competence);
-		}
-		siadap.getDefaultSiadapEvaluationUniverse().setCompetenceSlashCareerType(activityInformation.getCompetenceType());
+        //this means that we have equivalent competences :), let's remove and add them
+        List<Competence> competencesToAdd = activityInformation.getCompetences();
+        for (CompetenceEvaluation competence : previousCompetences) {
+            if (!competencesToAdd.contains(competence.getCompetence())) {
+                competence.delete();
+            } else {
+                competencesToAdd.remove(competence.getCompetence());
+            }
+        }
+        for (Competence competence : competencesToAdd) {
+            new CompetenceEvaluation(activityInformation.getSiadap(), competence);
+        }
+        siadap.getDefaultSiadapEvaluationUniverse().setCompetenceSlashCareerType(activityInformation.getCompetenceType());
 
-	}
+    }
 
-	@Override
-	public ActivityInformation<SiadapProcess> getActivityInformation(SiadapProcess process) {
-		return new CreateOrEditCompetenceEvaluationActivityInformation(process, this);
-	}
+    @Override
+    public ActivityInformation<SiadapProcess> getActivityInformation(SiadapProcess process) {
+        return new CreateOrEditCompetenceEvaluationActivityInformation(process, this);
+    }
 
-	@Override
-	protected String[] getArgumentsDescription(CreateOrEditCompetenceEvaluationActivityInformation activityInformation) {
-		return new String[] { activityInformation.getCompetenceType().getName() };
-	}
+    @Override
+    protected String[] getArgumentsDescription(CreateOrEditCompetenceEvaluationActivityInformation activityInformation) {
+        return new String[] { activityInformation.getCompetenceType().getName() };
+    }
 
-	@Override
-	public boolean isUserAwarenessNeeded(SiadapProcess process) {
-		return false;
-	}
+    @Override
+    public boolean isUserAwarenessNeeded(SiadapProcess process) {
+        return false;
+    }
 
-	@Override
-	public boolean isVisible() {
-		return true;
-	};
+    @Override
+    public boolean isVisible() {
+        return true;
+    };
 
-	@Override
-	public boolean isDefaultInputInterfaceUsed() {
-		return false;
-	}
+    @Override
+    public boolean isDefaultInputInterfaceUsed() {
+        return false;
+    }
 
-	@Override
-	public String getUsedBundle() {
-		return "resources/SiadapResources";
-	}
+    @Override
+    public String getUsedBundle() {
+        return "resources/SiadapResources";
+    }
 }

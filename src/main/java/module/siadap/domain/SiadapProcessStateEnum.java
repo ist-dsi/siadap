@@ -36,144 +36,144 @@ import pt.ist.fenixWebFramework.rendererExtensions.util.IPresentableEnum;
  * 
  */
 public enum SiadapProcessStateEnum implements IPresentableEnum {
-	NULLED,
+    NULLED,
 
-	NOT_CREATED,
+    NOT_CREATED,
 
-	INCOMPLETE_OBJ_OR_COMP,
+    INCOMPLETE_OBJ_OR_COMP,
 
-	NOT_SEALED,
+    NOT_SEALED,
 
-	EVALUATION_NOT_GOING_TO_BE_DONE,
+    EVALUATION_NOT_GOING_TO_BE_DONE,
 
-	NOT_YET_SUBMITTED_FOR_ACK,
+    NOT_YET_SUBMITTED_FOR_ACK,
 
-	WAITING_EVAL_OBJ_ACK,
+    WAITING_EVAL_OBJ_ACK,
 
-	WAITING_SELF_EVALUATION,
+    WAITING_SELF_EVALUATION,
 
-	NOT_YET_EVALUATED,
+    NOT_YET_EVALUATED,
 
-	WAITING_HARMONIZATION, //
+    WAITING_HARMONIZATION, //
 
-	WAITING_VALIDATION,
+    WAITING_VALIDATION,
 
-	WAITING_SUBMITTAL_BY_EVALUATOR_AFTER_VALIDATION,
+    WAITING_SUBMITTAL_BY_EVALUATOR_AFTER_VALIDATION,
 
-	WAITING_VALIDATION_ACKNOWLEDGMENT_BY_EVALUATED,
+    WAITING_VALIDATION_ACKNOWLEDGMENT_BY_EVALUATED,
 
-	VALIDATION_ACKNOWLEDGED,
+    VALIDATION_ACKNOWLEDGED,
 
-	WAITING_HOMOLOGATION,
+    WAITING_HOMOLOGATION,
 
-	WAITING_FOR_REVIEW_COMMISSION,
+    WAITING_FOR_REVIEW_COMMISSION,
 
-	HOMOLOGATED,
+    HOMOLOGATED,
 
-	FINAL_STATE,
+    FINAL_STATE,
 
-	UNIMPLEMENTED_STATE;
+    UNIMPLEMENTED_STATE;
 
-	private SiadapProcessStateEnum() {
-	}
+    private SiadapProcessStateEnum() {
+    }
 
-	/**
-	 * 
-	 * @return the String representing the state, used on the list of evaluated
-	 *         persons, currently prepareCreateSiadap.jsp
-	 */
-	public static String getStateForListOfProcessesString(Siadap siadap) {
-		return BundleUtil.getStringFromResourceBundle("resources/SiadapResources", getState(siadap).getLabelPrefix());
-	}
+    /**
+     * 
+     * @return the String representing the state, used on the list of evaluated
+     *         persons, currently prepareCreateSiadap.jsp
+     */
+    public static String getStateForListOfProcessesString(Siadap siadap) {
+        return BundleUtil.getStringFromResourceBundle("resources/SiadapResources", getState(siadap).getLabelPrefix());
+    }
 
-	public String getLabelPrefix() {
-		switch (this) {
-		case NULLED:
-			return "siadap.state.nulled";
-		case NOT_CREATED:
-			return "siadap.state.not.created";
-		case INCOMPLETE_OBJ_OR_COMP:
-			return "siadap.state.incomplete.objectives.or.competences";
-		case NOT_SEALED:
-			return "siadap.state.not.sealed";
-		case EVALUATION_NOT_GOING_TO_BE_DONE:
-			return "siadap.state.evaluation.not.going.to.be.done";
-		case NOT_YET_SUBMITTED_FOR_ACK:
-			return "siadap.state.not.submitted.for.acknowledgement";
-		case WAITING_EVAL_OBJ_ACK:
-			return "siadap.state.waiting.evaluation.objectives.acknowledgement";
-		case WAITING_SELF_EVALUATION:
-			return "siadap.state.waiting.self.evaluation";
-		case NOT_YET_EVALUATED:
-			return "siadap.state.not.evaluted.yet";
-		case WAITING_HARMONIZATION:
-			return "siadap.state.waiting.harmonization";
-		case WAITING_VALIDATION:
-			return "siadap.state.waiting.validation";
-		case WAITING_SUBMITTAL_BY_EVALUATOR_AFTER_VALIDATION:
-			return "siadap.state.waiting.evaluation.submittal.after.validation";
-		case WAITING_VALIDATION_ACKNOWLEDGMENT_BY_EVALUATED:
-			return "siadap.state.waiting.evaluation.ack.after.validation";
-		case VALIDATION_ACKNOWLEDGED:
-			return "siadap.state.validation.acked";
-		case WAITING_HOMOLOGATION:
-			return "siadap.state.waiting.homologation";
-		case WAITING_FOR_REVIEW_COMMISSION:
-			return "siadap.state.waiting.review.commission";
-		case HOMOLOGATED:
-			return "siadap.state.homologated";
-		case FINAL_STATE:
-			return "siadap.state.final";
-			//	case UNIMPLEMENTED_STATE:
-			//	    return "siadap.state.unimplemented";
-		}
-		return null;
-	}
+    public String getLabelPrefix() {
+        switch (this) {
+        case NULLED:
+            return "siadap.state.nulled";
+        case NOT_CREATED:
+            return "siadap.state.not.created";
+        case INCOMPLETE_OBJ_OR_COMP:
+            return "siadap.state.incomplete.objectives.or.competences";
+        case NOT_SEALED:
+            return "siadap.state.not.sealed";
+        case EVALUATION_NOT_GOING_TO_BE_DONE:
+            return "siadap.state.evaluation.not.going.to.be.done";
+        case NOT_YET_SUBMITTED_FOR_ACK:
+            return "siadap.state.not.submitted.for.acknowledgement";
+        case WAITING_EVAL_OBJ_ACK:
+            return "siadap.state.waiting.evaluation.objectives.acknowledgement";
+        case WAITING_SELF_EVALUATION:
+            return "siadap.state.waiting.self.evaluation";
+        case NOT_YET_EVALUATED:
+            return "siadap.state.not.evaluted.yet";
+        case WAITING_HARMONIZATION:
+            return "siadap.state.waiting.harmonization";
+        case WAITING_VALIDATION:
+            return "siadap.state.waiting.validation";
+        case WAITING_SUBMITTAL_BY_EVALUATOR_AFTER_VALIDATION:
+            return "siadap.state.waiting.evaluation.submittal.after.validation";
+        case WAITING_VALIDATION_ACKNOWLEDGMENT_BY_EVALUATED:
+            return "siadap.state.waiting.evaluation.ack.after.validation";
+        case VALIDATION_ACKNOWLEDGED:
+            return "siadap.state.validation.acked";
+        case WAITING_HOMOLOGATION:
+            return "siadap.state.waiting.homologation";
+        case WAITING_FOR_REVIEW_COMMISSION:
+            return "siadap.state.waiting.review.commission";
+        case HOMOLOGATED:
+            return "siadap.state.homologated";
+        case FINAL_STATE:
+            return "siadap.state.final";
+            //	case UNIMPLEMENTED_STATE:
+            //	    return "siadap.state.unimplemented";
+        }
+        return null;
+    }
 
-	public String getDescription() {
-		return BundleUtil.getStringFromResourceBundle("resources/SiadapResources", getLabelPrefix());
-	}
+    public String getDescription() {
+        return BundleUtil.getStringFromResourceBundle("resources/SiadapResources", getLabelPrefix());
+    }
 
-	public static SiadapProcessStateEnum getState(Siadap siadap) {
-		if (siadap == null) {
-			return NOT_CREATED;
-		} else {
-			return siadap.getState();
-		}
-	}
+    public static SiadapProcessStateEnum getState(Siadap siadap) {
+        if (siadap == null) {
+            return NOT_CREATED;
+        } else {
+            return siadap.getState();
+        }
+    }
 
-	public static boolean isNotSubmittedForConfirmation(final Siadap siadap) {
-		final SiadapProcessStateEnum state = getState(siadap);
-		return state.ordinal() <= NOT_YET_SUBMITTED_FOR_ACK.ordinal();
-	}
+    public static boolean isNotSubmittedForConfirmation(final Siadap siadap) {
+        final SiadapProcessStateEnum state = getState(siadap);
+        return state.ordinal() <= NOT_YET_SUBMITTED_FOR_ACK.ordinal();
+    }
 
-	/**
-	 * 
-	 * @param siadap
-	 * @param currentUser
-	 * @return a string with the explanation of what should be done next, based
-	 *         on the user, if he is an evaluator or an evaluated
-	 */
-	public static String getNextStep(Siadap siadap, User currentUser) {
-		if (siadap.getEvaluator().getPerson().getUser().equals(currentUser)) {
-			return BundleUtil.getStringFromResourceBundle("resources/SiadapResources", getState(siadap).getLabelPrefix()
-					+ ".nextstep.evaluator");
-		}
-		if (siadap.getEvaluated().getUser().equals(currentUser)) {
-			return BundleUtil.getStringFromResourceBundle("resources/SiadapResources", getState(siadap).getLabelPrefix()
-					+ ".nextstep.evaluated");
-		}
-		return null;
-	}
+    /**
+     * 
+     * @param siadap
+     * @param currentUser
+     * @return a string with the explanation of what should be done next, based
+     *         on the user, if he is an evaluator or an evaluated
+     */
+    public static String getNextStep(Siadap siadap, User currentUser) {
+        if (siadap.getEvaluator().getPerson().getUser().equals(currentUser)) {
+            return BundleUtil.getStringFromResourceBundle("resources/SiadapResources", getState(siadap).getLabelPrefix()
+                    + ".nextstep.evaluator");
+        }
+        if (siadap.getEvaluated().getUser().equals(currentUser)) {
+            return BundleUtil.getStringFromResourceBundle("resources/SiadapResources", getState(siadap).getLabelPrefix()
+                    + ".nextstep.evaluated");
+        }
+        return null;
+    }
 
-	@Override
-	public String getLocalizedName() {
-		if (getLabelPrefix() != null) {
-			return BundleUtil.getStringFromResourceBundle("resources/SiadapResources", getLabelPrefix());
-		} else {
-			return StringUtils.EMPTY;
-		}
+    @Override
+    public String getLocalizedName() {
+        if (getLabelPrefix() != null) {
+            return BundleUtil.getStringFromResourceBundle("resources/SiadapResources", getLabelPrefix());
+        } else {
+            return StringUtils.EMPTY;
+        }
 
-	}
+    }
 
 }

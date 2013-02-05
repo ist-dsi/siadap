@@ -68,301 +68,301 @@ import pt.utl.ist.fenix.tools.util.excel.Spreadsheet;
  */
 public class UnitManagementInterfaceAction extends ContextBaseAction {
 
-	@Override
-	public ActionForward execute(final ActionMapping mapping, final ActionForm form, final HttpServletRequest request,
-			final HttpServletResponse response) throws Exception {
-		final ActionForward forward = super.execute(mapping, form, request, response);
-		OrganizationModelAction.addHeadToLayoutContext(request);
-		return forward;
-	}
+    @Override
+    public ActionForward execute(final ActionMapping mapping, final ActionForm form, final HttpServletRequest request,
+            final HttpServletResponse response) throws Exception {
+        final ActionForward forward = super.execute(mapping, form, request, response);
+        OrganizationModelAction.addHeadToLayoutContext(request);
+        return forward;
+    }
 
-	public static enum Mode {
-		REGULAR_UNIT_MODE {
-			@Override
-			public AccountabilityType getUnitAccType(SiadapYearConfiguration configuration) {
-				return configuration.getUnitRelations();
-			}
+    public static enum Mode {
+        REGULAR_UNIT_MODE {
+            @Override
+            public AccountabilityType getUnitAccType(SiadapYearConfiguration configuration) {
+                return configuration.getUnitRelations();
+            }
 
-			@Override
-			public AccountabilityType[] getEmployeeAccTypes(SiadapYearConfiguration configuration) {
-				return new AccountabilityType[] { configuration.getWorkingRelation(),
-						configuration.getWorkingRelationWithNoQuota() };
-			}
+            @Override
+            public AccountabilityType[] getEmployeeAccTypes(SiadapYearConfiguration configuration) {
+                return new AccountabilityType[] { configuration.getWorkingRelation(),
+                        configuration.getWorkingRelationWithNoQuota() };
+            }
 
-			@Override
-			public Set<PersonSiadapWrapper> getActivePersonsUnder(SiadapYearConfiguration configuration, Unit unit) {
-				// TODO Auto-generated method stub
-				return null;
-			}
+            @Override
+            public Set<PersonSiadapWrapper> getActivePersonsUnder(SiadapYearConfiguration configuration, Unit unit) {
+                // TODO Auto-generated method stub
+                return null;
+            }
 
-			@Override
-			public String getLabelActivePersons() {
-				// TODO Auto-generated method stub
-				return null;
-			}
-		},
-		HARMONIZATION_UNIT_MODE {
-			@Override
-			public AccountabilityType getUnitAccType(SiadapYearConfiguration configuration) {
-				return configuration.getHarmonizationUnitRelations();
-			}
+            @Override
+            public String getLabelActivePersons() {
+                // TODO Auto-generated method stub
+                return null;
+            }
+        },
+        HARMONIZATION_UNIT_MODE {
+            @Override
+            public AccountabilityType getUnitAccType(SiadapYearConfiguration configuration) {
+                return configuration.getHarmonizationUnitRelations();
+            }
 
-			@Override
-			public AccountabilityType[] getEmployeeAccTypes(SiadapYearConfiguration configuration) {
-				return new AccountabilityType[] { configuration.getSiadap2HarmonizationRelation(),
-						configuration.getSiadap3HarmonizationRelation() };
-			}
+            @Override
+            public AccountabilityType[] getEmployeeAccTypes(SiadapYearConfiguration configuration) {
+                return new AccountabilityType[] { configuration.getSiadap2HarmonizationRelation(),
+                        configuration.getSiadap3HarmonizationRelation() };
+            }
 
-			@Override
-			public Set<PersonSiadapWrapper> getActivePersonsUnder(SiadapYearConfiguration configuration, Unit unit) {
-				UnitSiadapWrapper unitSiadapWrapper = new UnitSiadapWrapper(unit, configuration.getYear());
-				return unitSiadapWrapper.getPeopleHarmonizedInThisUnit(true);
-			}
+            @Override
+            public Set<PersonSiadapWrapper> getActivePersonsUnder(SiadapYearConfiguration configuration, Unit unit) {
+                UnitSiadapWrapper unitSiadapWrapper = new UnitSiadapWrapper(unit, configuration.getYear());
+                return unitSiadapWrapper.getPeopleHarmonizedInThisUnit(true);
+            }
 
-			@Override
-			public String getLabelActivePersons() {
-				return BundleUtil.getStringFromResourceBundle(Siadap.SIADAP_BUNDLE_STRING,
-						"label.unitManagementInterface.harmonizedActivePersons");
-			}
+            @Override
+            public String getLabelActivePersons() {
+                return BundleUtil.getStringFromResourceBundle(Siadap.SIADAP_BUNDLE_STRING,
+                        "label.unitManagementInterface.harmonizedActivePersons");
+            }
 
-		};
+        };
 
-		public abstract AccountabilityType getUnitAccType(SiadapYearConfiguration configuration);
+        public abstract AccountabilityType getUnitAccType(SiadapYearConfiguration configuration);
 
-		public abstract AccountabilityType[] getEmployeeAccTypes(SiadapYearConfiguration configuration);
+        public abstract AccountabilityType[] getEmployeeAccTypes(SiadapYearConfiguration configuration);
 
-		public abstract Set<PersonSiadapWrapper> getActivePersonsUnder(SiadapYearConfiguration configuration, Unit unit);
+        public abstract Set<PersonSiadapWrapper> getActivePersonsUnder(SiadapYearConfiguration configuration, Unit unit);
 
-		public abstract String getLabelActivePersons();
-	}
+        public abstract String getLabelActivePersons();
+    }
 
-	public ActionForward addHarmonizationUnitResponsible(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-			HttpServletResponse response) throws Exception {
-		VariantBean bean = getRenderedObject("addHarmonizationUnitResponsible");
-		Unit unit = getDomainObject(request, "unitId");
-		int year = Integer.parseInt(request.getParameter("year"));
+    public ActionForward addHarmonizationUnitResponsible(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+            HttpServletResponse response) throws Exception {
+        VariantBean bean = getRenderedObject("addHarmonizationUnitResponsible");
+        Unit unit = getDomainObject(request, "unitId");
+        int year = Integer.parseInt(request.getParameter("year"));
 
-		UnitSiadapWrapper harmUnit = new UnitSiadapWrapper(unit, year);
-		if (!harmUnit.isValidHarmonizationUnit()) {
-			throw new SiadapException("must only make changes for a valid harmonization unit. Unit: "
-					+ unit.getPresentationName());
-		}
+        UnitSiadapWrapper harmUnit = new UnitSiadapWrapper(unit, year);
+        if (!harmUnit.isValidHarmonizationUnit()) {
+            throw new SiadapException("must only make changes for a valid harmonization unit. Unit: "
+                    + unit.getPresentationName());
+        }
 
-		Person person = bean.getDomainObject();
-		harmUnit.addResponsibleForHarmonization(person);
+        Person person = bean.getDomainObject();
+        harmUnit.addResponsibleForHarmonization(person);
 
-		RenderUtils.invalidateViewState("addHarmonizationUnitResponsible");
+        RenderUtils.invalidateViewState("addHarmonizationUnitResponsible");
 
-		// notify the users who have access to this interface
-		SiadapUtilActions.notifyAdditionOfHarmonizationResponsible(person, unit, year, request);
+        // notify the users who have access to this interface
+        SiadapUtilActions.notifyAdditionOfHarmonizationResponsible(person, unit, year, request);
 
-		return showUnit(mapping, form, request, response);
+        return showUnit(mapping, form, request, response);
 
-	}
+    }
 
-	public final ActionForward terminateUnitHarmonization(final ActionMapping mapping, final ActionForm form,
-			final HttpServletRequest request, final HttpServletResponse response) throws Exception {
+    public final ActionForward terminateUnitHarmonization(final ActionMapping mapping, final ActionForm form,
+            final HttpServletRequest request, final HttpServletResponse response) throws Exception {
 
-		LocalDate now = new LocalDate();
-		int year = Integer.parseInt(request.getParameter("year"));
-		Unit unit = getDomainObject(request, "unitId");
-		Person person = getDomainObject(request, "personId");
+        LocalDate now = new LocalDate();
+        int year = Integer.parseInt(request.getParameter("year"));
+        Unit unit = getDomainObject(request, "unitId");
+        Person person = getDomainObject(request, "personId");
 
-		new PersonSiadapWrapper(person, year).removeAndNotifyHarmonizationResponsability(unit, person, year, request);
+        new PersonSiadapWrapper(person, year).removeAndNotifyHarmonizationResponsability(unit, person, year, request);
 
-		return showUnit(mapping, form, request, response);
-	}
+        return showUnit(mapping, form, request, response);
+    }
 
-	public final ActionForward downloadUnitStructure(final ActionMapping mapping, final ActionForm form,
-			final HttpServletRequest request, final HttpServletResponse response) throws Exception {
+    public final ActionForward downloadUnitStructure(final ActionMapping mapping, final ActionForm form,
+            final HttpServletRequest request, final HttpServletResponse response) throws Exception {
 
-		Mode mode = null;
-		String modeString = getAttribute(request, "mode");
-		mode = Mode.valueOf(modeString);
+        Mode mode = null;
+        String modeString = getAttribute(request, "mode");
+        mode = Mode.valueOf(modeString);
 
-		String yearString = getAttribute(request, "year");
-		final Integer year = Integer.valueOf(yearString);
+        String yearString = getAttribute(request, "year");
+        final Integer year = Integer.valueOf(yearString);
 
-		SiadapYearConfiguration siadapYearConfiguration = SiadapYearConfiguration.getSiadapYearConfiguration(year);
-		Unit siadapStructureTopUnit = siadapYearConfiguration.getSiadapStructureTopUnit();
+        SiadapYearConfiguration siadapYearConfiguration = SiadapYearConfiguration.getSiadapYearConfiguration(year);
+        Unit siadapStructureTopUnit = siadapYearConfiguration.getSiadapStructureTopUnit();
 
-		UnitSiadapWrapper topUnitWrapper = new UnitSiadapWrapper(siadapStructureTopUnit, year);
+        UnitSiadapWrapper topUnitWrapper = new UnitSiadapWrapper(siadapStructureTopUnit, year);
 
-		TreeSet<UnitSiadapWrapper> allWrapperUnits = new TreeSet(UnitSiadapWrapper.COMPARATOR_BY_UNIT_NAME);
+        TreeSet<UnitSiadapWrapper> allWrapperUnits = new TreeSet(UnitSiadapWrapper.COMPARATOR_BY_UNIT_NAME);
 
-		allWrapperUnits.addAll(topUnitWrapper.getAllChildUnits(mode.getUnitAccType(siadapYearConfiguration)));
-		
-		List<UnitSiadapWrapper> filteredWrapperUnits = new ArrayList<UnitSiadapWrapper>(Collections2.filter(allWrapperUnits, new Predicate<UnitSiadapWrapper>() {
-			
+        allWrapperUnits.addAll(topUnitWrapper.getAllChildUnits(mode.getUnitAccType(siadapYearConfiguration)));
 
-			@Override
-			public boolean apply(@Nullable UnitSiadapWrapper input) {
-				if (input == null || input.isHarmonizationUnit())
-					return false;
-				return true;
-			}
-		}));
-		
-		Collections.sort(filteredWrapperUnits, new Comparator<UnitSiadapWrapper>() {
+        List<UnitSiadapWrapper> filteredWrapperUnits =
+                new ArrayList<UnitSiadapWrapper>(Collections2.filter(allWrapperUnits, new Predicate<UnitSiadapWrapper>() {
 
-			@Override
-			public int compare(UnitSiadapWrapper o1, UnitSiadapWrapper o2) {
-				return Unit.COMPARATOR_BY_PRESENTATION_NAME.compare(o1.getHarmonizationUnit(),o2.getHarmonizationUnit());
-			}
-		});
+                    @Override
+                    public boolean apply(@Nullable UnitSiadapWrapper input) {
+                        if (input == null || input.isHarmonizationUnit())
+                            return false;
+                        return true;
+                    }
+                }));
 
-		SheetData<UnitSiadapWrapper> sheetData = new SheetData<UnitSiadapWrapper>(filteredWrapperUnits) {
+        Collections.sort(filteredWrapperUnits, new Comparator<UnitSiadapWrapper>() {
 
-			@Override
-			protected void makeLine(UnitSiadapWrapper unitSiadapWrapper) {
-				if (unitSiadapWrapper == null) {
-					return;
-				}
-				if (unitSiadapWrapper.isHarmonizationUnit()) {
-					return;
-				}
-				addCell("Unidade", unitSiadapWrapper.getUnit().getPartyName());
-				addCell("CC", unitSiadapWrapper.getUnit().getExpenditureUnit().getCostCenterUnit().getCostCenter());
-				addCell("Unidade de Harm.", unitSiadapWrapper.getHarmonizationUnit().getPartyName());
-				addCell("Número da U.H." , unitSiadapWrapper.getHarmonizationUnitNumber());
+            @Override
+            public int compare(UnitSiadapWrapper o1, UnitSiadapWrapper o2) {
+                return Unit.COMPARATOR_BY_PRESENTATION_NAME.compare(o1.getHarmonizationUnit(), o2.getHarmonizationUnit());
+            }
+        });
 
-			}
+        SheetData<UnitSiadapWrapper> sheetData = new SheetData<UnitSiadapWrapper>(filteredWrapperUnits) {
 
-		};
+            @Override
+            protected void makeLine(UnitSiadapWrapper unitSiadapWrapper) {
+                if (unitSiadapWrapper == null) {
+                    return;
+                }
+                if (unitSiadapWrapper.isHarmonizationUnit()) {
+                    return;
+                }
+                addCell("Unidade", unitSiadapWrapper.getUnit().getPartyName());
+                addCell("CC", unitSiadapWrapper.getUnit().getExpenditureUnit().getCostCenterUnit().getCostCenter());
+                addCell("Unidade de Harm.", unitSiadapWrapper.getHarmonizationUnit().getPartyName());
+                addCell("Número da U.H.", unitSiadapWrapper.getHarmonizationUnitNumber());
 
-		LocalDate currentLocalDate = new LocalDate();
+            }
 
-		return streamSpreadsheet(
-				response,
-				"SIADAP_" + year + "-EstrHarm-" + currentLocalDate.getDayOfMonth() + "-" + currentLocalDate.getMonthOfYear()
-						+ "-" + currentLocalDate.getYear(),
-				new SpreadsheetBuilder().addSheet(
-						"SIADAP - estructura de harmonização - " + year + " - " + currentLocalDate.toString(), sheetData));
+        };
 
-	}
+        LocalDate currentLocalDate = new LocalDate();
 
-	private ActionForward streamSpreadsheet(final HttpServletResponse response, final String fileName,
-			final SpreadsheetBuilder spreadSheetBuilder) throws IOException {
-		response.setContentType("application/xls ");
-		response.setHeader("Content-disposition", "attachment; filename=" + fileName + ".xls");
+        return streamSpreadsheet(
+                response,
+                "SIADAP_" + year + "-EstrHarm-" + currentLocalDate.getDayOfMonth() + "-" + currentLocalDate.getMonthOfYear()
+                        + "-" + currentLocalDate.getYear(),
+                new SpreadsheetBuilder().addSheet(
+                        "SIADAP - estructura de harmonização - " + year + " - " + currentLocalDate.toString(), sheetData));
 
-		ServletOutputStream outputStream = response.getOutputStream();
+    }
 
-		spreadSheetBuilder.build(WorkbookExportFormat.EXCEL, outputStream);
-		outputStream.flush();
-		outputStream.close();
+    private ActionForward streamSpreadsheet(final HttpServletResponse response, final String fileName,
+            final SpreadsheetBuilder spreadSheetBuilder) throws IOException {
+        response.setContentType("application/xls ");
+        response.setHeader("Content-disposition", "attachment; filename=" + fileName + ".xls");
 
-		return null;
-	}
+        ServletOutputStream outputStream = response.getOutputStream();
 
-	public ActionForward showUnit(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response)
-			throws Exception {
+        spreadSheetBuilder.build(WorkbookExportFormat.EXCEL, outputStream);
+        outputStream.flush();
+        outputStream.close();
 
-		Mode mode = null;
-		String modeString = getAttribute(request, "mode");
-		if (modeString != null) {
-			mode = Mode.valueOf(modeString);
-		} else {
-			//            mode = Mode.REGULAR_UNIT_MODE;
-			mode = Mode.HARMONIZATION_UNIT_MODE; //by default, for now, let's use the Harmonization unit mode
-		}
+        return null;
+    }
 
-		request.setAttribute("mode", mode);
+    public ActionForward showUnit(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response)
+            throws Exception {
 
-		SiadapYearWrapper siadapYearWrapper = (SiadapYearWrapper) getRenderedObject("siadapYearWrapper");
-		if (siadapYearWrapper == null) {
-			// let's try to get the year through the parameter
-			String yearString = getAttribute(request, "year");
-			if (yearString == null) {
-				ArrayList<Integer> yearsWithConfigs = SiadapYearsFromExistingSiadapConfigurations.getYearsWithExistingConfigs();
-				if (yearsWithConfigs.contains(new Integer(new LocalDate().getYear()))) {
-					int year = new LocalDate().getYear();
-					siadapYearWrapper = new SiadapYearWrapper(year);
-				} else {
-					siadapYearWrapper = new SiadapYearWrapper(yearsWithConfigs.get(yearsWithConfigs.size() - 1));
-				}
+        Mode mode = null;
+        String modeString = getAttribute(request, "mode");
+        if (modeString != null) {
+            mode = Mode.valueOf(modeString);
+        } else {
+            //            mode = Mode.REGULAR_UNIT_MODE;
+            mode = Mode.HARMONIZATION_UNIT_MODE; //by default, for now, let's use the Harmonization unit mode
+        }
 
-			} else {
-				siadapYearWrapper = new SiadapYearWrapper(Integer.parseInt(yearString));
-			}
-		}
-		request.setAttribute("siadapYearWrapper", siadapYearWrapper);
-		SiadapYearConfiguration configuration = siadapYearWrapper.getSiadapYearConfiguration();
+        request.setAttribute("mode", mode);
 
-		if (configuration == null) {
-			return forward(request, "/module/siadap/unitManagement/showUnit.jsp");
-		}
-		request.setAttribute("configuration", configuration);
+        SiadapYearWrapper siadapYearWrapper = (SiadapYearWrapper) getRenderedObject("siadapYearWrapper");
+        if (siadapYearWrapper == null) {
+            // let's try to get the year through the parameter
+            String yearString = getAttribute(request, "year");
+            if (yearString == null) {
+                ArrayList<Integer> yearsWithConfigs = SiadapYearsFromExistingSiadapConfigurations.getYearsWithExistingConfigs();
+                if (yearsWithConfigs.contains(new Integer(new LocalDate().getYear()))) {
+                    int year = new LocalDate().getYear();
+                    siadapYearWrapper = new SiadapYearWrapper(year);
+                } else {
+                    siadapYearWrapper = new SiadapYearWrapper(yearsWithConfigs.get(yearsWithConfigs.size() - 1));
+                }
 
-		// let's always use the last day of the year
-		Unit unit = (Unit) getDomainObject(request, "unitId");
-		if (unit == null) {
-			unit = configuration.getSiadapStructureTopUnit();
+            } else {
+                siadapYearWrapper = new SiadapYearWrapper(Integer.parseInt(yearString));
+            }
+        }
+        request.setAttribute("siadapYearWrapper", siadapYearWrapper);
+        SiadapYearConfiguration configuration = siadapYearWrapper.getSiadapYearConfiguration();
 
-			if (mode.equals(Mode.REGULAR_UNIT_MODE)) {
-				// and let's also get the total number of SIADAPs for this year
-				int siadapsCount =
-						SiadapYearConfiguration.getSiadapYearConfiguration(siadapYearWrapper.getChosenYear()).getSiadapsCount();
-				int siadapsDefinitiveCount = 0;
-				Map<SiadapProcessStateEnum, Integer> stateCount = new HashMap<SiadapProcessStateEnum, Integer>();
-				for (Siadap siadap : SiadapRootModule.getInstance().getSiadaps()) {
-					if (siadap.getYear().equals(siadapYearWrapper.getChosenYear())) {
-						siadapsDefinitiveCount++;
-						// let's put them on an HashMap by state TODO use Guava
-						// to
-						// do this
-						SiadapProcessStateEnum state = siadap.getState();
-						Integer integer = stateCount.get(state);
-						if (integer == null) {
-							integer = 0;
-						}
-						integer++;
-						stateCount.put(state, integer);
+        if (configuration == null) {
+            return forward(request, "/module/siadap/unitManagement/showUnit.jsp");
+        }
+        request.setAttribute("configuration", configuration);
 
-					}
-				}
+        // let's always use the last day of the year
+        Unit unit = (Unit) getDomainObject(request, "unitId");
+        if (unit == null) {
+            unit = configuration.getSiadapStructureTopUnit();
 
-				request.setAttribute("totalDefinitiveCount", stateCount);
-				request.setAttribute("siadapsCount", siadapsCount);
-				request.setAttribute("siadapsDefinitiveCount", siadapsDefinitiveCount);
-			}
-		}
+            if (mode.equals(Mode.REGULAR_UNIT_MODE)) {
+                // and let's also get the total number of SIADAPs for this year
+                int siadapsCount =
+                        SiadapYearConfiguration.getSiadapYearConfiguration(siadapYearWrapper.getChosenYear()).getSiadapsCount();
+                int siadapsDefinitiveCount = 0;
+                Map<SiadapProcessStateEnum, Integer> stateCount = new HashMap<SiadapProcessStateEnum, Integer>();
+                for (Siadap siadap : SiadapRootModule.getInstance().getSiadaps()) {
+                    if (siadap.getYear().equals(siadapYearWrapper.getChosenYear())) {
+                        siadapsDefinitiveCount++;
+                        // let's put them on an HashMap by state TODO use Guava
+                        // to
+                        // do this
+                        SiadapProcessStateEnum state = siadap.getState();
+                        Integer integer = stateCount.get(state);
+                        if (integer == null) {
+                            integer = 0;
+                        }
+                        integer++;
+                        stateCount.put(state, integer);
 
-		AccountabilityType unitAcc = mode.getUnitAccType(configuration);
-		AccountabilityType[] employeeAccs = mode.getEmployeeAccTypes(configuration);
+                    }
+                }
 
-		UnitSiadapWrapper unitSiadapWrapper = new UnitSiadapWrapper(unit, configuration.getYear());
-		final Collection<Party> parents = UnitSiadapWrapper.UnitTransverseUtil.getActiveParents(unit, configuration, unitAcc);
-		final Collection<Party> children =
-				UnitSiadapWrapper.UnitTransverseUtil.getActiveChildren(unit, configuration, unitAcc, employeeAccs);
+                request.setAttribute("totalDefinitiveCount", stateCount);
+                request.setAttribute("siadapsCount", siadapsCount);
+                request.setAttribute("siadapsDefinitiveCount", siadapsDefinitiveCount);
+            }
+        }
 
-		OrganizationChart<Party> chart = new OrganizationChart<Party>(unit, parents, children, 3);
-		request.setAttribute("chart", chart);
+        AccountabilityType unitAcc = mode.getUnitAccType(configuration);
+        AccountabilityType[] employeeAccs = mode.getEmployeeAccTypes(configuration);
 
-		Collection<PersonSiadapWrapper> activePersons = Collections.EMPTY_SET;
-		if (!unit.equals(configuration.getSiadapStructureTopUnit())) {
-			//if we are on the top unit, we don't want all of the people
-			activePersons = mode.getActivePersonsUnder(configuration, unit);
-		}
-		request.setAttribute("activePersons", activePersons);
+        UnitSiadapWrapper unitSiadapWrapper = new UnitSiadapWrapper(unit, configuration.getYear());
+        final Collection<Party> parents = UnitSiadapWrapper.UnitTransverseUtil.getActiveParents(unit, configuration, unitAcc);
+        final Collection<Party> children =
+                UnitSiadapWrapper.UnitTransverseUtil.getActiveChildren(unit, configuration, unitAcc, employeeAccs);
 
-		final Person unitResponsible = unitSiadapWrapper.getEvaluationResponsible();
-		request.setAttribute("unitResponsible", unitResponsible);
+        OrganizationChart<Party> chart = new OrganizationChart<Party>(unit, parents, children, 3);
+        request.setAttribute("chart", chart);
 
-		final Collection<Person> unitHarmonizers = new TreeSet<Person>(Party.COMPARATOR_BY_NAME);
-		UnitSiadapWrapper harmonizationUnit =
-				new UnitSiadapWrapper(unitSiadapWrapper.getHarmonizationUnit(), configuration.getYear());
+        Collection<PersonSiadapWrapper> activePersons = Collections.EMPTY_SET;
+        if (!unit.equals(configuration.getSiadapStructureTopUnit())) {
+            //if we are on the top unit, we don't want all of the people
+            activePersons = mode.getActivePersonsUnder(configuration, unit);
+        }
+        request.setAttribute("activePersons", activePersons);
 
-		if (harmonizationUnit.isValidHarmonizationUnit()) {
-			unitHarmonizers.addAll(harmonizationUnit.getHarmonizationResponsibles());
-		}
+        final Person unitResponsible = unitSiadapWrapper.getEvaluationResponsible();
+        request.setAttribute("unitResponsible", unitResponsible);
 
-		request.setAttribute("unitHarmonizers", unitHarmonizers);
+        final Collection<Person> unitHarmonizers = new TreeSet<Person>(Party.COMPARATOR_BY_NAME);
+        UnitSiadapWrapper harmonizationUnit =
+                new UnitSiadapWrapper(unitSiadapWrapper.getHarmonizationUnit(), configuration.getYear());
 
-		VariantBean bean = new VariantBean();
-		request.setAttribute("bean", bean);
+        if (harmonizationUnit.isValidHarmonizationUnit()) {
+            unitHarmonizers.addAll(harmonizationUnit.getHarmonizationResponsibles());
+        }
 
-		return forward(request, "/module/siadap/unitManagement/showUnit.jsp");
-	}
+        request.setAttribute("unitHarmonizers", unitHarmonizers);
+
+        VariantBean bean = new VariantBean();
+        request.setAttribute("bean", bean);
+
+        return forward(request, "/module/siadap/unitManagement/showUnit.jsp");
+    }
 
 }

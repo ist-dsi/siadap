@@ -36,27 +36,27 @@ import pt.ist.bennu.core.domain.scheduler.WriteCustomTask;
  */
 public class MigrateCompetenceTypeToSiadapEvaluationUniverse extends WriteCustomTask {
 
-	/* (non-Javadoc)
-	 * @see pt.ist.bennu.core.domain.scheduler.WriteCustomTask#doService()
-	 */
-	@Override
-	protected void doService() {
-		int relationsDone = 0;
-		int relationsNotDone = 0;
-		//let's get all of the SIADAPs
-		for (Siadap siadap : SiadapRootModule.getInstance().getSiadaps()) {
-			SiadapEvaluationUniverse defaultSiadapEvaluationUniverse = siadap.getDefaultSiadapEvaluationUniverse();
-			//let's get its CompetenceType, if it has one, let's set the relation
-			if (defaultSiadapEvaluationUniverse != null && siadap.getDefaultCompetenceType() != null) {
-				defaultSiadapEvaluationUniverse.setCompetenceSlashCareerType(siadap.getDefaultCompetenceType());
-				relationsDone++;
-			} else {
-				relationsNotDone++;
-			}
-		}
+    /* (non-Javadoc)
+     * @see pt.ist.bennu.core.domain.scheduler.WriteCustomTask#doService()
+     */
+    @Override
+    protected void doService() {
+        int relationsDone = 0;
+        int relationsNotDone = 0;
+        //let's get all of the SIADAPs
+        for (Siadap siadap : SiadapRootModule.getInstance().getSiadaps()) {
+            SiadapEvaluationUniverse defaultSiadapEvaluationUniverse = siadap.getDefaultSiadapEvaluationUniverse();
+            //let's get its CompetenceType, if it has one, let's set the relation
+            if (defaultSiadapEvaluationUniverse != null && siadap.getDefaultCompetenceType() != null) {
+                defaultSiadapEvaluationUniverse.setCompetenceSlashCareerType(siadap.getDefaultCompetenceType());
+                relationsDone++;
+            } else {
+                relationsNotDone++;
+            }
+        }
 
-		out.println("Migrated " + relationsDone + " competences and didn't migrate " + relationsNotDone);
+        out.println("Migrated " + relationsDone + " competences and didn't migrate " + relationsNotDone);
 
-	}
+    }
 
 }

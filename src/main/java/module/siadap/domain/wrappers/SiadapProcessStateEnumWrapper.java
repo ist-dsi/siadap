@@ -39,23 +39,23 @@ import module.siadap.domain.SiadapProcessStateEnum;
  */
 public class SiadapProcessStateEnumWrapper implements Serializable {
 
-	/**
-	 * Default serial version id
-	 */
-	private static final long serialVersionUID = 1L;
-	private SiadapProcessStateEnum processStateEnum;
+    /**
+     * Default serial version id
+     */
+    private static final long serialVersionUID = 1L;
+    private SiadapProcessStateEnum processStateEnum;
 
-	public SiadapProcessStateEnumWrapper(SiadapProcessStateEnum stateEnum) {
-		this.setProcessStateEnum(stateEnum);
+    public SiadapProcessStateEnumWrapper(SiadapProcessStateEnum stateEnum) {
+        this.setProcessStateEnum(stateEnum);
 
-	}
+    }
 
-	public SiadapProcessStateEnum getProcessStateEnum() {
-		return processStateEnum;
-	}
+    public SiadapProcessStateEnum getProcessStateEnum() {
+        return processStateEnum;
+    }
 
-	public void setProcessStateEnum(SiadapProcessStateEnum processStateEnum) {
-		this.processStateEnum = processStateEnum;
-	}
+    public void setProcessStateEnum(SiadapProcessStateEnum processStateEnum) {
+        this.processStateEnum = processStateEnum;
+    }
 
 }

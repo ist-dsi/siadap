@@ -51,61 +51,61 @@ import pt.ist.fenixWebFramework.struts.annotations.Mapping;
  */
 public class SiadapProcessControllerAction extends ContextBaseAction {
 
-	public ActionForward addNewIndicator(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-			HttpServletResponse response) throws Exception {
-		CreateObjectiveEvaluationActivityInformation information = getRenderedObject("activityBean");
-		information.addNewIndicator();
-		RenderUtils.invalidateViewState();
-		return ProcessManagement.performActivityPostback(information, request);
-	}
+    public ActionForward addNewIndicator(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+            HttpServletResponse response) throws Exception {
+        CreateObjectiveEvaluationActivityInformation information = getRenderedObject("activityBean");
+        information.addNewIndicator();
+        RenderUtils.invalidateViewState();
+        return ProcessManagement.performActivityPostback(information, request);
+    }
 
-	public ActionForward addNewScheduleRepresentation(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-			HttpServletResponse response) throws Exception {
-		ChangeCustomScheduleActivityInformation information = getRenderedObject("activityBean");
-		information.addCustomScheduleRepresentation();
-		RenderUtils.invalidateViewState();
-		return ProcessManagement.performActivityPostback(information, request);
-	}
+    public ActionForward addNewScheduleRepresentation(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+            HttpServletResponse response) throws Exception {
+        ChangeCustomScheduleActivityInformation information = getRenderedObject("activityBean");
+        information.addCustomScheduleRepresentation();
+        RenderUtils.invalidateViewState();
+        return ProcessManagement.performActivityPostback(information, request);
+    }
 
-	public ActionForward removeScheduleRepresentation(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-			HttpServletResponse response) throws Exception {
-		ChangeCustomScheduleActivityInformation information = getRenderedObject("activityBean");
-		Integer removeIndex = Integer.valueOf(request.getParameter("removeIndex"));
-		RenderUtils.invalidateViewState();
+    public ActionForward removeScheduleRepresentation(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+            HttpServletResponse response) throws Exception {
+        ChangeCustomScheduleActivityInformation information = getRenderedObject("activityBean");
+        Integer removeIndex = Integer.valueOf(request.getParameter("removeIndex"));
+        RenderUtils.invalidateViewState();
 
-		information.removeCustomScheduleRepresentation(removeIndex);
-		return ProcessManagement.performActivityPostback(information, request);
-	}
+        information.removeCustomScheduleRepresentation(removeIndex);
+        return ProcessManagement.performActivityPostback(information, request);
+    }
 
-	public ActionForward removeIndicator(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-			HttpServletResponse response) throws Exception {
-		CreateObjectiveEvaluationActivityInformation information = getRenderedObject("activityBean");
-		Integer removeIndex = Integer.valueOf(request.getParameter("removeIndex"));
-		RenderUtils.invalidateViewState();
+    public ActionForward removeIndicator(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+            HttpServletResponse response) throws Exception {
+        CreateObjectiveEvaluationActivityInformation information = getRenderedObject("activityBean");
+        Integer removeIndex = Integer.valueOf(request.getParameter("removeIndex"));
+        RenderUtils.invalidateViewState();
 
-		information.removeIndicator(removeIndex);
-		return ProcessManagement.performActivityPostback(information, request);
-	}
+        information.removeIndicator(removeIndex);
+        return ProcessManagement.performActivityPostback(information, request);
+    }
 
-	//    public ActionForward removeCustomSchedule(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-	//	    HttpServletResponse response) throws Exception {
-	//	SiadapProcess process = getProcess(request);
-	//	SiadapProcessSchedulesEnum processSchedulesEnum = SiadapProcessSchedulesEnum.valueOf(request.getParameter("type"));
-	//	process.removeCustomSchedule(processSchedulesEnum);
-	//	RenderUtils.invalidateViewState();
-	//
-	//	return ProcessManagement.forwardToProcess(process);
-	//    }
+    //    public ActionForward removeCustomSchedule(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+    //	    HttpServletResponse response) throws Exception {
+    //	SiadapProcess process = getProcess(request);
+    //	SiadapProcessSchedulesEnum processSchedulesEnum = SiadapProcessSchedulesEnum.valueOf(request.getParameter("type"));
+    //	process.removeCustomSchedule(processSchedulesEnum);
+    //	RenderUtils.invalidateViewState();
+    //
+    //	return ProcessManagement.forwardToProcess(process);
+    //    }
 
-	@Override
-	public Context createContext(String contextPathString, HttpServletRequest request) {
-		WorkflowProcess process = getProcess(request);
-		WorkflowLayoutContext layout = process.getLayout();
-		layout.setElements(contextPathString);
-		return layout;
-	}
+    @Override
+    public Context createContext(String contextPathString, HttpServletRequest request) {
+        WorkflowProcess process = getProcess(request);
+        WorkflowLayoutContext layout = process.getLayout();
+        layout.setElements(contextPathString);
+        return layout;
+    }
 
-	protected <T extends WorkflowProcess> T getProcess(HttpServletRequest request) {
-		return (T) getDomainObject(request, "processId");
-	}
+    protected <T extends WorkflowProcess> T getProcess(HttpServletRequest request) {
+        return (T) getDomainObject(request, "processId");
+    }
 }

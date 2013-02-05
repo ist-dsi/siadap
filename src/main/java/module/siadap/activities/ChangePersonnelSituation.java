@@ -53,46 +53,46 @@ import pt.ist.bennu.core.domain.groups.Role;
  */
 public class ChangePersonnelSituation extends WorkflowActivity<SiadapProcess, ChangePersonnelSituationActivityInformation> {
 
-	@Override
-	public boolean isActive(SiadapProcess process, User user) {
-		if (!process.isActive()) {
-			return false;
-		}
-		SiadapYearConfiguration configuration = SiadapYearConfiguration.getSiadapYearConfiguration(process.getSiadap().getYear());
-		return Role.getRole(RoleType.MANAGER).isMember(user) || configuration.isUserMemberOfStructureManagementGroup(user);
-	}
+    @Override
+    public boolean isActive(SiadapProcess process, User user) {
+        if (!process.isActive()) {
+            return false;
+        }
+        SiadapYearConfiguration configuration = SiadapYearConfiguration.getSiadapYearConfiguration(process.getSiadap().getYear());
+        return Role.getRole(RoleType.MANAGER).isMember(user) || configuration.isUserMemberOfStructureManagementGroup(user);
+    }
 
-	@Override
-	public String getUsedBundle() {
-		return Siadap.SIADAP_BUNDLE_STRING;
-	}
+    @Override
+    public String getUsedBundle() {
+        return Siadap.SIADAP_BUNDLE_STRING;
+    }
 
-	@Override
-	public boolean isUserAwarenessNeeded(SiadapProcess process) {
-		return false;
-	}
+    @Override
+    public boolean isUserAwarenessNeeded(SiadapProcess process) {
+        return false;
+    }
 
-	@Override
-	public boolean isVisible() {
-		return false;
-	}
+    @Override
+    public boolean isVisible() {
+        return false;
+    }
 
-	@Override
-	protected void process(ChangePersonnelSituationActivityInformation activityInformation) {
+    @Override
+    protected void process(ChangePersonnelSituationActivityInformation activityInformation) {
 
-		activityInformation.getBeanWrapper().execute(activityInformation.getProcess());
+        activityInformation.getBeanWrapper().execute(activityInformation.getProcess());
 
-	}
+    }
 
-	@Override
-	protected String[] getArgumentsDescription(ChangePersonnelSituationActivityInformation activityInformation) {
-		return (activityInformation.getBeanWrapper().getArgumentsDescription(activityInformation.getProcess()));
-	}
+    @Override
+    protected String[] getArgumentsDescription(ChangePersonnelSituationActivityInformation activityInformation) {
+        return (activityInformation.getBeanWrapper().getArgumentsDescription(activityInformation.getProcess()));
+    }
 
-	@Override
-	@Deprecated
-	public ActivityInformation<SiadapProcess> getActivityInformation(SiadapProcess process) {
-		throw new UnsupportedOperationException("activity.not.to.be.used.in.the.regular.way.use.AI.constructor.instead");
-	}
+    @Override
+    @Deprecated
+    public ActivityInformation<SiadapProcess> getActivityInformation(SiadapProcess process) {
+        throw new UnsupportedOperationException("activity.not.to.be.used.in.the.regular.way.use.AI.constructor.instead");
+    }
 
 }

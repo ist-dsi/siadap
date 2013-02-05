@@ -59,128 +59,128 @@ import pt.ist.bennu.core.domain.scheduler.TransactionalThread;
  */
 public class AssignInitialSiadapHarmRelation extends ReadCustomTask {
 
-	private static final LocalDate DATE_TO_USE = new LocalDate(2011, 12, 20);
-	int accApplied = 0;
+    private static final LocalDate DATE_TO_USE = new LocalDate(2011, 12, 20);
+    int accApplied = 0;
 
-	class AccountabilityAssignmentWrapper {
-		final AccountabilityType accTypeToUse;
-		final LocalDate startDate;
-		final LocalDate endDate;
-		final Unit unit;
-		final Person person;
+    class AccountabilityAssignmentWrapper {
+        final AccountabilityType accTypeToUse;
+        final LocalDate startDate;
+        final LocalDate endDate;
+        final Unit unit;
+        final Person person;
 
-		public AccountabilityAssignmentWrapper(AccountabilityType accType, LocalDate startDate, LocalDate endDate, Unit unit,
-				Person person) {
-			this.accTypeToUse = accType;
-			this.startDate = startDate;
-			this.endDate = endDate;
-			this.unit = unit;
-			this.person = person;
-		}
+        public AccountabilityAssignmentWrapper(AccountabilityType accType, LocalDate startDate, LocalDate endDate, Unit unit,
+                Person person) {
+            this.accTypeToUse = accType;
+            this.startDate = startDate;
+            this.endDate = endDate;
+            this.unit = unit;
+            this.person = person;
+        }
 
-		public void applyAcc() {
-			unit.addChild(person, accTypeToUse, startDate, endDate);
-			accApplied++;
+        public void applyAcc() {
+            unit.addChild(person, accTypeToUse, startDate, endDate);
+            accApplied++;
 
-		}
-	}
+        }
+    }
 
-	final List<AccountabilityAssignmentWrapper> accountabilitiesToApply = new ArrayList<AccountabilityAssignmentWrapper>();
+    final List<AccountabilityAssignmentWrapper> accountabilitiesToApply = new ArrayList<AccountabilityAssignmentWrapper>();
 
-	/* (non-Javadoc)
-	 * @see jvstm.TransactionalCommand#doIt()
-	 */
-	@Override
-	public void doIt() {
-		//let's infer the accountabilities to Assign
-		int totalNrSiadaps = 0;
-		int totalNrSiadapsWithoutWorkingUnit = 0;
-		int totalNrSiadapsToInfer = 0;
-		int totalNrSiadapsAlreadyInfered = 0;
-		int totalNrSiadapsSkippedDueToDifferentYear = 0;
-		for (Siadap siadap : SiadapRootModule.getInstance().getSiadaps()) {
-			++totalNrSiadaps;
-			Integer year = siadap.getYear();
-			if (year < DATE_TO_USE.getYear()) {
-				totalNrSiadapsSkippedDueToDifferentYear++;
-				continue;
-			}
-			SiadapYearConfiguration siadapYearConfiguration = SiadapYearConfiguration.getSiadapYearConfiguration(year);
-			AccountabilityType siadap2HarmonizationRelation = siadapYearConfiguration.getSiadap2HarmonizationRelation();
-			AccountabilityType siadap3HarmonizationRelation = siadapYearConfiguration.getSiadap3HarmonizationRelation();
-			if (siadap2HarmonizationRelation == null || siadap3HarmonizationRelation == null) {
-				out.println("Could not assign H. relations for SIADAPs in the year " + year
-						+ " because the relations were not configured");
-			}
+    /* (non-Javadoc)
+     * @see jvstm.TransactionalCommand#doIt()
+     */
+    @Override
+    public void doIt() {
+        //let's infer the accountabilities to Assign
+        int totalNrSiadaps = 0;
+        int totalNrSiadapsWithoutWorkingUnit = 0;
+        int totalNrSiadapsToInfer = 0;
+        int totalNrSiadapsAlreadyInfered = 0;
+        int totalNrSiadapsSkippedDueToDifferentYear = 0;
+        for (Siadap siadap : SiadapRootModule.getInstance().getSiadaps()) {
+            ++totalNrSiadaps;
+            Integer year = siadap.getYear();
+            if (year < DATE_TO_USE.getYear()) {
+                totalNrSiadapsSkippedDueToDifferentYear++;
+                continue;
+            }
+            SiadapYearConfiguration siadapYearConfiguration = SiadapYearConfiguration.getSiadapYearConfiguration(year);
+            AccountabilityType siadap2HarmonizationRelation = siadapYearConfiguration.getSiadap2HarmonizationRelation();
+            AccountabilityType siadap3HarmonizationRelation = siadapYearConfiguration.getSiadap3HarmonizationRelation();
+            if (siadap2HarmonizationRelation == null || siadap3HarmonizationRelation == null) {
+                out.println("Could not assign H. relations for SIADAPs in the year " + year
+                        + " because the relations were not configured");
+            }
 
-			SiadapEvaluationUniverse defaultSiadapEvaluationUniverse = siadap.getDefaultSiadapEvaluationUniverse();
-			if (defaultSiadapEvaluationUniverse != null && defaultSiadapEvaluationUniverse.getSiadapUniverse() != null) {
-				Person person = siadap.getEvaluated();
-				UnitSiadapWrapper workingUnit = new PersonSiadapWrapper(person, year).getWorkingUnit();
-				Unit unit = workingUnit.getUnit();
-				if (unit == null) {
-					totalNrSiadapsWithoutWorkingUnit++;
-				} else {
-					Collection<Accountability> currentAccountabilities =
-							person.getParentAccountabilities(siadap2HarmonizationRelation, siadap3HarmonizationRelation);
-					if (currentAccountabilities != null && currentAccountabilities.size() > 0) {
-						totalNrSiadapsAlreadyInfered++;
-					} else {
+            SiadapEvaluationUniverse defaultSiadapEvaluationUniverse = siadap.getDefaultSiadapEvaluationUniverse();
+            if (defaultSiadapEvaluationUniverse != null && defaultSiadapEvaluationUniverse.getSiadapUniverse() != null) {
+                Person person = siadap.getEvaluated();
+                UnitSiadapWrapper workingUnit = new PersonSiadapWrapper(person, year).getWorkingUnit();
+                Unit unit = workingUnit.getUnit();
+                if (unit == null) {
+                    totalNrSiadapsWithoutWorkingUnit++;
+                } else {
+                    Collection<Accountability> currentAccountabilities =
+                            person.getParentAccountabilities(siadap2HarmonizationRelation, siadap3HarmonizationRelation);
+                    if (currentAccountabilities != null && currentAccountabilities.size() > 0) {
+                        totalNrSiadapsAlreadyInfered++;
+                    } else {
 
-						totalNrSiadapsToInfer++;
-						//let's add this accountability
-						AccountabilityType accTypeToUse =
-								defaultSiadapEvaluationUniverse.getSiadapUniverse() == SiadapUniverse.SIADAP2 ? siadap2HarmonizationRelation : siadap3HarmonizationRelation;
-						accountabilitiesToApply.add(new AccountabilityAssignmentWrapper(accTypeToUse, DATE_TO_USE,
-								SiadapMiscUtilClass.lastDayOfYear(year), unit, person));
-					}
+                        totalNrSiadapsToInfer++;
+                        //let's add this accountability
+                        AccountabilityType accTypeToUse =
+                                defaultSiadapEvaluationUniverse.getSiadapUniverse() == SiadapUniverse.SIADAP2 ? siadap2HarmonizationRelation : siadap3HarmonizationRelation;
+                        accountabilitiesToApply.add(new AccountabilityAssignmentWrapper(accTypeToUse, DATE_TO_USE,
+                                SiadapMiscUtilClass.lastDayOfYear(year), unit, person));
+                    }
 
-				}
-			}
+                }
+            }
 
-		}
-		out.println("Nr SIADAPs: " + totalNrSiadaps + " Nr SIADAPs without working unit: " + totalNrSiadapsWithoutWorkingUnit
-				+ " Nr SIADAPs to infer: " + totalNrSiadapsToInfer + " Nr SIADAPS already infered: "
-				+ totalNrSiadapsAlreadyInfered + " going to skip " + totalNrSiadapsSkippedDueToDifferentYear
-				+ " because they are set in a past year");
+        }
+        out.println("Nr SIADAPs: " + totalNrSiadaps + " Nr SIADAPs without working unit: " + totalNrSiadapsWithoutWorkingUnit
+                + " Nr SIADAPs to infer: " + totalNrSiadapsToInfer + " Nr SIADAPS already infered: "
+                + totalNrSiadapsAlreadyInfered + " going to skip " + totalNrSiadapsSkippedDueToDifferentYear
+                + " because they are set in a past year");
 
-		//gonna apply the accs (let's try to do it all at once!)
-		ApplyAccountabilities applyAccountabilities = new ApplyAccountabilities(accountabilitiesToApply);
-		applyAccountabilities.start();
-		try {
-			applyAccountabilities.join();
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-			out.println("Error! printing status");
-			printStatus();
-			throw new Error(e);
-		}
-		printStatus();
+        //gonna apply the accs (let's try to do it all at once!)
+        ApplyAccountabilities applyAccountabilities = new ApplyAccountabilities(accountabilitiesToApply);
+        applyAccountabilities.start();
+        try {
+            applyAccountabilities.join();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+            out.println("Error! printing status");
+            printStatus();
+            throw new Error(e);
+        }
+        printStatus();
 
-	}
+    }
 
-	private void printStatus() {
-		out.println("Applied the following number of accountabilities: " + accApplied);
+    private void printStatus() {
+        out.println("Applied the following number of accountabilities: " + accApplied);
 
-	}
+    }
 
-	class ApplyAccountabilities extends TransactionalThread {
+    class ApplyAccountabilities extends TransactionalThread {
 
-		final List<AccountabilityAssignmentWrapper> accountabilitiesToApply;
+        final List<AccountabilityAssignmentWrapper> accountabilitiesToApply;
 
-		public ApplyAccountabilities(List<AccountabilityAssignmentWrapper> accountabilitiesToApply) {
-			this.accountabilitiesToApply = accountabilitiesToApply;
-		}
+        public ApplyAccountabilities(List<AccountabilityAssignmentWrapper> accountabilitiesToApply) {
+            this.accountabilitiesToApply = accountabilitiesToApply;
+        }
 
-		@Override
-		public void transactionalRun() {
-			for (AccountabilityAssignmentWrapper accWrapper : accountabilitiesToApply) {
-				accWrapper.applyAcc();
-				accApplied++;
-			}
+        @Override
+        public void transactionalRun() {
+            for (AccountabilityAssignmentWrapper accWrapper : accountabilitiesToApply) {
+                accWrapper.applyAcc();
+                accApplied++;
+            }
 
-		}
+        }
 
-	}
+    }
 
 }

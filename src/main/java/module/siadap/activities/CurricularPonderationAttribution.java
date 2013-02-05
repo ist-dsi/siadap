@@ -42,56 +42,56 @@ import pt.ist.bennu.core.domain.User;
  */
 public class CurricularPonderationAttribution extends WorkflowActivity<SiadapProcess, CurricularPonderationActivityInformation> {
 
-	@Override
-	public boolean isActive(SiadapProcess process, User user) {
-		if (!process.isActive()) {
-			return false;
-		}
-		Siadap siadap = process.getSiadap();
-		SiadapYearConfiguration siadapYearConfiguration = siadap.getSiadapYearConfiguration();
-		if (!siadapYearConfiguration.getClosedValidation() && !siadap.hasAnAssociatedCurricularPonderationEval()
-				&& siadapYearConfiguration.isCurrentUserMemberOfCCA()) {
-			return true;
-		}
-		return false;
-	}
+    @Override
+    public boolean isActive(SiadapProcess process, User user) {
+        if (!process.isActive()) {
+            return false;
+        }
+        Siadap siadap = process.getSiadap();
+        SiadapYearConfiguration siadapYearConfiguration = siadap.getSiadapYearConfiguration();
+        if (!siadapYearConfiguration.getClosedValidation() && !siadap.hasAnAssociatedCurricularPonderationEval()
+                && siadapYearConfiguration.isCurrentUserMemberOfCCA()) {
+            return true;
+        }
+        return false;
+    }
 
-	@Override
-	public boolean isUserAwarenessNeeded(SiadapProcess process) {
-		return false;
-	}
+    @Override
+    public boolean isUserAwarenessNeeded(SiadapProcess process) {
+        return false;
+    }
 
-	@Override
-	protected void process(CurricularPonderationActivityInformation activityInformation) {
-		Siadap siadap = activityInformation.getSiadap();
-		siadap.createCurricularPonderation(activityInformation.getSiadapUniverseToApply(),
-				activityInformation.getAssignedGrade(), activityInformation.getAssignExcellentGrade(),
-				activityInformation.getExcellentGradeJustification(), activityInformation.getCurricularPonderationRemarks(),
-				activityInformation.getEvaluator());
-	}
+    @Override
+    protected void process(CurricularPonderationActivityInformation activityInformation) {
+        Siadap siadap = activityInformation.getSiadap();
+        siadap.createCurricularPonderation(activityInformation.getSiadapUniverseToApply(),
+                activityInformation.getAssignedGrade(), activityInformation.getAssignExcellentGrade(),
+                activityInformation.getExcellentGradeJustification(), activityInformation.getCurricularPonderationRemarks(),
+                activityInformation.getEvaluator());
+    }
 
-	//Ponderação curricular atríbuida no universo {0} com a nota {1} ({2}) - Observações "{3}"
-	@Override
-	protected String[] getArgumentsDescription(CurricularPonderationActivityInformation activityInformation) {
-		String observations =
-				(StringUtils.isEmpty(activityInformation.getExcellentGradeJustification())) ? activityInformation
-						.getCurricularPonderationRemarks() : activityInformation.getCurricularPonderationRemarks() + " - "
-						+ activityInformation.getExcellentGradeJustification();
-		return new String[] {
-				activityInformation.getSiadapUniverseToApply().getLocalizedName(),
-				activityInformation.getAssignedGrade().toString(),
-				SiadapGlobalEvaluation.getGlobalEvaluation(activityInformation.getAssignedGrade(),
-						activityInformation.getAssignExcellentGrade().booleanValue()).getLocalizedName(), observations,
-				activityInformation.getEvaluator().getPresentationName() };
-	}
+    //Ponderação curricular atríbuida no universo {0} com a nota {1} ({2}) - Observações "{3}"
+    @Override
+    protected String[] getArgumentsDescription(CurricularPonderationActivityInformation activityInformation) {
+        String observations =
+                (StringUtils.isEmpty(activityInformation.getExcellentGradeJustification())) ? activityInformation
+                        .getCurricularPonderationRemarks() : activityInformation.getCurricularPonderationRemarks() + " - "
+                        + activityInformation.getExcellentGradeJustification();
+        return new String[] {
+                activityInformation.getSiadapUniverseToApply().getLocalizedName(),
+                activityInformation.getAssignedGrade().toString(),
+                SiadapGlobalEvaluation.getGlobalEvaluation(activityInformation.getAssignedGrade(),
+                        activityInformation.getAssignExcellentGrade().booleanValue()).getLocalizedName(), observations,
+                activityInformation.getEvaluator().getPresentationName() };
+    }
 
-	@Override
-	public ActivityInformation<SiadapProcess> getActivityInformation(SiadapProcess process) {
-		return new CurricularPonderationActivityInformation(process, this);
-	}
+    @Override
+    public ActivityInformation<SiadapProcess> getActivityInformation(SiadapProcess process) {
+        return new CurricularPonderationActivityInformation(process, this);
+    }
 
-	@Override
-	public String getUsedBundle() {
-		return Siadap.SIADAP_BUNDLE_STRING;
-	}
+    @Override
+    public String getUsedBundle() {
+        return Siadap.SIADAP_BUNDLE_STRING;
+    }
 }

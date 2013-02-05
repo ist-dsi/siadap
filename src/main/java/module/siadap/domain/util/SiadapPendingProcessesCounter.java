@@ -41,48 +41,48 @@ import pt.ist.bennu.core.domain.VirtualHost;
  */
 public class SiadapPendingProcessesCounter extends ProcessCounter {
 
-	public SiadapPendingProcessesCounter() {
-		super(SiadapProcess.class);
-	}
+    public SiadapPendingProcessesCounter() {
+        super(SiadapProcess.class);
+    }
 
-	@Override
-	public int getCount() {
-		int result = 0;
-		if (isApplicableToVirtualHost()) {
-			final User user = UserView.getCurrentUser();
-			try {
-				ArrayList<PersonSiadapWrapper> siadapWrappers =
-						SiadapRootModule.getInstance().getAssociatedSiadaps(user.getPerson(), false);
-				//let's count the ones with pending actions: - anything that the user can do
-				for (PersonSiadapWrapper personSiadapWrapper : siadapWrappers) {
-					if (!isToBeExcluded(personSiadapWrapper) && personSiadapWrapper.hasPendingActions()) {
-						result++;
-					}
-				}
-			} catch (final Throwable t) {
-				t.printStackTrace();
-				//throw new Error(t);
-			}
-		}
+    @Override
+    public int getCount() {
+        int result = 0;
+        if (isApplicableToVirtualHost()) {
+            final User user = UserView.getCurrentUser();
+            try {
+                ArrayList<PersonSiadapWrapper> siadapWrappers =
+                        SiadapRootModule.getInstance().getAssociatedSiadaps(user.getPerson(), false);
+                //let's count the ones with pending actions: - anything that the user can do
+                for (PersonSiadapWrapper personSiadapWrapper : siadapWrappers) {
+                    if (!isToBeExcluded(personSiadapWrapper) && personSiadapWrapper.hasPendingActions()) {
+                        result++;
+                    }
+                }
+            } catch (final Throwable t) {
+                t.printStackTrace();
+                //throw new Error(t);
+            }
+        }
 
-		return result;
-	}
+        return result;
+    }
 
-	private boolean isApplicableToVirtualHost() {
-		final VirtualHost virtualHost = VirtualHost.getVirtualHostForThread();
-		// HACK: this is a temporary hack because SIADAP stuff is not yet VirtualHostAware!
-		return virtualHost != null && virtualHost.getHostname().equals("dot.ist.utl.pt");
-	}
+    private boolean isApplicableToVirtualHost() {
+        final VirtualHost virtualHost = VirtualHost.getVirtualHostForThread();
+        // HACK: this is a temporary hack because SIADAP stuff is not yet VirtualHostAware!
+        return virtualHost != null && virtualHost.getHostname().equals("dot.ist.utl.pt");
+    }
 
-	/**
-	 * Method that excludes the users which aren't part of the test group
-	 * 
-	 * @param personSiadapWrapper
-	 * @return true if the process should be excluded from the count, true
-	 *         otherwise
-	 */
-	private boolean isToBeExcluded(PersonSiadapWrapper personSiadapWrapper) {
-		return personSiadapWrapper.getYear() == 2010;
-	}
+    /**
+     * Method that excludes the users which aren't part of the test group
+     * 
+     * @param personSiadapWrapper
+     * @return true if the process should be excluded from the count, true
+     *         otherwise
+     */
+    private boolean isToBeExcluded(PersonSiadapWrapper personSiadapWrapper) {
+        return personSiadapWrapper.getYear() == 2010;
+    }
 
 }

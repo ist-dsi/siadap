@@ -41,53 +41,53 @@ import pt.ist.bennu.core.domain.User;
  */
 public class CreateObjectiveEvaluation extends WorkflowActivity<SiadapProcess, CreateObjectiveEvaluationActivityInformation> {
 
-	@Override
-	public boolean isActive(SiadapProcess process, User user) {
-		Siadap siadap = process.getSiadap();
-		if (!process.isActive()) {
-			return false;
-		}
-		if (siadap.getObjectiveSpecificationInterval() == null || siadap.getEvaluator() == null) {
-			return false;
-		}
-		return siadap.getObjectiveSpecificationInterval().containsNow() && siadap.getEvaluator().getPerson().getUser() == user
-				&& siadap.getState().ordinal() <= SiadapProcessStateEnum.WAITING_EVAL_OBJ_ACK.ordinal()
-				&& (siadap.getEvaluatedOnlyByCompetences() == null || !siadap.getEvaluatedOnlyByCompetences());
-	}
+    @Override
+    public boolean isActive(SiadapProcess process, User user) {
+        Siadap siadap = process.getSiadap();
+        if (!process.isActive()) {
+            return false;
+        }
+        if (siadap.getObjectiveSpecificationInterval() == null || siadap.getEvaluator() == null) {
+            return false;
+        }
+        return siadap.getObjectiveSpecificationInterval().containsNow() && siadap.getEvaluator().getPerson().getUser() == user
+                && siadap.getState().ordinal() <= SiadapProcessStateEnum.WAITING_EVAL_OBJ_ACK.ordinal()
+                && (siadap.getEvaluatedOnlyByCompetences() == null || !siadap.getEvaluatedOnlyByCompetences());
+    }
 
-	@Override
-	protected void process(CreateObjectiveEvaluationActivityInformation activityInformation) {
-		ObjectiveEvaluation objectiveEvaluation =
-				new ObjectiveEvaluation(activityInformation.getSiadap(), activityInformation.getObjective(),
-						activityInformation.getType());
+    @Override
+    protected void process(CreateObjectiveEvaluationActivityInformation activityInformation) {
+        ObjectiveEvaluation objectiveEvaluation =
+                new ObjectiveEvaluation(activityInformation.getSiadap(), activityInformation.getObjective(),
+                        activityInformation.getType());
 
-		for (ObjectiveIndicator indicator : activityInformation.getIndicators()) {
-			objectiveEvaluation.addObjectiveIndicator(indicator.getMeasurementIndicator(), indicator.getSuperationCriteria(),
-					indicator.getBigDecimalPonderationFactor());
-		}
-	}
+        for (ObjectiveIndicator indicator : activityInformation.getIndicators()) {
+            objectiveEvaluation.addObjectiveIndicator(indicator.getMeasurementIndicator(), indicator.getSuperationCriteria(),
+                    indicator.getBigDecimalPonderationFactor());
+        }
+    }
 
-	@Override
-	protected boolean shouldLogActivity(CreateObjectiveEvaluationActivityInformation activityInformation) {
-		if (activityInformation.getProcess().getSiadap().getObjectivesAndCompetencesSealedDate() != null) {
-			return true;
-		} else {
-			return false;
-		}
-	}
+    @Override
+    protected boolean shouldLogActivity(CreateObjectiveEvaluationActivityInformation activityInformation) {
+        if (activityInformation.getProcess().getSiadap().getObjectivesAndCompetencesSealedDate() != null) {
+            return true;
+        } else {
+            return false;
+        }
+    }
 
-	@Override
-	public ActivityInformation<SiadapProcess> getActivityInformation(SiadapProcess process) {
-		return new CreateObjectiveEvaluationActivityInformation(process, this);
-	}
+    @Override
+    public ActivityInformation<SiadapProcess> getActivityInformation(SiadapProcess process) {
+        return new CreateObjectiveEvaluationActivityInformation(process, this);
+    }
 
-	@Override
-	public String getUsedBundle() {
-		return "resources/SiadapResources";
-	}
+    @Override
+    public String getUsedBundle() {
+        return "resources/SiadapResources";
+    }
 
-	@Override
-	public boolean isDefaultInputInterfaceUsed() {
-		return false;
-	}
+    @Override
+    public boolean isDefaultInputInterfaceUsed() {
+        return false;
+    }
 }

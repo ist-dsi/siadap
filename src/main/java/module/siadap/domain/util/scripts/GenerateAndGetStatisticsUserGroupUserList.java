@@ -36,22 +36,22 @@ import pt.ist.bennu.core.domain.scheduler.WriteCustomTask;
  */
 public class GenerateAndGetStatisticsUserGroupUserList extends WriteCustomTask {
 
-	@Override
-	protected void doService() {
-		SiadapRootModule siadapRootModule = SiadapRootModule.getInstance();
-		if (siadapRootModule.getStatisticsAccessUnionGroup() == null) {
-			siadapRootModule.setStatisticsAccessUnionGroup(new UnionGroup(pt.ist.bennu.core.domain.groups.Role
-					.getRole(pt.ist.bennu.core.domain.RoleType.MANAGER), siadapRootModule.getSiadapScheduleEditorsGroup(),
-					siadapRootModule.getSiadapCCAGroup(), siadapRootModule.getSiadapStructureManagementGroup()));
-		}
-		UnionGroup group = SiadapRootModule.getInstance().getStatisticsAccessUnionGroup();
-		out.println("Group name: " + group.getName());
-		out.println("List of users follows: ");
-		for (User user : group.getMembers()) {
-			out.println(user.getPerson().getName() + " (" + user.getUsername() + ")");
+    @Override
+    protected void doService() {
+        SiadapRootModule siadapRootModule = SiadapRootModule.getInstance();
+        if (siadapRootModule.getStatisticsAccessUnionGroup() == null) {
+            siadapRootModule.setStatisticsAccessUnionGroup(new UnionGroup(pt.ist.bennu.core.domain.groups.Role
+                    .getRole(pt.ist.bennu.core.domain.RoleType.MANAGER), siadapRootModule.getSiadapScheduleEditorsGroup(),
+                    siadapRootModule.getSiadapCCAGroup(), siadapRootModule.getSiadapStructureManagementGroup()));
+        }
+        UnionGroup group = SiadapRootModule.getInstance().getStatisticsAccessUnionGroup();
+        out.println("Group name: " + group.getName());
+        out.println("List of users follows: ");
+        for (User user : group.getMembers()) {
+            out.println(user.getPerson().getName() + " (" + user.getUsername() + ")");
 
-		}
+        }
 
-	}
+    }
 
 }

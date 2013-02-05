@@ -45,37 +45,37 @@ import pt.ist.fenixWebFramework.renderers.components.converters.Converter;
  */
 public class SiadapYearsFromExistingSiadapCfgPlusOne implements DataProvider {
 
-	/* (non-Javadoc)
-	 * @see pt.ist.fenixWebFramework.renderers.DataProvider#provide(java.lang.Object, java.lang.Object)
-	 */
-	@Override
-	public Object provide(Object source, Object currentValue) {
-		ArrayList<Integer> years = new ArrayList<Integer>();
-		int maximumYear = 0;
-		for (SiadapYearConfiguration siadapYearConfiguration : SiadapRootModule.getInstance().getYearConfigurations()) {
-			years.add(new Integer(siadapYearConfiguration.getYear()));
-			if (siadapYearConfiguration.getYear() > maximumYear) {
-				maximumYear = siadapYearConfiguration.getYear();
-			}
-		}
-		Integer currentYear = new Integer(new LocalDate().getYear());
-		if (!years.contains(currentYear)) {
-			years.add(currentYear);
-		}
-		Integer nextYear = new Integer(maximumYear + 1);
-		if (!years.contains(nextYear)) {
-			years.add(nextYear);
-		}
-		Collections.sort(years);
-		return years;
-	}
+    /* (non-Javadoc)
+     * @see pt.ist.fenixWebFramework.renderers.DataProvider#provide(java.lang.Object, java.lang.Object)
+     */
+    @Override
+    public Object provide(Object source, Object currentValue) {
+        ArrayList<Integer> years = new ArrayList<Integer>();
+        int maximumYear = 0;
+        for (SiadapYearConfiguration siadapYearConfiguration : SiadapRootModule.getInstance().getYearConfigurations()) {
+            years.add(new Integer(siadapYearConfiguration.getYear()));
+            if (siadapYearConfiguration.getYear() > maximumYear) {
+                maximumYear = siadapYearConfiguration.getYear();
+            }
+        }
+        Integer currentYear = new Integer(new LocalDate().getYear());
+        if (!years.contains(currentYear)) {
+            years.add(currentYear);
+        }
+        Integer nextYear = new Integer(maximumYear + 1);
+        if (!years.contains(nextYear)) {
+            years.add(nextYear);
+        }
+        Collections.sort(years);
+        return years;
+    }
 
-	/* (non-Javadoc)
-	 * @see pt.ist.fenixWebFramework.renderers.DataProvider#getConverter()
-	 */
-	@Override
-	public Converter getConverter() {
-		return null;
+    /* (non-Javadoc)
+     * @see pt.ist.fenixWebFramework.renderers.DataProvider#getConverter()
+     */
+    @Override
+    public Converter getConverter() {
+        return null;
 //		return new Converter() {
 //			
 //			@Override
@@ -85,6 +85,6 @@ public class SiadapYearsFromExistingSiadapCfgPlusOne implements DataProvider {
 //				return null;
 //			}
 //		};
-	}
+    }
 
 }

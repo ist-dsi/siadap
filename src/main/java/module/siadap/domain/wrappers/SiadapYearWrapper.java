@@ -37,26 +37,26 @@ import module.siadap.domain.SiadapYearConfiguration;
  */
 public class SiadapYearWrapper implements Serializable {
 
-	private Integer chosenYear;
+    private Integer chosenYear;
 
-	public SiadapYearWrapper(int year) {
-		chosenYear = new Integer(year);
+    public SiadapYearWrapper(int year) {
+        chosenYear = new Integer(year);
 //		for(SiadapYearConfiguration siadapYearConfiguration : SiadapRootModule.getInstance().getYearConfigurations())
 //		{
 //			if (siadapYearConfiguration.getYear() == year)
 //				{this.siadapYearConfiguration = siadapYearConfiguration;}
 //		}
-	}
+    }
 
-	public SiadapYearConfiguration getSiadapYearConfiguration() {
-		return SiadapYearConfiguration.getSiadapYearConfiguration(chosenYear);
-	}
+    public SiadapYearConfiguration getSiadapYearConfiguration() {
+        return SiadapYearConfiguration.getSiadapYearConfiguration(chosenYear);
+    }
 
-	public void setChosenYear(Integer chosenYear) {
-		this.chosenYear = chosenYear;
-	}
+    public void setChosenYear(Integer chosenYear) {
+        this.chosenYear = chosenYear;
+    }
 
-	public Integer getChosenYear() {
-		return chosenYear;
-	}
+    public Integer getChosenYear() {
+        return chosenYear;
+    }
 }

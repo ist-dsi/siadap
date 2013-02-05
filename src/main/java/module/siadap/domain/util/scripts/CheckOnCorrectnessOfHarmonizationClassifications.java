@@ -41,43 +41,43 @@ import pt.ist.bennu.core.domain.scheduler.WriteCustomTask;
  */
 public class CheckOnCorrectnessOfHarmonizationClassifications extends WriteCustomTask {
 
-	private final static int YEAR_TO_CHECK = 2011;
+    private final static int YEAR_TO_CHECK = 2011;
 
-	/* (non-Javadoc)
-	 * @see pt.ist.bennu.core.domain.scheduler.WriteCustomTask#doService()
-	 */
-	@Override
-	protected void doService() {
-		List<Siadap> siadapsWithoutGrade = new ArrayList<Siadap>();
-		int nrOfSiadaps = 0;
-		int nrOfTerminatedHarmonizationSiadaps = 0;
-		int nrOfHarmonizedWithoutGrade = 0;
-		for (Siadap siadap : SiadapRootModule.getInstance().getSiadaps()) {
-			if (siadap.getYear() == YEAR_TO_CHECK) {
-				nrOfSiadaps++;
+    /* (non-Javadoc)
+     * @see pt.ist.bennu.core.domain.scheduler.WriteCustomTask#doService()
+     */
+    @Override
+    protected void doService() {
+        List<Siadap> siadapsWithoutGrade = new ArrayList<Siadap>();
+        int nrOfSiadaps = 0;
+        int nrOfTerminatedHarmonizationSiadaps = 0;
+        int nrOfHarmonizedWithoutGrade = 0;
+        for (Siadap siadap : SiadapRootModule.getInstance().getSiadaps()) {
+            if (siadap.getYear() == YEAR_TO_CHECK) {
+                nrOfSiadaps++;
 
-				if (siadap.getDefaultSiadapEvaluationUniverse().getHarmonizationDate() != null) {
-					nrOfTerminatedHarmonizationSiadaps++;
+                if (siadap.getDefaultSiadapEvaluationUniverse().getHarmonizationDate() != null) {
+                    nrOfTerminatedHarmonizationSiadaps++;
 
-					if (siadap.getDefaultSiadapEvaluationUniverse().getHarmonizationClassification() == null) {
-						nrOfHarmonizedWithoutGrade++;
-						siadapsWithoutGrade.add(siadap);
-					}
-				}
+                    if (siadap.getDefaultSiadapEvaluationUniverse().getHarmonizationClassification() == null) {
+                        nrOfHarmonizedWithoutGrade++;
+                        siadapsWithoutGrade.add(siadap);
+                    }
+                }
 
-			}
-		}
+            }
+        }
 
-		out.println("Number of SIADAPS for the given year: " + nrOfSiadaps + " nr of terminated harm. SIADAPs: "
-				+ nrOfTerminatedHarmonizationSiadaps + " of which " + nrOfHarmonizedWithoutGrade + " are without grade");
+        out.println("Number of SIADAPS for the given year: " + nrOfSiadaps + " nr of terminated harm. SIADAPs: "
+                + nrOfTerminatedHarmonizationSiadaps + " of which " + nrOfHarmonizedWithoutGrade + " are without grade");
 
-		out.println("Siadaps wihout grade: ");
-		for (Siadap siadap : siadapsWithoutGrade) {
-			out.println(siadap.getProcess().getProcessNumber() + " with Skipped eval?: "
-					+ siadap.getDefaultSiadapEvaluationUniverse().isWithSkippedEvaluation());
-		}
-		out.println("-- END of LIST --");
+        out.println("Siadaps wihout grade: ");
+        for (Siadap siadap : siadapsWithoutGrade) {
+            out.println(siadap.getProcess().getProcessNumber() + " with Skipped eval?: "
+                    + siadap.getDefaultSiadapEvaluationUniverse().isWithSkippedEvaluation());
+        }
+        out.println("-- END of LIST --");
 
-	}
+    }
 
 }

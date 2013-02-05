@@ -37,49 +37,49 @@ import pt.ist.fenixWebFramework.renderers.components.converters.Converter;
  */
 public class SiadapStateToShowInCount implements DataProvider {
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * pt.ist.fenixWebFramework.renderers.DataProvider#provide(java.lang.Object,
-	 * java.lang.Object)
-	 */
-	@Override
-	public Object provide(Object source, Object currentValue) {
-		ArrayList<SiadapProcessStateEnum> siadapProcessStateEnumToReturn = new ArrayList<SiadapProcessStateEnum>();
-		for (SiadapProcessStateEnum stateEnum : SiadapProcessStateEnum.values()) {
-			if (stateEnum.ordinal() < getMaximumStateToShowInCount().ordinal()) {
-				siadapProcessStateEnumToReturn.add(stateEnum);
-			}
-		}
-		return siadapProcessStateEnumToReturn;
-	}
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * pt.ist.fenixWebFramework.renderers.DataProvider#provide(java.lang.Object,
+     * java.lang.Object)
+     */
+    @Override
+    public Object provide(Object source, Object currentValue) {
+        ArrayList<SiadapProcessStateEnum> siadapProcessStateEnumToReturn = new ArrayList<SiadapProcessStateEnum>();
+        for (SiadapProcessStateEnum stateEnum : SiadapProcessStateEnum.values()) {
+            if (stateEnum.ordinal() < getMaximumStateToShowInCount().ordinal()) {
+                siadapProcessStateEnumToReturn.add(stateEnum);
+            }
+        }
+        return siadapProcessStateEnumToReturn;
+    }
 
-	public static SiadapProcessStateEnum getMaximumStateToShowInCount() {
-		return SiadapProcessStateEnum.FINAL_STATE;
-	}
+    public static SiadapProcessStateEnum getMaximumStateToShowInCount() {
+        return SiadapProcessStateEnum.FINAL_STATE;
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see pt.ist.fenixWebFramework.renderers.DataProvider#getConverter()
-	 */
-	@Override
-	public Converter getConverter() {
-		return null;
-		// return new Converter() {
-		//
-		// @Override
-		// public Object convert(Class type, Object value) {
-		// if (value != null)
-		// return ((SiadapYearConfiguration) value).getYear();
-		// return null;
-		// }
-		// };
-	}
+    /*
+     * (non-Javadoc)
+     * 
+     * @see pt.ist.fenixWebFramework.renderers.DataProvider#getConverter()
+     */
+    @Override
+    public Converter getConverter() {
+        return null;
+        // return new Converter() {
+        //
+        // @Override
+        // public Object convert(Class type, Object value) {
+        // if (value != null)
+        // return ((SiadapYearConfiguration) value).getYear();
+        // return null;
+        // }
+        // };
+    }
 
-	public static SiadapProcessStateEnum getDefaultStateToFilter() {
-		return SiadapProcessStateEnum.WAITING_SELF_EVALUATION;
-	}
+    public static SiadapProcessStateEnum getDefaultStateToFilter() {
+        return SiadapProcessStateEnum.WAITING_SELF_EVALUATION;
+    }
 
 }

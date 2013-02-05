@@ -40,35 +40,35 @@ import pt.ist.bennu.core.domain.User;
  */
 public class SealObjectivesAndCompetences extends WorkflowActivity<SiadapProcess, ActivityInformation<SiadapProcess>> {
 
-	@Override
-	public boolean isActive(SiadapProcess process, User user) {
-		if (!process.isActive()) {
-			return false;
-		}
-		Siadap siadap = process.getSiadap();
-		if (siadap.getEvaluator() == null) {
-			return false;
-		}
-		return user == siadap.getEvaluator().getPerson().getUser() && siadap.getObjectiveSpecificationInterval().containsNow()
-				&& siadap.getObjectivesAndCompetencesSealedDate() == null;
-	}
+    @Override
+    public boolean isActive(SiadapProcess process, User user) {
+        if (!process.isActive()) {
+            return false;
+        }
+        Siadap siadap = process.getSiadap();
+        if (siadap.getEvaluator() == null) {
+            return false;
+        }
+        return user == siadap.getEvaluator().getPerson().getUser() && siadap.getObjectiveSpecificationInterval().containsNow()
+                && siadap.getObjectivesAndCompetencesSealedDate() == null;
+    }
 
-	@Override
-	protected void process(ActivityInformation<SiadapProcess> activityInformation) {
-		activityInformation.getProcess().getSiadap().setObjectivesAndCompetencesSealedDate(new LocalDate());
-	}
+    @Override
+    protected void process(ActivityInformation<SiadapProcess> activityInformation) {
+        activityInformation.getProcess().getSiadap().setObjectivesAndCompetencesSealedDate(new LocalDate());
+    }
 
-	protected static void revertProcess(ActivityInformation<SiadapProcess> activityInformation) {
-		activityInformation.getProcess().getSiadap().setObjectivesAndCompetencesSealedDate(null);
-	}
+    protected static void revertProcess(ActivityInformation<SiadapProcess> activityInformation) {
+        activityInformation.getProcess().getSiadap().setObjectivesAndCompetencesSealedDate(null);
+    }
 
-	@Override
-	public boolean isConfirmationNeeded(SiadapProcess process) {
-		return true;
-	}
+    @Override
+    public boolean isConfirmationNeeded(SiadapProcess process) {
+        return true;
+    }
 
-	@Override
-	public String getUsedBundle() {
-		return "resources/SiadapResources";
-	}
+    @Override
+    public String getUsedBundle() {
+        return "resources/SiadapResources";
+    }
 }

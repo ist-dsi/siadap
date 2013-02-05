@@ -42,26 +42,26 @@ import pt.ist.bennu.core.domain.User;
  */
 public class AcknowledgeEvaluationValidation extends WorkflowActivity<SiadapProcess, ActivityInformation<SiadapProcess>> {
 
-	@Override
-	public boolean isActive(SiadapProcess process, User user) {
-		Siadap siadap = process.getSiadap();
-		return siadap.getEvaluated().getUser() == user && siadap.getRequestedAcknowledegeValidationDate() != null
-				&& siadap.getAcknowledgeValidationDate() == null
-				&& siadap.getState().equals(SiadapProcessStateEnum.WAITING_VALIDATION_ACKNOWLEDGMENT_BY_EVALUATED);
-	}
+    @Override
+    public boolean isActive(SiadapProcess process, User user) {
+        Siadap siadap = process.getSiadap();
+        return siadap.getEvaluated().getUser() == user && siadap.getRequestedAcknowledegeValidationDate() != null
+                && siadap.getAcknowledgeValidationDate() == null
+                && siadap.getState().equals(SiadapProcessStateEnum.WAITING_VALIDATION_ACKNOWLEDGMENT_BY_EVALUATED);
+    }
 
-	@Override
-	protected void process(ActivityInformation<SiadapProcess> activityInformation) {
-		activityInformation.getProcess().getSiadap().setAcknowledgeValidationDate(new LocalDate());
-	}
+    @Override
+    protected void process(ActivityInformation<SiadapProcess> activityInformation) {
+        activityInformation.getProcess().getSiadap().setAcknowledgeValidationDate(new LocalDate());
+    }
 
-	@Override
-	public boolean isConfirmationNeeded(SiadapProcess process) {
-		return true;
-	}
+    @Override
+    public boolean isConfirmationNeeded(SiadapProcess process) {
+        return true;
+    }
 
-	@Override
-	public String getUsedBundle() {
-		return Siadap.SIADAP_BUNDLE_STRING;
-	}
+    @Override
+    public String getUsedBundle() {
+        return Siadap.SIADAP_BUNDLE_STRING;
+    }
 }

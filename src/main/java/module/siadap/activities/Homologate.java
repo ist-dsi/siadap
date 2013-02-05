@@ -46,71 +46,71 @@ import pt.ist.bennu.core.domain.User;
  */
 public class Homologate extends WorkflowActivity<SiadapProcess, HomologationActivityInformation> {
 
-	@Override
-	public boolean isActive(SiadapProcess process, User user) {
-		if (!process.isActive()) {
-			return false;
-		}
-		Siadap siadap = process.getSiadap();
-		return siadap.getSiadapYearConfiguration().isPersonResponsibleForHomologation(user.getPerson())
-				&& (siadap.getState().equals(SiadapProcessStateEnum.WAITING_FOR_REVIEW_COMMISSION) || siadap.getState().equals(
-						SiadapProcessStateEnum.WAITING_HOMOLOGATION));
-	}
+    @Override
+    public boolean isActive(SiadapProcess process, User user) {
+        if (!process.isActive()) {
+            return false;
+        }
+        Siadap siadap = process.getSiadap();
+        return siadap.getSiadapYearConfiguration().isPersonResponsibleForHomologation(user.getPerson())
+                && (siadap.getState().equals(SiadapProcessStateEnum.WAITING_FOR_REVIEW_COMMISSION) || siadap.getState().equals(
+                        SiadapProcessStateEnum.WAITING_HOMOLOGATION));
+    }
 
-	@Override
-	protected void process(HomologationActivityInformation activityInformation) {
-		//let's check if we should process the ChangeGrade as well
-		if (activityInformation.isShouldShowChangeGradeInterface()) {
-			//let's check to see what is there. if we have any field filled, we should have a valid grade
-			boolean shouldExecuteChangeGradeActivity = false;
-			for (GradePerUniverseBean gradePerUniverseBean : activityInformation.getChangeGradeAnytimeActivityInformation()
-					.getSiadapEvaluationUniversesBeans()) {
-				if (gradePerUniverseBean.getGradeToChangeTo() != null
-						|| !StringUtils.isBlank(gradePerUniverseBean.getJustification())
-						|| gradePerUniverseBean.isAssignExcellency()) {
-					if (!SiadapGlobalEvaluation.isValidGrade(gradePerUniverseBean.getGradeToChangeTo(),
-							gradePerUniverseBean.isAssignExcellency())) {
-						throw new SiadapException("error.ChangeGradeAnytimeAfterValidationByCCA.invalid.valid.grade.found");
-					} else if (StringUtils.isBlank(gradePerUniverseBean.getJustification())) {
-						throw new SiadapException("error.ChangeGradeAnytimeAfterValidationByCCA.no.justification.given");
-					} else {
-						shouldExecuteChangeGradeActivity = true;
-					}
-				}
-			}
+    @Override
+    protected void process(HomologationActivityInformation activityInformation) {
+        //let's check if we should process the ChangeGrade as well
+        if (activityInformation.isShouldShowChangeGradeInterface()) {
+            //let's check to see what is there. if we have any field filled, we should have a valid grade
+            boolean shouldExecuteChangeGradeActivity = false;
+            for (GradePerUniverseBean gradePerUniverseBean : activityInformation.getChangeGradeAnytimeActivityInformation()
+                    .getSiadapEvaluationUniversesBeans()) {
+                if (gradePerUniverseBean.getGradeToChangeTo() != null
+                        || !StringUtils.isBlank(gradePerUniverseBean.getJustification())
+                        || gradePerUniverseBean.isAssignExcellency()) {
+                    if (!SiadapGlobalEvaluation.isValidGrade(gradePerUniverseBean.getGradeToChangeTo(),
+                            gradePerUniverseBean.isAssignExcellency())) {
+                        throw new SiadapException("error.ChangeGradeAnytimeAfterValidationByCCA.invalid.valid.grade.found");
+                    } else if (StringUtils.isBlank(gradePerUniverseBean.getJustification())) {
+                        throw new SiadapException("error.ChangeGradeAnytimeAfterValidationByCCA.no.justification.given");
+                    } else {
+                        shouldExecuteChangeGradeActivity = true;
+                    }
+                }
+            }
 
-			if (shouldExecuteChangeGradeActivity) {
-				ChangeGradeAnytimeAfterValidationByCCA changeGradeAnytimeAfterValidationByCCA =
-						(ChangeGradeAnytimeAfterValidationByCCA) SiadapProcess
-								.getActivityStaticly(ChangeGradeAnytimeAfterValidationByCCA.class.getSimpleName());
-				changeGradeAnytimeAfterValidationByCCA.execute(activityInformation.getChangeGradeAnytimeActivityInformation());
-			}
+            if (shouldExecuteChangeGradeActivity) {
+                ChangeGradeAnytimeAfterValidationByCCA changeGradeAnytimeAfterValidationByCCA =
+                        (ChangeGradeAnytimeAfterValidationByCCA) SiadapProcess
+                                .getActivityStaticly(ChangeGradeAnytimeAfterValidationByCCA.class.getSimpleName());
+                changeGradeAnytimeAfterValidationByCCA.execute(activityInformation.getChangeGradeAnytimeActivityInformation());
+            }
 
-		}
-		//let's generate the document
-		activityInformation.getProcess().getSiadap().setHomologationDate(new LocalDate());
-		new HomologationDocumentFile(new PersonSiadapWrapper(activityInformation.getProcess().getSiadap().getEvaluated(),
-				activityInformation.getProcess().getSiadap().getYear()));
-	}
+        }
+        //let's generate the document
+        activityInformation.getProcess().getSiadap().setHomologationDate(new LocalDate());
+        new HomologationDocumentFile(new PersonSiadapWrapper(activityInformation.getProcess().getSiadap().getEvaluated(),
+                activityInformation.getProcess().getSiadap().getYear()));
+    }
 
-	@Override
-	public boolean isDefaultInputInterfaceUsed() {
-		return false;
-	}
+    @Override
+    public boolean isDefaultInputInterfaceUsed() {
+        return false;
+    }
 
-	@Override
-	public boolean isConfirmationNeeded(SiadapProcess process) {
-		return false;
-	}
+    @Override
+    public boolean isConfirmationNeeded(SiadapProcess process) {
+        return false;
+    }
 
-	@Override
-	public ActivityInformation<SiadapProcess> getActivityInformation(SiadapProcess process) {
-		return new HomologationActivityInformation(process, this);
-	}
+    @Override
+    public ActivityInformation<SiadapProcess> getActivityInformation(SiadapProcess process) {
+        return new HomologationActivityInformation(process, this);
+    }
 
-	@Override
-	public String getUsedBundle() {
-		return "resources/SiadapResources";
-	}
+    @Override
+    public String getUsedBundle() {
+        return "resources/SiadapResources";
+    }
 
 }

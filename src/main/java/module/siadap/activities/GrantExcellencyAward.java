@@ -42,62 +42,62 @@ import pt.ist.bennu.core.domain.User;
  */
 public class GrantExcellencyAward extends WorkflowActivity<SiadapProcess, ActivityInformation<SiadapProcess>> {
 
-	@Override
-	public boolean isActive(SiadapProcess process, User user) {
-		//	Siadap siadap = process.getSiadap();
-		//	return siadap.getSiadapYearConfiguration().isPersonMemberOfCCA(user.getPerson())
-		//		&& Boolean.TRUE.equals(siadap.getValidated())
-		//		&& !Boolean.TRUE.equals(siadap.getEvaluationData2().getExcellencyAward());
-		//TODO not sure if we actually need this but haven't deleted it yet
-		return false;
-	}
+    @Override
+    public boolean isActive(SiadapProcess process, User user) {
+        //	Siadap siadap = process.getSiadap();
+        //	return siadap.getSiadapYearConfiguration().isPersonMemberOfCCA(user.getPerson())
+        //		&& Boolean.TRUE.equals(siadap.getValidated())
+        //		&& !Boolean.TRUE.equals(siadap.getEvaluationData2().getExcellencyAward());
+        //TODO not sure if we actually need this but haven't deleted it yet
+        return false;
+    }
 
-	@Override
-	public boolean isUserAwarenessNeeded(SiadapProcess process) {
-		return false;
-	}
+    @Override
+    public boolean isUserAwarenessNeeded(SiadapProcess process) {
+        return false;
+    }
 
-	@Override
-	public boolean isConfirmationNeeded(SiadapProcess process) {
-		Siadap siadap = process.getSiadap();
-		int year = siadap.getSiadapYearConfiguration().getYear();
-		Person person = siadap.getEvaluated();
-		PersonSiadapWrapper wrapper = new PersonSiadapWrapper(person, year);
-		UnitSiadapWrapper workingUnit = new UnitSiadapWrapper(wrapper.getWorkingUnit().getHarmonizationUnit(), year);
-		int usedQuota = 0;
-		int totalQuota = 0;
-		SiadapUniverse defaultSiadapUniverse = siadap.getDefaultSiadapUniverse();
-		if (defaultSiadapUniverse.equals(SiadapUniverse.SIADAP2)) {
-			if (wrapper.isQuotaAware()) {
-				usedQuota = workingUnit.getNumberCurrentExcellentsSiadap2WithQuota();
-				totalQuota = workingUnit.getExcellencySiadap2WithQuotaQuota();
-			} else {
-				usedQuota = workingUnit.getNumberCurrentExcellentsSiadap2WithoutQuota();
-				totalQuota = workingUnit.getExcellencySiadap2WithoutQuotaQuota();
-			}
-		}
-		if (defaultSiadapUniverse.equals(SiadapUniverse.SIADAP3)) {
-			if (wrapper.isQuotaAware()) {
-				usedQuota = workingUnit.getNumberCurrentExcellentsSiadap3WithQuota();
-				totalQuota = workingUnit.getExcellencySiadap3WithQuotaQuota();
+    @Override
+    public boolean isConfirmationNeeded(SiadapProcess process) {
+        Siadap siadap = process.getSiadap();
+        int year = siadap.getSiadapYearConfiguration().getYear();
+        Person person = siadap.getEvaluated();
+        PersonSiadapWrapper wrapper = new PersonSiadapWrapper(person, year);
+        UnitSiadapWrapper workingUnit = new UnitSiadapWrapper(wrapper.getWorkingUnit().getHarmonizationUnit(), year);
+        int usedQuota = 0;
+        int totalQuota = 0;
+        SiadapUniverse defaultSiadapUniverse = siadap.getDefaultSiadapUniverse();
+        if (defaultSiadapUniverse.equals(SiadapUniverse.SIADAP2)) {
+            if (wrapper.isQuotaAware()) {
+                usedQuota = workingUnit.getNumberCurrentExcellentsSiadap2WithQuota();
+                totalQuota = workingUnit.getExcellencySiadap2WithQuotaQuota();
+            } else {
+                usedQuota = workingUnit.getNumberCurrentExcellentsSiadap2WithoutQuota();
+                totalQuota = workingUnit.getExcellencySiadap2WithoutQuotaQuota();
+            }
+        }
+        if (defaultSiadapUniverse.equals(SiadapUniverse.SIADAP3)) {
+            if (wrapper.isQuotaAware()) {
+                usedQuota = workingUnit.getNumberCurrentExcellentsSiadap3WithQuota();
+                totalQuota = workingUnit.getExcellencySiadap3WithQuotaQuota();
 
-			} else {
-				usedQuota = workingUnit.getNumberCurrentExcellentsSiadap3WithoutQuota();
-				totalQuota = workingUnit.getExcellencySiadap3WithoutQuotaQuota();
-			}
-		}
-		return usedQuota + 1 > totalQuota;
+            } else {
+                usedQuota = workingUnit.getNumberCurrentExcellentsSiadap3WithoutQuota();
+                totalQuota = workingUnit.getExcellencySiadap3WithoutQuotaQuota();
+            }
+        }
+        return usedQuota + 1 > totalQuota;
 
-	}
+    }
 
-	@Override
-	public String getUsedBundle() {
-		return "resources/SiadapResources";
-	}
+    @Override
+    public String getUsedBundle() {
+        return "resources/SiadapResources";
+    }
 
-	@Override
-	protected void process(ActivityInformation<SiadapProcess> activityInformation) {
-		activityInformation.getProcess().getSiadap().getEvaluationData2().setExcellencyAward(Boolean.TRUE);
-	}
+    @Override
+    protected void process(ActivityInformation<SiadapProcess> activityInformation) {
+        activityInformation.getProcess().getSiadap().getEvaluationData2().setExcellencyAward(Boolean.TRUE);
+    }
 
 }

@@ -44,32 +44,32 @@ import pt.ist.bennu.core.domain.User;
  */
 public class SendToReviewCommission extends WorkflowActivity<SiadapProcess, ActivityInformation<SiadapProcess>> {
 
-	@Override
-	public boolean isActive(SiadapProcess process, User user) {
-		if (!process.isActive()) {
-			return false;
-		}
-		int year = process.getSiadap().getYear();
-		if (SiadapRootModule.getInstance().getSiadapCCAGroup().isMember(user)
-				&& (process.getSiadap().getState().equals(SiadapProcessStateEnum.VALIDATION_ACKNOWLEDGED) || process.getSiadap()
-						.getState().equals(SiadapProcessStateEnum.WAITING_HOMOLOGATION))) {
-			return true;
-		}
-		return false;
-	}
+    @Override
+    public boolean isActive(SiadapProcess process, User user) {
+        if (!process.isActive()) {
+            return false;
+        }
+        int year = process.getSiadap().getYear();
+        if (SiadapRootModule.getInstance().getSiadapCCAGroup().isMember(user)
+                && (process.getSiadap().getState().equals(SiadapProcessStateEnum.VALIDATION_ACKNOWLEDGED) || process.getSiadap()
+                        .getState().equals(SiadapProcessStateEnum.WAITING_HOMOLOGATION))) {
+            return true;
+        }
+        return false;
+    }
 
-	@Override
-	public String getUsedBundle() {
-		return Siadap.SIADAP_BUNDLE_STRING;
-	}
+    @Override
+    public String getUsedBundle() {
+        return Siadap.SIADAP_BUNDLE_STRING;
+    }
 
-	@Override
-	public boolean isUserAwarenessNeeded(SiadapProcess process) {
-		return false;
-	}
+    @Override
+    public boolean isUserAwarenessNeeded(SiadapProcess process) {
+        return false;
+    }
 
-	@Override
-	protected void process(ActivityInformation<SiadapProcess> activityInformation) {
-		activityInformation.getProcess().getSiadap().setAssignedToReviewCommissionDate(new LocalDate());
-	}
+    @Override
+    protected void process(ActivityInformation<SiadapProcess> activityInformation) {
+        activityInformation.getProcess().getSiadap().setAssignedToReviewCommissionDate(new LocalDate());
+    }
 }

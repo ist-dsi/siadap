@@ -19,37 +19,37 @@ import pt.ist.bennu.core.domain.User;
  */
 public class RectifyNullifiedProcess extends WorkflowActivity<SiadapProcess, NullifyRatifyActivityInformation> {
 
-	@Override
-	public boolean isActive(SiadapProcess process, User user) {
-		Boolean nulled = process.getSiadap().getNulled();
-		return ((nulled != null && nulled) && (SiadapYearConfiguration.getStructureManagementGroup().isMember(
-				UserView.getCurrentUser()) || SiadapYearConfiguration.getCcaMembersGroup().isMember(UserView.getCurrentUser())));
-	}
+    @Override
+    public boolean isActive(SiadapProcess process, User user) {
+        Boolean nulled = process.getSiadap().getNulled();
+        return ((nulled != null && nulled) && (SiadapYearConfiguration.getStructureManagementGroup().isMember(
+                UserView.getCurrentUser()) || SiadapYearConfiguration.getCcaMembersGroup().isMember(UserView.getCurrentUser())));
+    }
 
-	@Override
-	protected void process(NullifyRatifyActivityInformation activityInformation) {
-		activityInformation.getProcess().getSiadap().setNulled(Boolean.FALSE);
+    @Override
+    protected void process(NullifyRatifyActivityInformation activityInformation) {
+        activityInformation.getProcess().getSiadap().setNulled(Boolean.FALSE);
 
-	}
+    }
 
-	@Override
-	protected String[] getArgumentsDescription(NullifyRatifyActivityInformation activityInformation) {
-		return new String[] { activityInformation.getJustification() };
-	}
+    @Override
+    protected String[] getArgumentsDescription(NullifyRatifyActivityInformation activityInformation) {
+        return new String[] { activityInformation.getJustification() };
+    }
 
-	@Override
-	public boolean isUserAwarenessNeeded(SiadapProcess process) {
-		return false;
-	}
+    @Override
+    public boolean isUserAwarenessNeeded(SiadapProcess process) {
+        return false;
+    }
 
-	@Override
-	public ActivityInformation<SiadapProcess> getActivityInformation(SiadapProcess process) {
-		return new NullifyRatifyActivityInformation(process, this);
-	}
+    @Override
+    public ActivityInformation<SiadapProcess> getActivityInformation(SiadapProcess process) {
+        return new NullifyRatifyActivityInformation(process, this);
+    }
 
-	@Override
-	public String getUsedBundle() {
-		return Siadap.SIADAP_BUNDLE_STRING;
-	}
+    @Override
+    public String getUsedBundle() {
+        return Siadap.SIADAP_BUNDLE_STRING;
+    }
 
 }

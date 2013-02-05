@@ -21,80 +21,80 @@ import module.workflow.domain.WorkflowProcess;
  */
 public class ChangeGradeAnytimeActivityInformation extends ActivityInformation<SiadapProcess> {
 
-	public static class GradePerUniverseBean implements Serializable {
-		/**
-		 * Default serial version
-		 */
-		private static final long serialVersionUID = 1L;
-		private BigDecimal gradeToChangeTo;
-		private boolean assignExcellency;
-		private String justification;
-		private final SiadapEvaluationUniverse siadapEvaluationUniverse;
+    public static class GradePerUniverseBean implements Serializable {
+        /**
+         * Default serial version
+         */
+        private static final long serialVersionUID = 1L;
+        private BigDecimal gradeToChangeTo;
+        private boolean assignExcellency;
+        private String justification;
+        private final SiadapEvaluationUniverse siadapEvaluationUniverse;
 
-		public GradePerUniverseBean(SiadapEvaluationUniverse evaluationUniverse) {
-			this.siadapEvaluationUniverse = evaluationUniverse;
-		}
+        public GradePerUniverseBean(SiadapEvaluationUniverse evaluationUniverse) {
+            this.siadapEvaluationUniverse = evaluationUniverse;
+        }
 
-		public boolean isAssignExcellency() {
-			return assignExcellency;
-		}
+        public boolean isAssignExcellency() {
+            return assignExcellency;
+        }
 
-		public void setAssignExcellency(boolean assignExcellency) {
-			this.assignExcellency = assignExcellency;
-		}
+        public void setAssignExcellency(boolean assignExcellency) {
+            this.assignExcellency = assignExcellency;
+        }
 
-		public BigDecimal getGradeToChangeTo() {
-			return gradeToChangeTo;
-		}
+        public BigDecimal getGradeToChangeTo() {
+            return gradeToChangeTo;
+        }
 
-		public void setGradeToChangeTo(BigDecimal gradeToChangeTo) {
-			this.gradeToChangeTo = gradeToChangeTo;
-		}
+        public void setGradeToChangeTo(BigDecimal gradeToChangeTo) {
+            this.gradeToChangeTo = gradeToChangeTo;
+        }
 
-		public SiadapEvaluationUniverse getSiadapEvaluationUniverse() {
-			return siadapEvaluationUniverse;
-		}
+        public SiadapEvaluationUniverse getSiadapEvaluationUniverse() {
+            return siadapEvaluationUniverse;
+        }
 
-		public String getJustification() {
-			return justification;
-		}
+        public String getJustification() {
+            return justification;
+        }
 
-		public void setJustification(String justification) {
-			this.justification = justification;
-		}
+        public void setJustification(String justification) {
+            this.justification = justification;
+        }
 
-	}
+    }
 
-	private List<GradePerUniverseBean> siadapEvaluationUniversesBeans = new ArrayList<GradePerUniverseBean>();
+    private List<GradePerUniverseBean> siadapEvaluationUniversesBeans = new ArrayList<GradePerUniverseBean>();
 
-	public ChangeGradeAnytimeActivityInformation(SiadapProcess process,
-			WorkflowActivity<? extends WorkflowProcess, ? extends ActivityInformation> activity) {
-		super(process, activity);
-		for (SiadapEvaluationUniverse siadapEvaluationUniverse : process.getSiadap().getSiadapEvaluationUniverses()) {
-			getSiadapEvaluationUniversesBeans().add(new GradePerUniverseBean(siadapEvaluationUniverse));
-		}
-	}
+    public ChangeGradeAnytimeActivityInformation(SiadapProcess process,
+            WorkflowActivity<? extends WorkflowProcess, ? extends ActivityInformation> activity) {
+        super(process, activity);
+        for (SiadapEvaluationUniverse siadapEvaluationUniverse : process.getSiadap().getSiadapEvaluationUniverses()) {
+            getSiadapEvaluationUniversesBeans().add(new GradePerUniverseBean(siadapEvaluationUniverse));
+        }
+    }
 
-	public List<GradePerUniverseBean> getSiadapEvaluationUniversesBeans() {
-		return siadapEvaluationUniversesBeans;
-	}
+    public List<GradePerUniverseBean> getSiadapEvaluationUniversesBeans() {
+        return siadapEvaluationUniversesBeans;
+    }
 
-	public void setSiadapEvaluationUniversesBeans(List<GradePerUniverseBean> siadapEvaluationUniversesBeans) {
-		this.siadapEvaluationUniversesBeans = siadapEvaluationUniversesBeans;
-	}
+    public void setSiadapEvaluationUniversesBeans(List<GradePerUniverseBean> siadapEvaluationUniversesBeans) {
+        this.siadapEvaluationUniversesBeans = siadapEvaluationUniversesBeans;
+    }
 
-	/**
-	 * @return true if there is at least one non null and valid grade and the
-	 *         other is null or valid
-	 */
-	@Override
-	public boolean hasAllneededInfo() {
-		return isForwardedFromInput();
-	}
+    /**
+     * @return true if there is at least one non null and valid grade and the
+     *         other is null or valid
+     */
+    @Override
+    public boolean hasAllneededInfo() {
+        return isForwardedFromInput();
+    }
 
-	/**
-	 * Default Serial
-	 */
-	private static final long serialVersionUID = 1L;
+    /**
+     * Default Serial
+     */
+    private static final long serialVersionUID = 1L;
 
 }

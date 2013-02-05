@@ -36,22 +36,22 @@ import module.workflow.domain.WorkflowProcess;
  */
 public class RemoveObjectiveEvaluationActivityInformation extends EditObjectiveEvaluationActivityInformation {
 
-	public RemoveObjectiveEvaluationActivityInformation(SiadapProcess process,
-			WorkflowActivity<? extends WorkflowProcess, ? extends ActivityInformation> activity) {
-		super(process, activity);
-	}
+    public RemoveObjectiveEvaluationActivityInformation(SiadapProcess process,
+            WorkflowActivity<? extends WorkflowProcess, ? extends ActivityInformation> activity) {
+        super(process, activity);
+    }
 
-	@Override
-	public boolean hasAllneededInfo() {
-		if (getEvaluation() != null) {
-			return true;
-		}
-		return false;
-	}
+    @Override
+    public boolean hasAllneededInfo() {
+        if (getEvaluation() != null) {
+            return true;
+        }
+        return false;
+    }
 
-	/**
+    /**
      * 
      */
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
 }

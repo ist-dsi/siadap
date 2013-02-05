@@ -34,6 +34,6 @@ import java.math.BigDecimal;
  */
 public interface IScoring {
 
-	public BigDecimal getPoints();
+    public BigDecimal getPoints();
 
 }
