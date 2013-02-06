@@ -400,7 +400,7 @@ boolean hasPeopleToHarmonize = ((peopleWithoutQuotasSIADAP2.getSiadapUniverse() 
 			});
 		
 		//give a visual clue to the ones with skipped eval
-		$("td").each(function(indexInArray, td) { if ($(td).text().trim() == "não avaliado") $(td).parent("tr").addClass("disabled"); }); 
+		$("td").each(function(indexInArray, td) { if ($(td).text().trim() == "não avaliado" || $(td).text().trim() == "Processo anulado") $(td).parent("tr").addClass("disabled"); }); 
 		
 		$("input[type=radio]").change(function () {
 			/* if ($(this).next().text().trim() == "Sim")

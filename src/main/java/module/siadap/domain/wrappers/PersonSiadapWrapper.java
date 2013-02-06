@@ -345,7 +345,8 @@ public class PersonSiadapWrapper extends PartyWrapper implements Serializable {
         if (getSiadap() == null || getSiadap().getSiadapEvaluationUniverseForSiadapUniverse(siadapUniverse) == null) {
             return false;
         }
-        return getSiadap().getSiadapEvaluationUniverseForSiadapUniverse(siadapUniverse).isWithSkippedEvaluation();
+        return getSiadap().getSiadapEvaluationUniverseForSiadapUniverse(siadapUniverse).isWithSkippedEvaluation()
+                || (getSiadap().getNulled() != null && getSiadap().getNulled());
     }
 
     public boolean getWithoutExcellencyAwardForSiadap2() {
