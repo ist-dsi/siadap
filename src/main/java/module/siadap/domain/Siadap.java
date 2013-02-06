@@ -30,6 +30,8 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
+import javax.annotation.Nullable;
+
 import jvstm.cps.ConsistencyPredicate;
 import module.organization.domain.Accountability;
 import module.organization.domain.AccountabilityType;
@@ -52,6 +54,10 @@ import org.joda.time.LocalDate;
 
 import pt.ist.fenixWebFramework.services.Service;
 
+import com.google.common.collect.Iterators;
+
+import dml.runtime.RelationAdapter;
+
 /**
  * 
  * @author João Antunes
@@ -60,6 +66,42 @@ import pt.ist.fenixWebFramework.services.Service;
  * 
  */
 public class Siadap extends Siadap_Base {
+
+    public static class SiadapSiadapYearConfigurationListener extends RelationAdapter<Siadap, SiadapYearConfiguration> {
+        @Override
+        public void afterAdd(Siadap siadap, SiadapYearConfiguration configuration) {
+            if (configuration == null) //then we are not adding, we are removing
+                return;
+            if (siadap.CheckOnlyOneSiadapForEachYear() == false)
+                throw new SiadapException("error.user.with.proccess.already.created");
+        }
+
+    }
+    
+    static {
+        Siadap.SiadapYearConfigurationSiadap.addListener(new SiadapSiadapYearConfigurationListener());
+    }
+
+    //@ConsistencyPredicate - in the future
+    protected boolean CheckOnlyOneSiadapForEachYear() {
+        final Person evaluated = getEvaluated();
+        final Integer year = getYear();
+        SiadapYearConfiguration siadapYearConfiguration = SiadapYearConfiguration.getSiadapYearConfiguration(year);
+        final Siadap siadap = this;
+        return !Iterators.any(siadapYearConfiguration.getSiadaps().iterator(), new com.google.common.base.Predicate<Siadap>() {
+
+            @Override
+            public boolean apply(@Nullable Siadap input) {
+                //any siadap for this person already
+                if (input == null || input == siadap)
+                    return false;
+                if (input.getEvaluated().equals(evaluated) && input.getYear().equals(year))
+                    return true;
+                return false;
+
+            }
+        });
+    }
 
     public static final String SIADAP_BUNDLE_STRING = "resources/SiadapResources";
 
@@ -71,15 +113,12 @@ public class Siadap extends Siadap_Base {
 
                     int presentationNameComparison = 0;
                     if (o1 == null || o2 == null) {
-                        if (o2 == null && o1 == null) {
+                        if (o2 == null && o1 == null)
                             return 0;
-                        }
-                        if (o2 == null) {
+                        if (o2 == null)
                             return 1;
-                        }
-                        if (o1 == null) {
+                        if (o1 == null)
                             return -1;
-                        }
                     }
                     if (o1.getEvaluated() != null && o2.getEvaluated() != null) {
                         presentationNameComparison =
@@ -126,56 +165,51 @@ public class Siadap extends Siadap_Base {
     }
 
     public SiadapProcessStateEnum getState() {
-        if (getNulled() == Boolean.TRUE) {
+        if (getNulled() == Boolean.TRUE)
             return SiadapProcessStateEnum.NULLED;
-        } else if (isWithSkippedEvaluation()) {
+        else if (isWithSkippedEvaluation())
             return SiadapProcessStateEnum.EVALUATION_NOT_GOING_TO_BE_DONE;
-        } else if (!isWithObjectivesFilled()) {
+        else if (!isWithObjectivesFilled())
             return SiadapProcessStateEnum.INCOMPLETE_OBJ_OR_COMP;
-        } else if (!hasSealedObjectivesAndCompetences()) {
+        else if (!hasSealedObjectivesAndCompetences())
             return SiadapProcessStateEnum.NOT_SEALED;
-        } else if (getRequestedAcknowledgeDate() == null) {
+        else if (getRequestedAcknowledgeDate() == null)
             return SiadapProcessStateEnum.NOT_YET_SUBMITTED_FOR_ACK;
-        } else if (!isEvaluatedWithKnowledgeOfObjectives()) {
+        else if (!isEvaluatedWithKnowledgeOfObjectives())
             return SiadapProcessStateEnum.WAITING_EVAL_OBJ_ACK;
-        } else if (!isAutoEvaliationDone() && !isDefaultEvaluationDone()) {
+        else if (!isAutoEvaliationDone() && !isDefaultEvaluationDone())
             return SiadapProcessStateEnum.WAITING_SELF_EVALUATION;
-        } else if (!isDefaultEvaluationDone()) {
+        else if (!isDefaultEvaluationDone())
             return SiadapProcessStateEnum.NOT_YET_EVALUATED;
-        } else if (getHarmonizationDate() == null) {
+        else if (getHarmonizationDate() == null)
             return SiadapProcessStateEnum.WAITING_HARMONIZATION;
-        } else if (getValidationDateOfDefaultEvaluation() == null) {
+        else if (getValidationDateOfDefaultEvaluation() == null)
             return SiadapProcessStateEnum.WAITING_VALIDATION;
-        } else if (getRequestedAcknowledegeValidationDate() == null && !getForcedReadinessToHomologation()) {
+        else if (getRequestedAcknowledegeValidationDate() == null && !getForcedReadinessToHomologation())
             return SiadapProcessStateEnum.WAITING_SUBMITTAL_BY_EVALUATOR_AFTER_VALIDATION;
-        } else if (getAcknowledgeValidationDate() == null && !getForcedReadinessToHomologation()) {
+        else if (getAcknowledgeValidationDate() == null && !getForcedReadinessToHomologation())
             return SiadapProcessStateEnum.WAITING_VALIDATION_ACKNOWLEDGMENT_BY_EVALUATED;
-        } else if (getHomologationDate() == null) {
+        else if (getHomologationDate() == null) {
             if (getAssignedToReviewCommissionDate() == null) {
-                if (isDuringReviewCommissionWaitingPeriod()) {
+                if (isDuringReviewCommissionWaitingPeriod())
                     return SiadapProcessStateEnum.VALIDATION_ACKNOWLEDGED;
-                } else {
+                else
                     return SiadapProcessStateEnum.WAITING_HOMOLOGATION;
-                }
-            } else {
+            } else
                 return SiadapProcessStateEnum.WAITING_FOR_REVIEW_COMMISSION;
-            }
-        } else if (getAcknowledgeHomologationDate() == null) {
+        } else if (getAcknowledgeHomologationDate() == null)
             return SiadapProcessStateEnum.HOMOLOGATED;
-        } else if (getAcknowledgeHomologationDate() != null) {
+        else if (getAcknowledgeHomologationDate() != null)
             return SiadapProcessStateEnum.FINAL_STATE;
-        }
         return SiadapProcessStateEnum.UNIMPLEMENTED_STATE;
     }
 
     private boolean isDuringReviewCommissionWaitingPeriod() {
-        if (getAcknowledgeValidationDate() == null) {
+        if (getAcknowledgeValidationDate() == null)
             return false;
-        }
 
-        if (getForcedReadinessToHomologation()) {
+        if (getForcedReadinessToHomologation())
             return false;
-        }
 
         LocalDate limitDate =
                 getAcknowledgeValidationDate().plusDays(getSiadapYearConfiguration().getReviewCommissionWaitingPeriod());
@@ -208,9 +242,8 @@ public class Siadap extends Siadap_Base {
 
     public SiadapUniverse getDefaultSiadapUniverse() {
         SiadapEvaluationUniverse defaultSiadapEvaluationUniverse = getDefaultSiadapEvaluationUniverse();
-        if (defaultSiadapEvaluationUniverse == null) {
+        if (defaultSiadapEvaluationUniverse == null)
             return null;
-        }
         return defaultSiadapEvaluationUniverse.getSiadapUniverse();
 
     }
@@ -226,9 +259,8 @@ public class Siadap extends Siadap_Base {
     public SiadapEvaluationUniverse getDefaultSiadapEvaluationUniverse() {
         for (SiadapEvaluationUniverse evaluationUniverse : getSiadapEvaluationUniverses()) {
             final Boolean defaultEvaluationUniverse = evaluationUniverse.getDefaultEvaluationUniverse();
-            if (defaultEvaluationUniverse != null && defaultEvaluationUniverse.booleanValue()) {
+            if (defaultEvaluationUniverse != null && defaultEvaluationUniverse.booleanValue())
                 return evaluationUniverse;
-            }
         }
         return null;
     }
@@ -251,9 +283,8 @@ public class Siadap extends Siadap_Base {
 
     public LocalDate getValidationDateOfDefaultEvaluation() {
         SiadapEvaluationUniverse defaultSiadapEvaluationUniverse = getDefaultSiadapEvaluationUniverse();
-        if (defaultSiadapEvaluationUniverse == null) {
+        if (defaultSiadapEvaluationUniverse == null)
             return null;
-        }
         return defaultSiadapEvaluationUniverse.getValidationDate();
     }
 
@@ -334,13 +365,11 @@ public class Siadap extends Siadap_Base {
     }
 
     public boolean isEvaluatedWithKnowledgeOfObjectives() {
-        if (getCurrentEvaluationItems() == null || getCurrentEvaluationItems().isEmpty()) {
+        if (getCurrentEvaluationItems() == null || getCurrentEvaluationItems().isEmpty())
             return false;
-        }
         for (SiadapEvaluationItem item : getCurrentEvaluationItems()) {
-            if (item.getAcknowledgeDate() == null) {
+            if (item.getAcknowledgeDate() == null)
                 return false;
-            }
         }
         return true;
     }
@@ -362,14 +391,12 @@ public class Siadap extends Siadap_Base {
     }
 
     public boolean hasAnyCompetencesSet() {
-        if (!getDefaultSiadapEvaluationUniverse().hasAnySiadapEvaluationItems()) {
+        if (!getDefaultSiadapEvaluationUniverse().hasAnySiadapEvaluationItems())
             return false;
-        }
         ArrayList<SiadapEvaluationItem> evaluationItems = new ArrayList<SiadapEvaluationItem>(getSiadapEvaluationItems2());
         for (SiadapEvaluationItem siadapEvaluationItem : evaluationItems) {
-            if (siadapEvaluationItem instanceof CompetenceEvaluation) {
+            if (siadapEvaluationItem instanceof CompetenceEvaluation)
                 return true;
-            }
         }
         return false;
     }
@@ -381,9 +408,8 @@ public class Siadap extends Siadap_Base {
      * @author João André Pereira Antunes (joao.antunes@tagus.ist.utl.pt)
      */
     public CompetenceType getDefaultCompetenceType() {
-        if (getDefaultSiadapEvaluationUniverse() == null) {
+        if (getDefaultSiadapEvaluationUniverse() == null)
             return null;
-        }
         return getDefaultSiadapEvaluationUniverse().getCompetenceSlashCareerType();
     }
 
@@ -394,20 +420,17 @@ public class Siadap extends Siadap_Base {
         if (siadapUniverse == null || assignedExcellency == null || evaluator == null
                 || !SiadapGlobalEvaluation.isValidGrade(gradeToAssign, assignedExcellency.booleanValue())
                 || (assignedExcellency.booleanValue() && StringUtils.isEmpty(excellencyAwardJustification))
-                || StringUtils.isEmpty(curricularPonderationJustification)) {
+                || StringUtils.isEmpty(curricularPonderationJustification))
             throw new SiadapException("invalid.data.for.creation.of.a.curricular.ponderation");
-        }
 
         // let's if we don't have an evaluation for the given universe
-        if (getSiadapEvaluationUniverseForSiadapUniverse(siadapUniverse) != null) {
+        if (getSiadapEvaluationUniverseForSiadapUniverse(siadapUniverse) != null)
             throw new SiadapException("error.curricular.ponderation.cannot.have.more.than.one.eval.for.universe");
-        }
 
         SiadapYearConfiguration siadapYearConfiguration = getSiadapYearConfiguration();
         Unit siadapSpecialHarmonizationUnit = siadapYearConfiguration.getSiadapSpecialHarmonizationUnit();
-        if (siadapSpecialHarmonizationUnit == null) {
+        if (siadapSpecialHarmonizationUnit == null)
             throw new SiadapException("error.must.configure.special.harmonnization.unit.first");
-        }
 
         AccountabilityType accTypeToReplace = null;
         if (siadapUniverse.equals(SiadapUniverse.SIADAP2)) {
@@ -416,9 +439,8 @@ public class Siadap extends Siadap_Base {
             accTypeToReplace = siadapYearConfiguration.getSiadap3HarmonizationRelation();
         }
 
-        if (accTypeToReplace == null) {
+        if (accTypeToReplace == null)
             throw new SiadapException("error.must.configure.SIADAP.2.and.3.harm.relation.types.first");
-        }
         // let's create the new SiadapEvaluationUniverse
         SiadapEvaluationUniverse siadapEvaluationUniverse = new SiadapEvaluationUniverse(this, siadapUniverse, null, false);
         CurricularPonderationEvaluationItem curricularPonderationEvaluationItem =
@@ -467,9 +489,8 @@ public class Siadap extends Siadap_Base {
      */
     public ArrayList<Competence> getCompetences() {
         ArrayList<Competence> arrayCompetences = new ArrayList<Competence>();
-        if (!hasAnySiadapEvaluationItems2()) {
+        if (!hasAnySiadapEvaluationItems2())
             return arrayCompetences;
-        }
         ArrayList<SiadapEvaluationItem> evaluationItems = new ArrayList<SiadapEvaluationItem>(getSiadapEvaluationItems2());
         for (SiadapEvaluationItem siadapEvaluationItem : evaluationItems) {
             if (siadapEvaluationItem instanceof CompetenceEvaluation) {
@@ -481,16 +502,14 @@ public class Siadap extends Siadap_Base {
 
     public boolean hasAnySiadapEvaluationItems2() {
         List<SiadapEvaluationItem> siadapEvaluationItems = getSiadapEvaluationItems2();
-        if (siadapEvaluationItems != null && siadapEvaluationItems.size() > 0) {
+        if (siadapEvaluationItems != null && siadapEvaluationItems.size() > 0)
             return true;
-        }
         return false;
     }
 
     public boolean hasSealedObjectivesAndCompetences() {
-        if (getObjectivesAndCompetencesSealedDate() == null) {
+        if (getObjectivesAndCompetencesSealedDate() == null)
             return false;
-        }
         return true;
     }
 
@@ -538,9 +557,8 @@ public class Siadap extends Siadap_Base {
 
     public boolean hasCompleteValidationAssessment(SiadapUniverse siadapUniverse) {
         SiadapEvaluationUniverse siadapEvaluationUniverse = getSiadapEvaluationUniverseForSiadapUniverse(siadapUniverse);
-        if (siadapEvaluationUniverse == null) {
+        if (siadapEvaluationUniverse == null)
             return false;
-        }
         return siadapEvaluationUniverse.hasCompleteValidationAssessment();
     }
 
@@ -551,9 +569,8 @@ public class Siadap extends Siadap_Base {
     public SiadapEvaluationUniverse getSiadapEvaluationUniverseForSiadapUniverse(SiadapUniverse siadapUniverse) {
         for (SiadapEvaluationUniverse siadapEvaluationUniverse : getSiadapEvaluationUniverses()) {
             if (siadapEvaluationUniverse.getSiadapUniverse() != null
-                    && siadapEvaluationUniverse.getSiadapUniverse().equals(siadapUniverse)) {
+                    && siadapEvaluationUniverse.getSiadapUniverse().equals(siadapUniverse))
                 return siadapEvaluationUniverse;
-            }
         }
         return null;
     }
@@ -602,23 +619,20 @@ public class Siadap extends Siadap_Base {
         SiadapEvaluationUniverse siadapEvaluationUniverseForSiadapUniverse =
                 getSiadapEvaluationUniverseForSiadapUniverse(siadapUniverseToConsider);
         if (siadapEvaluationUniverseForSiadapUniverse == null
-                && siadapGlobalEvaluation.equals(SiadapGlobalEvaluation.NONEXISTING)) {
+                && siadapGlobalEvaluation.equals(SiadapGlobalEvaluation.NONEXISTING))
             return true;
-        }
-        if (siadapEvaluationUniverseForSiadapUniverse == null) {
+        if (siadapEvaluationUniverseForSiadapUniverse == null)
             return false;
-        }
 
         // if we are on the default evaluation universe, we should check if this
         // one is finished or not
         if (siadapEvaluationUniverseForSiadapUniverse.getDefaultEvaluationUniverse() && !isDefaultEvaluationDone())
 
         {
-            if (siadapGlobalEvaluation.equals(SiadapGlobalEvaluation.NONEXISTING)) {
+            if (siadapGlobalEvaluation.equals(SiadapGlobalEvaluation.NONEXISTING))
                 return true;
-            } else {
+            else
                 return false;
-            }
         }
         BigDecimal gradeToUse = null;
         boolean excellencyAward = false;
@@ -649,9 +663,8 @@ public class Siadap extends Siadap_Base {
     // }
 
     public boolean hasExcellencyAward() {
-        if (getEvaluationData2() == null || getEvaluationData2().getExcellencyAward() == null) {
+        if (getEvaluationData2() == null || getEvaluationData2().getExcellencyAward() == null)
             return false;
-        }
         return getEvaluationData2().getExcellencyAward();
     }
 
@@ -744,9 +757,8 @@ public class Siadap extends Siadap_Base {
         SiadapYearConfiguration configuration = getSiadapYearConfiguration();
         LocalDate begin = configuration.getAutoEvaluationBegin();
         LocalDate end = configuration.getAutoEvaluationEnd();
-        if (end == null || begin == null) {
+        if (end == null || begin == null)
             return false;
-        }
         return true;
     }
 
@@ -756,9 +768,8 @@ public class Siadap extends Siadap_Base {
         SiadapYearConfiguration configuration = getSiadapYearConfiguration();
         LocalDate begin = configuration.getEvaluationBegin();
         LocalDate end = configuration.getEvaluationEnd();
-        if (end == null || begin == null) {
+        if (end == null || begin == null)
             return false;
-        }
         return true;
     }
 
@@ -767,32 +778,28 @@ public class Siadap extends Siadap_Base {
         SiadapYearConfiguration configuration = getSiadapYearConfiguration();
         LocalDate begin = configuration.getObjectiveSpecificationBegin();
         LocalDate end = configuration.getObjectiveSpecificationEnd();
-        if (end == null || begin == null) {
+        if (end == null || begin == null)
             return false;
-        }
         return true;
     }
 
     public boolean isAutoEvaluationIntervalFinished() {
         // TODO change this appropriately when Issue #31 is resolved
-        if (!isAutoEvaluationScheduleDefined()) {
+        if (!isAutoEvaluationScheduleDefined())
             return false;
-        }
         return getAutoEvaluationInterval().isBeforeNow();
     }
 
     public boolean isEvaluationIntervalFinished() {
-        if (!isEvaluationScheduleDefined()) {
+        if (!isEvaluationScheduleDefined())
             return false;
-        }
         // TODO change this appropriately when Issue #31 is resolved
         return getEvaluationInterval().isBeforeNow();
     }
 
     public boolean isObjectiveSpecificationIntervalFinished() {
-        if (!isObjectiveSpecificationScheduleDefined()) {
+        if (!isObjectiveSpecificationScheduleDefined())
             return false;
-        }
         // TODO change this appropriately when Issue #31 is resolved
         return getObjectiveSpecificationInterval().isBeforeNow();
     }
@@ -806,9 +813,8 @@ public class Siadap extends Siadap_Base {
 
     public boolean hasAnAssociatedCurricularPonderationEval() {
         for (SiadapEvaluationUniverse evaluationUniverse : getSiadapEvaluationUniverses()) {
-            if (evaluationUniverse.isCurriculumPonderation()) {
+            if (evaluationUniverse.isCurriculumPonderation())
                 return true;
-            }
         }
         return false;
     }
@@ -820,17 +826,15 @@ public class Siadap extends Siadap_Base {
         SiadapEvaluationUniverse evaluationUniverse = getSiadapEvaluationUniverseForSiadapUniverse(siadapUniverse);
         if ((evaluationUniverse.getHarmonizationAssessment() == null && !evaluationUniverse.isWithSkippedEvaluation())
                 || (evaluationUniverse.hasExcellencyAwardedFromEvaluator() && evaluationUniverse
-                        .getHarmonizationAssessmentForExcellencyAward() == null)) {
+                        .getHarmonizationAssessmentForExcellencyAward() == null))
             throw new SiadapException("harmonization.error.there.are.people.not.harmonized");
-        }
         // let's also make sure that this person either has been marked as not
         // having an evaluation or has the evaluation done
         if (!isEvaluationDone(siadapUniverse)) {
             if (evaluationUniverse.getDefaultEvaluationUniverse() && isWithSkippedEvaluation()) {
                 // do nothing :)
-            } else {
+            } else
                 throw new SiadapException("error.harmonization.can't.harmonize.with.users.without.grade");
-            }
         }
 
         // let's also make sure there's consistency between the excellency
@@ -840,9 +844,8 @@ public class Siadap extends Siadap_Base {
         if (evaluationUniverse.getHarmonizationAssessment() != null
                 && evaluationUniverse.getHarmonizationAssessmentForExcellencyAward() != null
                 && evaluationUniverse.getHarmonizationAssessmentForExcellencyAward() == true
-                && evaluationUniverse.getHarmonizationAssessment() == false) {
+                && evaluationUniverse.getHarmonizationAssessment() == false)
             throw new SiadapException("error.harmonization.inconsistency.between.excellency.and.regular.assessment");
-        }
         evaluationUniverse.setHarmonizationDate(harmonizationDate);
         getProcess().markAsHarmonized(evaluationUniverse);
     }
@@ -862,28 +865,25 @@ public class Siadap extends Siadap_Base {
     }
 
     public SiadapEvaluation getEvaluationData2() {
-        if (getDefaultSiadapEvaluationUniverse() == null) {
+        if (getDefaultSiadapEvaluationUniverse() == null)
             return null;
-        }
         return getDefaultSiadapEvaluationUniverse().getSiadapEvaluation();
     }
 
     public boolean hasAllEvaluationItemsValid() {
         for (SiadapEvaluationUniverse evaluationUniverse : getSiadapEvaluationUniverses()) {
             for (ObjectiveEvaluation objectiveEvaluation : evaluationUniverse.getObjectiveEvaluations()) {
-                if (!objectiveEvaluation.isValid()) {
+                if (!objectiveEvaluation.isValid())
                     return false;
-                }
             }
         }
         return true;
     }
 
     public boolean isHarmonizationOfDefaultUniverseDone() {
-        if (getDefaultSiadapEvaluationUniverse() != null) {
+        if (getDefaultSiadapEvaluationUniverse() != null)
             return getDefaultSiadapEvaluationUniverse().getHarmonizationDate() != null
                     && getDefaultSiadapEvaluationUniverse().getHarmonizationAssessment() != null;
-        }
         return false;
     }
 
@@ -905,9 +905,8 @@ public class Siadap extends Siadap_Base {
         SiadapEvaluationUniverse defaultSiadapEvaluationUniverse = getDefaultSiadapEvaluationUniverse();
         if ((getEvaluatedOnlyByCompetences() != null && getEvaluatedOnlyByCompetences())
                 && defaultSiadapEvaluationUniverse.getObjectiveEvaluations() != null
-                && defaultSiadapEvaluationUniverse.getObjectiveEvaluations().size() != 0) {
+                && defaultSiadapEvaluationUniverse.getObjectiveEvaluations().size() != 0)
             return false;
-        }
         return true;
     }
 
@@ -938,9 +937,8 @@ public class Siadap extends Siadap_Base {
             SiadapEvaluation siadapEvaluation = evaluationUniverse.getSiadapEvaluation();
             SiadapAutoEvaluation siadapAutoEvaluation = evaluationUniverse.getSiadapAutoEvaluation();
             if (siadapEvaluation != null || siadapAutoEvaluation != null) {
-                if (foundOneSet) {
+                if (foundOneSet)
                     return false;
-                }
                 foundOneSet = true;
             }
         }
@@ -949,27 +947,24 @@ public class Siadap extends Siadap_Base {
 
     public boolean hasAnySiadapEvaluationItemsInAnyUniverse() {
         for (SiadapEvaluationUniverse siadapEvalUniverse : getSiadapEvaluationUniverses()) {
-            if (!siadapEvalUniverse.getSiadapEvaluationItems().isEmpty()) {
+            if (!siadapEvalUniverse.getSiadapEvaluationItems().isEmpty())
                 return true;
-            }
         }
         return false;
     }
 
     public List<SiadapEvaluationItem> getSiadapEvaluationItems2() {
         List<SiadapEvaluationItem> siadapEvaluationItems = getDefaultSiadapEvaluationUniverse().getSiadapEvaluationItems();
-        if (siadapEvaluationItems != null && siadapEvaluationItems.size() > 0) {
+        if (siadapEvaluationItems != null && siadapEvaluationItems.size() > 0)
             return siadapEvaluationItems;
-        }
         return Collections.EMPTY_LIST;
     }
 
     public SiadapAutoEvaluation getAutoEvaluationData2() {
         for (SiadapEvaluationUniverse evaluationUniverse : getSiadapEvaluationUniverses()) {
             SiadapAutoEvaluation siadapAutoEvaluation = evaluationUniverse.getSiadapAutoEvaluation();
-            if (siadapAutoEvaluation != null) {
+            if (siadapAutoEvaluation != null)
                 return siadapAutoEvaluation;
-            }
         }
         return null;
     }
@@ -978,9 +973,8 @@ public class Siadap extends Siadap_Base {
         // if we have another one, we should throw an exception
         if (getSiadapEvaluationUniverseForSiadapUniverse(siadapUniverseToChangeTo) != null
                 && !getSiadapEvaluationUniverseForSiadapUniverse(siadapUniverseToChangeTo).equals(
-                        getDefaultSiadapEvaluationUniverse())) {
+                        getDefaultSiadapEvaluationUniverse()))
             throw new SiadapException("error.cant.change.default.universe.because.theres.another.eval.in.that.universe");
-        }
         getDefaultSiadapEvaluationUniverse().setSiadapUniverse(siadapUniverseToChangeTo);
 
     }

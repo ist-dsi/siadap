@@ -91,7 +91,7 @@
 		</html:link>
 	</logic:present>
 	<logic:notPresent name="person" property="siadap">
-		<a href="#" id="createSiadapLink">
+		<a class="toggableLink" toggleDiv="createSiadapDiv" href="#" id="createSiadapLink">
 			<bean:message key="link.create" bundle="MYORG_RESOURCES"/>
 		</a>
 		

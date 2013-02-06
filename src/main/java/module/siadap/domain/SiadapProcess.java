@@ -30,6 +30,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.MissingResourceException;
 
+import module.fileManagement.domain.DirNode;
 import module.organization.domain.Person;
 import module.organizationIst.domain.listner.LoginListner;
 import module.siadap.activities.AcknowledgeEvaluationObjectives;
@@ -69,6 +70,7 @@ import module.siadap.domain.wrappers.PersonSiadapWrapper;
 import module.workflow.activities.ActivityInformation;
 import module.workflow.activities.WorkflowActivity;
 import module.workflow.domain.LabelLog;
+import module.workflow.domain.ProcessDirNode;
 import module.workflow.domain.ProcessFile;
 import module.workflow.domain.WorkflowLog;
 import module.workflow.domain.WorkflowProcess;
@@ -150,9 +152,8 @@ public class SiadapProcess extends SiadapProcess_Base {
     public SiadapProcess(Integer year, Person evaluated, SiadapUniverse siadapUniverse, CompetenceType competenceType) {
         super();
 
-        if (competenceType == null || siadapUniverse == null) {
+        if (competenceType == null || siadapUniverse == null)
             throw new SiadapException("error.create.siadap.must.fill.competenceType.and.SiadapUniverse");
-        }
 
         User currentUser = UserView.getCurrentUser();
         Person possibleEvaluator = currentUser.getPerson();
@@ -167,9 +168,8 @@ public class SiadapProcess extends SiadapProcess_Base {
             belongsToASuperGroup = true;
         }
         if (!belongsToASuperGroup) {
-            if (evaluator == null || evaluator.getPerson() != possibleEvaluator) {
+            if (evaluator == null || evaluator.getPerson() != possibleEvaluator)
                 throw new DomainException("error.onlyEvaluatorCanCreateSiadap");
-            }
         }
 
         setWorkflowSystem(WorkflowSystem.getInstance());
@@ -243,9 +243,8 @@ public class SiadapProcess extends SiadapProcess_Base {
     public static WorkflowActivity<? extends WorkflowProcess, ? extends ActivityInformation<?>> getActivityStaticly(
             String activityName) {
         for (WorkflowActivity<? extends WorkflowProcess, ? extends ActivityInformation<?>> activity : activities) {
-            if (activity.getName().equals(activityName)) {
+            if (activity.getName().equals(activityName))
                 return activity;
-            }
         }
         return null;
     }
@@ -257,9 +256,8 @@ public class SiadapProcess extends SiadapProcess_Base {
 
     @Override
     public boolean isActive() {
-        if (getSiadap().getState().equals(SiadapProcessStateEnum.NULLED)) {
+        if (getSiadap().getState().equals(SiadapProcessStateEnum.NULLED))
             return false;
-        }
         return true;
     }
 
@@ -481,11 +479,44 @@ public class SiadapProcess extends SiadapProcess_Base {
     protected void delete(boolean neglectLogSize) {
         releaseProcess();
         List<WorkflowLog> executionLogs = getExecutionLogs();
-        if (!neglectLogSize && executionLogs.size() > 1) {
+        if (!neglectLogSize && executionLogs.size() > 1)
             throw new SiadapException("error.has.items.in.it");
-        }
         for (WorkflowLog exLog : executionLogs) {
             removeExecutionLogs(exLog);
+        }
+
+        ProcessDirNode documentsRepository = getDocumentsRepository();
+        module.workflow.domain.AbstractWFDocsGroup writeGroup =
+                (module.workflow.domain.AbstractWFDocsGroup) documentsRepository.getWriteGroup();
+        module.workflow.domain.AbstractWFDocsGroup readGroup =
+                (module.workflow.domain.AbstractWFDocsGroup) documentsRepository.getReadGroup();
+        writeGroup.removeProcess();
+        readGroup.removeProcess();
+        DirNode dirNode = documentsRepository.getDirNode();
+        DirNode trash = dirNode.getTrash();
+        readGroup.removeDirNodeFromReadGroup(dirNode);
+        readGroup.removeDirNodeFromWriteGroup(dirNode);
+        readGroup.removeDirNodeFromReadGroup(trash);
+        readGroup.removeDirNodeFromWriteGroup(trash);
+
+        writeGroup.removeDirNodeFromReadGroup(trash);
+        writeGroup.removeDirNodeFromWriteGroup(trash);
+        writeGroup.removeDirNodeFromReadGroup(dirNode);
+        writeGroup.removeDirNodeFromWriteGroup(dirNode);
+
+        readGroup.delete();
+        writeGroup.delete();
+        dirNode.removeTrash();
+        dirNode.removeProcessDirNode();
+        dirNode.delete();
+
+        trash.delete();
+
+        documentsRepository.delete();
+
+        for (WorkflowLog workflowLog : getExecutionLogs()) {
+            workflowLog.removeProcess();
+            workflowLog.delete();
         }
         removeSiadap();
         removeWorkflowSystem();

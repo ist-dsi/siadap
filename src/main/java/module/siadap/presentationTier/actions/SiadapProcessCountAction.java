@@ -93,9 +93,8 @@ public class SiadapProcessCountAction extends ContextBaseAction {
         SiadapProcessStateEnum state = SiadapProcessStateEnum.valueOf(request.getParameter("state"));
         Integer year = Integer.valueOf(request.getParameter("year"));
 
-        if (state == null || year == null) {
+        if (state == null || year == null)
             return null;
-        }
 
         ArrayList<Siadap> siadapsOfYearAndState = new ArrayList<Siadap>();
         for (Siadap siadap : SiadapRootModule.getInstance().getSiadaps()) {
@@ -301,9 +300,8 @@ public class SiadapProcessCountAction extends ContextBaseAction {
         request.setAttribute("siadapYearWrapper", siadapYearWrapper);
         SiadapYearConfiguration configuration = siadapYearWrapper.getSiadapYearConfiguration();
 
-        if (configuration == null) {
+        if (configuration == null)
             return forward(request, "/module/siadap/unit.jsp");
-        }
         request.setAttribute("configuration", configuration);
 
         SiadapProcessStateEnumWrapper siadapProcessStateToFilter =
