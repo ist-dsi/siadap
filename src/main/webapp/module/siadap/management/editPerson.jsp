@@ -493,7 +493,7 @@ request.setAttribute("isCCAMember", isCCAMember);
 
 
 <%-- For now, let's also comment the ability to add people to do the harmonization of certain units, I should check the type of accountability
-that is desirable (start and end dates) --%>
+that is desirable (start and end dates) 
 <logic:equal name="isManager" value="true">
 	<p>
 	<strong><bean:message key="label.addHarmonizationResponsability" bundle="SIADAP_RESOURCES"/></strong>
@@ -519,8 +519,8 @@ that is desirable (start and end dates) --%>
 	</fr:edit>
 	</p>
 </logic:equal>
+--%>
 <%-- End of isAbleToChangeAnything --%>
-
 
 <%-- For now, let's comment out the history section
 <strong> <bean:message key="label.history" bundle="SIADAP_RESOURCES"/>: </strong>

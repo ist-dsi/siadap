@@ -21,9 +21,9 @@ import pt.ist.fenixframework.pstm.IllegalWriteException;
  */
 public class DeleteSiadapProcessForGivenUSer extends WriteCustomTask {
 
-    private final String WF_PROCESS_OID = "6214818079331";
+    private final String WF_PROCESS_OID = "6214818075818";
 
-    private final String LABEL_LOG_OID = "1073743539799";
+    private final String LABEL_LOG_OID = "1073743523396";
 
     /* (non-Javadoc)
      * @see pt.ist.bennu.core.domain.scheduler.WriteCustomTask#doService()

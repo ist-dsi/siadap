@@ -737,9 +737,6 @@ public class SiadapPersonnelManagement extends ContextBaseAction {
         @Override
         public void execute(SiadapProcess process) throws SiadapException {
             Siadap siadap = process.getSiadap();
-            if (siadap.isDefaultEvaluationDone()) {
-                throw new SiadapException("error.cannot.change.evaluator.evaluation.already.done");
-            }
             new PersonSiadapWrapper(siadap.getEvaluated(), siadap.getYear()).changeEvaluatorTo(getEvaluator(), getDateOfChange());
 
         }
