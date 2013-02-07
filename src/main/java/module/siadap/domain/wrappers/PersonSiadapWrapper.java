@@ -1037,7 +1037,6 @@ public class PersonSiadapWrapper extends PartyWrapper implements Serializable {
         SiadapActionChangeValidatorEnum.HARMONIZATION_UNIT_CHANGE.validate(this);
 
         verifyDate(dateOfChange);
-        verifyWorkingAndHarmonizationUnitChange();
 
         SiadapYearConfiguration configuration = getConfiguration();
 
