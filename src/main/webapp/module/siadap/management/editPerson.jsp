@@ -142,7 +142,7 @@ request.setAttribute("isCCAMember", isCCAMember);
 		</html:link>
 	</logic:notPresent>
 	<logic:present name="personWrapper" property="siadap">
-		<p> <a class="toggableLink" toggleDiv="changeSiadapUniverseDiv" href="#" id="changeUnit"> <bean:message key="label.changeWorkingUnit" bundle="SIADAP_RESOURCES"/> </a> | <a class="toggableLink" toggleDiv="changeHarmonizationUnitDiv" href="#" id="changeHarmonizationUnit"> <bean:message key="label.changeHarmonizationUnit" bundle="SIADAP_RESOURCES"/> </a> | <a class="toggableLink" toggleDiv="changeEvaluatorDiv" href="#" id="changeEvaluator"> <bean:message key="label.changeEvaluator" bundle="SIADAP_RESOURCES"/> </a>
+		<p> <a class="toggableLink" toggleDiv="changeUnitDiv" href="#" id="changeUnit"> <bean:message key="label.changeWorkingUnit" bundle="SIADAP_RESOURCES"/> </a> | <a class="toggableLink" toggleDiv="changeHarmonizationUnitDiv" href="#" id="changeHarmonizationUnit"> <bean:message key="label.changeHarmonizationUnit" bundle="SIADAP_RESOURCES"/> </a> | <a class="toggableLink" toggleDiv="changeEvaluatorDiv" href="#" id="changeEvaluator"> <bean:message key="label.changeEvaluator" bundle="SIADAP_RESOURCES"/> </a>
 			<logic:equal name="person" property="customEvaluatorDefined" value="true">
 			| <html:link page="<%="/siadapPersonnelManagement.do?method=removeCustomEvaluator&activity=ChangePersonnelSituation&year=" + year.toString()%>" paramId="personId"  paramName="person"  paramProperty="person.externalId">
 				<bean:message key="label.removeCustomEvaluator" bundle="SIADAP_RESOURCES"/>
