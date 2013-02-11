@@ -40,9 +40,6 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.joda.time.LocalDate;
 
-import com.google.common.base.Predicate;
-import com.google.common.collect.Collections2;
-
 import pt.ist.bennu.core.presentationTier.actions.ContextBaseAction;
 import pt.ist.bennu.core.presentationTier.component.OrganizationChart;
 import pt.ist.bennu.core.util.BundleUtil;
@@ -52,7 +49,9 @@ import pt.ist.fenixWebFramework.struts.annotations.Mapping;
 import pt.utl.ist.fenix.tools.spreadsheet.SheetData;
 import pt.utl.ist.fenix.tools.spreadsheet.SpreadsheetBuilder;
 import pt.utl.ist.fenix.tools.spreadsheet.WorkbookExportFormat;
-import pt.utl.ist.fenix.tools.util.excel.Spreadsheet;
+
+import com.google.common.base.Predicate;
+import com.google.common.collect.Collections2;
 
 @Mapping(path = "/unitManagementInterface")
 /**
@@ -151,7 +150,7 @@ public class UnitManagementInterfaceAction extends ContextBaseAction {
         Person person = bean.getDomainObject();
         harmUnit.addResponsibleForHarmonization(person);
 
-        RenderUtils.invalidateViewState("addHarmonizationUnitResponsible");
+        RenderUtils.invalidateViewState();
 
         // notify the users who have access to this interface
         SiadapUtilActions.notifyAdditionOfHarmonizationResponsible(person, unit, year, request);
@@ -235,7 +234,7 @@ public class UnitManagementInterfaceAction extends ContextBaseAction {
         return streamSpreadsheet(
                 response,
                 "SIADAP_" + year + "-EstrHarm-" + currentLocalDate.getDayOfMonth() + "-" + currentLocalDate.getMonthOfYear()
-                        + "-" + currentLocalDate.getYear(),
+                + "-" + currentLocalDate.getYear(),
                 new SpreadsheetBuilder().addSheet(
                         "SIADAP - estructura de harmonização - " + year + " - " + currentLocalDate.toString(), sheetData));
 

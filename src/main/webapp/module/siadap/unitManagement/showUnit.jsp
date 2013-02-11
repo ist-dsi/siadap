@@ -234,8 +234,8 @@ int j =0;
 
 <table align="center" style="width: 100%; text-align: center;">
 	<tr>
-		<td style="width: 50%; text-align: center; vertical-align: top; padding: 15px;">
-			<div class="infobox" style="height: 175px;">
+		<td style="width: 50%; vertical-align: top; padding: 15px;">
+			<div class="infobox" style="height: 100%;">
 				<h4>
 					<bean:message key="label.unit.harmonizer" bundle="SIADAP_RESOURCES"/>
 				</h4>
@@ -275,7 +275,7 @@ int j =0;
 					if (mode.equals(Mode.HARMONIZATION_UNIT_MODE) && unitWrapper.isHarmonizationUnit() ) {
 					%>
 					<div id="addHarmonizationUnitResponsibleDiv" >
-						<div class="highlightBox">
+						<%--  <div class="highlightBox"> --%>
 		
 						<fr:form action="<%= "/unitManagementInterface.do?method=addHarmonizationUnitResponsible&year=" + 
 						year.toString() + "&mode=" + mode.name() + "&unitId=" + unit.getExternalId() %>">
@@ -306,7 +306,7 @@ int j =0;
 						<html:submit styleClass="inputbutton"><bean:message key="button.unitManagementInterface.add.HarmonizationResponsible" bundle="SIADAP_RESOURCES"/></html:submit>
 					</fr:form>
 							
-						</div>
+						<%--</div>  --%>
 					</div>
 					<%
 					}
@@ -314,7 +314,7 @@ int j =0;
 			</div>
 		</td>
 		<td style="width: 50%; text-align: center; vertical-align: top; padding: 15px;">
-			<div class="infobox" style="height: 175px;">
+			<div class="infobox" style="height: 100%;">
 				<h4>
 					<bean:message key="label.unit.responsible" bundle="SIADAP_RESOURCES"/>
 				</h4>
