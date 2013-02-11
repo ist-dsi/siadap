@@ -10,7 +10,7 @@
  *
  *   The SIADAP Module is free software: you can
  *   redistribute it and/or modify it under the terms of the GNU Lesser General
- *   Public License as published by the Free Software Foundation, either version 
+ *   Public License as published by the Free Software Foundation, either version
  *   3 of the License, or (at your option) any later version.
  *
  *   The SIADAP Module is distributed in the hope that it will be useful,
@@ -50,6 +50,8 @@ public class SubmitValidatedEvaluation extends WorkflowActivity<SiadapProcess, A
     @Override
     public boolean isActive(SiadapProcess process, User user) {
         Siadap siadap = process.getSiadap();
+        if (siadap.getEvaluator() == null)
+            return false;
         return siadap.getEvaluator().getPerson().getUser() == user && siadap.getValidationDateOfDefaultEvaluation() != null
                 && siadap.getRequestedAcknowledegeValidationDate() == null && siadap.getAcknowledgeValidationDate() == null
                 && siadap.getState().equals(SiadapProcessStateEnum.WAITING_SUBMITTAL_BY_EVALUATOR_AFTER_VALIDATION);
@@ -97,7 +99,7 @@ public class SubmitValidatedEvaluation extends WorkflowActivity<SiadapProcess, A
                 final VirtualHost virtualHost = VirtualHost.getVirtualHostForThread();
                 new Email(virtualHost.getApplicationSubTitle().getContent(), virtualHost.getSystemEmailAddress(),
                         new String[] {}, toAddress, ccAddress, Collections.EMPTY_LIST, "SIADAP - " + year
-                                + " Nota final disponível", body.toString());
+                        + " Nota final disponível", body.toString());
             }
         } catch (Throwable ex) {
             System.out.println("Unable to lookup email address for: " + evaluatedPerson.getUser().getUsername() + " Error: "
