@@ -461,6 +461,7 @@ request.setAttribute("isCCAMember", isCCAMember);
 				<fr:slot name="excellencyEvaluationPercentage"/> --%>
 				<fr:slot name="totalPeopleWorkingInUnit"/>
 				<fr:slot name="totalPeopleWithSiadapWorkingInUnit"/>
+				<fr:slot name="validHarmonizationUnit"/>
 			</fr:schema>
 			<fr:layout name="tabular">
 				<fr:property name="classes" value="tstyle2"/>

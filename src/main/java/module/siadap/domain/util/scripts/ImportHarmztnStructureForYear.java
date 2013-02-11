@@ -180,7 +180,7 @@ public class ImportHarmztnStructureForYear extends WriteCustomTask {
         Map<Unit, Set<Unit>> abandonedUnits = new HashMap<Unit, Set<Unit>>();
         //now let's take care of the deactivated units
         for (Unit unitToDeactivate : unitsToDeactivate) {
-            //let's get all of the sub units and 
+            //let's get all of the sub units and
             UnitSiadapWrapper unitToDeactivateWrapper = new UnitSiadapWrapper(unitToDeactivate, year);
             List<UnitSiadapWrapper> subHarmonizationWrappedUnits = unitToDeactivateWrapper.getSubHarmonizationUnits();
             if (!subHarmonizationWrappedUnits.isEmpty()) {
@@ -199,8 +199,8 @@ public class ImportHarmztnStructureForYear extends WriteCustomTask {
                 //let's add it to the abandonedUnits
                 abandonedUnits.put(unitToDeactivate, new HashSet<Unit>(units));
 
-                //let's disconnect it from the top unit
             }
+            //let's disconnect it from the top unit
             unitToDeactivateWrapper.deactivateHarmonizationUnit(JUSTIFICATION);
         }
 
@@ -427,7 +427,7 @@ public class ImportHarmztnStructureForYear extends WriteCustomTask {
                                     + number);
                 } else {
                     return; // this is probably a new Harmonization unit to be
-                            // made
+                    // made
                 }
 
             }

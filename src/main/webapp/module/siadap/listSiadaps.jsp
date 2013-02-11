@@ -143,13 +143,13 @@ SiadapYearWrapper siadapYearWrapper = (SiadapYearWrapper) request.getAttribute("
 	</jsp:include>
 </logic:notEmpty>
 
-<logic:notEmpty name="person" property="harmozationUnits">
+<logic:notEmpty name="person" property="activeHarmonizationUnits">
 	<%-- <logic:equal value="true" name="person" property="harmonizationPeriodOpen"> --%>
 		<%-- Defining the year here so that it can be more easily passed on the links below that use it --%>
 		<bean:define id="year" name="siadapYearWrapper" property="chosenYear"/>
 				<h3> <bean:message key="label.responsifleForHarmonizationOf" bundle="SIADAP_RESOURCES"/>: </h3>
 			<div>
-				<fr:view name="person" property="harmozationUnits">
+				<fr:view name="person" property="activeHarmonizationUnits">
 					<fr:schema type="module.siadap.domain.wrappers.UnitSiadapWrapper" bundle="SIADAP_RESOURCES">
 						<fr:slot name="unit.partyName"  key="label.unit" bundle="ORGANIZATION_RESOURCES" />
 						<fr:slot name="unit.acronym" key="label.acronym" bundle="ORGANIZATION_RESOURCES" />

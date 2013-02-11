@@ -472,6 +472,10 @@ public class PersonSiadapWrapper extends PartyWrapper implements Serializable {
         return getHarmozationUnits(true);
     }
 
+    public Collection<UnitSiadapWrapper> getActiveHarmonizationUnits() {
+        return getHarmozationUnits(false);
+    }
+
     public void removeAndNotifyHarmonizationResponsability(Unit unit, Person person, int year, HttpServletRequest request) {
         removeHarmonizationResponsability(unit);
         SiadapUtilActions.notifyRemovalOfHarmonizationResponsible(person, unit, year, request);
@@ -565,11 +569,13 @@ public class PersonSiadapWrapper extends PartyWrapper implements Serializable {
         return getTotalQualitativeEvaluationScoring(SiadapUniverse.SIADAP3);
     }
 
-    public Collection<UnitSiadapWrapper> getHarmozationUnits(boolean skipClosedAccountabilities) {
+    public Collection<UnitSiadapWrapper> getHarmozationUnits(boolean considerInactiveHarmUnits) {
         List<UnitSiadapWrapper> units = new ArrayList<UnitSiadapWrapper>();
 
         for (Unit unit : getParentUnits(getConfiguration().getHarmonizationResponsibleRelation())) {
-            units.add(new UnitSiadapWrapper(unit, getYear()));
+            UnitSiadapWrapper harmUnitWrapper = new UnitSiadapWrapper(unit, getYear());
+            if (considerInactiveHarmUnits || harmUnitWrapper.isValidHarmonizationUnit())
+                units.add(harmUnitWrapper);
         }
         return units;
     }
