@@ -10,7 +10,7 @@
  *
  *   The SIADAP Module is free software: you can
  *   redistribute it and/or modify it under the terms of the GNU Lesser General
- *   Public License as published by the Free Software Foundation, either version 
+ *   Public License as published by the Free Software Foundation, either version
  *   3 of the License, or (at your option) any later version.
  *
  *   The SIADAP Module is distributed in the hope that it will be useful,
@@ -437,7 +437,8 @@ public class SiadapEvaluationUniverse extends SiadapEvaluationUniverse_Base {
 
     @Override
     public void setHarmonizationDate(LocalDate harmonizationDate) {
-        if (getHarmonizationAssessment() == null && !isWithSkippedEvaluation()) {
+        if ((getHarmonizationAssessment() == null || (getCurrentExcellencyAward() == true && getHarmonizationAssessmentForExcellencyAward() == null))
+                && !(isWithSkippedEvaluation() || getSiadap().getState().equals(SiadapProcessStateEnum.NULLED))) {
             throw new SiadapException("error.harmonization.not.finished.for.person.X"
                     + getSiadap().getEvaluated().getUser().getUsername());
         }

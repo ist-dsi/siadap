@@ -10,7 +10,7 @@
  *
  *   The SIADAP Module is free software: you can
  *   redistribute it and/or modify it under the terms of the GNU Lesser General
- *   Public License as published by the Free Software Foundation, either version 
+ *   Public License as published by the Free Software Foundation, either version
  *   3 of the License, or (at your option) any later version.
  *
  *   The SIADAP Module is distributed in the hope that it will be useful,
@@ -77,7 +77,7 @@ public class Siadap extends Siadap_Base {
         }
 
     }
-    
+
     static {
         Siadap.SiadapYearConfigurationSiadap.addListener(new SiadapSiadapYearConfigurationListener());
     }
@@ -108,27 +108,27 @@ public class Siadap extends Siadap_Base {
     public static final Comparator<Siadap> COMPARATOR_BY_EVALUATED_PRESENTATION_NAME_FALLBACK_YEAR_THEN_OID =
             new Comparator<Siadap>() {
 
-                @Override
-                public int compare(Siadap o1, Siadap o2) {
+        @Override
+        public int compare(Siadap o1, Siadap o2) {
 
-                    int presentationNameComparison = 0;
-                    if (o1 == null || o2 == null) {
-                        if (o2 == null && o1 == null)
-                            return 0;
-                        if (o2 == null)
-                            return 1;
-                        if (o1 == null)
-                            return -1;
-                    }
-                    if (o1.getEvaluated() != null && o2.getEvaluated() != null) {
-                        presentationNameComparison =
-                                o1.getEvaluated().getPresentationName().compareTo(o2.getEvaluated().getPresentationName());
-                    }
-                    int yearComparison = o1.getYear().compareTo(o2.getYear());
-                    return presentationNameComparison == 0 ? (yearComparison == 0 ? o1.getExternalId().compareTo(
-                            o2.getExternalId()) : yearComparison) : presentationNameComparison;
-                }
-            };
+            int presentationNameComparison = 0;
+            if (o1 == null || o2 == null) {
+                if (o2 == null && o1 == null)
+                    return 0;
+                if (o2 == null)
+                    return 1;
+                if (o1 == null)
+                    return -1;
+            }
+            if (o1.getEvaluated() != null && o2.getEvaluated() != null) {
+                presentationNameComparison =
+                        o1.getEvaluated().getPresentationName().compareTo(o2.getEvaluated().getPresentationName());
+            }
+            int yearComparison = o1.getYear().compareTo(o2.getYear());
+            return presentationNameComparison == 0 ? (yearComparison == 0 ? o1.getExternalId().compareTo(
+                    o2.getExternalId()) : yearComparison) : presentationNameComparison;
+        }
+    };
 
     // register itself in the pending processes widget:
     static {
@@ -545,7 +545,7 @@ public class Siadap extends Siadap_Base {
         }
         return hasAllNeededCompetences()
                 && ((getEvaluatedOnlyByCompetences() == null || getEvaluatedOnlyByCompetences()) || (efficiencyObjectives >= MINIMUM_EFICIENCY_OBJECTIVES_NUMBER
-                        && performanceObjectives >= MINIMUM_PERFORMANCE_OBJECTIVES_NUMBER && qualityObjectives >= MINIMUM_QUALITY_OBJECTIVES_NUMBER));
+                && performanceObjectives >= MINIMUM_PERFORMANCE_OBJECTIVES_NUMBER && qualityObjectives >= MINIMUM_QUALITY_OBJECTIVES_NUMBER));
     }
 
     public boolean hasAllNeededCompetences() {
@@ -824,13 +824,18 @@ public class Siadap extends Siadap_Base {
     @Service
     public void markAsHarmonized(LocalDate harmonizationDate, SiadapUniverse siadapUniverse) {
         SiadapEvaluationUniverse evaluationUniverse = getSiadapEvaluationUniverseForSiadapUniverse(siadapUniverse);
-        if ((evaluationUniverse.getHarmonizationAssessment() == null && !evaluationUniverse.isWithSkippedEvaluation())
-                || (evaluationUniverse.hasExcellencyAwardedFromEvaluator() && evaluationUniverse
-                        .getHarmonizationAssessmentForExcellencyAward() == null))
-            throw new SiadapException("harmonization.error.there.are.people.not.harmonized");
+        if (! (evaluationUniverse.isWithSkippedEvaluation() || getState().equals(SiadapProcessStateEnum.NULLED))) {
+            //only if we don't have a nulled or skipped evaluation
+            if (evaluationUniverse.getHarmonizationAssessment() == null || (evaluationUniverse.hasExcellencyAwardedFromEvaluator() && evaluationUniverse.getHarmonizationAssessmentForExcellencyAward() == null))
+            {
+                //and only if we have no harmonization assessment, or an excellent and no harmonization for that one
+                throw new SiadapException("harmonization.error.there.are.people.not.harmonized");
+
+            }
+        }
         // let's also make sure that this person either has been marked as not
         // having an evaluation or has the evaluation done
-        if (!isEvaluationDone(siadapUniverse)) {
+        if (!isEvaluationDone(siadapUniverse) && !getState().equals(SiadapProcessStateEnum.NULLED)) {
             if (evaluationUniverse.getDefaultEvaluationUniverse() && isWithSkippedEvaluation()) {
                 // do nothing :)
             } else
@@ -883,7 +888,7 @@ public class Siadap extends Siadap_Base {
     public boolean isHarmonizationOfDefaultUniverseDone() {
         if (getDefaultSiadapEvaluationUniverse() != null)
             return getDefaultSiadapEvaluationUniverse().getHarmonizationDate() != null
-                    && getDefaultSiadapEvaluationUniverse().getHarmonizationAssessment() != null;
+            && getDefaultSiadapEvaluationUniverse().getHarmonizationAssessment() != null;
         return false;
     }
 
