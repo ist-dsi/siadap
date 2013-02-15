@@ -10,7 +10,7 @@
  *
  *   The SIADAP Module is free software: you can
  *   redistribute it and/or modify it under the terms of the GNU Lesser General
- *   Public License as published by the Free Software Foundation, either version 
+ *   Public License as published by the Free Software Foundation, either version
  *   3 of the License, or (at your option) any later version.
  *
  *   The SIADAP Module is distributed in the hope that it will be useful,
@@ -419,8 +419,8 @@ public class SiadapPersonnelManagement extends ContextBaseAction {
                     }
                     row.setCell(evaluatedWrapper.getSiadap() == null
                             || evaluatedWrapper.getUnitWhereIsHarmonized(evaluatedWrapper.getSiadap().getDefaultSiadapUniverse()) == null ? "-" : evaluatedWrapper
-                            .getUnitWhereIsHarmonized(evaluatedWrapper.getSiadap().getDefaultSiadapUniverse())
-                            .getPresentationName());
+                                    .getUnitWhereIsHarmonized(evaluatedWrapper.getSiadap().getDefaultSiadapUniverse())
+                                    .getPresentationName());
                     row.setCell(evaluatedWrapper.getCareerName());
                     row.setCell(String.valueOf(siadap.getDefaultSiadapUniverse()));
                     row.setCell(evaluatedWrapper.isQuotaAware() ? "Sim" : "Não");
@@ -499,7 +499,7 @@ public class SiadapPersonnelManagement extends ContextBaseAction {
                         .getWorkingUnit().getUnit().getPresentationName());
                 row.setCell(evaluatedWrapper.getSiadap() == null
                         || evaluatedWrapper.getUnitWhereIsHarmonized(evaluatedWrapper.getSiadap().getDefaultSiadapUniverse()) == null ? "-" : evaluatedWrapper
-                        .getUnitWhereIsHarmonized(evaluatedWrapper.getSiadap().getDefaultSiadapUniverse()).getPresentationName());
+                                .getUnitWhereIsHarmonized(evaluatedWrapper.getSiadap().getDefaultSiadapUniverse()).getPresentationName());
                 row.setCell(evaluatedWrapper.getCareerName());
                 row.setCell(String.valueOf(siadap.getDefaultSiadapUniverse()));
                 row.setCell(evaluatedWrapper.isQuotaAware() ? "Sim" : "Não");
@@ -581,7 +581,7 @@ public class SiadapPersonnelManagement extends ContextBaseAction {
         public String[] getArgumentsDescription(SiadapProcess process) {
             return new String[] { BundleUtil.getFormattedStringFromResourceBundle(Siadap.SIADAP_BUNDLE_STRING,
                     RemoveCustomEvaluatorBean.class.getSimpleName(), process.getSiadap().getEvaluator().getPerson()
-                            .getPresentationName()) };
+                    .getPresentationName()) };
         }
 
         @Override
@@ -651,7 +651,7 @@ public class SiadapPersonnelManagement extends ContextBaseAction {
             if (!forceChange) {
                 return new String[] { BundleUtil.getFormattedStringFromResourceBundle(Siadap.SIADAP_BUNDLE_STRING,
                         ChangeSiadapUniverseBean.class.getSimpleName(), getSiadapUniverse().getLocalizedName(), getDateOfChange()
-                                .toString()) };
+                        .toString()) };
             } else {
                 return new String[] { BundleUtil.getFormattedStringFromResourceBundle(Siadap.SIADAP_BUNDLE_STRING,
                         ChangeSiadapUniverseBean.class.getSimpleName() + ".forced", getSiadapUniverse().getLocalizedName(),
@@ -779,7 +779,7 @@ public class SiadapPersonnelManagement extends ContextBaseAction {
             if (process.getSiadap().getCompetences() != null
                     && process.getSiadap().getCompetences().isEmpty() == false
                     && SiadapProcessStateEnum.getState(process.getSiadap()).ordinal() > SiadapProcessStateEnum.NOT_YET_SUBMITTED_FOR_ACK
-                            .ordinal()) {
+                    .ordinal()) {
                 throw new SiadapException("error.changing.competence.type.cant.due.to.existing.competences.defined");
             }
             SiadapEvaluationUniverse defaultSiadapEvaluationUniverse = process.getSiadap().getDefaultSiadapEvaluationUniverse();
@@ -900,15 +900,15 @@ public class SiadapPersonnelManagement extends ContextBaseAction {
                     (withQuotas) ? BundleUtil
                             .getFormattedStringFromResourceBundle(Siadap.SIADAP_BUNDLE_STRING, "siadap.true.yes") : BundleUtil
                             .getFormattedStringFromResourceBundle(Siadap.SIADAP_BUNDLE_STRING, "siadap.false.no");
-            PersonSiadapWrapper evaluator = new PersonSiadapWrapper(process.getSiadap()).getEvaluator();
-            String currentEvaluator = evaluator == null ? "-" : evaluator.getPerson().getPresentationName();
-            return new String[] { BundleUtil.getFormattedStringFromResourceBundle(Siadap.SIADAP_BUNDLE_STRING,
-                    ChangeWorkingUnitBean.class.getSimpleName(), unit.getPresentationName(), countsForInstitutionalQuotas,
-                    dateOfChange.toString()) };
-            // ,
-            // BundleUtil.getFormattedStringFromResourceBundle(Siadap.SIADAP_BUNDLE_STRING,
-            // "ChangeWorkingUnitBean.evaluatorSideEffect", currentEvaluator))
-            // };
+                            PersonSiadapWrapper evaluator = new PersonSiadapWrapper(process.getSiadap()).getEvaluator();
+                            String currentEvaluator = evaluator == null ? "-" : evaluator.getPerson().getPresentationName();
+                            return new String[] { BundleUtil.getFormattedStringFromResourceBundle(Siadap.SIADAP_BUNDLE_STRING,
+                                    ChangeWorkingUnitBean.class.getSimpleName(), unit.getPresentationName(), countsForInstitutionalQuotas,
+                                    dateOfChange.toString()) };
+                            // ,
+                            // BundleUtil.getFormattedStringFromResourceBundle(Siadap.SIADAP_BUNDLE_STRING,
+                            // "ChangeWorkingUnitBean.evaluatorSideEffect", currentEvaluator))
+                            // };
         }
 
         @Override
@@ -976,8 +976,7 @@ public class SiadapPersonnelManagement extends ContextBaseAction {
 
         @Override
         public String getSuccessWarningMessage() {
-            return BundleUtil.getStringFromResourceBundle(Siadap.SIADAP_BUNDLE_STRING,
-                    "warning.changed.working.unit.check.evaluator");
+            return null;
         }
 
         public String getJustification() {

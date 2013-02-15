@@ -1040,7 +1040,7 @@ public class PersonSiadapWrapper extends PartyWrapper implements Serializable {
     }
 
     public void changeHarmonizationUnitTo(Unit unit, LocalDate dateOfChange, String justification) throws SiadapException {
-        SiadapActionChangeValidatorEnum.HARMONIZATION_UNIT_CHANGE.validate(this);
+        SiadapActionChangeValidatorEnum.HARMONIZATION_UNIT_CHANGE.validate(this, unit);
 
         verifyDate(dateOfChange);
 
