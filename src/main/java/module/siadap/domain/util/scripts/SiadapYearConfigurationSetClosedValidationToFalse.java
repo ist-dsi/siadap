@@ -10,7 +10,7 @@
  *
  *   The SIADAP Module is free software: you can
  *   redistribute it and/or modify it under the terms of the GNU Lesser General
- *   Public License as published by the Free Software Foundation, either version 
+ *   Public License as published by the Free Software Foundation, either version
  *   3 of the License, or (at your option) any later version.
  *
  *   The SIADAP Module is distributed in the hope that it will be useful,
@@ -24,7 +24,6 @@
  */
 package module.siadap.domain.util.scripts;
 
-import module.siadap.domain.SiadapRootModule;
 import module.siadap.domain.SiadapYearConfiguration;
 import pt.ist.bennu.core.domain.scheduler.WriteCustomTask;
 
@@ -44,11 +43,10 @@ public class SiadapYearConfigurationSetClosedValidationToFalse extends WriteCust
     @Override
     protected void doService() {
         int nrOfBoolsSet = 0;
-        for (SiadapYearConfiguration siadapYearConfiguration : SiadapRootModule.getInstance().getYearConfigurations()) {
-            if (siadapYearConfiguration.getClosedValidation() == null) {
-                siadapYearConfiguration.setClosedValidation(Boolean.FALSE);
-                nrOfBoolsSet++;
-            }
+        SiadapYearConfiguration siadapYearConfiguration = SiadapYearConfiguration.getSiadapYearConfiguration(2012);
+        if (siadapYearConfiguration.getClosedValidation() == null || siadapYearConfiguration.getClosedValidation()) {
+            siadapYearConfiguration.setClosedValidation(Boolean.FALSE);
+            nrOfBoolsSet++;
         }
 
         out.println("Number of bools that were set: " + nrOfBoolsSet);
