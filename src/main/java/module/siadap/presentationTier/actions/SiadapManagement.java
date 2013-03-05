@@ -10,7 +10,7 @@
  *
  *   The SIADAP Module is free software: you can
  *   redistribute it and/or modify it under the terms of the GNU Lesser General
- *   Public License as published by the Free Software Foundation, either version 
+ *   Public License as published by the Free Software Foundation, either version
  *   3 of the License, or (at your option) any later version.
  *
  *   The SIADAP Module is distributed in the hope that it will be useful,
@@ -379,10 +379,10 @@ public class SiadapManagement extends ContextBaseAction {
             return validateUnit(mapping, form, request, response, unitWrapper, null);
         } catch (DomainException ex) {
             addLocalizedMessage(request, ex.getLocalizedMessage());
-            return validateUnit(mapping, form, request, response, unitWrapper, siadapUniverseWrappers);
+            return validateUnit(mapping, form, request, response, unitWrapper, null);
         } catch (ActivityException ex) {
             addLocalizedMessage(request, ex.getMessage());
-            return validateUnit(mapping, form, request, response, unitWrapper, siadapUniverseWrappers);
+            return validateUnit(mapping, form, request, response, unitWrapper, null);
         }
 
         for (SiadapException warningMessage : warningMessages) {
@@ -423,6 +423,8 @@ public class SiadapManagement extends ContextBaseAction {
     public final ActionForward validateUnit(final ActionMapping mapping, final ActionForm form, final HttpServletRequest request,
             final HttpServletResponse response, UnitSiadapWrapper unitWrapper,
             Collection<SiadapUniverseWrapper> siadapUniverseWrappers) {
+
+        RenderUtils.invalidateViewState();
 
         request.setAttribute("siadapYearWrapper", new SiadapYearWrapper(unitWrapper.getYear()));
 
@@ -916,9 +918,9 @@ public class SiadapManagement extends ContextBaseAction {
                     SiadapUniverseWrapper.SIADAP2_WITH_QUOTAS_HIGH_SUGGESTION, SiadapUniverse.SIADAP2, unitWrapper, true));
 
             siadapUniverseWrappers
-                    .add(new SiadapUniverseWrapper(siadap2WithoutQuotas.get(ExceedingQuotaSuggestionType.EXCELLENCY_SUGGESTION),
-                            SiadapUniverseWrapper.SIADAP2_WITHOUT_QUOTAS_EXCELLENT_SUGGESTION, SiadapUniverse.SIADAP2,
-                            unitWrapper, false));
+            .add(new SiadapUniverseWrapper(siadap2WithoutQuotas.get(ExceedingQuotaSuggestionType.EXCELLENCY_SUGGESTION),
+                    SiadapUniverseWrapper.SIADAP2_WITHOUT_QUOTAS_EXCELLENT_SUGGESTION, SiadapUniverse.SIADAP2,
+                    unitWrapper, false));
 
             siadapUniverseWrappers.add(new SiadapUniverseWrapper(siadap2WithoutQuotas
                     .get(ExceedingQuotaSuggestionType.HIGH_SUGGESTION),
@@ -933,9 +935,9 @@ public class SiadapManagement extends ContextBaseAction {
                     SiadapUniverseWrapper.SIADAP3_WITH_QUOTAS_HIGH_SUGGESTION, SiadapUniverse.SIADAP3, unitWrapper, true));
 
             siadapUniverseWrappers
-                    .add(new SiadapUniverseWrapper(siadap3WithoutQuotas.get(ExceedingQuotaSuggestionType.EXCELLENCY_SUGGESTION),
-                            SiadapUniverseWrapper.SIADAP3_WITHOUT_QUOTAS_EXCELLENT_SUGGESTION, SiadapUniverse.SIADAP3,
-                            unitWrapper, false));
+            .add(new SiadapUniverseWrapper(siadap3WithoutQuotas.get(ExceedingQuotaSuggestionType.EXCELLENCY_SUGGESTION),
+                    SiadapUniverseWrapper.SIADAP3_WITHOUT_QUOTAS_EXCELLENT_SUGGESTION, SiadapUniverse.SIADAP3,
+                    unitWrapper, false));
 
             siadapUniverseWrappers.add(new SiadapUniverseWrapper(siadap3WithoutQuotas
                     .get(ExceedingQuotaSuggestionType.HIGH_SUGGESTION),

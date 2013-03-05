@@ -43,9 +43,6 @@ public class Validation extends WorkflowActivity<SiadapProcess, ValidationActivi
 
     @Override
     public boolean isActive(SiadapProcess process, User user) {
-        if (!process.isActive()) {
-            return false;
-        }
         // joantune : TODO (?? not sure)  check the process state
         try {
 
