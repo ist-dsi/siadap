@@ -46,6 +46,7 @@ import module.organization.domain.Person;
 import module.organization.domain.Unit;
 import module.siadap.activities.NullifyProcess;
 import module.siadap.domain.CompetenceType;
+import module.siadap.domain.CurricularPonderationEvaluationItem;
 import module.siadap.domain.ExceedingQuotaProposal;
 import module.siadap.domain.ObjectiveEvaluation;
 import module.siadap.domain.ObjectiveEvaluationIndicator;
@@ -363,6 +364,13 @@ public class PersonSiadapWrapper extends PartyWrapper implements Serializable {
                 getSiadap().getSiadapEvaluationUniverseForSiadapUniverse(siadapUniverse);
         if (siadapEvaluationUniverseForSiadapUniverse == null) {
             return true;
+        }
+        if (siadapEvaluationUniverseForSiadapUniverse.isCurriculumPonderation()) {
+            CurricularPonderationEvaluationItem curricularPonderationEvaluationItem =
+                    (CurricularPonderationEvaluationItem) siadapEvaluationUniverseForSiadapUniverse.getSiadapEvaluationItems()
+                            .get(0);
+            return curricularPonderationEvaluationItem.getExcellencyAward() == null
+                    || !curricularPonderationEvaluationItem.getExcellencyAward();
         }
         return siadapEvaluationUniverseForSiadapUniverse.getEvaluatorClassificationExcellencyAward() == null
                 || !siadapEvaluationUniverseForSiadapUniverse.getEvaluatorClassificationExcellencyAward();
