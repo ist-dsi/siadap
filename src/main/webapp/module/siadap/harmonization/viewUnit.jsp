@@ -515,6 +515,11 @@ color: #999;
 						<fr:slot name="currentProcessState" layout="null-as-label" key="label.state" readOnly="true" >
 							<fr:property name="subLayout" value=""/>
 						</fr:slot>
+						
+						<%--Current(latest) grade --%>
+						<fr:slot name="latestClassificationForSIADAP2" key="label.finalEvaluationScoring" layout="null-as-label" readOnly="true">
+							<fr:property name="subLayout" value=""/>
+						</fr:slot>
 						<%-- Harmonization assessments --%>
 						<logic:equal name="currentUnit" property="harmonizationFinished" value="false">
 							<fr:slot name="harmonizationCurrentAssessmentForSIADAP2" layout="radio" key="label.harmonization.assessment"> 
@@ -633,6 +638,10 @@ color: #999;
 							<fr:property name="subLayout" value=""/>
 						</fr:slot>
 						<fr:slot name="currentProcessState" layout="null-as-label" key="label.state" readOnly="true" >
+							<fr:property name="subLayout" value=""/>
+						</fr:slot>
+						<%--Current(latest) grade --%>
+						<fr:slot name="latestClassificationForSIADAP3" key="label.finalEvaluationScoring" layout="null-as-label" readOnly="true">
 							<fr:property name="subLayout" value=""/>
 						</fr:slot>
 						<%-- Harmonization assessments --%>
@@ -756,6 +765,10 @@ color: #999;
 						<fr:slot name="currentProcessState" layout="null-as-label" key="label.state" readOnly="true" >
 							<fr:property name="subLayout" value=""/>
 						</fr:slot>
+						<%--Current(latest) grade --%>
+						<fr:slot name="latestClassificationForSIADAP2" key="label.finalEvaluationScoring" layout="null-as-label" readOnly="true">
+							<fr:property name="subLayout" value=""/>
+						</fr:slot>
 						<%-- Harmonization assessments --%>
 						<logic:equal name="currentUnit" property="harmonizationFinished" value="false">
 							<fr:slot name="harmonizationCurrentAssessmentForSIADAP2" layout="radio" key="label.harmonization.assessment">
@@ -873,6 +886,10 @@ color: #999;
 							<fr:property name="subLayout" value=""/>
 						</fr:slot>
 						<fr:slot name="currentProcessState" layout="null-as-label" key="label.state" readOnly="true" >
+							<fr:property name="subLayout" value=""/>
+						</fr:slot>
+						<%--Current(latest) grade --%>
+						<fr:slot name="latestClassificationForSIADAP3" key="label.finalEvaluationScoring" layout="null-as-label" readOnly="true">
 							<fr:property name="subLayout" value=""/>
 						</fr:slot>
 						<%-- Harmonization assessments --%>
