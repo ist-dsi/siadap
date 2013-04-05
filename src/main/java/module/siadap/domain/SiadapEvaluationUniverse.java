@@ -195,7 +195,7 @@ public class SiadapEvaluationUniverse extends SiadapEvaluationUniverse_Base {
      *         CcaAssessment, classification, and excellencyAward)
      */
     protected boolean hasCompleteValidationAssessment() {
-        if (isWithSkippedEvaluation()) {
+        if (isWithSkippedEvaluation() || (getSiadap().getNulled() != null && getSiadap().getNulled() == true)) {
             return true;
         }
         //it depends on the grade, so if we have a grade of regular, we won't need an assessment
