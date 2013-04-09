@@ -4,4 +4,4 @@
 <%@ taglib uri="http://jakarta.apache.org/struts/tags-logic" prefix="logic" %>
 <%@ taglib uri="http://fenix-ashes.ist.utl.pt/fenix-renderers" prefix="fr" %>
 
-<h2><bean:message key="link.siadapManagement" bundle="SIADAP_RESOURCES"/> - <fr:view name="process" property="siadap.year"/> - <fr:view name="process" property="siadap.evaluated.firstAndLastName"/>(<fr:view name="process" property="processNumber"/>)</h2> 
+<h2><bean:message key="link.siadapManagement" bundle="SIADAP_RESOURCES"/> - <fr:view name="process" property="siadap.siadapYearConfiguration.label"/> - <fr:view name="process" property="siadap.evaluated.firstAndLastName"/>(<fr:view name="process" property="processNumber"/>)</h2> 

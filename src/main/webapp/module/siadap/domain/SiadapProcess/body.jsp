@@ -52,7 +52,7 @@ pre {
 	<b><p style="color:darkRed">Avaliado sem e-mail definido. Este avaliado não poderá receber notificações automáticas via e-mail. Para corrigir isto, por favor insira um contacto de-mail na secção informação pessoal no Fénix</p> </b>
 </div>
 </logic:equal>
-<h3><bean:message bundle="SIADAP_RESOURCES" key="label.siadap.schedule" arg0="<%= ((SiadapProcess) processJava).getSiadap().getYear().toString()%>" />:</h3>
+<h3><bean:message bundle="SIADAP_RESOURCES" key="label.siadap.schedule" arg0="<%= ((SiadapProcess) processJava).getSiadap().getSiadapYearConfiguration().getLabel()%>" />:</h3>
 <%-- START: The table with the deadlines and custom deadlines if they are defined --%>
 <table class="tstyle3 thleft mvert10px">
 	<tbody>
