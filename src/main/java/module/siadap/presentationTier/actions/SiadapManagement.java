@@ -55,7 +55,6 @@ import module.siadap.domain.wrappers.SiadapUniverseWrapper;
 import module.siadap.domain.wrappers.SiadapUniverseWrapper.UniverseDisplayMode;
 import module.siadap.domain.wrappers.SiadapYearWrapper;
 import module.siadap.domain.wrappers.UnitSiadapWrapper;
-import module.siadap.presentationTier.renderers.providers.SiadapYearsFromExistingSiadapConfigurations;
 import module.workflow.activities.ActivityException;
 import module.workflow.activities.ActivityInformation;
 import module.workflow.domain.WorkflowProcess;
@@ -125,13 +124,7 @@ public class SiadapManagement extends ContextBaseAction {
 
         SiadapYearWrapper siadapYearWrapper = (SiadapYearWrapper) getRenderedObject("siadapYearWrapper");
         if (siadapYearWrapper == null) {
-            ArrayList<Integer> yearsWithConfigs = SiadapYearsFromExistingSiadapConfigurations.getYearsWithExistingConfigs();
-            if (yearsWithConfigs.contains(new Integer(new LocalDate().getYear()))) {
-                int year = new LocalDate().getYear();
-                siadapYearWrapper = new SiadapYearWrapper(year);
-            } else {
-                siadapYearWrapper = new SiadapYearWrapper(yearsWithConfigs.get(yearsWithConfigs.size() - 1));
-            }
+            siadapYearWrapper = SiadapYearWrapper.getCurrentYearOrLatestAvailableWrapper();
         }
 
         return manageSiadapForGivenYear(mapping, form, request, response, siadapYearWrapper);
@@ -155,8 +148,7 @@ public class SiadapManagement extends ContextBaseAction {
             final HttpServletRequest request, final HttpServletResponse response) {
         SiadapYearWrapper siadapYearWrapper = (SiadapYearWrapper) getRenderedObject("siadapYearWrapper");
         if (siadapYearWrapper == null) {
-            int year = new LocalDate().getYear();
-            siadapYearWrapper = new SiadapYearWrapper(year);
+            siadapYearWrapper = SiadapYearWrapper.getCurrentYearOrLatestAvailableWrapper();
         }
         RenderUtils.invalidateViewState();
         request.setAttribute("siadapYearWrapper", siadapYearWrapper);
@@ -285,9 +277,8 @@ public class SiadapManagement extends ContextBaseAction {
     public final ActionForward createNewSiadapYearConfiguration(final ActionMapping mapping, final ActionForm form,
             final HttpServletRequest request, final HttpServletResponse response) {
 
-        Integer year = new Integer(request.getParameter("year"));
-
-        SiadapYearConfiguration.createNewSiadapYearConfiguration(year);
+        String label = request.getParameter("label");
+        SiadapYearConfiguration.createNewSiadapYearConfiguration(label);
         return manageSiadap(mapping, form, request, response);
     }
 
@@ -399,13 +390,7 @@ public class SiadapManagement extends ContextBaseAction {
         Integer yearInteger = request.getParameter("year") == null ? null : Integer.parseInt(request.getParameter("year"));
         SiadapYearWrapper siadapYearWrapper = (SiadapYearWrapper) getRenderedObject("siadapYearWrapper");
         if (siadapYearWrapper == null && yearInteger == null) {
-            ArrayList<Integer> yearsWithConfigs = SiadapYearsFromExistingSiadapConfigurations.getYearsWithExistingConfigs();
-            if (yearsWithConfigs.contains(new Integer(new LocalDate().getYear()))) {
-                int year = new LocalDate().getYear();
-                siadapYearWrapper = new SiadapYearWrapper(year);
-            } else {
-                siadapYearWrapper = new SiadapYearWrapper(yearsWithConfigs.get(yearsWithConfigs.size() - 1));
-            }
+            siadapYearWrapper = SiadapYearWrapper.getPreviousYearOrLatestAvailableWrapper();
         } else if (yearInteger != null) {
             siadapYearWrapper = new SiadapYearWrapper(yearInteger);
         }
@@ -618,18 +603,7 @@ public class SiadapManagement extends ContextBaseAction {
 
         SiadapYearWrapper siadapYearWrapper = (SiadapYearWrapper) getRenderedObject("siadapYearWrapper");
         if (siadapYearWrapper == null) {
-            ArrayList<Integer> yearsWithConfigs = SiadapYearsFromExistingSiadapConfigurations.getYearsWithExistingConfigs();
-            if (yearsWithConfigs.contains(new Integer(new LocalDate().getYear() - 1))) {
-                int year = new LocalDate().getYear() - 1;
-                siadapYearWrapper = new SiadapYearWrapper(year);
-            } else {
-                if (yearsWithConfigs.contains(new Integer(new LocalDate().getYear()))) {
-                    int year = new LocalDate().getYear();
-                    siadapYearWrapper = new SiadapYearWrapper(year);
-                } else {
-                    siadapYearWrapper = new SiadapYearWrapper(yearsWithConfigs.get(yearsWithConfigs.size() - 1));
-                }
-            }
+            siadapYearWrapper = SiadapYearWrapper.getPreviousYearOrLatestAvailableWrapper();
         }
         RenderUtils.invalidateViewState();
 

@@ -12,13 +12,15 @@
 
 <bean:define id="year" name="unit" property="year"/>
 
+<bean:define id="siadapLabel" name="unit" property="configuration.label" type="java.lang.String"/>
+
 <h2><fr:view name="unit" property="name" /></h2>
 
 <logic:equal name="mode" value="viewHomologatedProcesses">
-	<h3><%= employees.size() %> <bean:message key="title.siadap.processes.homologated" bundle="SIADAP_RESOURCES" /><%= " (SIADAP - " + year + ")" %></h3> 
+	<h3><%= employees.size() %> <bean:message key="title.siadap.processes.homologated" bundle="SIADAP_RESOURCES" /><%= " (SIADAP - " + siadapLabel + ")" %></h3> 
 </logic:equal>
 <logic:equal name="mode" value="viewReviewCommission">
-	<h3><%= employees.size() %> <bean:message key="title.siadap.processes.in.reviewCommission" bundle="SIADAP_RESOURCES" /><%= " (SIADAP - " + year + ")" %></h3> 
+	<h3><%= employees.size() %> <bean:message key="title.siadap.processes.in.reviewCommission" bundle="SIADAP_RESOURCES" /><%= " (SIADAP - " + siadapLabel + ")" %></h3> 
 </logic:equal>
 
 <fr:view name="employees">

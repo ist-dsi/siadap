@@ -39,6 +39,7 @@ import module.siadap.domain.groups.SiadapStructureManagementGroup;
 import module.siadap.domain.wrappers.PersonSiadapWrapper;
 import module.siadap.domain.wrappers.UnitSiadapWrapper;
 
+import org.apache.commons.lang.StringUtils;
 import org.jfree.data.time.Month;
 import org.joda.time.LocalDate;
 
@@ -51,6 +52,7 @@ import pt.ist.fenixWebFramework.services.Service;
 
 import com.google.common.base.Predicate;
 import com.google.common.collect.Collections2;
+import com.google.common.collect.Iterables;
 import com.google.common.collect.Iterators;
 
 /**
@@ -89,6 +91,17 @@ public class SiadapYearConfiguration extends SiadapYearConfiguration_Base {
     public static NamedGroup getHomologationMembersGroup() {
         initGroups();
         return homologationMembersGroup;
+    }
+
+    public static int getNextYear() {
+        int nextYear = -1;
+        for (SiadapYearConfiguration configuration : MyOrg.getInstance().getSiadapRootModule().getYearConfigurations()) {
+            int endYear = configuration.getBiannual() ? configuration.getYear() + 1 : configuration.getYear();
+            endYear += 1;
+            if (endYear > nextYear)
+                nextYear = endYear;
+        }
+        return nextYear;
     }
 
     /**
@@ -194,6 +207,21 @@ public class SiadapYearConfiguration extends SiadapYearConfiguration_Base {
         setLockHarmonizationOnQuota(Boolean.TRUE);
         setLockHarmonizationOnQuotaOutsideOfQuotaUniverses(Boolean.TRUE);
         setClosedValidation(Boolean.FALSE);
+        setBiannual(Boolean.TRUE);
+    }
+
+    public static SiadapYearConfiguration getSiadapYearConfiguration(final String chosenYearConfigurationLabel) {
+        if (StringUtils.isBlank(chosenYearConfigurationLabel))
+            return null;
+        return Iterables.tryFind(SiadapRootModule.getInstance().getYearConfigurations(),
+                new Predicate<SiadapYearConfiguration>() {
+            @Override
+            public boolean apply(SiadapYearConfiguration siadapYearConfiguration) {
+                if (siadapYearConfiguration == null)
+                    return false;
+                return siadapYearConfiguration.getLabel().equals(chosenYearConfigurationLabel);
+            }
+        }).orNull();
     }
 
     public static SiadapYearConfiguration getSiadapYearConfiguration(Integer year) {
@@ -245,12 +273,13 @@ public class SiadapYearConfiguration extends SiadapYearConfiguration_Base {
     }
 
     @Service
-    public static SiadapYearConfiguration createNewSiadapYearConfiguration(Integer year) {
-        SiadapYearConfiguration configuration = getSiadapYearConfiguration(year);
+    public static SiadapYearConfiguration createNewSiadapYearConfiguration(String label) {
+        SiadapYearConfiguration configuration = getSiadapYearConfiguration(label);
         if (configuration != null) {
             return configuration;
         }
-        return new SiadapYearConfiguration(year, DEFAULT_SIADAP2_OBJECTIVES_PONDERATION, DEFAULT_SIADAP2_COMPETENCES_PONDERATION,
+        return new SiadapYearConfiguration(getNextYear(), DEFAULT_SIADAP2_OBJECTIVES_PONDERATION,
+                DEFAULT_SIADAP2_COMPETENCES_PONDERATION,
                 DEFAULT_SIADAP3_COMPETENCES_PONDERATION, DEFAULT_SIADAP3_OBJECTIVES_PONDERATION,
                 DEFAULT_REVIEW_COMMISSION_WAITING_PERIOD);
     }
@@ -466,4 +495,15 @@ public class SiadapYearConfiguration extends SiadapYearConfiguration_Base {
     public boolean isPersonMemberOfRevertStateGroup(Person person) {
         return getRevertStateGroupMember().contains(person);
     }
+
+    public String getLabel() {
+        if (getBiannual() == null || getBiannual() == false)
+            return String.valueOf(getYear());
+        else {
+            String shortVersionOfSecondYear = StringUtils.right(String.valueOf(getYear() + 1), 2);
+            return String.valueOf(getYear()) + "-" + shortVersionOfSecondYear;
+        }
+
+    }
+
 }

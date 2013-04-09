@@ -63,7 +63,7 @@
 <fr:form action="<%="/unitManagementInterface.do?method=showUnit&mode=" + mode.name()%>" >
 	<fr:edit id="siadapYearWrapper" name="siadapYearWrapper" nested="true">
 		<fr:schema bundle="SIADAP" type="module.siadap.domain.wrappers.SiadapYearWrapper">
-			<fr:slot name="chosenYear" bundle="SIADAP_RESOURCES" layout="menu-select-postback" key="siadap.start.siadapYearChoice">
+			<fr:slot name="chosenYearLabel" bundle="SIADAP_RESOURCES" layout="menu-select-postback" key="siadap.start.siadapYearChoice">
 					<fr:property name="providerClass" value="module.siadap.presentationTier.renderers.providers.SiadapYearsFromExistingSiadapConfigurations"/>
 					<%-- 
 					<fr:property name="format" value="${year}" />
