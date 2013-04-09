@@ -10,7 +10,7 @@
  *
  *   The SIADAP Module is free software: you can
  *   redistribute it and/or modify it under the terms of the GNU Lesser General
- *   Public License as published by the Free Software Foundation, either version 
+ *   Public License as published by the Free Software Foundation, either version
  *   3 of the License, or (at your option) any later version.
  *
  *   The SIADAP Module is distributed in the hope that it will be useful,
@@ -164,7 +164,7 @@ public class SiadapProcess extends SiadapProcess_Base {
         if ((configuration.getCcaMembers() != null && configuration.getCcaMembers().contains(currentUser.getPerson()))
                 || (configuration.getScheduleEditors() != null && configuration.getScheduleEditors().contains(
                         currentUser.getPerson())) || Role.getRole(RoleType.MANAGER).isMember(currentUser)
-                || configuration.getStructureManagementGroupMembers().contains(currentUser.getPerson())) {
+                        || configuration.getStructureManagementGroupMembers().contains(currentUser.getPerson())) {
             belongsToASuperGroup = true;
         }
         if (!belongsToASuperGroup) {
@@ -174,7 +174,7 @@ public class SiadapProcess extends SiadapProcess_Base {
 
         setWorkflowSystem(WorkflowSystem.getInstance());
         setSiadap(new Siadap(year, evaluated, siadapUniverse, competenceType));
-        setProcessNumber("S" + year + "/" + evaluated.getUser().getUsername());
+        setProcessNumber("S" + configuration.getLabel() + "/" + evaluated.getUser().getUsername());
 
         new LabelLog(this, currentUser, this.getClass().getName() + ".creation", "resources/SiadapResources",
                 evaluated.getName(), year.toString(), siadapUniverse.getLocalizedName(), competenceType.getName());
@@ -292,7 +292,7 @@ public class SiadapProcess extends SiadapProcess_Base {
         if (evaluationUniverse.isCurriculumPonderation()) {
             siadapUniverseLocalizedName +=
                     " (" + BundleUtil.getStringFromResourceBundle(Siadap.SIADAP_BUNDLE_STRING, "label.curricularPonderation")
-                            + " )";
+                    + " )";
         }
         new LabelLog(this, UserView.getCurrentUser(), "label.terminateHarmonization.for", "resources/SiadapResources",
                 siadapUniverseLocalizedName);
@@ -303,7 +303,7 @@ public class SiadapProcess extends SiadapProcess_Base {
         if (evaluationUniverse.isCurriculumPonderation()) {
             siadapUniverseLocalizedName +=
                     " (" + BundleUtil.getStringFromResourceBundle(Siadap.SIADAP_BUNDLE_STRING, "label.curricularPonderation")
-                            + " )";
+                    + " )";
         }
         new LabelLog(this, UserView.getCurrentUser(), "label.givenHarmonizationAssessment.for", "resources/SiadapResources",
                 siadapUniverseLocalizedName);
@@ -314,7 +314,7 @@ public class SiadapProcess extends SiadapProcess_Base {
         if (evaluationUniverse.isCurriculumPonderation()) {
             siadapUniverseLocalizedName +=
                     " (" + BundleUtil.getStringFromResourceBundle(Siadap.SIADAP_BUNDLE_STRING, "label.curricularPonderation")
-                            + " )";
+                    + " )";
         }
         new LabelLog(this, UserView.getCurrentUser(), "label.reOpenHarmonization.for", "resources/SiadapResources",
                 siadapUniverseLocalizedName);
@@ -465,7 +465,7 @@ public class SiadapProcess extends SiadapProcess_Base {
         if (siadapEvaluationUniverse.isCurriculumPonderation()) {
             siadapUniverseLocalizedName +=
                     " (" + BundleUtil.getStringFromResourceBundle(Siadap.SIADAP_BUNDLE_STRING, "label.curricularPonderation")
-                            + " )";
+                    + " )";
         }
         new LabelLog(this, UserView.getCurrentUser(), "label.removedHarmonizationAssessment.for", "resources/SiadapResources",
                 siadapUniverseLocalizedName);
