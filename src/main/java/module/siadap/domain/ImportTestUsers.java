@@ -25,6 +25,7 @@
 package module.siadap.domain;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import pt.ist.bennu.core.domain.MyOrg;
@@ -94,7 +95,7 @@ public class ImportTestUsers extends WriteCustomTask {
 
         // get all of the users from the static list of strings with their
         // userIds, abort if any isn't found
-        List<User> existingSystemUsers = myOrg.getUser();
+        Collection<User> existingSystemUsers = myOrg.getUser();
         List<User> testUsersList = new ArrayList<User>();
         for (User user : existingSystemUsers) {
             if (testUsersListString.contains(user.getUsername())) {

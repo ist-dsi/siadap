@@ -65,7 +65,7 @@ import org.joda.time.LocalDate;
 import pt.ist.bennu.core.presentationTier.actions.ContextBaseAction;
 import pt.ist.bennu.core.presentationTier.component.OrganizationChart;
 import pt.ist.fenixWebFramework.renderers.utils.RenderUtils;
-import pt.ist.fenixWebFramework.services.Service;
+import pt.ist.fenixframework.Atomic;
 import pt.ist.fenixWebFramework.struts.annotations.Mapping;
 
 import com.google.common.collect.ArrayListMultimap;
@@ -125,7 +125,7 @@ public class SiadapProcessCountAction extends ContextBaseAction {
 
     }
 
-    @Service
+    @Atomic
     private void deleteSiadapEvenWithFiles(Siadap siadap) {
         SiadapProcess process = siadap.getProcess();
         for (ProcessFile file : process.getFiles()) {

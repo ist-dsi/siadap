@@ -24,10 +24,10 @@
  */
 package module.siadap.domain;
 
+import java.util.Collection;
 import java.util.Collections;
-import java.util.List;
 
-import pt.ist.fenixWebFramework.services.Service;
+import pt.ist.fenixframework.Atomic;
 
 /**
  * 
@@ -42,14 +42,14 @@ public class CompetenceType extends CompetenceType_Base {
         setSiadapRootModule(SiadapRootModule.getInstance());
     }
 
-    @Service
+    @Atomic
     public static CompetenceType createNewCompetenceType(String name) {
         return new CompetenceType(name);
     }
 
     public Integer getNextCompetenceNumber() {
 
-        List<Competence> competences = getCompetences();
+        Collection<Competence> competences = getCompetences();
         if (competences.isEmpty()) {
             return 1;
         }

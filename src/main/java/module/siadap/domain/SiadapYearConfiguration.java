@@ -40,16 +40,17 @@ import module.siadap.domain.wrappers.PersonSiadapWrapper;
 import module.siadap.domain.wrappers.UnitSiadapWrapper;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
 import org.jfree.data.time.Month;
 import org.joda.time.LocalDate;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import pt.ist.bennu.core.applicationTier.Authenticate.UserView;
 import pt.ist.bennu.core.domain.MyOrg;
 import pt.ist.bennu.core.domain.User;
 import pt.ist.bennu.core.domain.groups.NamedGroup;
 import pt.ist.bennu.core.domain.groups.PersistentGroup;
-import pt.ist.fenixWebFramework.services.Service;
+import pt.ist.fenixframework.Atomic;
 
 import com.google.common.base.Predicate;
 import com.google.common.collect.Collections2;
@@ -79,7 +80,7 @@ public class SiadapYearConfiguration extends SiadapYearConfiguration_Base {
     private static SiadapCCAGroup ccaMembersGroup;
     private static SiadapStructureManagementGroup siadapStructureManagementGroup;
 
-    private static final Logger LOGGER = Logger.getLogger(SiadapYearConfiguration.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(SiadapYearConfiguration.class);
 
     public static SiadapCCAGroup getCcaMembersGroup() {
         initGroups();
@@ -101,8 +102,9 @@ public class SiadapYearConfiguration extends SiadapYearConfiguration_Base {
         for (SiadapYearConfiguration configuration : MyOrg.getInstance().getSiadapRootModule().getYearConfigurations()) {
             int endYear = configuration.getBiannual() ? configuration.getYear() + 1 : configuration.getYear();
             endYear += 1;
-            if (endYear > nextYear)
+            if (endYear > nextYear) {
                 nextYear = endYear;
+            }
         }
         return nextYear;
     }
@@ -181,27 +183,27 @@ public class SiadapYearConfiguration extends SiadapYearConfiguration_Base {
         groupsInitialized = true;
     }
 
-    @Service
+    @Atomic
     private static void createStructureManagementGroup() {
         siadapStructureManagementGroup = new SiadapStructureManagementGroup();
     }
 
-    @Service
+    @Atomic
     private static void createHomologationMembersGroup() {
         homologationMembersGroup = new NamedGroup(HOMOLOGATION_MEMBERS_GROUPNAME);
     }
 
-    @Service
+    @Atomic
     private static void createCCAMembersGroup() {
         ccaMembersGroup = new SiadapCCAGroup();
     }
 
-    @Service
+    @Atomic
     public static void addHomologationMember(User user) {
         getHomologationMembersGroup().addUsers(user);
     }
 
-    @Service
+    @Atomic
     public static void removeHomologationMember(User user) {
         getHomologationMembersGroup().removeUsers(user);
     }
@@ -261,17 +263,19 @@ public class SiadapYearConfiguration extends SiadapYearConfiguration_Base {
     }
 
     public static SiadapYearConfiguration getSiadapYearConfiguration(final String chosenYearConfigurationLabel) {
-        if (StringUtils.isBlank(chosenYearConfigurationLabel))
+        if (StringUtils.isBlank(chosenYearConfigurationLabel)) {
             return null;
+        }
         return Iterables.tryFind(SiadapRootModule.getInstance().getYearConfigurations(),
                 new Predicate<SiadapYearConfiguration>() {
-            @Override
-            public boolean apply(SiadapYearConfiguration siadapYearConfiguration) {
-                if (siadapYearConfiguration == null)
-                    return false;
-                return siadapYearConfiguration.getLabel().equals(chosenYearConfigurationLabel);
-            }
-        }).orNull();
+                    @Override
+                    public boolean apply(SiadapYearConfiguration siadapYearConfiguration) {
+                        if (siadapYearConfiguration == null) {
+                            return false;
+                        }
+                        return siadapYearConfiguration.getLabel().equals(chosenYearConfigurationLabel);
+                    }
+                }).orNull();
     }
 
     public static SiadapYearConfiguration getSiadapYearConfiguration(Integer year) {
@@ -300,7 +304,7 @@ public class SiadapYearConfiguration extends SiadapYearConfiguration_Base {
         return true;
     }
 
-    @Service
+    @Atomic
     public Boolean initializePonderationsIfNeeded() {
         Boolean migratedAnything = Boolean.FALSE;
         if (getSiadap2CompetencesPonderation() == null) {
@@ -322,7 +326,7 @@ public class SiadapYearConfiguration extends SiadapYearConfiguration_Base {
         return migratedAnything;
     }
 
-    @Service
+    @Atomic
     public static SiadapYearConfiguration createNewSiadapYearConfiguration(String label) {
         SiadapYearConfiguration configuration = getSiadapYearConfiguration(label);
         if (configuration != null) {
@@ -416,61 +420,61 @@ public class SiadapYearConfiguration extends SiadapYearConfiguration_Base {
     }
 
     @Override
-    @Service
+    @Atomic
     public void addStructureManagementGroupMembers(Person structureManagementGroupMembers) {
         super.addStructureManagementGroupMembers(structureManagementGroupMembers);
     }
 
     @Override
-    @Service
+    @Atomic
     public void removeStructureManagementGroupMembers(Person structureManagementGroupMembers) {
         super.removeStructureManagementGroupMembers(structureManagementGroupMembers);
     }
 
     @Override
-    @Service
+    @Atomic
     public void addCcaMembers(Person ccaMembers) {
         super.addCcaMembers(ccaMembers);
     }
 
     @Override
-    @Service
+    @Atomic
     public void removeCcaMembers(Person ccaMembers) {
         super.removeCcaMembers(ccaMembers);
     }
 
     @Override
-    @Service
+    @Atomic
     public void addHomologationMembers(Person homologationMembers) {
         super.addHomologationMembers(homologationMembers);
     }
 
     @Override
-    @Service
+    @Atomic
     public void addScheduleEditors(Person scheduleEditors) {
         super.addScheduleEditors(scheduleEditors);
     };
 
     @Override
-    @Service
+    @Atomic
     public void addRevertStateGroupMember(Person revertStateGroupMember) {
         super.addRevertStateGroupMember(revertStateGroupMember);
     }
 
     @Override
-    @Service
+    @Atomic
     public void removeScheduleEditors(Person scheduleEditor) {
         super.removeScheduleEditors(scheduleEditor);
     };
 
     @Override
-    @Service
+    @Atomic
     public void removeRevertStateGroupMember(Person revertStateGroupMember) {
         super.removeRevertStateGroupMember(revertStateGroupMember);
     }
 
     @Override
-    @Service
+    @Atomic
     public void removeHomologationMembers(Person homologationMembers) {
         super.removeHomologationMembers(homologationMembers);
     }
@@ -546,9 +550,9 @@ public class SiadapYearConfiguration extends SiadapYearConfiguration_Base {
     }
 
     public String getLabel() {
-        if (getBiannual() == null || getBiannual() == false)
+        if (getBiannual() == null || getBiannual() == false) {
             return String.valueOf(getYear());
-        else {
+        } else {
             String shortVersionOfSecondYear = StringUtils.right(String.valueOf(getYear() + 1), 2);
             return String.valueOf(getYear()) + "-" + shortVersionOfSecondYear;
         }

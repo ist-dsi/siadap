@@ -42,7 +42,6 @@ import module.siadap.domain.groups.SiadapStructureManagementGroup;
 import module.siadap.domain.wrappers.PersonSiadapWrapper;
 import module.siadap.domain.wrappers.UnitSiadapWrapper;
 
-import org.apache.log4j.Logger;
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFCellStyle;
 import org.apache.poi.hssf.usermodel.HSSFFont;
@@ -62,6 +61,8 @@ import org.apache.poi.ss.usermodel.PrintSetup;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.util.IOUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import pt.ist.bennu.core.applicationTier.Authenticate.UserView;
 import pt.ist.bennu.core.domain.ModuleInitializer;
@@ -70,7 +71,7 @@ import pt.ist.bennu.core.domain.User;
 import pt.ist.bennu.core.domain.groups.NamedGroup;
 import pt.ist.bennu.core.domain.groups.PersistentGroup;
 import pt.ist.bennu.core.domain.groups.UnionGroup;
-import pt.ist.fenixWebFramework.services.Service;
+import pt.ist.fenixframework.Atomic;
 
 /**
  * 
@@ -81,7 +82,7 @@ import pt.ist.fenixWebFramework.services.Service;
  */
 public class SiadapRootModule extends SiadapRootModule_Base implements ModuleInitializer {
 
-    private static final Logger LOGGER = Logger.getLogger(SiadapRootModule.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(SiadapRootModule.class);
 
     private static boolean isInitialized = false;
 
@@ -209,7 +210,7 @@ public class SiadapRootModule extends SiadapRootModule_Base implements ModuleIni
 
     }
 
-    @Service
+    @Atomic
     public synchronized static void initialize() {
         if (!isInitialized) {
             try {

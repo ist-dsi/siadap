@@ -11,8 +11,8 @@ import module.siadap.domain.SiadapProcess;
 import module.siadap.presentationTier.actions.SiadapProcessCountAction;
 import module.workflow.domain.LabelLog;
 import pt.ist.bennu.core.domain.scheduler.WriteCustomTask;
-import pt.ist.fenixframework.pstm.AbstractDomainObject;
-import pt.ist.fenixframework.pstm.IllegalWriteException;
+import pt.ist.fenixframework.FenixFramework;
+import pt.ist.fenixframework.core.WriteOnReadError;
 
 /**
  * @author João Antunes (joao.antunes@tagus.ist.utl.pt) - 5 de Fev de 2013
@@ -30,9 +30,9 @@ public class DeleteSiadapProcessForGivenUSer extends WriteCustomTask {
      */
     @Override
     protected void doService() {
-        SiadapProcess process = AbstractDomainObject.fromExternalId(this.WF_PROCESS_OID);
+        SiadapProcess process = FenixFramework.getDomainObject(this.WF_PROCESS_OID);
 
-        LabelLog labelLog = AbstractDomainObject.fromExternalId(LABEL_LOG_OID);
+        LabelLog labelLog = FenixFramework.getDomainObject(LABEL_LOG_OID);
 
         labelLog.delete();
 
@@ -40,17 +40,17 @@ public class DeleteSiadapProcessForGivenUSer extends WriteCustomTask {
 
         try {
 
-
             Method deleteMethod = SiadapProcessCountAction.class.getDeclaredMethod("deleteSiadapEvenWithFiles", Siadap.class);
             deleteMethod.setAccessible(true);
 
             SiadapProcessCountAction siadapProcessCountAction = new SiadapProcessCountAction();
             deleteMethod.invoke(siadapProcessCountAction, siadap);
         } catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException ex) {
-            if (ex.getCause() instanceof IllegalWriteException)
-                throw (IllegalWriteException) ex.getCause();
-            else
+            if (ex.getCause() instanceof WriteOnReadError) {
+                throw (WriteOnReadError) ex.getCause();
+            } else {
                 throw new Error(ex);
+            }
         }
 
     }

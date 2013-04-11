@@ -7,7 +7,7 @@ import module.organization.domain.Accountability;
 import module.workflow.domain.WorkflowLog;
 import pt.ist.bennu.core.domain.User;
 import pt.ist.bennu.core.domain.scheduler.WriteCustomTask;
-import pt.ist.fenixframework.pstm.AbstractDomainObject;
+import pt.ist.fenixframework.FenixFramework;
 
 /**
  * @author João Antunes (joao.antunes@tagus.ist.utl.pt) - 7 de Fev de 2013
@@ -27,13 +27,13 @@ public class CorrectSiadapAccontabilityMistake extends WriteCustomTask {
     @Override
     protected void doService() {
         User prevericator = User.findByUsername("ist23470");
-        Accountability accToChange = AbstractDomainObject.fromExternalId(ACC_OID);
+        Accountability accToChange = FenixFramework.getDomainObject(ACC_OID);
         if (accToChange.getCreatorUser().equals(prevericator))
             out.println("Found the accountability");
         else
             return;
 
-        WorkflowLog log = AbstractDomainObject.fromExternalId(WORKFLOW_LOG_OID);
+        WorkflowLog log = FenixFramework.getDomainObject(WORKFLOW_LOG_OID);
         if (log.getActivityExecutor().equals(prevericator))
         {
             out.println("Got log: " + log.getDescription());
