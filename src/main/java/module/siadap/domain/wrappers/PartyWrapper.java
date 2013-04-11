@@ -10,7 +10,7 @@
  *
  *   The SIADAP Module is free software: you can
  *   redistribute it and/or modify it under the terms of the GNU Lesser General
- *   Public License as published by the Free Software Foundation, either version 
+ *   Public License as published by the Free Software Foundation, either version
  *   3 of the License, or (at your option) any later version.
  *
  *   The SIADAP Module is distributed in the hope that it will be useful,
@@ -34,9 +34,9 @@ import module.organization.domain.Party;
 import module.organization.domain.Person;
 import module.organization.domain.Unit;
 import module.siadap.domain.SiadapYearConfiguration;
+import module.siadap.domain.util.SiadapMiscUtilClass;
 
 import org.apache.commons.collections.Predicate;
-import org.jfree.data.time.Month;
 import org.joda.time.LocalDate;
 
 /**
@@ -183,8 +183,8 @@ public abstract class PartyWrapper implements Serializable {
         private final boolean skipClosedAccountabilities;
 
         public FilterAccountabilities(int year, boolean skipClosedAccountabilities) {
-            this.begin = new LocalDate(year, Month.JANUARY, 1);
-            this.end = new LocalDate(year, Month.DECEMBER, 31);
+            this.begin = SiadapMiscUtilClass.firstDayOfYear(year);
+            this.end = SiadapMiscUtilClass.lastDayOfYear(year);
             this.skipClosedAccountabilities = skipClosedAccountabilities;
         }
 

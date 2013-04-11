@@ -21,9 +21,10 @@
 
 <bean:define id="user" name="USER_SESSION_ATTRIBUTE" property="user"/>
 <bean:define id="year" name="person" property="year"/>
+<bean:define id="yearLabel" name="person" property="configuration.label" type="java.lang.String"/>
 <bean:define id="personWrapper" name="person"  type="module.siadap.domain.wrappers.PersonSiadapWrapper"/>
 
-<h2><bean:message key="link.siadap.structureManagement.forAGivenYear" arg0="<%=year.toString()%>" bundle="SIADAP_RESOURCES"/></h2>
+<h2><bean:message key="link.siadap.structureManagement.forAGivenYear" arg0="<%=yearLabel%>" bundle="SIADAP_RESOURCES"/></h2>
 <br/>
 
 <bean:define id="personId" name="person" property="person.externalId"/>
@@ -486,9 +487,9 @@ request.setAttribute("isCCAMember", isCCAMember);
  <jsp:param value="<%=configuration.getHarmonizationResponsibleRelation().getExternalId()%>" name="accountabilities"/>
  <jsp:param value="<%=configuration.getSiadap2HarmonizationRelation().getExternalId()%>" name="accountabilities"/>
  <jsp:param value="<%=configuration.getSiadap3HarmonizationRelation().getExternalId()%>" name="accountabilities"/>
- <jsp:param value="<%=year%>" name="endDateYear"/>
- <jsp:param value="12" name="endDateMonth"/>
- <jsp:param value="31" name="endDateDay"/>
+ <jsp:param value="<%=configuration.getLastDay().getYear()%>" name="endDateYear"/>
+ <jsp:param value="<%=configuration.getLastDay().getMonthOfYear()%>" name="endDateMonth"/>
+ <jsp:param value="<%=configuration.getLastDay().getDayOfMonth()%>" name="endDateDay"/>
  <jsp:param value="true" name="showDeletedAccountabilities"/>
 </jsp:include>
 

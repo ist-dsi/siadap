@@ -74,7 +74,7 @@ SiadapYearWrapper siadapYearWrapper = (SiadapYearWrapper) request.getAttribute("
  	<fr:view name="person" property="allSiadaps">
  		<fr:schema type="module.siadap.domain.Siadap" bundle="SIADAP_RESOURCES">
  			<fr:slot name="process.processNumber" key="label.processNumber" bundle="WORKFLOW_RESOURCES"/>
- 			<fr:slot name="year"/>
+ 			<fr:slot name="siadapYearConfiguration.label" key="label.year"/>
  			<%-- TODO joantune: SIADAP-145 
  			<fr:slot name="defaultTotalEvaluationScoring"/>
  			--%>

@@ -10,7 +10,7 @@
  *
  *   The SIADAP Module is free software: you can
  *   redistribute it and/or modify it under the terms of the GNU Lesser General
- *   Public License as published by the Free Software Foundation, either version 
+ *   Public License as published by the Free Software Foundation, either version
  *   3 of the License, or (at your option) any later version.
  *
  *   The SIADAP Module is distributed in the hope that it will be useful,
@@ -27,6 +27,7 @@ package module.siadap.domain.util.scripts;
 import module.organization.domain.Accountability;
 import module.organization.domain.AccountabilityType;
 import module.siadap.domain.SiadapYearConfiguration;
+import module.siadap.domain.util.SiadapMiscUtilClass;
 
 import org.joda.time.LocalDate;
 
@@ -66,7 +67,7 @@ public class MakeXRelationsEndAtEndYear extends WriteCustomTask {
         for (Accountability accountability : accType.getAccountabilities()) {
             LocalDate endDate = accountability.getEndDate();
             if (endDate == null) {
-                endDate = new LocalDate((new LocalDate()).getYear(), 12, 31);
+                endDate = SiadapMiscUtilClass.lastDayOfYear(new LocalDate().getYear());
                 accountability.editDates(accountability.getBeginDate(), endDate);
                 nrOfEvalAccEnded++;
                 out.println("Ended an accountability where parent is " + accountability.getParent().getPartyName()

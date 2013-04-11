@@ -64,9 +64,14 @@ public class SiadapYearWrapper implements Serializable, Comparable<SiadapYearWra
     }
 
     public static SiadapYearWrapper getPreviousYearOrLatestAvailableWrapper() {
+        Integer currentYear = new LocalDate().getYear();
         SiadapYearWrapper siadapYearWrapper = null;
         ArrayList<Integer> yearsWithConfigs = SiadapYearsFromExistingSiadapConfigurations.getYearsWithExistingConfigs();
-        if (yearsWithConfigs.contains(new Integer(new LocalDate().getYear() - 1))) {
+        if (SiadapYearConfiguration.getSiadapYearConfiguration(currentYear) != null) {
+            siadapYearWrapper =
+                    new SiadapYearWrapper(SiadapYearConfiguration.getSiadapYearConfiguration(currentYear)
+                            .getPreviousSiadapYearConfiguration().getYear());
+        } else if (yearsWithConfigs.contains(new Integer(currentYear - 1))) {
             int year = new LocalDate().getYear() - 1;
             siadapYearWrapper = new SiadapYearWrapper(year);
         } else {

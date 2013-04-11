@@ -23,13 +23,14 @@
 		<fr:layout name="tabular-sortable">
 			<fr:property name="classes" value="tstyle2"/>
 			<fr:property name="columnClasses" value="aleft,aleft,,"/>
+			<%-- 
 			<fr:property name="link(create)" value="<%="/siadapManagement.do?method=createNewSiadapProcess&year=" + request.getParameter("year")%>"/>
 			<fr:property name="bundle(create)" value="MYORG_RESOURCES"/>
 			<fr:property name="key(create)" value="link.create"/>
 			<fr:property name="param(create)" value="person.externalId/personId"/>
 			<fr:property name="order(create)" value="1"/>
 			<fr:property name="visibleIf(create)" value="currentUserAbleToCreateProcess"/>
-			
+			--%>
 			<fr:property name="link(viewProcess)" value="<%="/workflowProcessManagement.do?method=viewProcess&year=" + request.getParameter("year")%>"/>
 			<fr:property name="bundle(viewProcess)" value="MYORG_RESOURCES"/>
 			<fr:property name="key(viewProcess)" value="link.view"/>

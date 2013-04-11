@@ -368,7 +368,7 @@ public class PersonSiadapWrapper extends PartyWrapper implements Serializable {
         if (siadapEvaluationUniverseForSiadapUniverse.isCurriculumPonderation()) {
             CurricularPonderationEvaluationItem curricularPonderationEvaluationItem =
                     (CurricularPonderationEvaluationItem) siadapEvaluationUniverseForSiadapUniverse.getSiadapEvaluationItems()
-                            .get(0);
+                    .get(0);
             return curricularPonderationEvaluationItem.getExcellencyAward() == null
                     || !curricularPonderationEvaluationItem.getExcellencyAward();
         }
@@ -678,7 +678,7 @@ public class PersonSiadapWrapper extends PartyWrapper implements Serializable {
     }
 
     public boolean isCurrentUserAbleToCreateProcess() {
-        return getSiadap() == null && isCurrentUserAbleToEvaluate();
+        return getSiadap() == null && SiadapYearConfiguration.getStructureManagementGroup().isMember(UserView.getCurrentUser());
     }
 
     public boolean isCurrentUserAbleToSeeAutoEvaluationDetails() {
@@ -1064,14 +1064,13 @@ public class PersonSiadapWrapper extends PartyWrapper implements Serializable {
 
         // let's change the harmonization unit then
         for (Accountability accountability : getParentAccountabilityTypes(defaultUniverseHarmonizationRelation)) {
-            if (accountability.isActiveNow()) {
+            if (accountability.isActive(getConfiguration().getLastDayForAccountabilities())) {
                 accountability.editDates(accountability.getBeginDate(), dateOfChange, justification);
             }
         }
         unit.addChild(getPerson(), defaultUniverseHarmonizationRelation, dateOfChange, null, justification);
 
     }
-
 
     @Service
     public void changeWorkingUnitTo(Unit unit, Boolean withQuotas, LocalDate dateOfChange, String justification) {
@@ -1094,7 +1093,7 @@ public class PersonSiadapWrapper extends PartyWrapper implements Serializable {
 
             for (Accountability accountability : getParentAccountabilityTypes(configuration.getWorkingRelation(),
                     configuration.getWorkingRelationWithNoQuota())) {
-                if (accountability.isActiveNow()) {
+                if (accountability.isActive(configuration.getLastDayForAccountabilities())) {
                     accountability.editDates(accountability.getBeginDate(), dateOfChange);
                 }
             }
@@ -1127,14 +1126,15 @@ public class PersonSiadapWrapper extends PartyWrapper implements Serializable {
         SiadapActionChangeValidatorEnum.EVALUATOR_CHANGE.validate(this);
 
         verifyDate(dateOfChange);
-        LocalDate startOfYear = new LocalDate(dateOfChange.getYear(), 1, 1);
-        LocalDate endOfYear = new LocalDate(dateOfChange.getYear(), 12, 31);
+        @SuppressWarnings("boxing")
+        LocalDate startOfYear = SiadapMiscUtilClass.firstDayOfYear(dateOfChange.getYear());
+        LocalDate endOfYear = SiadapMiscUtilClass.lastDayOfYear(dateOfChange.getYear());
         SiadapYearConfiguration configuration = getConfiguration();
         AccountabilityType evaluationRelation = configuration.getEvaluationRelation();
         boolean needToAddAcc = true;
         for (Accountability accountability : getParentAccountabilityTypes(evaluationRelation)) {
-            if (accountability.isActiveNow() && accountability.getParent() instanceof Person
-                    && accountability.getChild() instanceof Person) {
+            if (accountability.isActive(getConfiguration().getLastDayForAccountabilities())
+                    && accountability.getParent() instanceof Person && accountability.getChild() instanceof Person) {
                 // let's close it if we have a different person here
                 if (!accountability.getParent().equals(newEvaluator)) {
                     accountability.editDates(accountability.getBeginDate(), dateOfChange);
@@ -1222,7 +1222,7 @@ public class PersonSiadapWrapper extends PartyWrapper implements Serializable {
                     dateToEndTheAcc = accountability.getBeginDate().plusDays(1);
                 } else {
                     // let's close it on the last day of the previous year
-                    dateToEndTheAcc = SiadapMiscUtilClass.lastDayOfYear(getYear() - 1);
+                    dateToEndTheAcc = getConfiguration().getPreviousSiadapYearConfiguration().getLastDay();
                 }
                 if (!accountability.isErased()) {
                     accountability.setEndDate(dateToEndTheAcc);
@@ -1544,7 +1544,8 @@ public class PersonSiadapWrapper extends PartyWrapper implements Serializable {
 
         if (getSiadap() != null) {
             // shouldn't remove the structure, simply nullify it
-            throw new SiadapException("error.should.nullify.not.remove");
+            throw new SiadapException("error.should.nullify.not.remove",
+                    getPerson() != null ? getPerson().getPresentationName() : "-");
         }
         for (Accountability acc : getPerson().getParentAccountabilities(getConfiguration().getUnitRelations(),
                 getConfiguration().getHarmonizationUnitRelations(), getConfiguration().getWorkingRelation(),
@@ -1558,7 +1559,7 @@ public class PersonSiadapWrapper extends PartyWrapper implements Serializable {
                 if (acc.getBeginDate().getYear() == getYear()) {
                     acc.delete();
                 } else {
-                    acc.setEndDate(SiadapMiscUtilClass.lastDayOfYear(getYear() - 1));
+                    acc.setEndDate(getConfiguration().getPreviousSiadapYearConfiguration().getLastDay());
                 }
             }
         }
