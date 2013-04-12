@@ -552,7 +552,14 @@ public class SiadapYearConfiguration extends SiadapYearConfiguration_Base {
     }
 
     private static final Integer MAXIMUM_NR_OBJ_INDICATORS_IN_BIANNUAL_PROCCESS = new Integer(3);
+    private static final Integer MAXIMUM_NR_OF_OBJECTIVES_FOR_BIANNUAL_PROCCESS = new Integer(7);
 
+    public Integer getMaximumNumberOfObjectives() {
+        if (getBiannual() == true)
+            return MAXIMUM_NR_OF_OBJECTIVES_FOR_BIANNUAL_PROCCESS;
+        else
+            return null;
+    }
     public Integer getMaximumNumberOfObjectiveIndicators() {
         if (getBiannual() == true)
             return MAXIMUM_NR_OBJ_INDICATORS_IN_BIANNUAL_PROCCESS;
