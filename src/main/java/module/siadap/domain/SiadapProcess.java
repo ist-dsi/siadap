@@ -159,6 +159,9 @@ public class SiadapProcess extends SiadapProcess_Base {
         Person possibleEvaluator = currentUser.getPerson();
         PersonSiadapWrapper evaluator = new PersonSiadapWrapper(evaluated, year).getEvaluator();
         SiadapYearConfiguration configuration = SiadapYearConfiguration.getSiadapYearConfiguration(year);
+        if (configuration.isOnlyAllowedToCreateSIADAP3() && siadapUniverse.equals(SiadapUniverse.SIADAP2)) {
+            throw new SiadapException("Unable to create a SIADAP2 proccess due to the configuration");
+        }
 
         boolean belongsToASuperGroup = false;
         if ((configuration.getCcaMembers() != null && configuration.getCcaMembers().contains(currentUser.getPerson()))

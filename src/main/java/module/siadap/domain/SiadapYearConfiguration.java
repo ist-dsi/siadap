@@ -124,6 +124,10 @@ public class SiadapYearConfiguration extends SiadapYearConfiguration_Base {
 
     }
 
+    public boolean isOnlyAllowedToCreateSIADAP3() {
+        return getBiannual();
+    }
+
     public SiadapYearConfiguration getPreviousSiadapYearConfiguration() {
         int currentYear = getYear();
         SiadapYearConfiguration configurationToReturn = null;

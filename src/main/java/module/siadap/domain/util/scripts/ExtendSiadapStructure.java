@@ -28,6 +28,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import javax.annotation.Nullable;
+
 import module.organization.domain.Accountability;
 import module.organization.domain.AccountabilityType;
 import module.organization.domain.Person;
@@ -42,10 +44,16 @@ import module.siadap.domain.SiadapYearConfiguration;
 import module.siadap.domain.exceptions.SiadapException;
 import module.siadap.domain.util.SiadapMiscUtilClass;
 import module.siadap.domain.wrappers.PersonSiadapWrapper;
+
+import org.joda.time.LocalDate;
+
 import pt.ist.bennu.core.applicationTier.Authenticate;
 import pt.ist.bennu.core.domain.User;
 import pt.ist.bennu.core.domain.scheduler.WriteCustomTask;
 import pt.ist.fenixWebFramework.security.UserView;
+
+import com.google.common.base.Predicate;
+import com.google.common.collect.Iterables;
 
 /**
  * 
@@ -55,11 +63,7 @@ import pt.ist.fenixWebFramework.security.UserView;
  * configured
  * 
  * @author João Antunes
- * 
- *         TODO WARNING: Note, this script created Persons with both types of
- *         working and working with no quota accountabilities @see {@link CorrectSiadapAccsForEmployees}
  */
-@Deprecated
 public class ExtendSiadapStructure extends WriteCustomTask {
 
     class SiadapBean {
@@ -93,8 +97,13 @@ public class ExtendSiadapStructure extends WriteCustomTask {
         }
     }
 
+    private final static boolean USE_PERSONNEL_ACC = true;
+    private final static boolean BY_DEFAULT_DONT_CREATE_SIADAP2_PROCESS = true;
+
     private final static int YEAR_TO_EXTEND = 2012;
     private final static int YEAR_TO_EXTEND_TO = YEAR_TO_EXTEND + 1;
+    protected static final LocalDate USE_PERSONNEL_ACC_DATE = new LocalDate(); //use the current day to filter the persons
+    //with the PERSONNEL accountability
     //let's get the configuration and all of the accountabilities that we should 'clone'
     SiadapYearConfiguration yearConfigurationToExtend;
     SiadapYearConfiguration yearConfigurationToExtendTo;
@@ -116,9 +125,11 @@ public class ExtendSiadapStructure extends WriteCustomTask {
     AccountabilityType newWorkingRelationWithNoQuota;
     private AccountabilityType newEvaluationRelation;
     Set<Person> personsWithNulledOrNotCreatedProccesses;
+    Set<Person> personsCurrentlyNotWorking;
 
     private Set<Accountability> accsToClone;
     private Set<SiadapBean> siadapsToClone;
+    private Set<Person> siadap2Persons;
 
     @Override
     public String getServerName() {
@@ -151,6 +162,10 @@ public class ExtendSiadapStructure extends WriteCustomTask {
 
         personsWithNulledOrNotCreatedProccesses = new HashSet<>();
 
+        personsCurrentlyNotWorking = new HashSet<>();
+
+        siadap2Persons = new HashSet();
+
         //now let's scour all of the existing SIADAPs for the given year, and register the data to extend to the next year such as Universe (SIADAP2 or SIADAP3) and Career (Competence Type)
         //as well as the accountabilities that are set directly between two persons
 
@@ -158,25 +173,42 @@ public class ExtendSiadapStructure extends WriteCustomTask {
         List<Siadap> siadaps = SiadapRootModule.getInstance().getSiadaps();
         for (Siadap siadap : siadaps) {
             if (siadap.getState().ordinal() > SiadapProcessStateEnum.NOT_CREATED.ordinal()) {
-
                 if (siadap.getYear().intValue() == YEAR_TO_EXTEND) {
-                    //check for direct accountabilities to extend
-                    for (Accountability acc : siadap.getEvaluated().getParentAccountabilities(evaluationRelation)) {
-                        if (acc.isActive(SiadapMiscUtilClass.lastDayOfYearWhereAccsAreActive(YEAR_TO_EXTEND))
-                                && acc.getParent() instanceof Person) {
-                            accsToClone.add(acc);
-                            nrDirectEvaluatorsFound++;
+                    Person evaluated = siadap.getEvaluated();
+                    if (USE_PERSONNEL_ACC
+                            && Iterables.any(evaluated.getParentAccountabilities(AccountabilityType.readBy("Personnel")),
+                                    new Predicate<Accountability>() {
+
+                                @Override
+                                public boolean apply(@Nullable Accountability input) {
+                                    if (input == null)
+                                        return false;
+                                    return input.isActive(USE_PERSONNEL_ACC_DATE);
+                                }
+                            })) {
+
+                        //check for direct accountabilities to extend
+                        for (Accountability acc : siadap.getEvaluated().getParentAccountabilities(evaluationRelation)) {
+                            if (acc.isActive(SiadapMiscUtilClass.lastDayOfYearWhereAccsAreActive(YEAR_TO_EXTEND))
+                                    && acc.getParent() instanceof Person) {
+                                accsToClone.add(acc);
+                                nrDirectEvaluatorsFound++;
+                            }
                         }
-                    }
 
-                    //let's get the career and the SIADAP universe
-                    try {
-                        siadapsToClone.add(new SiadapBean(siadap));
-                    } catch (SiadapException ex) {
-                        out.println("SIADAP CLONING: Could not clone (due to null competence type/Universe) "
-                                + siadap.getProcess().getProcessNumber());
-                    }
+                        //let's get the career and the SIADAP universe
+                        try {
+                            siadapsToClone.add(new SiadapBean(siadap));
+                        } catch (SiadapException ex) {
+                            out.println("SIADAP CLONING: Could not clone (due to null competence type/Universe) "
+                                    + siadap.getProcess().getProcessNumber());
+                        }
 
+                    }
+                    else {
+                        //this is an innactive person, let's add it to the list
+                        personsCurrentlyNotWorking.add(evaluated);
+                    }
                 }
             } else {
                 personsWithNulledOrNotCreatedProccesses.add(siadap.getEvaluated());
@@ -260,9 +292,17 @@ public class ExtendSiadapStructure extends WriteCustomTask {
 
                 }
                 if (!siadapAlreadyExists) {
-                    SiadapProcess.createNewProcess(siadap.getEvaluated(), YEAR_TO_EXTEND_TO,
-                            siadapBean.getDefaultSiadapUniverse(), siadapBean.getCompetenceType());
-                    clonedSiadaps++;
+                    try {
+
+                        SiadapProcess.createNewProcess(siadap.getEvaluated(), YEAR_TO_EXTEND_TO,
+                                siadapBean.getDefaultSiadapUniverse(), siadapBean.getCompetenceType());
+                        clonedSiadaps++;
+                    } catch (SiadapException ex) {
+                        if (siadapBean.getDefaultSiadapUniverse().equals(SiadapUniverse.SIADAP2))
+                            siadap2Persons.add(siadapBean.getSiadap().getEvaluated());
+                        else
+                            throw ex;
+                    }
                 }
             }
 
@@ -271,6 +311,20 @@ public class ExtendSiadapStructure extends WriteCustomTask {
             for (Person person : personsWithNulledOrNotCreatedProccesses) {
                 PersonSiadapWrapper personSiadapWrapper = new PersonSiadapWrapper(person, YEAR_TO_EXTEND_TO);
                 personSiadapWrapper.removeFromSiadapStructure();
+                out.println(person.getPresentationName());
+            }
+
+            out.println("Removing from the structure persons without an active Personnel accountability. got "
+                    + personsCurrentlyNotWorking.size());
+            for (Person person : personsCurrentlyNotWorking) {
+                PersonSiadapWrapper personSiadapWrapper = new PersonSiadapWrapper(person, YEAR_TO_EXTEND_TO);
+                personSiadapWrapper.removeFromSiadapStructure();
+                out.println(person.getPresentationName());
+            }
+
+            out.println("Listing the " + siadap2Persons.size()
+                    + " persons that had a SIADAP2 process and whose SIADAP process for this year wasn't created");
+            for (Person person : siadap2Persons) {
                 out.println(person.getPresentationName());
             }
 
@@ -284,16 +338,24 @@ public class ExtendSiadapStructure extends WriteCustomTask {
         for (Accountability acc : unit.getChildrenAccountabilities(harmonizationResponsibleRelation, unitRelations,
                 harmonizationUnitRelations, siadap2HarmonizationRelation, siadap3HarmonizationRelation, workingRelation,
                 workingRelationWithNoQuota, evaluationRelation)) {
-            if (acc.getChild() instanceof Person
-                    && (personsWithNulledOrNotCreatedProccesses.contains(acc.getChild()) || new PersonSiadapWrapper(
-                            (Person) acc.getChild(), YEAR_TO_EXTEND).getSiadap() == null)) {
-                out.println("Not registering acc " + acc.getDetailsString() + " because person: "
-                        + acc.getChild().getPresentationName() + " has a nulled process");
-                if (personsWithNulledOrNotCreatedProccesses.contains(acc.getChild()) == false) {
-                    //add it to print the person to be able to report it
-                    personsWithNulledOrNotCreatedProccesses.add((Person) acc.getChild());
+            if (acc.getChild() instanceof Person) {
+
+                if ((personsWithNulledOrNotCreatedProccesses.contains(acc.getChild()) || new PersonSiadapWrapper(
+                        (Person) acc.getChild(), YEAR_TO_EXTEND).getSiadap() == null)) {
+                    out.println("Not registering acc " + acc.getDetailsString() + " because person: "
+                            + acc.getChild().getPresentationName() + " has a nulled process");
+                    if (personsWithNulledOrNotCreatedProccesses.contains(acc.getChild()) == false) {
+                        //add it to print the person to be able to report it
+                        personsWithNulledOrNotCreatedProccesses.add((Person) acc.getChild());
+                    }
+                    continue;
                 }
-                continue;
+                if (personsCurrentlyNotWorking.contains(acc.getChild())) {
+                    out.println("Not registering acc " + acc.getDetailsString() + " because person: "
+                            + acc.getChild().getPresentationName() + " has no active personnel relation");
+
+                    continue;
+                }
             }
             if (acc.isActive(SiadapMiscUtilClass.lastDayOfYearWhereAccsAreActive(YEAR_TO_EXTEND))) {
                 //it was active, so let's add it to the list of accs to clone/extend

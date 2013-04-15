@@ -1547,6 +1547,9 @@ public class PersonSiadapWrapper extends PartyWrapper implements Serializable {
             throw new SiadapException("error.should.nullify.not.remove",
                     getPerson() != null ? getPerson().getPresentationName() : "-");
         }
+
+        AccountabilityType evaluationRelationType = getConfiguration().getEvaluationRelation();
+
         for (Accountability acc : getPerson().getParentAccountabilities(getConfiguration().getUnitRelations(),
                 getConfiguration().getHarmonizationUnitRelations(), getConfiguration().getWorkingRelation(),
                 getConfiguration().getWorkingRelationWithNoQuota(), getConfiguration().getEvaluationRelation(),

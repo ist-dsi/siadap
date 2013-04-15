@@ -180,7 +180,11 @@ request.setAttribute("isCCAMember", isCCAMember);
 				
 				<fr:edit id="createSiadapBean1" name="createSiadapBean">
 					<fr:schema bundle="SIADAP_RESOURCES" type="module.siadap.presentationTier.actions.SiadapPersonnelManagement$SiadapCreationBean">
-						<fr:slot name="defaultSiadapUniverse"/>
+						<fr:slot name="defaultSiadapUniverse">
+							<logic:equal value="true" name="personWrapper" property="configuration.onlyAllowedToCreateSIADAP3">
+								<fr:property name="excludedValues" value="SIADAP2"/>
+							</logic:equal>
+						</fr:slot>
 						<fr:slot name="competenceType" layout="menu-select">
 							<fr:property name="providerClass" value="module.siadap.presentationTier.renderers.providers.CompetenceTypeProvider" />
 							<fr:property name="format" value="${name}" />
