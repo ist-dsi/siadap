@@ -24,8 +24,8 @@
  */
 package module.siadap.domain.util.scripts;
 
+import java.util.Collection;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 import javax.annotation.Nullable;
@@ -176,7 +176,7 @@ public class ExtendSiadapStructureForTestPurposes extends WriteCustomTask {
         //as well as the accountabilities that are set directly between two persons
 
         int nrDirectEvaluatorsFound = 0;
-        List<Siadap> siadaps = SiadapRootModule.getInstance().getSiadaps();
+        Collection<Siadap> siadaps = SiadapRootModule.getInstance().getSiadaps();
         for (Siadap siadap : siadaps) {
             if (siadap.getYear().intValue() == YEAR_TO_EXTEND) {
                 if (siadap.getState().ordinal() > SiadapProcessStateEnum.NOT_CREATED.ordinal()) {
@@ -187,13 +187,14 @@ public class ExtendSiadapStructureForTestPurposes extends WriteCustomTask {
                                 && Iterables.any(evaluated.getParentAccountabilities(AccountabilityType.readBy("Personnel")),
                                         new Predicate<Accountability>() {
 
-                                    @Override
-                                    public boolean apply(@Nullable Accountability input) {
-                                        if (input == null)
-                                            return false;
-                                        return input.isActive(USE_PERSONNEL_ACC_DATE);
-                                    }
-                                })) {
+                                            @Override
+                                            public boolean apply(@Nullable Accountability input) {
+                                                if (input == null) {
+                                                    return false;
+                                                }
+                                                return input.isActive(USE_PERSONNEL_ACC_DATE);
+                                            }
+                                        })) {
 
                             //check for direct accountabilities to extend
                             for (Accountability acc : siadap.getEvaluated().getParentAccountabilities(evaluationRelation)) {
@@ -224,7 +225,6 @@ public class ExtendSiadapStructureForTestPurposes extends WriteCustomTask {
             }
         }
         out.println("Caught " + nrDirectEvaluatorsFound + " direct evaluator relations");
-
 
         descendOnUnitAndRegisterAccs(topUnit);
 
@@ -293,7 +293,7 @@ public class ExtendSiadapStructureForTestPurposes extends WriteCustomTask {
             for (SiadapBean siadapBean : siadapsToClone) {
                 Siadap siadap = siadapBean.getSiadap();
                 boolean siadapAlreadyExists = false;
-                for (Siadap currentSiadap : siadap.getEvaluated().getSiadapsAsEvaluated()) {
+                for (Siadap currentSiadap : siadap.getEvaluated().getSiadapsAsEvaluatedSet()) {
                     if (currentSiadap.getYear().intValue() == YEAR_TO_EXTEND_TO) {
                         siadapAlreadyExists = true;
                         break;
@@ -307,10 +307,11 @@ public class ExtendSiadapStructureForTestPurposes extends WriteCustomTask {
                                 siadapBean.getDefaultSiadapUniverse(), siadapBean.getCompetenceType(), false);
                         clonedSiadaps++;
                     } catch (SiadapException ex) {
-                        if (siadapBean.getDefaultSiadapUniverse().equals(SiadapUniverse.SIADAP2))
+                        if (siadapBean.getDefaultSiadapUniverse().equals(SiadapUniverse.SIADAP2)) {
                             siadap2Persons.add(siadapBean.getSiadap().getEvaluated());
-                        else
+                        } else {
                             throw ex;
+                        }
                     }
                 }
             }
@@ -347,9 +348,10 @@ public class ExtendSiadapStructureForTestPurposes extends WriteCustomTask {
         for (Accountability acc : unit.getChildrenAccountabilities(harmonizationResponsibleRelation, unitRelations,
                 harmonizationUnitRelations, siadap2HarmonizationRelation, siadap3HarmonizationRelation, workingRelation,
                 workingRelationWithNoQuota, evaluationRelation)) {
-            if (acc.getChild() instanceof Person && (acc.getAccountabilityType().equals(siadap2HarmonizationRelation)
-                    || acc.getAccountabilityType().equals(siadap3HarmonizationRelation)
-                    || acc.getAccountabilityType().equals(workingRelation) || acc.getAccountabilityType().equals(
+            if (acc.getChild() instanceof Person
+                    && (acc.getAccountabilityType().equals(siadap2HarmonizationRelation)
+                            || acc.getAccountabilityType().equals(siadap3HarmonizationRelation)
+                            || acc.getAccountabilityType().equals(workingRelation) || acc.getAccountabilityType().equals(
                             workingRelationWithNoQuota))) {
 
                 if ((personsWithNulledOrNotCreatedProccesses.contains(acc.getChild()))) {

@@ -59,4 +59,9 @@ public class Competence extends Competence_Base {
         return new Competence(competenceType, name, description);
     }
 
+    @Deprecated
+    public java.util.Set<module.siadap.domain.CompetenceEvaluation> getCompetenceEvaluation() {
+        return getCompetenceEvaluationSet();
+    }
+
 }

@@ -1039,7 +1039,7 @@ public class PersonSiadapWrapper extends PartyWrapper implements Serializable {
 
         });
 
-        processes.addAll(getPerson().getSiadapsAsEvaluated());
+        processes.addAll(getPerson().getSiadapsAsEvaluatedSet());
         return processes;
     }
 

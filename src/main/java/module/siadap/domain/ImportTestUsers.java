@@ -105,7 +105,7 @@ public class ImportTestUsers extends WriteCustomTask {
                     out.println("*DEBUG* added user with name: " + user.getPerson().getName());
                 } else {
                     out.println("*DEBUG* found a user without name!");
-                    out.println("*DEBUG* users info, comments count: " + user.getCommentsCount() + " password: "
+                    out.println("*DEBUG* users info, comments count: " + user.getCommentsSet().size() + " password: "
                             + user.getPassword() + " ExternalID: " + user.getExternalId());
                     out.println("*DEBUG* Ignoring it!");
                     testUsersList.remove(user);

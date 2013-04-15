@@ -56,4 +56,14 @@ public class CompetenceType extends CompetenceType_Base {
         Competence max = Collections.max(competences, Competence.COMPARATOR_BY_NUMBER);
         return max.getNumber() + 1;
     }
+    @Deprecated
+    public java.util.Set<module.siadap.domain.Competence> getCompetences() {
+        return getCompetencesSet();
+    }
+
+    @Deprecated
+    public java.util.Set<module.siadap.domain.SiadapEvaluationUniverse> getSiadapEvaluationUniverses() {
+        return getSiadapEvaluationUniversesSet();
+    }
+
 }

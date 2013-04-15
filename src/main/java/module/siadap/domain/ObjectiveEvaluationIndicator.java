@@ -60,8 +60,8 @@ public class ObjectiveEvaluationIndicator extends ObjectiveEvaluationIndicator_B
      * Disconnects itself from the world, and removes itself from the DB
      */
     public void delete() {
-        removeObjectiveEvaluation();
-        removeSiadapRootModule();
+        setObjectiveEvaluation(null);
+        setSiadapRootModule(null);
         deleteDomainObject();
     }
 

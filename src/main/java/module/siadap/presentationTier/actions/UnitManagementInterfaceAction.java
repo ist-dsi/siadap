@@ -196,8 +196,9 @@ public class UnitManagementInterfaceAction extends ContextBaseAction {
 
                     @Override
                     public boolean apply(@Nullable UnitSiadapWrapper input) {
-                        if (input == null || input.isHarmonizationUnit())
+                        if (input == null || input.isHarmonizationUnit()) {
                             return false;
+                        }
                         return true;
                     }
                 }));
@@ -234,7 +235,7 @@ public class UnitManagementInterfaceAction extends ContextBaseAction {
         return streamSpreadsheet(
                 response,
                 "SIADAP_" + year + "-EstrHarm-" + currentLocalDate.getDayOfMonth() + "-" + currentLocalDate.getMonthOfYear()
-                + "-" + currentLocalDate.getYear(),
+                        + "-" + currentLocalDate.getYear(),
                 new SpreadsheetBuilder().addSheet(
                         "SIADAP - estructura de harmonização - " + year + " - " + currentLocalDate.toString(), sheetData));
 
@@ -301,7 +302,8 @@ public class UnitManagementInterfaceAction extends ContextBaseAction {
             if (mode.equals(Mode.REGULAR_UNIT_MODE)) {
                 // and let's also get the total number of SIADAPs for this year
                 int siadapsCount =
-                        SiadapYearConfiguration.getSiadapYearConfiguration(siadapYearWrapper.getChosenYear()).getSiadapsCount();
+                        SiadapYearConfiguration.getSiadapYearConfiguration(siadapYearWrapper.getChosenYear()).getSiadapsSet()
+                                .size();
                 int siadapsDefinitiveCount = 0;
                 Map<SiadapProcessStateEnum, Integer> stateCount = new HashMap<SiadapProcessStateEnum, Integer>();
                 for (Siadap siadap : SiadapRootModule.getInstance().getSiadaps()) {

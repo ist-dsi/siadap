@@ -163,12 +163,12 @@ public class Siadap extends Siadap_Base {
 
     @ConsistencyPredicate
     public boolean hasSiadapYearConfigurationObject() {
-        return hasSiadapYearConfiguration();
+        return getSiadapYearConfiguration() != null;
     }
 
     @ConsistencyPredicate
     public boolean hasSiadapRootModuleObject() {
-        return hasSiadapRootModule();
+        return getSiadapRootModule() != null;
     }
 
     public SiadapProcessStateEnum getState() {
@@ -408,7 +408,7 @@ public class Siadap extends Siadap_Base {
     }
 
     public boolean hasAnyCompetencesSet() {
-        if (!getDefaultSiadapEvaluationUniverse().hasAnySiadapEvaluationItems()) {
+        if (getDefaultSiadapEvaluationUniverse().getSiadapEvaluationItemsSet().isEmpty()) {
             return false;
         }
         ArrayList<SiadapEvaluationItem> evaluationItems = new ArrayList<SiadapEvaluationItem>(getSiadapEvaluationItems2());
@@ -1044,17 +1044,17 @@ public class Siadap extends Siadap_Base {
      * Deletes the proccess and everything which is associated with it
      */
     public void delete(boolean neglectLogSize) {
-        removeEvaluated();
+        setEvaluated(null);
         SiadapProcess process = getProcess();
-        removeProcess();
+        setProcess(null);
         process.delete(neglectLogSize);
         for (SiadapEvaluationUniverse siadapEvalUni : getSiadapEvaluationUniverses()) {
             removeSiadapEvaluationUniverses(siadapEvalUni);
             siadapEvalUni.delete();
         }
-        removeSiadapRootModule();
+        setSiadapRootModule(null);
         setYear(null);
-        removeSiadapYearConfiguration();
+        setSiadapYearConfiguration(null);
         deleteDomainObject();
     }
 
@@ -1067,7 +1067,7 @@ public class Siadap extends Siadap_Base {
     public static SiadapUniverse getLastSiadapUniverseUsedBy(Person person) {
         SiadapUniverse siadapUniverseToReturn = null;
         int mostRecentYear = 0;
-        for (Siadap previousSiadap : person.getSiadapsAsEvaluated()) {
+        for (Siadap previousSiadap : person.getSiadapsAsEvaluatedSet()) {
             SiadapUniverse defaultSiadapUniverse = previousSiadap.getDefaultSiadapUniverse();
             if (defaultSiadapUniverse != null && (mostRecentYear == 0 || previousSiadap.getYear() < mostRecentYear)) {
                 siadapUniverseToReturn = previousSiadap.getDefaultSiadapUniverse();
@@ -1081,4 +1081,10 @@ public class Siadap extends Siadap_Base {
     public static String getRemoteEmail(Person person) {
         return new JerseyRemoteUser(person.getUser()).getEmailForSendingEmails();
     }
+
+    @Deprecated
+    public java.util.Set<module.siadap.domain.SiadapEvaluationUniverse> getSiadapEvaluationUniverses() {
+        return getSiadapEvaluationUniversesSet();
+    }
+
 }

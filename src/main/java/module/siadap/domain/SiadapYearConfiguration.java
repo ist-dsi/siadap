@@ -338,7 +338,7 @@ public class SiadapYearConfiguration extends SiadapYearConfiguration_Base {
     }
 
     public Siadap getSiadapFor(Person person, Integer year) {
-        for (Siadap siadap : person.getSiadapsAsEvaluated()) {
+        for (Siadap siadap : person.getSiadapsAsEvaluatedSet()) {
             if (siadap.getYear().equals(year)) {
                 return siadap;
             }
@@ -394,7 +394,7 @@ public class SiadapYearConfiguration extends SiadapYearConfiguration_Base {
 
     public Siadap getSiadapFor(final Person person) {
         final int year = getYear();
-        for (final Siadap siadap : person.getSiadapsAsEvaluated()) {
+        for (final Siadap siadap : person.getSiadapsAsEvaluatedSet()) {
             if (siadap.getYear().intValue() == year) {
                 return siadap;
             }
@@ -563,16 +563,58 @@ public class SiadapYearConfiguration extends SiadapYearConfiguration_Base {
     private static final Integer MAXIMUM_NR_OF_OBJECTIVES_FOR_BIANNUAL_PROCCESS = new Integer(7);
 
     public Integer getMaximumNumberOfObjectives() {
-        if (getBiannual() == true)
+        if (getBiannual() == true) {
             return MAXIMUM_NR_OF_OBJECTIVES_FOR_BIANNUAL_PROCCESS;
-        else
+        } else {
             return null;
-    }
-    public Integer getMaximumNumberOfObjectiveIndicators() {
-        if (getBiannual() == true)
-            return MAXIMUM_NR_OBJ_INDICATORS_IN_BIANNUAL_PROCCESS;
-        else
-            return null;
+        }
     }
 
+    public Integer getMaximumNumberOfObjectiveIndicators() {
+        if (getBiannual() == true) {
+            return MAXIMUM_NR_OBJ_INDICATORS_IN_BIANNUAL_PROCCESS;
+        } else {
+            return null;
+        }
+    }
+
+    @Deprecated
+    public java.util.Set<module.organization.domain.Person> getScheduleEditors() {
+        return getScheduleEditorsSet();
+    }
+
+    @Deprecated
+    public java.util.Set<module.organization.domain.Person> getCcaMembers() {
+        return getCcaMembersSet();
+    }
+
+    @Deprecated
+    public java.util.Set<module.organization.domain.Person> getRevertStateGroupMember() {
+        return getRevertStateGroupMemberSet();
+    }
+
+    @Deprecated
+    public java.util.Set<module.organization.domain.Person> getStructureManagementGroupMembers() {
+        return getStructureManagementGroupMembersSet();
+    }
+
+    @Deprecated
+    public java.util.Set<module.siadap.domain.Siadap> getSiadaps() {
+        return getSiadapsSet();
+    }
+
+    @Deprecated
+    public java.util.Set<module.organization.domain.Person> getHomologationMembers() {
+        return getHomologationMembersSet();
+    }
+
+    @Deprecated
+    public java.util.Set<module.siadap.domain.ExceedingQuotaProposal> getExceedingQuotasProposals() {
+        return getExceedingQuotasProposalsSet();
+    }
+
+    @Deprecated
+    public java.util.Set<module.organization.domain.Unit> getHarmonizationClosedUnits() {
+        return getHarmonizationClosedUnitsSet();
+    }
 }

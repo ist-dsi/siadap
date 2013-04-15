@@ -283,7 +283,7 @@ public class ExtendSiadapStructure extends WriteCustomTask {
             for (SiadapBean siadapBean : siadapsToClone) {
                 Siadap siadap = siadapBean.getSiadap();
                 boolean siadapAlreadyExists = false;
-                for (Siadap currentSiadap : siadap.getEvaluated().getSiadapsAsEvaluated()) {
+                for (Siadap currentSiadap : siadap.getEvaluated().getSiadapsAsEvaluatedSet()) {
                     if (currentSiadap.getYear().intValue() == YEAR_TO_EXTEND_TO) {
                         siadapAlreadyExists = true;
                         break;

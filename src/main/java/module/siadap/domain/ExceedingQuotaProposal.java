@@ -222,7 +222,7 @@ public class ExceedingQuotaProposal extends ExceedingQuotaProposal_Base {
             return unitProposals;
         }
         unitProposals =
-                new ArrayList<ExceedingQuotaProposal>(getQuotaProposalsByPredicate(unit.getExceedingQuotasProposals(),
+                new ArrayList<ExceedingQuotaProposal>(getQuotaProposalsByPredicate(unit.getExceedingQuotasProposalsSet(),
                         new Predicate() {
 
                             @Override
@@ -253,7 +253,7 @@ public class ExceedingQuotaProposal extends ExceedingQuotaProposal_Base {
 
         List<ExceedingQuotaProposal> personQuotaProposal = new ArrayList<ExceedingQuotaProposal>(
 
-        person.getExceedingQuotasProposals());
+        person.getExceedingQuotasProposalsSet());
 
         List<ExceedingQuotaProposal> exceedingQuotasProposalsForGivenYear =
                 new ArrayList<ExceedingQuotaProposal>(configuration.getExceedingQuotasProposals());
@@ -458,30 +458,6 @@ public class ExceedingQuotaProposal extends ExceedingQuotaProposal_Base {
     @Override
     @Deprecated
     public void setYearConfiguration(SiadapYearConfiguration yearConfiguration) {
-        throw new UnsupportedOperationException("must.not.invoke.this.from.outside.use.apply");
-    }
-
-    @Override
-    @Deprecated
-    public void removeSiadapRootModule() {
-        throw new UnsupportedOperationException("must.not.invoke.this.from.outside.use.apply");
-    }
-
-    @Override
-    @Deprecated
-    public void removeSuggestion() {
-        throw new UnsupportedOperationException("must.not.invoke.this.from.outside.use.apply");
-    }
-
-    @Override
-    @Deprecated
-    public void removeUnit() {
-        throw new UnsupportedOperationException("must.not.invoke.this.from.outside.use.apply");
-    }
-
-    @Override
-    @Deprecated
-    public void removeYearConfiguration() {
         throw new UnsupportedOperationException("must.not.invoke.this.from.outside.use.apply");
     }
 

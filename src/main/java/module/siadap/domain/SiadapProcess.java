@@ -507,8 +507,8 @@ public class SiadapProcess extends SiadapProcess_Base {
                 (module.workflow.domain.AbstractWFDocsGroup) documentsRepository.getWriteGroup();
         module.workflow.domain.AbstractWFDocsGroup readGroup =
                 (module.workflow.domain.AbstractWFDocsGroup) documentsRepository.getReadGroup();
-        writeGroup.removeProcess();
-        readGroup.removeProcess();
+        writeGroup.setProcess(null);
+        readGroup.setProcess(null);
         DirNode dirNode = documentsRepository.getDirNode();
         DirNode trash = dirNode.getTrash();
         readGroup.removeDirNodeFromReadGroup(dirNode);
@@ -523,8 +523,8 @@ public class SiadapProcess extends SiadapProcess_Base {
 
         readGroup.delete();
         writeGroup.delete();
-        dirNode.removeTrash();
-        dirNode.removeProcessDirNode();
+        dirNode.setTrash(null);
+        dirNode.setProcessDirNode(null);
         dirNode.delete();
 
         trash.delete();
@@ -532,11 +532,11 @@ public class SiadapProcess extends SiadapProcess_Base {
         documentsRepository.delete();
 
         for (WorkflowLog workflowLog : getExecutionLogs()) {
-            workflowLog.removeProcess();
+            workflowLog.setProcess(null);
             workflowLog.delete();
         }
-        removeSiadap();
-        removeWorkflowSystem();
+        setSiadap(null);
+        setWorkflowSystem(null);
         deleteDomainObject();
 
     }

@@ -465,9 +465,14 @@ public class SiadapEvaluationUniverse extends SiadapEvaluationUniverse_Base {
             removeSiadapEvaluationItems(siadapEvaluationItems);
             siadapEvaluationItems.delete();
         }
-        removeCompetenceSlashCareerType();
-        removeSiadap();
+        setCompetenceSlashCareerType(null);
+        setSiadap(null);
         deleteDomainObject();
+    }
+
+    @Deprecated
+    public java.util.Set<module.siadap.domain.SiadapEvaluationItem> getSiadapEvaluationItems() {
+        return getSiadapEvaluationItemsSet();
     }
 
 }

@@ -768,4 +768,49 @@ public class SiadapRootModule extends SiadapRootModule_Base implements ModuleIni
         // now let's resize the logo
         picture.resize();
     }
+    @Deprecated
+    public java.util.Set<module.siadap.domain.ObjectiveEvaluationIndicator> getIndicators() {
+        return getIndicatorsSet();
+    }
+
+    @Deprecated
+    public java.util.Set<module.siadap.domain.ExceedingQuotaProposal> getExceedingQuotasProposals() {
+        return getExceedingQuotasProposalsSet();
+    }
+
+    @Deprecated
+    public java.util.Set<module.siadap.domain.SiadapYearConfiguration> getYearConfigurations() {
+        return getYearConfigurationsSet();
+    }
+
+    @Deprecated
+    public java.util.Set<module.siadap.domain.CompetenceType> getCompetenceTypes() {
+        return getCompetenceTypesSet();
+    }
+
+    @Deprecated
+    public java.util.Set<module.siadap.domain.Siadap> getSiadaps() {
+        return getSiadapsSet();
+    }
+
+    @Deprecated
+    public java.util.Set<module.siadap.domain.Competence> getCompetences() {
+        return getCompetencesSet();
+    }
+
+    @Deprecated
+    public java.util.Set<module.siadap.domain.SiadapEvaluation> getEvaluations() {
+        return getEvaluationsSet();
+    }
+
+    @Deprecated
+    public java.util.Set<module.siadap.domain.SiadapAutoEvaluation> getAutoEvaluations() {
+        return getAutoEvaluationsSet();
+    }
+
+    @Deprecated
+    public java.util.Set<module.siadap.domain.SiadapEvaluationItem> getEvaluationItems() {
+        return getEvaluationItemsSet();
+    }
+
 }

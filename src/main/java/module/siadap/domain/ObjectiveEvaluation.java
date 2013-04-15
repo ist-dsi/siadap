@@ -180,11 +180,16 @@ public class ObjectiveEvaluation extends ObjectiveEvaluation_Base {
         }
         //unlink from the old only, if there is a newer, it should give an exception
         if (getOldObjectiveEvaluation() != null) {
-            getOldObjectiveEvaluation().removeNewObjectiveEvaluation();
+            getOldObjectiveEvaluation().setNewObjectiveEvaluation(null);
         }
-        removeOldObjectiveEvaluation();
-        removeSiadapEvaluationUniverse();
-        removeSiadapRootModule();
+        setOldObjectiveEvaluation(null);
+        setSiadapEvaluationUniverse(null);
+        setSiadapRootModule(null);
         deleteDomainObject();
     }
+    @Deprecated
+    public java.util.Set<module.siadap.domain.ObjectiveEvaluationIndicator> getIndicators() {
+        return getIndicatorsSet();
+    }
+
 }

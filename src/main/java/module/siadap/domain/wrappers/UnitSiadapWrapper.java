@@ -1763,7 +1763,8 @@ public class UnitSiadapWrapper extends PartyWrapper implements Serializable {
 
     public static Unit getUnit(final OrganizationalModel organizationalModel, String unitExternalId) {
         final Unit unit = FenixFramework.getDomainObject(unitExternalId);
-        return unit == null ? (organizationalModel.hasAnyParties() ? (Unit) organizationalModel.getPartiesIterator().next() : null) : unit;
+        return unit == null ? (!organizationalModel.getPartiesSet().isEmpty() ? (Unit) organizationalModel.getParties()
+                .iterator().next() : null) : unit;
     }
 
     public UnitSiadapWrapper getTopHarmonizationUnit() {
