@@ -32,7 +32,6 @@ import java.util.MissingResourceException;
 
 import module.fileManagement.domain.DirNode;
 import module.organization.domain.Person;
-import module.organizationIst.domain.listner.LoginListner;
 import module.siadap.activities.AcknowledgeEvaluationObjectives;
 import module.siadap.activities.AcknowledgeEvaluationValidation;
 import module.siadap.activities.AcknowledgeHomologation;
@@ -337,11 +336,13 @@ public class SiadapProcess extends SiadapProcess_Base {
 
     public static void checkEmailExistenceImportAndWarnOnError(Person person) {
         // if we have no info about the person, let's import it
-        if (Siadap.getRemoteEmail(person) == null) {
-            LoginListner.importUserInformation(person.getUser().getUsername());
+        String emailToUse = person.getUser().getEmail();
+        if (emailToUse == null) {
+            emailToUse = Siadap.getRemoteEmail(person);
+
         }
         // if that didn't solved it, let's warn the admin by e-mail
-        if (Siadap.getRemoteEmail(person) == null) {
+        if (emailToUse == null) {
             StringBuilder message =
                     new StringBuilder("Error, could not import e-mail/info for person " + person.getName() + "\n");
             if (person.getUser() != null && person.getUser().getUsername() != null) {

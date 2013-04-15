@@ -20,8 +20,6 @@
 		<version.pt.ist.organization>1.0.0</version.pt.ist.organization>
 		<version.pt.ist.email.dispatch>1.0.0</version.pt.ist.email.dispatch>
 		<version.pt.ist.contacts>1.0.0</version.pt.ist.contacts>
-		<version.pt.ist.organization.ist>1.0.0</version.pt.ist.organization.ist>
-		<version.pt.ist.expenditure.tracking>1.0.0</version.pt.ist.expenditure.tracking>
 		<version.pt.ist.scheduler>1.0.0</version.pt.ist.scheduler>
 		<version.pt.ist.web.service.utils>1.0.0</version.pt.ist.web.service.utils>
 		<version.pt.ist.bennu.vaadin>1.0.0</version.pt.ist.bennu.vaadin>
@@ -61,16 +59,6 @@
 			<groupId>pt.ist</groupId>
 			<artifactId>contacts</artifactId>
 			<version>${version.pt.ist.contacts}</version>
-		</dependency>
-		<dependency>
-			<groupId>pt.ist</groupId>
-			<artifactId>organization-ist</artifactId>
-			<version>${version.pt.ist.organization.ist}</version>
-		</dependency>
-		<dependency>
-			<groupId>pt.ist</groupId>
-			<artifactId>expenditure-tracking</artifactId>
-			<version>${version.pt.ist.expenditure.tracking}</version>
 		</dependency>
 		<dependency>
 			<groupId>pt.ist</groupId>

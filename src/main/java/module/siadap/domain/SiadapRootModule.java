@@ -10,7 +10,7 @@
  *
  *   The SIADAP Module is free software: you can
  *   redistribute it and/or modify it under the terms of the GNU Lesser General
- *   Public License as published by the Free Software Foundation, either version 
+ *   Public License as published by the Free Software Foundation, either version
  *   3 of the License, or (at your option) any later version.
  *
  *   The SIADAP Module is distributed in the hope that it will be useful,
@@ -32,6 +32,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import module.organization.domain.PartyType;
 import module.organization.domain.Person;
 import module.organization.domain.Unit;
 import module.siadap.domain.exceptions.SiadapException;
@@ -598,9 +599,8 @@ public class SiadapRootModule extends SiadapRootModule_Base implements ModuleIni
                 cellIndex = START_CELL_INDEX;
                 // write the unit name and cost center
                 String unitNameWithCC = eachUnit.getUnit().getPartyName().getContent();
-                if (eachUnit.getUnit().getExpenditureUnit() != null
-                        && eachUnit.getUnit().getExpenditureUnit().getCostCenterUnit() != null) {
-                    unitNameWithCC += " - CC " + eachUnit.getUnit().getExpenditureUnit().getCostCenterUnit().getCostCenter();
+                if (eachUnit.getUnit().getPartyTypes().contains(PartyType.readBy("CostCenter"))) {
+                    unitNameWithCC += " - " + eachUnit.getUnit().getAcronym();
                 }
                 cell = row.createCell(cellIndex++);
                 sheetToWriteTo.addMergedRegion(new CellRangeAddress(rowIndex, rowIndex, --cellIndex, ++cellIndex));
@@ -692,67 +692,67 @@ public class SiadapRootModule extends SiadapRootModule_Base implements ModuleIni
                         (considerQuotas) ? eachUnit.getUnitEmployeesWithQuotas(false) : eachUnit
                                 .getUnitEmployeesWithoutQuotas(true);
 
-                // now let's take care of exporting the persons
-                for (PersonSiadapWrapper personWrapper : listToUse) {
-                    row = sheetToWriteTo.createRow(++rowIndex);
-                    // restart the cell's index
-                    cellIndex = START_CELL_INDEX;
-                    String istIdEvaluated = personWrapper.getPerson().getUser().getUsername();
-                    cell = row.createCell(cellIndex++);
-                    cell.setCellValue(istIdEvaluated);
-                    cell.setCellStyle(defaultTextIstIdStyle);
+                        // now let's take care of exporting the persons
+                        for (PersonSiadapWrapper personWrapper : listToUse) {
+                            row = sheetToWriteTo.createRow(++rowIndex);
+                            // restart the cell's index
+                            cellIndex = START_CELL_INDEX;
+                            String istIdEvaluated = personWrapper.getPerson().getUser().getUsername();
+                            cell = row.createCell(cellIndex++);
+                            cell.setCellValue(istIdEvaluated);
+                            cell.setCellStyle(defaultTextIstIdStyle);
 
-                    String nameEvaluatedPerson = personWrapper.getPerson().getName();
-                    cell = row.createCell(cellIndex++);
-                    cell.setCellValue(nameEvaluatedPerson);
-                    cell.setCellStyle(defaultTextNameStyle);
+                            String nameEvaluatedPerson = personWrapper.getPerson().getName();
+                            cell = row.createCell(cellIndex++);
+                            cell.setCellValue(nameEvaluatedPerson);
+                            cell.setCellStyle(defaultTextNameStyle);
 
-                    if (shouldIncludeUniverse) {
+                            if (shouldIncludeUniverse) {
 
-                        Siadap siadap = personWrapper.getSiadap();
-                        String siadapUniverseToBeWritten =
-                                (siadap == null || siadap.getDefaultSiadapUniverse() == null) ? "Não definido" : siadap
-                                        .getDefaultSiadapUniverse().getLocalizedName();
-                        cell = row.createCell(cellIndex++);
-                        cell.setCellValue(siadapUniverseToBeWritten);
-                        cell.setCellStyle(defaultTextNameStyle);
-                    }
+                                Siadap siadap = personWrapper.getSiadap();
+                                String siadapUniverseToBeWritten =
+                                        (siadap == null || siadap.getDefaultSiadapUniverse() == null) ? "Não definido" : siadap
+                                                .getDefaultSiadapUniverse().getLocalizedName();
+                                cell = row.createCell(cellIndex++);
+                                cell.setCellValue(siadapUniverseToBeWritten);
+                                cell.setCellStyle(defaultTextNameStyle);
+                            }
 
-                    PersonSiadapWrapper evaluatorWrapper = personWrapper.getEvaluator();
-                    String istIdEvaluator = evaluatorWrapper == null ? "-" : evaluatorWrapper.getPerson().getUser().getUsername();
-                    cell = row.createCell(cellIndex++);
-                    cell.setCellValue(istIdEvaluator);
-                    cell.setCellStyle(defaultTextIstIdStyle);
+                            PersonSiadapWrapper evaluatorWrapper = personWrapper.getEvaluator();
+                            String istIdEvaluator = evaluatorWrapper == null ? "-" : evaluatorWrapper.getPerson().getUser().getUsername();
+                            cell = row.createCell(cellIndex++);
+                            cell.setCellValue(istIdEvaluator);
+                            cell.setCellStyle(defaultTextIstIdStyle);
 
-                    String nameEvaluatorWrapper = evaluatorWrapper == null ? "-" : evaluatorWrapper.getName();
-                    cell = row.createCell(cellIndex++);
-                    cell.setCellValue(nameEvaluatorWrapper);
-                    cell.setCellStyle(defaultTextNameStyle);
+                            String nameEvaluatorWrapper = evaluatorWrapper == null ? "-" : evaluatorWrapper.getName();
+                            cell = row.createCell(cellIndex++);
+                            cell.setCellValue(nameEvaluatorWrapper);
+                            cell.setCellStyle(defaultTextNameStyle);
 
-                }
-                // let's make a bottom border on the last four cells
-                for (int i = START_CELL_INDEX; i < START_CELL_INDEX + 4; i++) {
-                    cell = row.getCell(i);
-                    // let's diferentaitate between the IST-id and the name
-                    if (i == START_CELL_INDEX || i == START_CELL_INDEX + 2) // first
-                                                                            // cell,
-                                                                            // IST-ID
-                                                                            // then.
-                                                                            // or
-                                                                            // third
-                                                                            // cell
-                                                                            // the
-                                                                            // other
-                                                                            // IST-ID
-                    {
-                        cell.setCellStyle(defaultTextIstIdLastStyle);
-                    } else {
-                        cell.setCellStyle(defaultTextNameLastStyle);
-                    }
+                        }
+                        // let's make a bottom border on the last four cells
+                        for (int i = START_CELL_INDEX; i < START_CELL_INDEX + 4; i++) {
+                            cell = row.getCell(i);
+                            // let's diferentaitate between the IST-id and the name
+                            if (i == START_CELL_INDEX || i == START_CELL_INDEX + 2) // first
+                                // cell,
+                                // IST-ID
+                                // then.
+                                // or
+                                // third
+                                // cell
+                                // the
+                                // other
+                                // IST-ID
+                            {
+                                cell.setCellStyle(defaultTextIstIdLastStyle);
+                            } else {
+                                cell.setCellStyle(defaultTextNameLastStyle);
+                            }
 
-                }
-                row = sheetToWriteTo.createRow(++rowIndex);
-                row = sheetToWriteTo.createRow(++rowIndex);
+                        }
+                        row = sheetToWriteTo.createRow(++rowIndex);
+                        row = sheetToWriteTo.createRow(++rowIndex);
 
             }
 

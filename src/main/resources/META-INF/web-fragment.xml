@@ -22,13 +22,6 @@
    <name>email-dispatch</name>
    <name>contacts</name>
    <name>geography</name>
-   <name>organization-ist</name>
-   <name>expenditure-tracking</name>
-   <name>meta-workflow</name>
-   <name>finance</name>
-   <name>external-accounting-integration</name>
-   <name>db-utils</name>
-   <name>messaging</name>
    <name>scheduler</name>
    <name>scheduler-plugin</name>
    <name>web-service-utils</name>
