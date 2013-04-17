@@ -98,7 +98,6 @@ public class ExtendSiadapStructureForTestPurposes extends WriteCustomTask {
     }
 
     private final static boolean USE_PERSONNEL_ACC = true;
-    private final static boolean BY_DEFAULT_DONT_CREATE_SIADAP2_PROCESS = true;
 
     private final static int YEAR_TO_EXTEND = 2012;
     private final static int YEAR_TO_EXTEND_TO = YEAR_TO_EXTEND + 1;
@@ -305,7 +304,7 @@ public class ExtendSiadapStructureForTestPurposes extends WriteCustomTask {
                     try {
 
                         SiadapProcess.createNewProcess(siadap.getEvaluated(), YEAR_TO_EXTEND_TO,
-                                siadapBean.getDefaultSiadapUniverse(), siadapBean.getCompetenceType());
+                                siadapBean.getDefaultSiadapUniverse(), siadapBean.getCompetenceType(), false);
                         clonedSiadaps++;
                     } catch (SiadapException ex) {
                         if (siadapBean.getDefaultSiadapUniverse().equals(SiadapUniverse.SIADAP2))

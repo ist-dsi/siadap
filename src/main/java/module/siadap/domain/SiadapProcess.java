@@ -75,6 +75,7 @@ import module.workflow.domain.WorkflowLog;
 import module.workflow.domain.WorkflowProcess;
 import module.workflow.domain.WorkflowSystem;
 
+import org.apache.poi.hssf.record.formula.functions.T;
 import org.joda.time.LocalDate;
 
 import pt.ist.bennu.core.applicationTier.Authenticate.UserView;
@@ -148,7 +149,8 @@ public class SiadapProcess extends SiadapProcess_Base {
 
     private HashMap<User, ArrayList<String>> userWarningsKey = new HashMap<User, ArrayList<String>>();
 
-    public SiadapProcess(Integer year, Person evaluated, SiadapUniverse siadapUniverse, CompetenceType competenceType) {
+    public SiadapProcess(Integer year, Person evaluated, SiadapUniverse siadapUniverse, CompetenceType competenceType,
+            boolean skipUniverseCheck) {
         super();
 
         if (competenceType == null || siadapUniverse == null)
@@ -158,8 +160,10 @@ public class SiadapProcess extends SiadapProcess_Base {
         Person possibleEvaluator = currentUser.getPerson();
         PersonSiadapWrapper evaluator = new PersonSiadapWrapper(evaluated, year).getEvaluator();
         SiadapYearConfiguration configuration = SiadapYearConfiguration.getSiadapYearConfiguration(year);
-        if (configuration.isOnlyAllowedToCreateSIADAP3() && siadapUniverse.equals(SiadapUniverse.SIADAP2)) {
-            throw new SiadapException("Unable to create a SIADAP2 proccess due to the configuration");
+        if (skipUniverseCheck == false) {
+            if (configuration.isOnlyAllowedToCreateSIADAP3() && siadapUniverse.equals(SiadapUniverse.SIADAP2)) {
+                throw new SiadapException("Unable to create a SIADAP2 proccess due to the configuration");
+            }
         }
 
         boolean belongsToASuperGroup = false;
@@ -272,10 +276,11 @@ public class SiadapProcess extends SiadapProcess_Base {
         // TODO Auto-generated method stub
     }
 
+
     @Service
     public static SiadapProcess createNewProcess(Person evaluated, Integer year, SiadapUniverse siadapUniverse,
-            CompetenceType competenceType) throws SiadapException {
-        return new SiadapProcess(year, evaluated, siadapUniverse, competenceType);
+            CompetenceType competenceType, boolean skipUniverseCheck) throws SiadapException {
+        return new SiadapProcess(year, evaluated, siadapUniverse, competenceType, skipUniverseCheck);
     }
 
     @Override

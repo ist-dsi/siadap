@@ -294,7 +294,7 @@ public class ExtendSiadapStructure extends WriteCustomTask {
                     try {
 
                         SiadapProcess.createNewProcess(siadap.getEvaluated(), YEAR_TO_EXTEND_TO,
-                                siadapBean.getDefaultSiadapUniverse(), siadapBean.getCompetenceType());
+                                siadapBean.getDefaultSiadapUniverse(), siadapBean.getCompetenceType(), false);
                         clonedSiadaps++;
                     } catch (SiadapException ex) {
                         if (siadapBean.getDefaultSiadapUniverse().equals(SiadapUniverse.SIADAP2))

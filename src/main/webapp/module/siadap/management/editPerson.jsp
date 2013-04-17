@@ -95,6 +95,11 @@
 		<a class="toggableLink" toggleDiv="createSiadapDiv" href="#" id="createSiadapLink">
 			<bean:message key="link.create" bundle="MYORG_RESOURCES"/>
 		</a>
+		<logic:equal value="true" name="personWrapper" property="configuration.onlyAllowedToCreateSIADAP3">
+			| <a class="toggableLink" toggleDiv="createSiadap2ForCurricularPonderationDiv" href="#">
+				<bean:message key="link.create.forCurricularPonderation" bundle="SIADAP_RESOURCES"/>
+			</a>
+		</logic:equal>
 		
 	</logic:notPresent>
 </p>
@@ -188,6 +193,26 @@ request.setAttribute("isCCAMember", isCCAMember);
 								<fr:property name="excludedValues" value="SIADAP2"/>
 							</logic:equal>
 						</fr:slot>
+						<fr:slot name="competenceType" layout="menu-select">
+							<fr:property name="providerClass" value="module.siadap.presentationTier.renderers.providers.CompetenceTypeProvider" />
+							<fr:property name="format" value="${name}" />
+							<fr:property name="sortBy" value="name" />
+						</fr:slot>
+					</fr:schema>
+				</fr:edit>
+			<html:submit styleClass="inputbutton"><bean:message key="renderers.form.submit.name" bundle="RENDERER_RESOURCES"/></html:submit>
+			</fr:form>
+		</div>
+	</div>
+	
+	<div class="toggableDiv" id="createSiadap2ForCurricularPonderationDiv" style="display: none;">
+		<div class="highlightBox">
+			<p>Criar SIADAP2 para ponderação curricular:</p>
+			<fr:form action="<%="/siadapPersonnelManagement.do?method=createNewSiadap2ProcessForCurricularPonderation&personId=" + personId + "&year=" + year.toString()%>">
+				<fr:edit id="createSiadapBean" name="createSiadapBean" visible="false"/>
+				
+				<fr:edit id="createSiadapBean1" name="createSiadapBean">
+					<fr:schema bundle="SIADAP_RESOURCES" type="module.siadap.presentationTier.actions.SiadapPersonnelManagement$SiadapCreationBean">
 						<fr:slot name="competenceType" layout="menu-select">
 							<fr:property name="providerClass" value="module.siadap.presentationTier.renderers.providers.CompetenceTypeProvider" />
 							<fr:property name="format" value="${name}" />
