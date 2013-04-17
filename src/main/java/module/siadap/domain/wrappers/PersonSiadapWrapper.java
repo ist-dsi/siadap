@@ -70,6 +70,7 @@ import org.joda.time.LocalDate;
 import pt.ist.bennu.core.applicationTier.Authenticate.UserView;
 import pt.ist.bennu.core.domain.User;
 import pt.ist.bennu.core.domain.exceptions.DomainException;
+import pt.ist.bennu.core.util.BundleUtil;
 import pt.ist.fenixWebFramework.services.Service;
 
 /**
@@ -189,6 +190,33 @@ public class PersonSiadapWrapper extends PartyWrapper implements Serializable {
                 this.harmonizationCurrentAssessmentForSIADAP3 = siadapEvaluationUniverseForSIADAP3.getHarmonizationAssessment();
                 this.harmonizationCurrentAssessmentForExcellencyAwardForSIADAP3 =
                         siadapEvaluationUniverseForSIADAP3.getHarmonizationAssessmentForExcellencyAward();
+            }
+        }
+    }
+
+    public void correctHarmonizationRelationsForRecentlyCreatedProcess() {
+        //get all the relevant accountabilities
+        List<Accountability> parentAccountabilityTypes =
+                getParentAccountabilityTypes(getConfiguration().getSiadap2HarmonizationRelation(), getConfiguration()
+                        .getSiadap3HarmonizationRelation());
+
+        AccountabilityType accTypeToKeep = getDefaultSiadapUniverse().getHarmonizationRelation(getConfiguration());
+        boolean hasNeededAccountability = false;
+        for (Accountability acc : parentAccountabilityTypes) {
+            if (acc.getAccountabilityType().equals(accTypeToKeep)) {
+                hasNeededAccountability = true;
+            } else {
+                //let us close it
+                acc.setEndDate(getConfiguration().getFirstDay(), BundleUtil.getStringFromResourceBundle(
+                        Siadap.SIADAP_BUNDLE_STRING, "harmonization.unit.process.creation.justification"));
+            }
+        }
+        if (hasNeededAccountability == false) {
+            //let us create it
+            if (getWorkingUnit() != null) {
+                changeHarmonizationUnitTo(getWorkingUnit().getUnit(), getConfiguration().getFirstDay(),
+                        BundleUtil.getStringFromResourceBundle(Siadap.SIADAP_BUNDLE_STRING,
+                                "harmonization.unit.process.creation.justification"));
             }
         }
     }
@@ -1535,12 +1563,19 @@ public class PersonSiadapWrapper extends PartyWrapper implements Serializable {
     }
 
     /**
+     * @param perserveResponsabilityRelations preserve evaluation responsabilities, as well as harmonization ones. Only removes
+     *            the working relations and the relations that tell you where you are harmonized i.e.
+     *            {@link SiadapYearConfiguration#getSiadap2HarmonizationRelation()},
+     *            {@link SiadapYearConfiguration#getSiadap3HarmonizationRelation()},
+     *            {@link SiadapYearConfiguration#getWorkingRelation()},
+     *            {@link SiadapYearConfiguration#getWorkingRelationWithNoQuota()}
      * 
      * @throws SiadapException
      *             if the SIADAP proccess exists. Then it should be nullified ( {@link NullifyProcess}) instead
+     * 
      */
     @Service
-    public void removeFromSiadapStructure() throws SiadapException {
+    public void removeFromSiadapStructure(boolean preserveResponsabilityRelations) throws SiadapException {
 
         if (getSiadap() != null) {
             // shouldn't remove the structure, simply nullify it
@@ -1548,13 +1583,29 @@ public class PersonSiadapWrapper extends PartyWrapper implements Serializable {
                     getPerson() != null ? getPerson().getPresentationName() : "-");
         }
 
-        AccountabilityType evaluationRelationType = getConfiguration().getEvaluationRelation();
+        Set<AccountabilityType> accTypesToConsider = new HashSet<AccountabilityType>();
 
-        for (Accountability acc : getPerson().getParentAccountabilities(getConfiguration().getUnitRelations(),
-                getConfiguration().getHarmonizationUnitRelations(), getConfiguration().getWorkingRelation(),
-                getConfiguration().getWorkingRelationWithNoQuota(), getConfiguration().getEvaluationRelation(),
-                getConfiguration().getSiadap2HarmonizationRelation(), getConfiguration().getSiadap3HarmonizationRelation())) {
+        if (preserveResponsabilityRelations == false) {
+            accTypesToConsider.add(getConfiguration().getUnitRelations());
+            accTypesToConsider.add(getConfiguration().getHarmonizationUnitRelations());
+            accTypesToConsider.add(getConfiguration().getHarmonizationResponsibleRelation());
+        }
+
+        accTypesToConsider.add(getConfiguration().getEvaluationRelation());
+        accTypesToConsider.add(getConfiguration().getWorkingRelation());
+        accTypesToConsider.add(getConfiguration().getWorkingRelationWithNoQuota());
+        accTypesToConsider.add(getConfiguration().getSiadap2HarmonizationRelation());
+        accTypesToConsider.add(getConfiguration().getSiadap3HarmonizationRelation());
+
+        for (Accountability acc : getPerson().getParentAccountabilities(accTypesToConsider)) {
             if (acc.isActive(SiadapMiscUtilClass.lastDayOfYearWhereAccsAreActive(getYear()))) {
+                if (preserveResponsabilityRelations
+                        && acc.getAccountabilityType().equals(getConfiguration().getEvaluationRelation())
+                        && acc.getParent() instanceof Unit) {
+                    //let us not remove this one, because if we did, we would have deleted a responsability towards
+                    //evaluating a unit
+                    continue;
+                }
 
                 // let's close it on the last day of the previous year, or, in
                 // case it has a beginning year equal to this one, let's delete

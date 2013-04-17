@@ -345,8 +345,10 @@ public class SiadapPersonnelManagement extends ContextBaseAction {
         int year = Integer.parseInt(request.getParameter("year"));
         Person evaluated = (Person) getDomainObject(request, "personId");
 
+        boolean preserveResponsabilityRelations = Boolean.parseBoolean(request.getParameter("preserveResponsabilityRelations"));
+
         try {
-            new PersonSiadapWrapper(evaluated, year).removeFromSiadapStructure();
+            new PersonSiadapWrapper(evaluated, year).removeFromSiadapStructure(preserveResponsabilityRelations);
         } catch (DomainException ex) {
             addMessage(request, ex.getKey(), ex.getArgs());
         }

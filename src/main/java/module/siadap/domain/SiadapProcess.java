@@ -178,6 +178,10 @@ public class SiadapProcess extends SiadapProcess_Base {
         setSiadap(new Siadap(year, evaluated, siadapUniverse, competenceType));
         setProcessNumber("S" + configuration.getLabel() + "/" + evaluated.getUser().getUsername());
 
+        //let us put in order the harmonization relations
+        PersonSiadapWrapper personSiadapWrapper = new PersonSiadapWrapper(getSiadap());
+        personSiadapWrapper.correctHarmonizationRelationsForRecentlyCreatedProcess();
+
         new LabelLog(this, currentUser, this.getClass().getName() + ".creation", "resources/SiadapResources",
                 evaluated.getName(), year.toString(), siadapUniverse.getLocalizedName(), competenceType.getName());
     }

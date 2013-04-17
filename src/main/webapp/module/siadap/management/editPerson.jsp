@@ -138,7 +138,10 @@ request.setAttribute("isCCAMember", isCCAMember);
 		</wf:activityLink>
 	</logic:present>
 	<logic:notPresent name="siadapProcess">
-		<html:link styleId="removeFromSiadapStructure"  page="<%="/siadapPersonnelManagement.do?method=removeFromSiadapStructure&year="+year.toString()%>" paramName="person" paramProperty="person.externalId" paramId="personId">
+		<html:link styleId="removeFromSiadapStructure"  page="<%="/siadapPersonnelManagement.do?method=removeFromSiadapStructure&year="+year.toString()+"&preserveResponsabilityRelations=true"%>" paramName="person" paramProperty="person.externalId" paramId="personId">
+			<bean:message key="label.management.removeFromSiadapStructure.preserveResponsabilityRelations" bundle="SIADAP_RESOURCES"/>
+		</html:link>
+		| <html:link styleId="removeFromSiadapStructure"  page="<%="/siadapPersonnelManagement.do?method=removeFromSiadapStructure&year="+year.toString()+"&preserveResponsabilityRelations=false"%>" paramName="person" paramProperty="person.externalId" paramId="personId">
 			<bean:message key="label.management.removeFromSiadapStructure" bundle="SIADAP_RESOURCES"/>
 		</html:link>
 	</logic:notPresent>
