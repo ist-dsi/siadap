@@ -10,7 +10,7 @@
  *
  *   The SIADAP Module is free software: you can
  *   redistribute it and/or modify it under the terms of the GNU Lesser General
- *   Public License as published by the Free Software Foundation, either version 
+ *   Public License as published by the Free Software Foundation, either version
  *   3 of the License, or (at your option) any later version.
  *
  *   The SIADAP Module is distributed in the hope that it will be useful,
@@ -32,6 +32,7 @@ import java.util.List;
 import module.siadap.domain.Siadap;
 import module.siadap.domain.SiadapEvaluationObjectivesType;
 import module.siadap.domain.SiadapProcess;
+import module.siadap.domain.exceptions.SiadapException;
 import module.workflow.activities.ActivityInformation;
 import module.workflow.activities.WorkflowActivity;
 import module.workflow.domain.WorkflowProcess;
@@ -113,11 +114,21 @@ public class CreateObjectiveEvaluationActivityInformation extends ActivityInform
         }
     }
 
-    public void addNewIndicator() {
+    public void addNewIndicator() throws SiadapException {
+        checkIndicatorsSize();
         indicators.add(new ObjectiveIndicator(null, null, indicators.size() == 0 ? HUNDRED_PERCENT : null));
     }
 
-    protected void addNewIndicator(String measurementIndicator, String superationCriteria, BigDecimal ponderationFactor) {
+    private void checkIndicatorsSize() {
+        Integer maxNrIndicators = getSiadap().getSiadapYearConfiguration().getMaximumNumberOfObjectiveIndicators();
+        if (maxNrIndicators != null && indicators.size() >= maxNrIndicators) {
+            throw new SiadapException("ObjectiveEvaluation.maximum.nr.of.indicators.reached", maxNrIndicators.toString());
+        }
+    }
+
+    protected void addNewIndicator(String measurementIndicator, String superationCriteria, BigDecimal ponderationFactor)
+            throws SiadapException {
+        checkIndicatorsSize();
         indicators.add(new ObjectiveIndicator(measurementIndicator, superationCriteria, new Integer(ponderationFactor.multiply(
                 new BigDecimal(100)).intValue())));
     }

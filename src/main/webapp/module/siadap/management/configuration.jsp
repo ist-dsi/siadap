@@ -8,11 +8,8 @@
 <fr:form action="/siadapManagement.do?method=showConfiguration">
 	<fr:edit id="siadapYearWrapper" name="siadapYearWrapper" nested="true">
 		<fr:schema bundle="SIADAP" type="module.siadap.domain.wrappers.SiadapYearWrapper">
-			<fr:slot name="chosenYear" bundle="SIADAP_RESOURCES" layout="menu-select-postback" key="siadap.start.siadapYearChoice">
-					<fr:property name="providerClass" value="module.siadap.presentationTier.renderers.providers.SiadapYearsFromExistingSiadapCfgPlusOne"/>
-					<%-- 
-					<fr:property name="format" value="${year}" />
-					--%>
+			<fr:slot name="chosenYearLabel" bundle="SIADAP_RESOURCES" layout="menu-select-postback" key="siadap.start.siadapYearChoice">
+					<fr:property name="providerClass" value="module.siadap.presentationTier.renderers.providers.SiadapYearsFromExistingSiadapCfgPlusOne" />
 					<fr:property name="nullOptionHidden" value="true"/>
 					<%-- 
 					<fr:property name="eachSchema" value="module.siadap.presentationTier.renderers.providers.SiadapYearConfigurationsFromExisting.year"/>
@@ -22,10 +19,12 @@
 		<fr:destination name="postBack" path="/siadapManagement.do?method=showConfiguration"/>
 	</fr:edit>
 </fr:form>  
+<%--
 <bean:define id="year" name="siadapYearWrapper" property="chosenYear"/>
-
+<bean:define id="label" name="siadapYearWrapper" property="chosenYearLabel"/>
+ --%>
 <logic:notPresent name="configuration"> 
-	<html:link page="/siadapManagement.do?method=createNewSiadapYearConfiguration" paramId="year" paramName="year">
+	<html:link page="/siadapManagement.do?method=createNewSiadapYearConfiguration" >
 		<bean:message key="label.create.currentYearConfiguration" bundle="SIADAP_RESOURCES"/>
 	</html:link>
 </logic:notPresent>
@@ -38,6 +37,7 @@
 	action="/siadapManagement.do?method=manageSiadap">
 	<fr:schema type="module.siadap.domain.SiadapYearConfiguration"
 		bundle="SIADAP_RESOURCES">
+		<fr:slot name="biannual"/>
 		<fr:slot name="unitRelations" layout="menu-select" key="label.config.unitRelations">
 			<fr:property name="providerClass"
 				value="module.organization.presentationTier.renderers.providers.AccountabilityTypesProvider" />

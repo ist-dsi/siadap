@@ -10,7 +10,7 @@
  *
  *   The SIADAP Module is free software: you can
  *   redistribute it and/or modify it under the terms of the GNU Lesser General
- *   Public License as published by the Free Software Foundation, either version 
+ *   Public License as published by the Free Software Foundation, either version
  *   3 of the License, or (at your option) any later version.
  *
  *   The SIADAP Module is distributed in the hope that it will be useful,
@@ -32,7 +32,6 @@ import java.util.MissingResourceException;
 
 import module.fileManagement.domain.DirNode;
 import module.organization.domain.Person;
-import module.organizationIst.domain.listner.LoginListner;
 import module.siadap.activities.AcknowledgeEvaluationObjectives;
 import module.siadap.activities.AcknowledgeEvaluationValidation;
 import module.siadap.activities.AcknowledgeHomologation;
@@ -76,6 +75,7 @@ import module.workflow.domain.WorkflowLog;
 import module.workflow.domain.WorkflowProcess;
 import module.workflow.domain.WorkflowSystem;
 
+import org.apache.poi.hssf.record.formula.functions.T;
 import org.joda.time.LocalDate;
 
 import pt.ist.bennu.core.applicationTier.Authenticate.UserView;
@@ -149,7 +149,8 @@ public class SiadapProcess extends SiadapProcess_Base {
 
     private HashMap<User, ArrayList<String>> userWarningsKey = new HashMap<User, ArrayList<String>>();
 
-    public SiadapProcess(Integer year, Person evaluated, SiadapUniverse siadapUniverse, CompetenceType competenceType) {
+    public SiadapProcess(Integer year, Person evaluated, SiadapUniverse siadapUniverse, CompetenceType competenceType,
+            boolean skipUniverseCheck) {
         super();
 
         if (competenceType == null || siadapUniverse == null)
@@ -159,12 +160,17 @@ public class SiadapProcess extends SiadapProcess_Base {
         Person possibleEvaluator = currentUser.getPerson();
         PersonSiadapWrapper evaluator = new PersonSiadapWrapper(evaluated, year).getEvaluator();
         SiadapYearConfiguration configuration = SiadapYearConfiguration.getSiadapYearConfiguration(year);
+        if (skipUniverseCheck == false) {
+            if (configuration.isOnlyAllowedToCreateSIADAP3() && siadapUniverse.equals(SiadapUniverse.SIADAP2)) {
+                throw new SiadapException("Unable to create a SIADAP2 proccess due to the configuration");
+            }
+        }
 
         boolean belongsToASuperGroup = false;
         if ((configuration.getCcaMembers() != null && configuration.getCcaMembers().contains(currentUser.getPerson()))
                 || (configuration.getScheduleEditors() != null && configuration.getScheduleEditors().contains(
                         currentUser.getPerson())) || Role.getRole(RoleType.MANAGER).isMember(currentUser)
-                || configuration.getStructureManagementGroupMembers().contains(currentUser.getPerson())) {
+                        || configuration.getStructureManagementGroupMembers().contains(currentUser.getPerson())) {
             belongsToASuperGroup = true;
         }
         if (!belongsToASuperGroup) {
@@ -174,7 +180,11 @@ public class SiadapProcess extends SiadapProcess_Base {
 
         setWorkflowSystem(WorkflowSystem.getInstance());
         setSiadap(new Siadap(year, evaluated, siadapUniverse, competenceType));
-        setProcessNumber("S" + year + "/" + evaluated.getUser().getUsername());
+        setProcessNumber("S" + configuration.getLabel() + "/" + evaluated.getUser().getUsername());
+
+        //let us put in order the harmonization relations
+        PersonSiadapWrapper personSiadapWrapper = new PersonSiadapWrapper(getSiadap());
+        personSiadapWrapper.correctHarmonizationRelationsForRecentlyCreatedProcess();
 
         new LabelLog(this, currentUser, this.getClass().getName() + ".creation", "resources/SiadapResources",
                 evaluated.getName(), year.toString(), siadapUniverse.getLocalizedName(), competenceType.getName());
@@ -266,10 +276,11 @@ public class SiadapProcess extends SiadapProcess_Base {
         // TODO Auto-generated method stub
     }
 
+
     @Service
     public static SiadapProcess createNewProcess(Person evaluated, Integer year, SiadapUniverse siadapUniverse,
-            CompetenceType competenceType) throws SiadapException {
-        return new SiadapProcess(year, evaluated, siadapUniverse, competenceType);
+            CompetenceType competenceType, boolean skipUniverseCheck) throws SiadapException {
+        return new SiadapProcess(year, evaluated, siadapUniverse, competenceType, skipUniverseCheck);
     }
 
     @Override
@@ -292,7 +303,7 @@ public class SiadapProcess extends SiadapProcess_Base {
         if (evaluationUniverse.isCurriculumPonderation()) {
             siadapUniverseLocalizedName +=
                     " (" + BundleUtil.getStringFromResourceBundle(Siadap.SIADAP_BUNDLE_STRING, "label.curricularPonderation")
-                            + " )";
+                    + " )";
         }
         new LabelLog(this, UserView.getCurrentUser(), "label.terminateHarmonization.for", "resources/SiadapResources",
                 siadapUniverseLocalizedName);
@@ -303,7 +314,7 @@ public class SiadapProcess extends SiadapProcess_Base {
         if (evaluationUniverse.isCurriculumPonderation()) {
             siadapUniverseLocalizedName +=
                     " (" + BundleUtil.getStringFromResourceBundle(Siadap.SIADAP_BUNDLE_STRING, "label.curricularPonderation")
-                            + " )";
+                    + " )";
         }
         new LabelLog(this, UserView.getCurrentUser(), "label.givenHarmonizationAssessment.for", "resources/SiadapResources",
                 siadapUniverseLocalizedName);
@@ -314,7 +325,7 @@ public class SiadapProcess extends SiadapProcess_Base {
         if (evaluationUniverse.isCurriculumPonderation()) {
             siadapUniverseLocalizedName +=
                     " (" + BundleUtil.getStringFromResourceBundle(Siadap.SIADAP_BUNDLE_STRING, "label.curricularPonderation")
-                            + " )";
+                    + " )";
         }
         new LabelLog(this, UserView.getCurrentUser(), "label.reOpenHarmonization.for", "resources/SiadapResources",
                 siadapUniverseLocalizedName);
@@ -334,11 +345,13 @@ public class SiadapProcess extends SiadapProcess_Base {
 
     public static void checkEmailExistenceImportAndWarnOnError(Person person) {
         // if we have no info about the person, let's import it
-        if (Siadap.getRemoteEmail(person) == null) {
-            LoginListner.importUserInformation(person.getUser().getUsername());
+        String emailToUse = person.getUser().getEmail();
+        if (emailToUse == null) {
+            emailToUse = Siadap.getRemoteEmail(person);
+
         }
         // if that didn't solved it, let's warn the admin by e-mail
-        if (Siadap.getRemoteEmail(person) == null) {
+        if (emailToUse == null) {
             StringBuilder message =
                     new StringBuilder("Error, could not import e-mail/info for person " + person.getName() + "\n");
             if (person.getUser() != null && person.getUser().getUsername() != null) {
@@ -465,7 +478,7 @@ public class SiadapProcess extends SiadapProcess_Base {
         if (siadapEvaluationUniverse.isCurriculumPonderation()) {
             siadapUniverseLocalizedName +=
                     " (" + BundleUtil.getStringFromResourceBundle(Siadap.SIADAP_BUNDLE_STRING, "label.curricularPonderation")
-                            + " )";
+                    + " )";
         }
         new LabelLog(this, UserView.getCurrentUser(), "label.removedHarmonizationAssessment.for", "resources/SiadapResources",
                 siadapUniverseLocalizedName);

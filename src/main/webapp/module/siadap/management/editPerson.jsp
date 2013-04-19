@@ -21,9 +21,10 @@
 
 <bean:define id="user" name="USER_SESSION_ATTRIBUTE" property="user"/>
 <bean:define id="year" name="person" property="year"/>
+<bean:define id="yearLabel" name="person" property="configuration.label" type="java.lang.String"/>
 <bean:define id="personWrapper" name="person"  type="module.siadap.domain.wrappers.PersonSiadapWrapper"/>
 
-<h2><bean:message key="link.siadap.structureManagement.forAGivenYear" arg0="<%=year.toString()%>" bundle="SIADAP_RESOURCES"/></h2>
+<h2><bean:message key="link.siadap.structureManagement.forAGivenYear" arg0="<%=yearLabel%>" bundle="SIADAP_RESOURCES"/></h2>
 <br/>
 
 <bean:define id="personId" name="person" property="person.externalId"/>
@@ -94,6 +95,11 @@
 		<a class="toggableLink" toggleDiv="createSiadapDiv" href="#" id="createSiadapLink">
 			<bean:message key="link.create" bundle="MYORG_RESOURCES"/>
 		</a>
+		<logic:equal value="true" name="personWrapper" property="configuration.onlyAllowedToCreateSIADAP3">
+			| <a class="toggableLink" toggleDiv="createSiadap2ForCurricularPonderationDiv" href="#">
+				<bean:message key="link.create.forCurricularPonderation" bundle="SIADAP_RESOURCES"/>
+			</a>
+		</logic:equal>
 		
 	</logic:notPresent>
 </p>
@@ -137,7 +143,10 @@ request.setAttribute("isCCAMember", isCCAMember);
 		</wf:activityLink>
 	</logic:present>
 	<logic:notPresent name="siadapProcess">
-		<html:link styleId="removeFromSiadapStructure"  page="<%="/siadapPersonnelManagement.do?method=removeFromSiadapStructure&year="+year.toString()%>" paramName="person" paramProperty="person.externalId" paramId="personId">
+		<html:link styleId="removeFromSiadapStructure"  page="<%="/siadapPersonnelManagement.do?method=removeFromSiadapStructure&year="+year.toString()+"&preserveResponsabilityRelations=true"%>" paramName="person" paramProperty="person.externalId" paramId="personId">
+			<bean:message key="label.management.removeFromSiadapStructure.preserveResponsabilityRelations" bundle="SIADAP_RESOURCES"/>
+		</html:link>
+		| <html:link styleId="removeFromSiadapStructure"  page="<%="/siadapPersonnelManagement.do?method=removeFromSiadapStructure&year="+year.toString()+"&preserveResponsabilityRelations=false"%>" paramName="person" paramProperty="person.externalId" paramId="personId">
 			<bean:message key="label.management.removeFromSiadapStructure" bundle="SIADAP_RESOURCES"/>
 		</html:link>
 	</logic:notPresent>
@@ -179,7 +188,31 @@ request.setAttribute("isCCAMember", isCCAMember);
 				
 				<fr:edit id="createSiadapBean1" name="createSiadapBean">
 					<fr:schema bundle="SIADAP_RESOURCES" type="module.siadap.presentationTier.actions.SiadapPersonnelManagement$SiadapCreationBean">
-						<fr:slot name="defaultSiadapUniverse"/>
+						<fr:slot name="defaultSiadapUniverse">
+							<logic:equal value="true" name="personWrapper" property="configuration.onlyAllowedToCreateSIADAP3">
+								<fr:property name="excludedValues" value="SIADAP2"/>
+							</logic:equal>
+						</fr:slot>
+						<fr:slot name="competenceType" layout="menu-select">
+							<fr:property name="providerClass" value="module.siadap.presentationTier.renderers.providers.CompetenceTypeProvider" />
+							<fr:property name="format" value="${name}" />
+							<fr:property name="sortBy" value="name" />
+						</fr:slot>
+					</fr:schema>
+				</fr:edit>
+			<html:submit styleClass="inputbutton"><bean:message key="renderers.form.submit.name" bundle="RENDERER_RESOURCES"/></html:submit>
+			</fr:form>
+		</div>
+	</div>
+	
+	<div class="toggableDiv" id="createSiadap2ForCurricularPonderationDiv" style="display: none;">
+		<div class="highlightBox">
+			<p>Criar SIADAP2 para ponderação curricular:</p>
+			<fr:form action="<%="/siadapPersonnelManagement.do?method=createNewSiadap2ProcessForCurricularPonderation&personId=" + personId + "&year=" + year.toString()%>">
+				<fr:edit id="createSiadapBean" name="createSiadapBean" visible="false"/>
+				
+				<fr:edit id="createSiadapBean1" name="createSiadapBean">
+					<fr:schema bundle="SIADAP_RESOURCES" type="module.siadap.presentationTier.actions.SiadapPersonnelManagement$SiadapCreationBean">
 						<fr:slot name="competenceType" layout="menu-select">
 							<fr:property name="providerClass" value="module.siadap.presentationTier.renderers.providers.CompetenceTypeProvider" />
 							<fr:property name="format" value="${name}" />
@@ -486,9 +519,9 @@ request.setAttribute("isCCAMember", isCCAMember);
  <jsp:param value="<%=configuration.getHarmonizationResponsibleRelation().getExternalId()%>" name="accountabilities"/>
  <jsp:param value="<%=configuration.getSiadap2HarmonizationRelation().getExternalId()%>" name="accountabilities"/>
  <jsp:param value="<%=configuration.getSiadap3HarmonizationRelation().getExternalId()%>" name="accountabilities"/>
- <jsp:param value="<%=year%>" name="endDateYear"/>
- <jsp:param value="12" name="endDateMonth"/>
- <jsp:param value="31" name="endDateDay"/>
+ <jsp:param value="<%=configuration.getLastDay().getYear()%>" name="endDateYear"/>
+ <jsp:param value="<%=configuration.getLastDay().getMonthOfYear()%>" name="endDateMonth"/>
+ <jsp:param value="<%=configuration.getLastDay().getDayOfMonth()%>" name="endDateDay"/>
  <jsp:param value="true" name="showDeletedAccountabilities"/>
 </jsp:include>
 

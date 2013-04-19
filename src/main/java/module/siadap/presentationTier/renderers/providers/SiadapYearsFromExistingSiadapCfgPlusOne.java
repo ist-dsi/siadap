@@ -10,7 +10,7 @@
  *
  *   The SIADAP Module is free software: you can
  *   redistribute it and/or modify it under the terms of the GNU Lesser General
- *   Public License as published by the Free Software Foundation, either version 
+ *   Public License as published by the Free Software Foundation, either version
  *   3 of the License, or (at your option) any later version.
  *
  *   The SIADAP Module is distributed in the hope that it will be useful,
@@ -24,14 +24,12 @@
  */
 package module.siadap.presentationTier.renderers.providers;
 
-import java.util.ArrayList;
-import java.util.Collections;
+import java.util.Set;
+import java.util.TreeSet;
 
 import module.siadap.domain.SiadapRootModule;
 import module.siadap.domain.SiadapYearConfiguration;
-
-import org.joda.time.LocalDate;
-
+import module.siadap.domain.wrappers.SiadapYearWrapper;
 import pt.ist.fenixWebFramework.renderers.DataProvider;
 import pt.ist.fenixWebFramework.renderers.components.converters.Converter;
 
@@ -50,25 +48,21 @@ public class SiadapYearsFromExistingSiadapCfgPlusOne implements DataProvider {
      */
     @Override
     public Object provide(Object source, Object currentValue) {
-        ArrayList<Integer> years = new ArrayList<Integer>();
+        Set<String> yearConfigurations = new TreeSet<>();
         int maximumYear = 0;
         for (SiadapYearConfiguration siadapYearConfiguration : SiadapRootModule.getInstance().getYearConfigurations()) {
-            years.add(new Integer(siadapYearConfiguration.getYear()));
+            yearConfigurations.add(siadapYearConfiguration.getLabel());
             if (siadapYearConfiguration.getYear() > maximumYear) {
                 maximumYear = siadapYearConfiguration.getYear();
+                if (siadapYearConfiguration.getBiannual()) {
+                    maximumYear += 1;
+                }
             }
         }
-        Integer currentYear = new Integer(new LocalDate().getYear());
-        if (!years.contains(currentYear)) {
-            years.add(currentYear);
-        }
-        Integer nextYear = new Integer(maximumYear + 1);
-        if (!years.contains(nextYear)) {
-            years.add(nextYear);
-        }
-        Collections.sort(years);
-        return years;
+        yearConfigurations.add(SiadapYearWrapper.getNewYearLabel());
+        return yearConfigurations;
     }
+
 
     /* (non-Javadoc)
      * @see pt.ist.fenixWebFramework.renderers.DataProvider#getConverter()
@@ -76,8 +70,9 @@ public class SiadapYearsFromExistingSiadapCfgPlusOne implements DataProvider {
     @Override
     public Converter getConverter() {
         return null;
+
 //		return new Converter() {
-//			
+//
 //			@Override
 //			public Object convert(Class type, Object value) {
 //				if (value != null)

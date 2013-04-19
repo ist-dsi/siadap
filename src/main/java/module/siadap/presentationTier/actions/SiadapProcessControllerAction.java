@@ -10,7 +10,7 @@
  *
  *   The SIADAP Module is free software: you can
  *   redistribute it and/or modify it under the terms of the GNU Lesser General
- *   Public License as published by the Free Software Foundation, either version 
+ *   Public License as published by the Free Software Foundation, either version
  *   3 of the License, or (at your option) any later version.
  *
  *   The SIADAP Module is distributed in the hope that it will be useful,
@@ -29,6 +29,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import module.siadap.activities.ChangeCustomScheduleActivityInformation;
 import module.siadap.activities.CreateObjectiveEvaluationActivityInformation;
+import module.siadap.domain.exceptions.SiadapException;
 import module.workflow.domain.WorkflowProcess;
 import module.workflow.presentationTier.WorkflowLayoutContext;
 import module.workflow.presentationTier.actions.ProcessManagement;
@@ -54,7 +55,12 @@ public class SiadapProcessControllerAction extends ContextBaseAction {
     public ActionForward addNewIndicator(ActionMapping mapping, ActionForm form, HttpServletRequest request,
             HttpServletResponse response) throws Exception {
         CreateObjectiveEvaluationActivityInformation information = getRenderedObject("activityBean");
-        information.addNewIndicator();
+        try {
+
+            information.addNewIndicator();
+        } catch (SiadapException ex) {
+            addLocalizedMessage(request, ex.getLocalizedMessage());
+        }
         RenderUtils.invalidateViewState();
         return ProcessManagement.performActivityPostback(information, request);
     }

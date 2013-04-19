@@ -10,7 +10,7 @@
  *
  *   The SIADAP Module is free software: you can
  *   redistribute it and/or modify it under the terms of the GNU Lesser General
- *   Public License as published by the Free Software Foundation, either version 
+ *   Public License as published by the Free Software Foundation, either version
  *   3 of the License, or (at your option) any later version.
  *
  *   The SIADAP Module is distributed in the hope that it will be useful,
@@ -47,6 +47,9 @@ public class CreateObjectiveEvaluation extends WorkflowActivity<SiadapProcess, C
         if (!process.isActive()) {
             return false;
         }
+        Integer maximumNumberOfObjectives = siadap.getSiadapYearConfiguration().getMaximumNumberOfObjectives();
+        if (maximumNumberOfObjectives != null && siadap.getObjectiveEvaluations().size() >= maximumNumberOfObjectives)
+            return false;
         if (siadap.getObjectiveSpecificationInterval() == null || siadap.getEvaluator() == null) {
             return false;
         }

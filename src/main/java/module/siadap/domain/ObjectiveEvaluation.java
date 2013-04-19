@@ -10,7 +10,7 @@
  *
  *   The SIADAP Module is free software: you can
  *   redistribute it and/or modify it under the terms of the GNU Lesser General
- *   Public License as published by the Free Software Foundation, either version 
+ *   Public License as published by the Free Software Foundation, either version
  *   3 of the License, or (at your option) any later version.
  *
  *   The SIADAP Module is distributed in the hope that it will be useful,
@@ -27,6 +27,7 @@ package module.siadap.domain;
 import java.math.BigDecimal;
 import java.util.Comparator;
 
+import module.siadap.domain.exceptions.SiadapException;
 import module.siadap.domain.scoring.IScoring;
 import pt.ist.bennu.core.domain.exceptions.DomainException;
 
@@ -109,7 +110,19 @@ public class ObjectiveEvaluation extends ObjectiveEvaluation_Base {
             throw new DomainException("error.ponderation.cannot.be.over.100",
                     DomainException.getResourceFor("resources/SiadapResources"));
         }
+        checkSizeOfIndicators();
         new ObjectiveEvaluationIndicator(this, measurementIndicator, superationCriteria, ponderationFactor);
+    }
+
+    private void checkSizeOfIndicators() {
+        Integer maximumNumberOfObjectiveIndicators =
+                getSiadap().getSiadapYearConfiguration().getMaximumNumberOfObjectiveIndicators();
+        if (maximumNumberOfObjectiveIndicators != null && getIndicators().size() >= maximumNumberOfObjectiveIndicators) {
+            throw new SiadapException("ObjectiveEvaluation.maximum.nr.of.indicators.reached",
+                    maximumNumberOfObjectiveIndicators.toString());
+
+        }
+
     }
 
     @Override

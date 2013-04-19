@@ -471,7 +471,7 @@ public class Siadap extends Siadap_Base {
 
         if (dateToUse == null) {
             // let's get a viable date here 30th December of the year
-            dateToUse = new LocalDate(getYear(), 12, 30);
+            dateToUse = getSiadapYearConfiguration().getLastDayForAccountabilities();
         }
 
         if (accToRemove != null) {

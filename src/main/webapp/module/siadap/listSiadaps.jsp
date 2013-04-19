@@ -15,7 +15,7 @@
 <script src="<%= request.getContextPath() + "/javaScript/spin.js"%>" type="text/javascript"></script>
 <script src="<%= request.getContextPath() + "/javaScript/jquery.blockUI.js"%>" type="text/javascript"></script>
 
-<h2> SIADAP <bean:write name="siadapYearWrapper" property="chosenYear"/></h2>
+<h2> SIADAP <bean:write name="siadapYearWrapper" property="chosenYearLabel"/></h2>
 
 <%
 SiadapYearWrapper siadapYearWrapper = (SiadapYearWrapper) request.getAttribute("siadapYearWrapper");%>
@@ -24,7 +24,7 @@ SiadapYearWrapper siadapYearWrapper = (SiadapYearWrapper) request.getAttribute("
 <fr:form action="/siadapManagement.do?method=manageSiadap">
 	<fr:edit id="siadapYearWrapper" name="siadapYearWrapper" nested="true">
 		<fr:schema bundle="SIADAP" type="module.siadap.domain.wrappers.SiadapYearWrapper">
-			<fr:slot name="chosenYear" bundle="SIADAP_RESOURCES" layout="menu-select-postback" key="siadap.start.siadapYearChoice">
+			<fr:slot name="chosenYearLabel" bundle="SIADAP_RESOURCES" layout="menu-select-postback" key="siadap.start.siadapYearChoice">
 					<fr:property name="providerClass" value="module.siadap.presentationTier.renderers.providers.SiadapYearsFromExistingSiadapConfigurations"/>
 					<%-- 
 					<fr:property name="format" value="${year}" />
@@ -74,7 +74,7 @@ SiadapYearWrapper siadapYearWrapper = (SiadapYearWrapper) request.getAttribute("
  	<fr:view name="person" property="allSiadaps">
  		<fr:schema type="module.siadap.domain.Siadap" bundle="SIADAP_RESOURCES">
  			<fr:slot name="process.processNumber" key="label.processNumber" bundle="WORKFLOW_RESOURCES"/>
- 			<fr:slot name="year"/>
+ 			<fr:slot name="siadapYearConfiguration.label" key="label.year"/>
  			<%-- TODO joantune: SIADAP-145 
  			<fr:slot name="defaultTotalEvaluationScoring"/>
  			--%>

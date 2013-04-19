@@ -64,7 +64,7 @@ import com.google.common.collect.Iterables;
  * 
  * @author João Antunes
  */
-public class ExtendSiadapStructure extends WriteCustomTask {
+public class ExtendSiadapStructureForTestPurposes extends WriteCustomTask {
 
     class SiadapBean {
 
@@ -98,7 +98,6 @@ public class ExtendSiadapStructure extends WriteCustomTask {
     }
 
     private final static boolean USE_PERSONNEL_ACC = true;
-    private final static boolean BY_DEFAULT_DONT_CREATE_SIADAP2_PROCESS = true;
 
     private final static int YEAR_TO_EXTEND = 2012;
     private final static int YEAR_TO_EXTEND_TO = YEAR_TO_EXTEND + 1;
@@ -130,6 +129,7 @@ public class ExtendSiadapStructure extends WriteCustomTask {
     private Set<Accountability> accsToClone;
     private Set<SiadapBean> siadapsToClone;
     private Set<Person> siadap2Persons;
+    private Set<Person> peopleToActuallyImport;
 
     @Override
     public String getServerName() {
@@ -166,6 +166,12 @@ public class ExtendSiadapStructure extends WriteCustomTask {
 
         siadap2Persons = new HashSet();
 
+        peopleToActuallyImport = new HashSet();
+        peopleToActuallyImport.add(User.findByUsername("ist12048").getPerson());
+        peopleToActuallyImport.add(User.findByUsername("ist138407").getPerson());
+        peopleToActuallyImport.add(User.findByUsername("ist154457").getPerson());
+        peopleToActuallyImport.add(User.findByUsername("ist24439").getPerson());
+        peopleToActuallyImport.add(User.findByUsername("ist24616").getPerson());
         //now let's scour all of the existing SIADAPs for the given year, and register the data to extend to the next year such as Universe (SIADAP2 or SIADAP3) and Career (Competence Type)
         //as well as the accountabilities that are set directly between two persons
 
@@ -175,38 +181,41 @@ public class ExtendSiadapStructure extends WriteCustomTask {
             if (siadap.getYear().intValue() == YEAR_TO_EXTEND) {
                 if (siadap.getState().ordinal() > SiadapProcessStateEnum.NOT_CREATED.ordinal()) {
                     Person evaluated = siadap.getEvaluated();
-                    if (USE_PERSONNEL_ACC
-                            && Iterables.any(evaluated.getParentAccountabilities(AccountabilityType.readBy("Personnel")),
-                                    new Predicate<Accountability>() {
+                    if (peopleToActuallyImport.contains(evaluated)) {
 
-                                @Override
-                                public boolean apply(@Nullable Accountability input) {
-                                    if (input == null)
-                                        return false;
-                                    return input.isActive(USE_PERSONNEL_ACC_DATE);
+                        if (USE_PERSONNEL_ACC
+                                && Iterables.any(evaluated.getParentAccountabilities(AccountabilityType.readBy("Personnel")),
+                                        new Predicate<Accountability>() {
+
+                                    @Override
+                                    public boolean apply(@Nullable Accountability input) {
+                                        if (input == null)
+                                            return false;
+                                        return input.isActive(USE_PERSONNEL_ACC_DATE);
+                                    }
+                                })) {
+
+                            //check for direct accountabilities to extend
+                            for (Accountability acc : siadap.getEvaluated().getParentAccountabilities(evaluationRelation)) {
+                                if (acc.isActive(SiadapMiscUtilClass.lastDayOfYearWhereAccsAreActive(YEAR_TO_EXTEND))
+                                        && acc.getParent() instanceof Person) {
+                                    accsToClone.add(acc);
+                                    nrDirectEvaluatorsFound++;
                                 }
-                            })) {
-
-                        //check for direct accountabilities to extend
-                        for (Accountability acc : siadap.getEvaluated().getParentAccountabilities(evaluationRelation)) {
-                            if (acc.isActive(SiadapMiscUtilClass.lastDayOfYearWhereAccsAreActive(YEAR_TO_EXTEND))
-                                    && acc.getParent() instanceof Person) {
-                                accsToClone.add(acc);
-                                nrDirectEvaluatorsFound++;
                             }
-                        }
 
-                        //let's get the career and the SIADAP universe
-                        try {
-                            siadapsToClone.add(new SiadapBean(siadap));
-                        } catch (SiadapException ex) {
-                            out.println("SIADAP CLONING: Could not clone (due to null competence type/Universe) "
-                                    + siadap.getProcess().getProcessNumber());
-                        }
+                            //let's get the career and the SIADAP universe
+                            try {
+                                siadapsToClone.add(new SiadapBean(siadap));
+                            } catch (SiadapException ex) {
+                                out.println("SIADAP CLONING: Could not clone (due to null competence type/Universe) "
+                                        + siadap.getProcess().getProcessNumber());
+                            }
 
-                    } else {
-                        //this is an innactive person, let's add it to the list
-                        personsCurrentlyNotWorking.add(evaluated);
+                        } else {
+                            //this is an innactive person, let's add it to the list
+                            personsCurrentlyNotWorking.add(evaluated);
+                        }
                     }
                 } else {
                     personsWithNulledOrNotCreatedProccesses.add(siadap.getEvaluated());
@@ -215,6 +224,7 @@ public class ExtendSiadapStructure extends WriteCustomTask {
             }
         }
         out.println("Caught " + nrDirectEvaluatorsFound + " direct evaluator relations");
+
 
         descendOnUnitAndRegisterAccs(topUnit);
 
@@ -337,11 +347,10 @@ public class ExtendSiadapStructure extends WriteCustomTask {
         for (Accountability acc : unit.getChildrenAccountabilities(harmonizationResponsibleRelation, unitRelations,
                 harmonizationUnitRelations, siadap2HarmonizationRelation, siadap3HarmonizationRelation, workingRelation,
                 workingRelationWithNoQuota, evaluationRelation)) {
-            if (acc.getChild() instanceof Person
-                    && (acc.getAccountabilityType().equals(siadap2HarmonizationRelation)
-                            || acc.getAccountabilityType().equals(siadap3HarmonizationRelation)
-                            || acc.getAccountabilityType().equals(workingRelation) || acc.getAccountabilityType().equals(
-                                    workingRelationWithNoQuota))) {
+            if (acc.getChild() instanceof Person && (acc.getAccountabilityType().equals(siadap2HarmonizationRelation)
+                    || acc.getAccountabilityType().equals(siadap3HarmonizationRelation)
+                    || acc.getAccountabilityType().equals(workingRelation) || acc.getAccountabilityType().equals(
+                            workingRelationWithNoQuota))) {
 
                 if ((personsWithNulledOrNotCreatedProccesses.contains(acc.getChild()))) {
                     out.println("Not registering acc " + acc.getDetailsString() + " because person: "
@@ -353,6 +362,11 @@ public class ExtendSiadapStructure extends WriteCustomTask {
                             + acc.getChild().getPresentationName() + " has no active personnel relation");
 
                     continue;
+                }
+                if (peopleToActuallyImport.contains(acc.getChild()) == false) {
+                    personsWithNulledOrNotCreatedProccesses.add((Person) acc.getChild());
+                    continue;
+
                 }
             }
             if (acc.isActive(SiadapMiscUtilClass.lastDayOfYearWhereAccsAreActive(YEAR_TO_EXTEND))) {

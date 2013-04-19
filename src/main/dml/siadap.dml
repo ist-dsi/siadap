@@ -86,6 +86,8 @@ class SiadapYearConfiguration {
 	/* Waiting period after validation acknowledgment, before holomogation, in days */
 	Integer reviewCommissionWaitingPeriod;
 	
+	Boolean biannual;
+	
 	
 }
 

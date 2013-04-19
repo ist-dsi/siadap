@@ -39,6 +39,8 @@ import module.siadap.domain.groups.SiadapStructureManagementGroup;
 import module.siadap.domain.wrappers.PersonSiadapWrapper;
 import module.siadap.domain.wrappers.UnitSiadapWrapper;
 
+import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
 import org.jfree.data.time.Month;
 import org.joda.time.LocalDate;
 
@@ -51,6 +53,7 @@ import pt.ist.fenixWebFramework.services.Service;
 
 import com.google.common.base.Predicate;
 import com.google.common.collect.Collections2;
+import com.google.common.collect.Iterables;
 import com.google.common.collect.Iterators;
 
 /**
@@ -76,6 +79,8 @@ public class SiadapYearConfiguration extends SiadapYearConfiguration_Base {
     private static SiadapCCAGroup ccaMembersGroup;
     private static SiadapStructureManagementGroup siadapStructureManagementGroup;
 
+    private static final Logger LOGGER = Logger.getLogger(SiadapYearConfiguration.class);
+
     public static SiadapCCAGroup getCcaMembersGroup() {
         initGroups();
         return ccaMembersGroup;
@@ -91,6 +96,17 @@ public class SiadapYearConfiguration extends SiadapYearConfiguration_Base {
         return homologationMembersGroup;
     }
 
+    public static int getNextYear() {
+        int nextYear = -1;
+        for (SiadapYearConfiguration configuration : MyOrg.getInstance().getSiadapRootModule().getYearConfigurations()) {
+            int endYear = configuration.getBiannual() ? configuration.getYear() + 1 : configuration.getYear();
+            endYear += 1;
+            if (endYear > nextYear)
+                nextYear = endYear;
+        }
+        return nextYear;
+    }
+
     /**
      * 
      * @return {@link #getLastDay()} minus 1 day = 30th December
@@ -100,12 +116,28 @@ public class SiadapYearConfiguration extends SiadapYearConfiguration_Base {
     }
 
     public LocalDate getLastDay() {
-        return new LocalDate(getYear(), Month.DECEMBER, 31);
+        return getBiannual() ? new LocalDate(getYear() + 1, Month.DECEMBER, 31) : new LocalDate(getYear(), Month.DECEMBER, 31);
     }
 
     public LocalDate getFirstDay() {
         return new LocalDate(getYear(), Month.JANUARY, 1);
 
+    }
+
+    public boolean isOnlyAllowedToCreateSIADAP3() {
+        return getBiannual();
+    }
+
+    public SiadapYearConfiguration getPreviousSiadapYearConfiguration() {
+        int currentYear = getYear();
+        SiadapYearConfiguration configurationToReturn = null;
+        for (SiadapYearConfiguration configuration : SiadapRootModule.getInstance().getYearConfigurations()) {
+            if ((configurationToReturn == null && configuration != this)
+                    || (configuration.getYear() < currentYear && configurationToReturn.getYear() < configuration.getYear())) {
+                configurationToReturn = configuration;
+            }
+        }
+        return configurationToReturn;
     }
 
     public boolean isHarmonizationPeriodOpenNow() {
@@ -194,6 +226,52 @@ public class SiadapYearConfiguration extends SiadapYearConfiguration_Base {
         setLockHarmonizationOnQuota(Boolean.TRUE);
         setLockHarmonizationOnQuotaOutsideOfQuotaUniverses(Boolean.TRUE);
         setClosedValidation(Boolean.FALSE);
+        setBiannual(Boolean.TRUE);
+
+        //let us prefill the AccountabilityType slots, Top unit, Special harmonization unit, and
+        //members of groups, with the previous configuration, if possible
+        prefillWithPreviousConf();
+    }
+
+    private void prefillWithPreviousConf() {
+        SiadapYearConfiguration previousSiadapYearConfiguration = getPreviousSiadapYearConfiguration();
+        if (previousSiadapYearConfiguration != null) {
+            LOGGER.info("Prefilling new SiadapYearConfiguration " + this.getExternalId() + " with data from previous, oid: "
+                    + previousSiadapYearConfiguration.getExternalId() + " year: " + previousSiadapYearConfiguration.getYear());
+
+            setUnitRelations(previousSiadapYearConfiguration.getUnitRelations());
+            setHarmonizationResponsibleRelation(previousSiadapYearConfiguration.getHarmonizationResponsibleRelation());
+            setWorkingRelation(previousSiadapYearConfiguration.getWorkingRelation());
+            setWorkingRelationWithNoQuota(previousSiadapYearConfiguration.getWorkingRelationWithNoQuota());
+            setEvaluationRelation(previousSiadapYearConfiguration.getEvaluationRelation());
+            setSiadap2HarmonizationRelation(previousSiadapYearConfiguration.getSiadap2HarmonizationRelation());
+            setSiadap3HarmonizationRelation(previousSiadapYearConfiguration.getSiadap3HarmonizationRelation());
+            setHarmonizationUnitRelations(previousSiadapYearConfiguration.getHarmonizationUnitRelations());
+            setSiadapStructureTopUnit(previousSiadapYearConfiguration.getSiadapStructureTopUnit());
+            setSiadapSpecialHarmonizationUnit(previousSiadapYearConfiguration.getSiadapSpecialHarmonizationUnit());
+
+            getCcaMembers().addAll(previousSiadapYearConfiguration.getCcaMembers());
+            getScheduleEditors().addAll(previousSiadapYearConfiguration.getScheduleEditors());
+            getRevertStateGroupMember().addAll(previousSiadapYearConfiguration.getRevertStateGroupMember());
+            getHomologationMembers().addAll(previousSiadapYearConfiguration.getHomologationMembers());
+            getStructureManagementGroupMembers().addAll(previousSiadapYearConfiguration.getStructureManagementGroupMembers());
+
+        }
+
+    }
+
+    public static SiadapYearConfiguration getSiadapYearConfiguration(final String chosenYearConfigurationLabel) {
+        if (StringUtils.isBlank(chosenYearConfigurationLabel))
+            return null;
+        return Iterables.tryFind(SiadapRootModule.getInstance().getYearConfigurations(),
+                new Predicate<SiadapYearConfiguration>() {
+            @Override
+            public boolean apply(SiadapYearConfiguration siadapYearConfiguration) {
+                if (siadapYearConfiguration == null)
+                    return false;
+                return siadapYearConfiguration.getLabel().equals(chosenYearConfigurationLabel);
+            }
+        }).orNull();
     }
 
     public static SiadapYearConfiguration getSiadapYearConfiguration(Integer year) {
@@ -245,14 +323,14 @@ public class SiadapYearConfiguration extends SiadapYearConfiguration_Base {
     }
 
     @Service
-    public static SiadapYearConfiguration createNewSiadapYearConfiguration(Integer year) {
-        SiadapYearConfiguration configuration = getSiadapYearConfiguration(year);
+    public static SiadapYearConfiguration createNewSiadapYearConfiguration(String label) {
+        SiadapYearConfiguration configuration = getSiadapYearConfiguration(label);
         if (configuration != null) {
             return configuration;
         }
-        return new SiadapYearConfiguration(year, DEFAULT_SIADAP2_OBJECTIVES_PONDERATION, DEFAULT_SIADAP2_COMPETENCES_PONDERATION,
-                DEFAULT_SIADAP3_COMPETENCES_PONDERATION, DEFAULT_SIADAP3_OBJECTIVES_PONDERATION,
-                DEFAULT_REVIEW_COMMISSION_WAITING_PERIOD);
+        return new SiadapYearConfiguration(getNextYear(), DEFAULT_SIADAP2_OBJECTIVES_PONDERATION,
+                DEFAULT_SIADAP2_COMPETENCES_PONDERATION, DEFAULT_SIADAP3_COMPETENCES_PONDERATION,
+                DEFAULT_SIADAP3_OBJECTIVES_PONDERATION, DEFAULT_REVIEW_COMMISSION_WAITING_PERIOD);
     }
 
     public Siadap getSiadapFor(Person person, Integer year) {
@@ -466,4 +544,31 @@ public class SiadapYearConfiguration extends SiadapYearConfiguration_Base {
     public boolean isPersonMemberOfRevertStateGroup(Person person) {
         return getRevertStateGroupMember().contains(person);
     }
+
+    public String getLabel() {
+        if (getBiannual() == null || getBiannual() == false)
+            return String.valueOf(getYear());
+        else {
+            String shortVersionOfSecondYear = StringUtils.right(String.valueOf(getYear() + 1), 2);
+            return String.valueOf(getYear()) + "-" + shortVersionOfSecondYear;
+        }
+
+    }
+
+    private static final Integer MAXIMUM_NR_OBJ_INDICATORS_IN_BIANNUAL_PROCCESS = new Integer(3);
+    private static final Integer MAXIMUM_NR_OF_OBJECTIVES_FOR_BIANNUAL_PROCCESS = new Integer(7);
+
+    public Integer getMaximumNumberOfObjectives() {
+        if (getBiannual() == true)
+            return MAXIMUM_NR_OF_OBJECTIVES_FOR_BIANNUAL_PROCCESS;
+        else
+            return null;
+    }
+    public Integer getMaximumNumberOfObjectiveIndicators() {
+        if (getBiannual() == true)
+            return MAXIMUM_NR_OBJ_INDICATORS_IN_BIANNUAL_PROCCESS;
+        else
+            return null;
+    }
+
 }

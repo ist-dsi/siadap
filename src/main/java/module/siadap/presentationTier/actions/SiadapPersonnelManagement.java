@@ -37,6 +37,8 @@ import javax.servlet.http.HttpServletResponse;
 import module.organization.domain.Person;
 import module.organization.domain.Unit;
 import module.siadap.activities.ChangePersonnelSituationActivityInformation;
+import module.siadap.activities.NoEvaluation;
+import module.siadap.activities.NoEvaluationActivityInformation;
 import module.siadap.domain.CompetenceEvaluation;
 import module.siadap.domain.CompetenceType;
 import module.siadap.domain.Siadap;
@@ -51,6 +53,14 @@ import module.siadap.domain.util.actions.SiadapUtilActions;
 import module.siadap.domain.wrappers.PersonSiadapWrapper;
 import module.siadap.domain.wrappers.SiadapYearWrapper;
 import module.siadap.domain.wrappers.UnitSiadapWrapper;
+import module.siadap.presentationTier.actions.SiadapPersonnelManagement.ActivityInformationBeanWrapper;
+import module.siadap.presentationTier.actions.SiadapPersonnelManagement.ChangeEvaluatorBean;
+import module.siadap.presentationTier.actions.SiadapPersonnelManagement.ChangeHarmonizationUnitBean;
+import module.siadap.presentationTier.actions.SiadapPersonnelManagement.ChangeSiadapUniverseBean;
+import module.siadap.presentationTier.actions.SiadapPersonnelManagement.ChangeWorkingUnitBean;
+import module.siadap.presentationTier.actions.SiadapPersonnelManagement.ForceChangeCompetenceTypeBean;
+import module.siadap.presentationTier.actions.SiadapPersonnelManagement.RemoveCustomEvaluatorBean;
+import module.siadap.presentationTier.actions.SiadapPersonnelManagement.SiadapCreationBean;
 import module.siadap.presentationTier.renderers.providers.SiadapYearsFromExistingSiadapConfigurations;
 import module.workflow.activities.ActivityException;
 import module.workflow.activities.ActivityInformation;
@@ -59,6 +69,7 @@ import module.workflow.domain.WorkflowProcess;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.apache.poi.hssf.record.formula.functions.T;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
@@ -143,11 +154,53 @@ public class SiadapPersonnelManagement extends ContextBaseAction {
         SiadapCreationBean siadapCreationBean = getRenderedObject("createSiadapBean");
         Person evaluated = (Person) getDomainObject(request, "personId");
 
+        createSiadapProcess(request, evaluated, year, siadapCreationBean.getDefaultSiadapUniverse(),
+                siadapCreationBean.getCompetenceType(), false);
+        return viewPerson(mapping, form, request, response);
+
+    }
+
+    private final SiadapProcess createSiadapProcess(HttpServletRequest request, Person evaluated, int year,
+            SiadapUniverse siadapUniverse,
+            CompetenceType competenceType, boolean skipUniverseCheck) {
         try {
-            SiadapProcess.createNewProcess(evaluated, year, siadapCreationBean.getDefaultSiadapUniverse(),
-                    siadapCreationBean.getCompetenceType());
+            return SiadapProcess
+                    .createNewProcess(evaluated, new Integer(year), siadapUniverse, competenceType,
+                            skipUniverseCheck);
         } catch (DomainException ex) {
             addMessage(request, ex.getKey(), ex.getArgs());
+        }
+
+        return null;
+
+    }
+
+    public final ActionForward createNewSiadap2ProcessForCurricularPonderation(final ActionMapping mapping,
+            final ActionForm form, final HttpServletRequest request, final HttpServletResponse response) throws Exception {
+
+        int year = Integer.parseInt(request.getParameter("year"));
+        SiadapCreationBean siadapCreationBean = getRenderedObject("createSiadapBean");
+        Person evaluated = (Person) getDomainObject(request, "personId");
+
+        SiadapProcess recentlyCreatedProcess = createSiadapProcess(request, evaluated, year, SiadapUniverse.SIADAP2, siadapCreationBean.getCompetenceType(), true);
+
+        //now, let's set it as no evaluated with the justification that the
+        //process was created only to do the curricular ponderation
+        WorkflowActivity<WorkflowProcess, ActivityInformation<WorkflowProcess>> noEvaluationActivity = recentlyCreatedProcess.getActivity(NoEvaluation.class.getSimpleName());
+        NoEvaluationActivityInformation noEvaluationActivityInformation = new NoEvaluationActivityInformation(recentlyCreatedProcess, noEvaluationActivity);
+        noEvaluationActivityInformation.setNoEvaluationJustification(BundleUtil.getStringFromResourceBundle(
+                Siadap.SIADAP_BUNDLE_STRING, "siadap2.process.creation.for.curricularPonderation.noEvaluation.justification"));
+
+        try {
+            if (!noEvaluationActivityInformation.hasAllneededInfo()) {
+                throw new SiadapException("noEvaluationActivityInformation.needs.more.info");
+            }
+            noEvaluationActivity.execute(noEvaluationActivityInformation);
+
+        } catch (DomainException ex) {
+            addLocalizedMessage(request, ex.getLocalizedMessage());
+        } catch (ActivityException e) {
+            addLocalizedMessage(request, e.getMessage());
         }
 
         return viewPerson(mapping, form, request, response);
@@ -345,8 +398,10 @@ public class SiadapPersonnelManagement extends ContextBaseAction {
         int year = Integer.parseInt(request.getParameter("year"));
         Person evaluated = (Person) getDomainObject(request, "personId");
 
+        boolean preserveResponsabilityRelations = Boolean.parseBoolean(request.getParameter("preserveResponsabilityRelations"));
+
         try {
-            new PersonSiadapWrapper(evaluated, year).removeFromSiadapStructure();
+            new PersonSiadapWrapper(evaluated, year).removeFromSiadapStructure(preserveResponsabilityRelations);
         } catch (DomainException ex) {
             addMessage(request, ex.getKey(), ex.getArgs());
         }

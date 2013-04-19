@@ -221,7 +221,7 @@ public class UnitManagementInterfaceAction extends ContextBaseAction {
                     return;
                 }
                 addCell("Unidade", unitSiadapWrapper.getUnit().getPartyName());
-                addCell("CC", unitSiadapWrapper.getUnit().getExpenditureUnit().getCostCenterUnit().getCostCenter());
+                addCell("CC", unitSiadapWrapper.getUnit().getAcronym());
                 addCell("Unidade de Harm.", unitSiadapWrapper.getHarmonizationUnit().getPartyName());
                 addCell("Número da U.H.", unitSiadapWrapper.getHarmonizationUnitNumber());
 

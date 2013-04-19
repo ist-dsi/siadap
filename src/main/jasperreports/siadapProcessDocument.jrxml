@@ -154,7 +154,7 @@ $P{personSiadapWrapper}.getCareerName() : $R{competenceType.notDefined}]]></text
 					<textElement textAlignment="Center" verticalAlignment="Middle">
 						<font pdfFontName="Helvetica-Bold" size="12" isBold="true"/>
 					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA["SIADAP - " + $P{siadap}.getYear() + " - " + $P{siadap}.getEvaluated().getFirstAndLastName() + "(" + $P{process}.getProcessNumber() + ")"]]></textFieldExpression>
+				<textFieldExpression   class="java.lang.String"><![CDATA["SIADAP - " + $P{siadap}.getSiadapYearConfiguration().getLabel() + " - " + $P{siadap}.getEvaluated().getFirstAndLastName() + "(" + $P{process}.getProcessNumber() + ")"]]></textFieldExpression>
 				</textField>
 				<staticText>
 					<reportElement
@@ -280,7 +280,7 @@ $P{personSiadapWrapper}.getCareerName() : $R{competenceType.notDefined}]]></text
 					<textElement verticalAlignment="Middle">
 						<font pdfFontName="Helvetica" isBold="false" isItalic="false"/>
 					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[$P{siadap}.getEvaluated().getPresentationName()]]></textFieldExpression>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$P{siadap}.getEvaluator().getPerson().getPresentationName()]]></textFieldExpression>
 				</textField>
 				<staticText>
 					<reportElement

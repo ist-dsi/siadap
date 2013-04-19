@@ -4,7 +4,25 @@
     <ordering>
         <after>
         	<!-- [START OF BENNU GENERATED FRAGMENT] -->
-		<!-- [END OF BENNU GENERATED FRAGMENT] -->
+         <name>bennu-core</name>
+         <name>fenix-web-framework</name>
+         <name>workflow</name>
+         <name>content</name>
+         <name>file-management</name>
+         <name>lucene</name>
+         <name>dashboard</name>
+         <name>file-support</name>
+         <name>file-support-plugin</name>
+         <name>organization</name>
+         <name>lucene-indexing-plugin</name>
+         <name>email-dispatch</name>
+         <name>contacts</name>
+         <name>geography</name>
+         <name>scheduler</name>
+         <name>scheduler-plugin</name>
+         <name>web-service-utils</name>
+         <name>bennu-vaadin</name>
+         <!-- [END OF BENNU GENERATED FRAGMENT] -->
         </after>
         <before>
             <others />

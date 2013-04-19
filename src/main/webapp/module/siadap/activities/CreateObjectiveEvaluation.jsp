@@ -112,18 +112,25 @@
 		left: -219px;
 		}
 	</style>
-	 <%--	hovering tooltip stuff:  --%>
-	 <div style="text-align: right;">
-	   <div onmouseover="document.getElementById('adicionarDiv').className='tooltip tooltipOpen';" onmouseout="document.getElementById('adicionarDiv').className='tooltip tooltipClosed';" id="adicionarDiv" class="tooltip tooltipClosed">
-			<a id='addNewIndicator' href="#"><bean:message bundle="SIADAP_RESOURCES" key="activity.CreateOrEditObjectiveEvaluation.indicator.add"/></a>
-            <div class="tooltipText">
-            	<bean:message bundle="SIADAP_RESOURCES" key="activity.CreateOrEditObjectiveEvaluation.indicator.add.explanation"/>
-            </div>
-            <script type="text/javascript">document.getElementById('adicionarDiv').className='tooltip tooltipClosed';</script>
-        </div>
-     </div>
-	<input id="addNewIndicator" type="hidden" value="+"/>
-
+	<bean:size id="nrCurrentIndicators" name="information" property="indicators"/>
+	<%Integer maxNrIndicators = siadapProcess.getSiadap().getSiadapYearConfiguration().getMaximumNumberOfObjectiveIndicators();
+	boolean hideAddNewIndicator = maxNrIndicators == null ? false : nrCurrentIndicators >= maxNrIndicators; 
+	request.setAttribute("hideAddNewIndicator", hideAddNewIndicator);
+	%>
+	
+	<logic:equal value="false" name="hideAddNewIndicator">
+		 <%--	hovering tooltip stuff:  --%>
+		 <div style="text-align: right;">
+		   <div onmouseover="document.getElementById('adicionarDiv').className='tooltip tooltipOpen';" onmouseout="document.getElementById('adicionarDiv').className='tooltip tooltipClosed';" id="adicionarDiv" class="tooltip tooltipClosed">
+				<a id='addNewIndicator' href="#"><bean:message bundle="SIADAP_RESOURCES" key="activity.CreateOrEditObjectiveEvaluation.indicator.add"/></a>
+	            <div class="tooltipText">
+	            	<bean:message bundle="SIADAP_RESOURCES" key="activity.CreateOrEditObjectiveEvaluation.indicator.add.explanation"/>
+	            </div>
+	            <script type="text/javascript">document.getElementById('adicionarDiv').className='tooltip tooltipClosed';</script>
+	        </div>
+	     </div>
+		<input id="addNewIndicator" type="hidden" value="+"/>
+	</logic:equal>
 	<html:submit styleClass="inputbutton"><bean:message key="button.save" bundle="SIADAP_RESOURCES"/></html:submit>
 </fr:form>
 <fr:form id="form" action='<%="/workflowProcessManagement.do?method=viewProcess&processId=" + processId %>'>

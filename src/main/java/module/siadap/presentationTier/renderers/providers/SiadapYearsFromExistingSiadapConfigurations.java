@@ -10,7 +10,7 @@
  *
  *   The SIADAP Module is free software: you can
  *   redistribute it and/or modify it under the terms of the GNU Lesser General
- *   Public License as published by the Free Software Foundation, either version 
+ *   Public License as published by the Free Software Foundation, either version
  *   3 of the License, or (at your option) any later version.
  *
  *   The SIADAP Module is distributed in the hope that it will be useful,
@@ -26,6 +26,8 @@ package module.siadap.presentationTier.renderers.providers;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Set;
+import java.util.TreeSet;
 
 import module.siadap.domain.SiadapRootModule;
 import module.siadap.domain.SiadapYearConfiguration;
@@ -49,14 +51,35 @@ public class SiadapYearsFromExistingSiadapConfigurations implements DataProvider
      */
     @Override
     public Object provide(Object source, Object currentValue) {
-        return getYearsWithExistingConfigs();
+        return getLabelsWithExistingConfigs();
     }
 
     /**
      * Method wrapper which is used by other interface packages other than the
      * renders
      * 
-     * @return an {@link ArrayList} of Integers with the years that have a
+     * @return an {@link ArrayList} of Strings with the {@link SiadapYearConfiguration#getLabel()} that have a
+     *         configuration associated
+     */
+    static public Set<String> getLabelsWithExistingConfigs() {
+        Set<String> years = new TreeSet<String>();
+        for (SiadapYearConfiguration siadapYearConfiguration : SiadapRootModule.getInstance().getYearConfigurations()) {
+            //let's make the 2010 year disappear for all of the users which aren't on the test group
+            if (siadapYearConfiguration.getYear() == 2010
+                    && !SiadapRootModule.getInstance().getSiadapTestUserGroup().hasUsers(UserView.getCurrentUser())) {
+                continue;
+            } else {
+                years.add(siadapYearConfiguration.getLabel());
+            }
+        }
+        return years;
+    }
+
+    /**
+     * Method wrapper which is used by other interface packages other than the
+     * renders
+     * 
+     * @return an {@link ArrayList} of Strings with the {@link SiadapYearConfiguration#getLabel()} that have a
      *         configuration associated
      */
     static public ArrayList<Integer> getYearsWithExistingConfigs() {
@@ -67,7 +90,7 @@ public class SiadapYearsFromExistingSiadapConfigurations implements DataProvider
                     && !SiadapRootModule.getInstance().getSiadapTestUserGroup().hasUsers(UserView.getCurrentUser())) {
                 continue;
             } else {
-                years.add(new Integer(siadapYearConfiguration.getYear()));
+                years.add(siadapYearConfiguration.getYear());
             }
         }
         Collections.sort(years);
