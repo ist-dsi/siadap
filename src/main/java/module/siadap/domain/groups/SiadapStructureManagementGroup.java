@@ -24,8 +24,8 @@
  */
 package module.siadap.domain.groups;
 
+import java.util.Collection;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 import module.organization.domain.Person;
@@ -81,7 +81,7 @@ public class SiadapStructureManagementGroup extends SiadapStructureManagementGro
         return getMembers(new LocalDate().getYear());
     }
 
-    static public List<Person> getListOfMembers(int year) {
+    static public Collection<Person> getListOfMembers(int year) {
         SiadapYearConfiguration configuration = SiadapYearConfiguration.getSiadapYearConfiguration(year);
         return configuration.getStructureManagementGroupMembers();
 

@@ -65,8 +65,8 @@ import org.joda.time.LocalDate;
 import pt.ist.bennu.core.presentationTier.actions.ContextBaseAction;
 import pt.ist.bennu.core.presentationTier.component.OrganizationChart;
 import pt.ist.fenixWebFramework.renderers.utils.RenderUtils;
-import pt.ist.fenixWebFramework.services.Service;
 import pt.ist.fenixWebFramework.struts.annotations.Mapping;
+import pt.ist.fenixframework.Atomic;
 
 import com.google.common.collect.ArrayListMultimap;
 
@@ -93,8 +93,9 @@ public class SiadapProcessCountAction extends ContextBaseAction {
         SiadapProcessStateEnum state = SiadapProcessStateEnum.valueOf(request.getParameter("state"));
         Integer year = Integer.valueOf(request.getParameter("year"));
 
-        if (state == null || year == null)
+        if (state == null || year == null) {
             return null;
+        }
 
         ArrayList<Siadap> siadapsOfYearAndState = new ArrayList<Siadap>();
         for (Siadap siadap : SiadapRootModule.getInstance().getSiadaps()) {
@@ -125,7 +126,7 @@ public class SiadapProcessCountAction extends ContextBaseAction {
 
     }
 
-    @Service
+    @Atomic
     private void deleteSiadapEvenWithFiles(Siadap siadap) {
         SiadapProcess process = siadap.getProcess();
         for (ProcessFile file : process.getFiles()) {
@@ -242,7 +243,7 @@ public class SiadapProcessCountAction extends ContextBaseAction {
         Set<Person> duplicatePersons = processCounter.getDuplicatePersons();
         ArrayList<Siadap> siadaps = new ArrayList<Siadap>();
         for (Person person : duplicatePersons) {
-            for (Siadap siadap : person.getSiadapsAsEvaluated()) {
+            for (Siadap siadap : person.getSiadapsAsEvaluatedSet()) {
                 if (siadap.getYear().equals(year)) {
                     siadaps.add(siadap);
                 }
@@ -300,8 +301,9 @@ public class SiadapProcessCountAction extends ContextBaseAction {
         request.setAttribute("siadapYearWrapper", siadapYearWrapper);
         SiadapYearConfiguration configuration = siadapYearWrapper.getSiadapYearConfiguration();
 
-        if (configuration == null)
+        if (configuration == null) {
             return forward(request, "/module/siadap/unit.jsp");
+        }
         request.setAttribute("configuration", configuration);
 
         SiadapProcessStateEnumWrapper siadapProcessStateToFilter =
@@ -323,7 +325,7 @@ public class SiadapProcessCountAction extends ContextBaseAction {
 
             //and let's also get the total number of SIADAPs for this year
             int siadapsCount =
-                    SiadapYearConfiguration.getSiadapYearConfiguration(siadapYearWrapper.getChosenYear()).getSiadapsCount();
+                    SiadapYearConfiguration.getSiadapYearConfiguration(siadapYearWrapper.getChosenYear()).getSiadapsSet().size();
             int siadapsDefinitiveCount = 0;
             Map<SiadapProcessStateEnum, Integer> stateCount = new HashMap<SiadapProcessStateEnum, Integer>();
             for (Siadap siadap : SiadapRootModule.getInstance().getSiadaps()) {

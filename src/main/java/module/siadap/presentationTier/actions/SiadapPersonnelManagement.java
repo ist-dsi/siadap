@@ -27,7 +27,7 @@ package module.siadap.presentationTier.actions;
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.List;
+import java.util.Collection;
 import java.util.Set;
 
 import javax.servlet.ServletOutputStream;
@@ -53,14 +53,6 @@ import module.siadap.domain.util.actions.SiadapUtilActions;
 import module.siadap.domain.wrappers.PersonSiadapWrapper;
 import module.siadap.domain.wrappers.SiadapYearWrapper;
 import module.siadap.domain.wrappers.UnitSiadapWrapper;
-import module.siadap.presentationTier.actions.SiadapPersonnelManagement.ActivityInformationBeanWrapper;
-import module.siadap.presentationTier.actions.SiadapPersonnelManagement.ChangeEvaluatorBean;
-import module.siadap.presentationTier.actions.SiadapPersonnelManagement.ChangeHarmonizationUnitBean;
-import module.siadap.presentationTier.actions.SiadapPersonnelManagement.ChangeSiadapUniverseBean;
-import module.siadap.presentationTier.actions.SiadapPersonnelManagement.ChangeWorkingUnitBean;
-import module.siadap.presentationTier.actions.SiadapPersonnelManagement.ForceChangeCompetenceTypeBean;
-import module.siadap.presentationTier.actions.SiadapPersonnelManagement.RemoveCustomEvaluatorBean;
-import module.siadap.presentationTier.actions.SiadapPersonnelManagement.SiadapCreationBean;
 import module.siadap.presentationTier.renderers.providers.SiadapYearsFromExistingSiadapConfigurations;
 import module.workflow.activities.ActivityException;
 import module.workflow.activities.ActivityInformation;
@@ -68,13 +60,13 @@ import module.workflow.activities.WorkflowActivity;
 import module.workflow.domain.WorkflowProcess;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
-import org.apache.poi.hssf.record.formula.functions.T;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.joda.time.LocalDate;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import pt.ist.bennu.core.applicationTier.Authenticate.UserView;
 import pt.ist.bennu.core.domain.exceptions.DomainException;
@@ -96,7 +88,7 @@ import pt.utl.ist.fenix.tools.util.excel.Spreadsheet.Row;
 @Mapping(path = "/siadapPersonnelManagement")
 public class SiadapPersonnelManagement extends ContextBaseAction {
 
-    private static Logger logger = Logger.getLogger(SiadapPersonnelManagement.class.getName());
+    private static Logger logger = LoggerFactory.getLogger(SiadapPersonnelManagement.class.getName());
 
     public final ActionForward start(final ActionMapping mapping, final ActionForm form, final HttpServletRequest request,
             final HttpServletResponse response) throws Exception {
@@ -161,12 +153,10 @@ public class SiadapPersonnelManagement extends ContextBaseAction {
     }
 
     private final SiadapProcess createSiadapProcess(HttpServletRequest request, Person evaluated, int year,
-            SiadapUniverse siadapUniverse,
-            CompetenceType competenceType, boolean skipUniverseCheck) {
+            SiadapUniverse siadapUniverse, CompetenceType competenceType, boolean skipUniverseCheck) {
         try {
             return SiadapProcess
-                    .createNewProcess(evaluated, new Integer(year), siadapUniverse, competenceType,
-                            skipUniverseCheck);
+                    .createNewProcess(evaluated, new Integer(year), siadapUniverse, competenceType, skipUniverseCheck);
         } catch (DomainException ex) {
             addMessage(request, ex.getKey(), ex.getArgs());
         }
@@ -182,12 +172,16 @@ public class SiadapPersonnelManagement extends ContextBaseAction {
         SiadapCreationBean siadapCreationBean = getRenderedObject("createSiadapBean");
         Person evaluated = (Person) getDomainObject(request, "personId");
 
-        SiadapProcess recentlyCreatedProcess = createSiadapProcess(request, evaluated, year, SiadapUniverse.SIADAP2, siadapCreationBean.getCompetenceType(), true);
+        SiadapProcess recentlyCreatedProcess =
+                createSiadapProcess(request, evaluated, year, SiadapUniverse.SIADAP2, siadapCreationBean.getCompetenceType(),
+                        true);
 
         //now, let's set it as no evaluated with the justification that the
         //process was created only to do the curricular ponderation
-        WorkflowActivity<WorkflowProcess, ActivityInformation<WorkflowProcess>> noEvaluationActivity = recentlyCreatedProcess.getActivity(NoEvaluation.class.getSimpleName());
-        NoEvaluationActivityInformation noEvaluationActivityInformation = new NoEvaluationActivityInformation(recentlyCreatedProcess, noEvaluationActivity);
+        WorkflowActivity<SiadapProcess, ActivityInformation<SiadapProcess>> noEvaluationActivity =
+                recentlyCreatedProcess.getActivity(NoEvaluation.class.getSimpleName());
+        NoEvaluationActivityInformation noEvaluationActivityInformation =
+                new NoEvaluationActivityInformation(recentlyCreatedProcess, noEvaluationActivity);
         noEvaluationActivityInformation.setNoEvaluationJustification(BundleUtil.getStringFromResourceBundle(
                 Siadap.SIADAP_BUNDLE_STRING, "siadap2.process.creation.for.curricularPonderation.noEvaluation.justification"));
 
@@ -440,7 +434,7 @@ public class SiadapPersonnelManagement extends ContextBaseAction {
 
         // let's get all of the SIADAPs
         // List<Siadap> siadaps = siadapYearConfiguration.getSiadaps();
-        List<Siadap> siadaps = SiadapRootModule.getInstance().getSiadaps();
+        Collection<Siadap> siadaps = SiadapRootModule.getInstance().getSiadaps();
         for (Siadap siadap : siadaps) {
             if (siadap.getYear().intValue() == year) {
                 Row row = siadapRawDataSpreadsheet.addRow();
@@ -474,8 +468,8 @@ public class SiadapPersonnelManagement extends ContextBaseAction {
                     }
                     row.setCell(evaluatedWrapper.getSiadap() == null
                             || evaluatedWrapper.getUnitWhereIsHarmonized(evaluatedWrapper.getSiadap().getDefaultSiadapUniverse()) == null ? "-" : evaluatedWrapper
-                                    .getUnitWhereIsHarmonized(evaluatedWrapper.getSiadap().getDefaultSiadapUniverse())
-                                    .getPresentationName());
+                            .getUnitWhereIsHarmonized(evaluatedWrapper.getSiadap().getDefaultSiadapUniverse())
+                            .getPresentationName());
                     row.setCell(evaluatedWrapper.getCareerName());
                     row.setCell(String.valueOf(siadap.getDefaultSiadapUniverse()));
                     row.setCell(evaluatedWrapper.isQuotaAware() ? "Sim" : "Não");
@@ -514,7 +508,7 @@ public class SiadapPersonnelManagement extends ContextBaseAction {
         // let's get all of the SIADAPs
         SiadapYearConfiguration siadapYearConfiguration = SiadapYearConfiguration.getSiadapYearConfiguration(year);
         // List<Siadap> siadaps = siadapYearConfiguration.getSiadaps();
-        List<Siadap> siadaps = SiadapRootModule.getInstance().getSiadaps();
+        Collection<Siadap> siadaps = SiadapRootModule.getInstance().getSiadaps();
         for (Siadap siadap : siadaps) {
             if (siadap.getYear().intValue() == year) {
                 Row row = siadapRawDataSpreadsheet.addRow();
@@ -554,7 +548,7 @@ public class SiadapPersonnelManagement extends ContextBaseAction {
                         .getWorkingUnit().getUnit().getPresentationName());
                 row.setCell(evaluatedWrapper.getSiadap() == null
                         || evaluatedWrapper.getUnitWhereIsHarmonized(evaluatedWrapper.getSiadap().getDefaultSiadapUniverse()) == null ? "-" : evaluatedWrapper
-                                .getUnitWhereIsHarmonized(evaluatedWrapper.getSiadap().getDefaultSiadapUniverse()).getPresentationName());
+                        .getUnitWhereIsHarmonized(evaluatedWrapper.getSiadap().getDefaultSiadapUniverse()).getPresentationName());
                 row.setCell(evaluatedWrapper.getCareerName());
                 row.setCell(String.valueOf(siadap.getDefaultSiadapUniverse()));
                 row.setCell(evaluatedWrapper.isQuotaAware() ? "Sim" : "Não");
@@ -636,7 +630,7 @@ public class SiadapPersonnelManagement extends ContextBaseAction {
         public String[] getArgumentsDescription(SiadapProcess process) {
             return new String[] { BundleUtil.getFormattedStringFromResourceBundle(Siadap.SIADAP_BUNDLE_STRING,
                     RemoveCustomEvaluatorBean.class.getSimpleName(), process.getSiadap().getEvaluator().getPerson()
-                    .getPresentationName()) };
+                            .getPresentationName()) };
         }
 
         @Override
@@ -706,7 +700,7 @@ public class SiadapPersonnelManagement extends ContextBaseAction {
             if (!forceChange) {
                 return new String[] { BundleUtil.getFormattedStringFromResourceBundle(Siadap.SIADAP_BUNDLE_STRING,
                         ChangeSiadapUniverseBean.class.getSimpleName(), getSiadapUniverse().getLocalizedName(), getDateOfChange()
-                        .toString()) };
+                                .toString()) };
             } else {
                 return new String[] { BundleUtil.getFormattedStringFromResourceBundle(Siadap.SIADAP_BUNDLE_STRING,
                         ChangeSiadapUniverseBean.class.getSimpleName() + ".forced", getSiadapUniverse().getLocalizedName(),
@@ -834,7 +828,7 @@ public class SiadapPersonnelManagement extends ContextBaseAction {
             if (process.getSiadap().getCompetences() != null
                     && process.getSiadap().getCompetences().isEmpty() == false
                     && SiadapProcessStateEnum.getState(process.getSiadap()).ordinal() > SiadapProcessStateEnum.NOT_YET_SUBMITTED_FOR_ACK
-                    .ordinal()) {
+                            .ordinal()) {
                 throw new SiadapException("error.changing.competence.type.cant.due.to.existing.competences.defined");
             }
             SiadapEvaluationUniverse defaultSiadapEvaluationUniverse = process.getSiadap().getDefaultSiadapEvaluationUniverse();
@@ -955,15 +949,15 @@ public class SiadapPersonnelManagement extends ContextBaseAction {
                     (withQuotas) ? BundleUtil
                             .getFormattedStringFromResourceBundle(Siadap.SIADAP_BUNDLE_STRING, "siadap.true.yes") : BundleUtil
                             .getFormattedStringFromResourceBundle(Siadap.SIADAP_BUNDLE_STRING, "siadap.false.no");
-                            PersonSiadapWrapper evaluator = new PersonSiadapWrapper(process.getSiadap()).getEvaluator();
-                            String currentEvaluator = evaluator == null ? "-" : evaluator.getPerson().getPresentationName();
-                            return new String[] { BundleUtil.getFormattedStringFromResourceBundle(Siadap.SIADAP_BUNDLE_STRING,
-                                    ChangeWorkingUnitBean.class.getSimpleName(), unit.getPresentationName(), countsForInstitutionalQuotas,
-                                    dateOfChange.toString()) };
-                            // ,
-                            // BundleUtil.getFormattedStringFromResourceBundle(Siadap.SIADAP_BUNDLE_STRING,
-                            // "ChangeWorkingUnitBean.evaluatorSideEffect", currentEvaluator))
-                            // };
+            PersonSiadapWrapper evaluator = new PersonSiadapWrapper(process.getSiadap()).getEvaluator();
+            String currentEvaluator = evaluator == null ? "-" : evaluator.getPerson().getPresentationName();
+            return new String[] { BundleUtil.getFormattedStringFromResourceBundle(Siadap.SIADAP_BUNDLE_STRING,
+                    ChangeWorkingUnitBean.class.getSimpleName(), unit.getPresentationName(), countsForInstitutionalQuotas,
+                    dateOfChange.toString()) };
+            // ,
+            // BundleUtil.getFormattedStringFromResourceBundle(Siadap.SIADAP_BUNDLE_STRING,
+            // "ChangeWorkingUnitBean.evaluatorSideEffect", currentEvaluator))
+            // };
         }
 
         @Override

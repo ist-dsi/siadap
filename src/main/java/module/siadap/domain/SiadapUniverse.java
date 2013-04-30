@@ -31,9 +31,9 @@ import module.organization.domain.Accountability;
 import module.organization.domain.AccountabilityType;
 import module.organization.domain.Party;
 import pt.ist.fenixWebFramework.rendererExtensions.util.IPresentableEnum;
+import pt.ist.fenixframework.dml.runtime.Relation;
+import pt.ist.fenixframework.dml.runtime.RelationListener;
 import pt.utl.ist.fenix.tools.util.i18n.Language;
-import dml.runtime.Relation;
-import dml.runtime.RelationListener;
 
 /**
  * 

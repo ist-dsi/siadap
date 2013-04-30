@@ -26,7 +26,7 @@ package module.siadap.domain;
 
 import java.util.Comparator;
 
-import pt.ist.fenixWebFramework.services.Service;
+import pt.ist.fenixframework.Atomic;
 
 /**
  * 
@@ -54,9 +54,14 @@ public class Competence extends Competence_Base {
 
     }
 
-    @Service
+    @Atomic
     public static Competence createNewCompetence(CompetenceType competenceType, String name, String description) {
         return new Competence(competenceType, name, description);
+    }
+
+    @Deprecated
+    public java.util.Set<module.siadap.domain.CompetenceEvaluation> getCompetenceEvaluation() {
+        return getCompetenceEvaluationSet();
     }
 
 }

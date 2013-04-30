@@ -25,6 +25,7 @@
 package module.siadap.domain;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -75,7 +76,6 @@ import module.workflow.domain.WorkflowLog;
 import module.workflow.domain.WorkflowProcess;
 import module.workflow.domain.WorkflowSystem;
 
-import org.apache.poi.hssf.record.formula.functions.T;
 import org.joda.time.LocalDate;
 
 import pt.ist.bennu.core.applicationTier.Authenticate.UserView;
@@ -87,7 +87,7 @@ import pt.ist.bennu.core.domain.groups.Role;
 import pt.ist.bennu.core.util.BundleUtil;
 import pt.ist.bennu.core.util.ClassNameBundle;
 import pt.ist.emailNotifier.domain.Email;
-import pt.ist.fenixWebFramework.services.Service;
+import pt.ist.fenixframework.Atomic;
 
 /**
  * 
@@ -153,8 +153,9 @@ public class SiadapProcess extends SiadapProcess_Base {
             boolean skipUniverseCheck) {
         super();
 
-        if (competenceType == null || siadapUniverse == null)
+        if (competenceType == null || siadapUniverse == null) {
             throw new SiadapException("error.create.siadap.must.fill.competenceType.and.SiadapUniverse");
+        }
 
         User currentUser = UserView.getCurrentUser();
         Person possibleEvaluator = currentUser.getPerson();
@@ -170,12 +171,13 @@ public class SiadapProcess extends SiadapProcess_Base {
         if ((configuration.getCcaMembers() != null && configuration.getCcaMembers().contains(currentUser.getPerson()))
                 || (configuration.getScheduleEditors() != null && configuration.getScheduleEditors().contains(
                         currentUser.getPerson())) || Role.getRole(RoleType.MANAGER).isMember(currentUser)
-                        || configuration.getStructureManagementGroupMembers().contains(currentUser.getPerson())) {
+                || configuration.getStructureManagementGroupMembers().contains(currentUser.getPerson())) {
             belongsToASuperGroup = true;
         }
         if (!belongsToASuperGroup) {
-            if (evaluator == null || evaluator.getPerson() != possibleEvaluator)
+            if (evaluator == null || evaluator.getPerson() != possibleEvaluator) {
                 throw new DomainException("error.onlyEvaluatorCanCreateSiadap");
+            }
         }
 
         setWorkflowSystem(WorkflowSystem.getInstance());
@@ -253,8 +255,9 @@ public class SiadapProcess extends SiadapProcess_Base {
     public static WorkflowActivity<? extends WorkflowProcess, ? extends ActivityInformation<?>> getActivityStaticly(
             String activityName) {
         for (WorkflowActivity<? extends WorkflowProcess, ? extends ActivityInformation<?>> activity : activities) {
-            if (activity.getName().equals(activityName))
+            if (activity.getName().equals(activityName)) {
                 return activity;
+            }
         }
         return null;
     }
@@ -266,8 +269,9 @@ public class SiadapProcess extends SiadapProcess_Base {
 
     @Override
     public boolean isActive() {
-        if (getSiadap().getState().equals(SiadapProcessStateEnum.NULLED))
+        if (getSiadap().getState().equals(SiadapProcessStateEnum.NULLED)) {
             return false;
+        }
         return true;
     }
 
@@ -276,8 +280,7 @@ public class SiadapProcess extends SiadapProcess_Base {
         // TODO Auto-generated method stub
     }
 
-
-    @Service
+    @Atomic
     public static SiadapProcess createNewProcess(Person evaluated, Integer year, SiadapUniverse siadapUniverse,
             CompetenceType competenceType, boolean skipUniverseCheck) throws SiadapException {
         return new SiadapProcess(year, evaluated, siadapUniverse, competenceType, skipUniverseCheck);
@@ -303,7 +306,7 @@ public class SiadapProcess extends SiadapProcess_Base {
         if (evaluationUniverse.isCurriculumPonderation()) {
             siadapUniverseLocalizedName +=
                     " (" + BundleUtil.getStringFromResourceBundle(Siadap.SIADAP_BUNDLE_STRING, "label.curricularPonderation")
-                    + " )";
+                            + " )";
         }
         new LabelLog(this, UserView.getCurrentUser(), "label.terminateHarmonization.for", "resources/SiadapResources",
                 siadapUniverseLocalizedName);
@@ -314,7 +317,7 @@ public class SiadapProcess extends SiadapProcess_Base {
         if (evaluationUniverse.isCurriculumPonderation()) {
             siadapUniverseLocalizedName +=
                     " (" + BundleUtil.getStringFromResourceBundle(Siadap.SIADAP_BUNDLE_STRING, "label.curricularPonderation")
-                    + " )";
+                            + " )";
         }
         new LabelLog(this, UserView.getCurrentUser(), "label.givenHarmonizationAssessment.for", "resources/SiadapResources",
                 siadapUniverseLocalizedName);
@@ -325,7 +328,7 @@ public class SiadapProcess extends SiadapProcess_Base {
         if (evaluationUniverse.isCurriculumPonderation()) {
             siadapUniverseLocalizedName +=
                     " (" + BundleUtil.getStringFromResourceBundle(Siadap.SIADAP_BUNDLE_STRING, "label.curricularPonderation")
-                    + " )";
+                            + " )";
         }
         new LabelLog(this, UserView.getCurrentUser(), "label.reOpenHarmonization.for", "resources/SiadapResources",
                 siadapUniverseLocalizedName);
@@ -406,7 +409,7 @@ public class SiadapProcess extends SiadapProcess_Base {
      * @param newDate
      *            the new date to use for this schedule
      */
-    @Service
+    @Atomic
     public void changeCustomSiadapSchedule(SiadapProcessSchedulesEnum processSchedulesEnum, LocalDate newDate) {
         Siadap siadap = getSiadap();
         switch (processSchedulesEnum) {
@@ -478,7 +481,7 @@ public class SiadapProcess extends SiadapProcess_Base {
         if (siadapEvaluationUniverse.isCurriculumPonderation()) {
             siadapUniverseLocalizedName +=
                     " (" + BundleUtil.getStringFromResourceBundle(Siadap.SIADAP_BUNDLE_STRING, "label.curricularPonderation")
-                    + " )";
+                            + " )";
         }
         new LabelLog(this, UserView.getCurrentUser(), "label.removedHarmonizationAssessment.for", "resources/SiadapResources",
                 siadapUniverseLocalizedName);
@@ -491,9 +494,10 @@ public class SiadapProcess extends SiadapProcess_Base {
      */
     protected void delete(boolean neglectLogSize) {
         releaseProcess();
-        List<WorkflowLog> executionLogs = getExecutionLogs();
-        if (!neglectLogSize && executionLogs.size() > 1)
+        Collection<WorkflowLog> executionLogs = getExecutionLogs();
+        if (!neglectLogSize && executionLogs.size() > 1) {
             throw new SiadapException("error.has.items.in.it");
+        }
         for (WorkflowLog exLog : executionLogs) {
             removeExecutionLogs(exLog);
         }
@@ -503,8 +507,8 @@ public class SiadapProcess extends SiadapProcess_Base {
                 (module.workflow.domain.AbstractWFDocsGroup) documentsRepository.getWriteGroup();
         module.workflow.domain.AbstractWFDocsGroup readGroup =
                 (module.workflow.domain.AbstractWFDocsGroup) documentsRepository.getReadGroup();
-        writeGroup.removeProcess();
-        readGroup.removeProcess();
+        writeGroup.setProcess(null);
+        readGroup.setProcess(null);
         DirNode dirNode = documentsRepository.getDirNode();
         DirNode trash = dirNode.getTrash();
         readGroup.removeDirNodeFromReadGroup(dirNode);
@@ -519,8 +523,8 @@ public class SiadapProcess extends SiadapProcess_Base {
 
         readGroup.delete();
         writeGroup.delete();
-        dirNode.removeTrash();
-        dirNode.removeProcessDirNode();
+        dirNode.setTrash(null);
+        dirNode.setProcessDirNode(null);
         dirNode.delete();
 
         trash.delete();
@@ -528,11 +532,11 @@ public class SiadapProcess extends SiadapProcess_Base {
         documentsRepository.delete();
 
         for (WorkflowLog workflowLog : getExecutionLogs()) {
-            workflowLog.removeProcess();
+            workflowLog.setProcess(null);
             workflowLog.delete();
         }
-        removeSiadap();
-        removeWorkflowSystem();
+        setSiadap(null);
+        setWorkflowSystem(null);
         deleteDomainObject();
 
     }

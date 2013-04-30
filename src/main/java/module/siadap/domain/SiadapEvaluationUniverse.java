@@ -38,7 +38,7 @@ import org.apache.commons.collections.Predicate;
 import org.joda.time.LocalDate;
 
 import pt.ist.bennu.core.domain.exceptions.DomainException;
-import pt.ist.fenixWebFramework.services.Service;
+import pt.ist.fenixframework.Atomic;
 
 /**
  * 
@@ -372,7 +372,7 @@ public class SiadapEvaluationUniverse extends SiadapEvaluationUniverse_Base {
         return isCurriculumPonderation() && getSiadapEvaluationItems() != null && getSiadapEvaluationItems().size() > 0;
     }
 
-    @Service
+    @Atomic
     public void setHarmonizationAssessments(Boolean harmonizationAssessment, Boolean excellencyHarmonizationAssessment) {
         if (getHarmonizationDate() != null) {
             throw new SiadapException("error.harmonization.closed.cannot.change.assessment.reopen.first");
@@ -445,7 +445,7 @@ public class SiadapEvaluationUniverse extends SiadapEvaluationUniverse_Base {
         super.setHarmonizationDate(harmonizationDate);
     }
 
-    @Service
+    @Atomic
     public void removeHarmonizationAssessments() {
         super.setHarmonizationAssessment(null);
         setHarmonizationClassification(null);
@@ -465,9 +465,14 @@ public class SiadapEvaluationUniverse extends SiadapEvaluationUniverse_Base {
             removeSiadapEvaluationItems(siadapEvaluationItems);
             siadapEvaluationItems.delete();
         }
-        removeCompetenceSlashCareerType();
-        removeSiadap();
+        setCompetenceSlashCareerType(null);
+        setSiadap(null);
         deleteDomainObject();
+    }
+
+    @Deprecated
+    public java.util.Set<module.siadap.domain.SiadapEvaluationItem> getSiadapEvaluationItems() {
+        return getSiadapEvaluationItemsSet();
     }
 
 }
