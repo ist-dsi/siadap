@@ -66,7 +66,7 @@ public class SiadapYearsFromExistingSiadapConfigurations implements DataProvider
         for (SiadapYearConfiguration siadapYearConfiguration : SiadapRootModule.getInstance().getYearConfigurations()) {
             //let's make the 2010 year disappear for all of the users which aren't on the test group
             if (siadapYearConfiguration.getYear() == 2010
-                    && !SiadapRootModule.getInstance().getSiadapTestUserGroup().hasUsers(UserView.getCurrentUser())) {
+                    && !SiadapRootModule.getInstance().getSiadapTestUserGroup().getUsersSet().contains(UserView.getCurrentUser())) {
                 continue;
             } else {
                 years.add(siadapYearConfiguration.getLabel());
@@ -87,7 +87,7 @@ public class SiadapYearsFromExistingSiadapConfigurations implements DataProvider
         for (SiadapYearConfiguration siadapYearConfiguration : SiadapRootModule.getInstance().getYearConfigurations()) {
             //let's make the 2010 year disappear for all of the users which aren't on the test group
             if (siadapYearConfiguration.getYear() == 2010
-                    && !SiadapRootModule.getInstance().getSiadapTestUserGroup().hasUsers(UserView.getCurrentUser())) {
+                    && !SiadapRootModule.getInstance().getSiadapTestUserGroup().getUsersSet().contains(UserView.getCurrentUser())) {
                 continue;
             } else {
                 years.add(siadapYearConfiguration.getYear());

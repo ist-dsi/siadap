@@ -4,8 +4,8 @@
 package module.siadap.domain.util.actions;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
-import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -23,7 +23,7 @@ import org.apache.struts.action.ActionMessages;
 import pt.ist.bennu.core.domain.VirtualHost;
 import pt.ist.bennu.core.util.BundleUtil;
 import pt.ist.emailNotifier.domain.Email;
-import pt.ist.fenixWebFramework.services.Service;
+import pt.ist.fenixframework.Atomic;
 
 /**
  * @author João Antunes (joao.antunes@tagus.ist.utl.pt) - 30 de Jan de 2013
@@ -93,7 +93,7 @@ public class SiadapUtilActions {
     public static void notifySiadapStructureManagementUsers(final HttpServletRequest request, String subject, String content) {
         // get the SiadapStructureManagementUsers
         int year = Integer.parseInt(request.getParameter("year"));
-        List<Person> persons = SiadapStructureManagementGroup.getListOfMembers(year);
+        Collection<Person> persons = SiadapStructureManagementGroup.getListOfMembers(year);
         Person[] personArray = new Person[persons.size()];
         int i = 0;
         for (Person person : persons) {
@@ -138,7 +138,7 @@ public class SiadapUtilActions {
     }
 
     // created because of the faulty dml injector
-    @Service
+    @Atomic
     private static void auxNotifyUser(ArrayList<String> usersEmails, String notificationSubject, String notificationContent) {
         final VirtualHost virtualHost = VirtualHost.getVirtualHostForThread();
         new Email(virtualHost.getApplicationSubTitle().getContent(), virtualHost.getSystemEmailAddress(), new String[] {},

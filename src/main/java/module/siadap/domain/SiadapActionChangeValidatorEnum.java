@@ -3,7 +3,7 @@
  */
 package module.siadap.domain;
 
-import java.util.List;
+import java.util.Collection;
 
 import module.organization.domain.Unit;
 import module.siadap.domain.exceptions.SiadapException;
@@ -32,7 +32,7 @@ public enum SiadapActionChangeValidatorEnum {
 
                 if (currentStateOrdinal > SiadapProcessStateEnum.WAITING_HARMONIZATION.ordinal()
                         || (currentStateOrdinal == SiadapProcessStateEnum.WAITING_HARMONIZATION.ordinal() && siadapWrapper
-                        .getConfiguration().isHarmonizationPeriodOpenNow())) {
+                                .getConfiguration().isHarmonizationPeriodOpenNow())) {
                     throw new SiadapException("error.changing.working.unit.cant.change.quotas.on.user.waiting.to.be.harmonized");
                 }
             }
@@ -50,16 +50,18 @@ public enum SiadapActionChangeValidatorEnum {
                 //we must not have any harmonization assessment
                 SiadapEvaluationUniverse defaultSiadapEvaluationUniverse =
                         siadapWrapper.getSiadap().getDefaultSiadapEvaluationUniverse();
-                if (defaultSiadapEvaluationUniverse == null)
+                if (defaultSiadapEvaluationUniverse == null) {
                     return;
+                }
                 if (defaultSiadapEvaluationUniverse.getHarmonizationAssessment() != null
                         || (defaultSiadapEvaluationUniverse.getCurrentExcellencyAward() == true && defaultSiadapEvaluationUniverse
-                        .getHarmonizationAssessmentForExcellencyAward() != null))
+                                .getHarmonizationAssessmentForExcellencyAward() != null)) {
                     throw new SiadapException("error.changing.harmonization.unit.user.has.harmonization.assessment");
+                }
 
                 //let's check if the unit we are changing from/to have the harmonization closed or not
                 Unit currentUnit = siadapWrapper.getUnitWhereIsHarmonized();
-                List<Unit> harmonizationClosedUnits = siadapWrapper.getConfiguration().getHarmonizationClosedUnits();
+                Collection<Unit> harmonizationClosedUnits = siadapWrapper.getConfiguration().getHarmonizationClosedUnits();
 
                 if (harmonizationClosedUnits.contains(newHarmonizationUnit) && harmonizationClosedUnits.contains(currentUnit)) {
                     throw new SiadapException("error.changing.harmonization.unit.both.are.closed",
@@ -75,7 +77,6 @@ public enum SiadapActionChangeValidatorEnum {
                     throw new SiadapException("error.changing.harmonization.unit.origin.closed",
                             currentUnit.getPresentationName());
                 }
-
 
             }
 

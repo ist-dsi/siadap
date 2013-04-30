@@ -50,7 +50,7 @@ public class CleanAccountabilitiesWithUselessPartyTypesOfGivenYear extends Write
     private boolean isOneOfPartyTypes(Party party) {
         for (String type : PARTY_TYPES_TO_CLEAN) {
             PartyType pType = PartyType.readBy(type);
-            if (party.hasPartyTypes(pType)) {
+            if (party.getPartyTypesSet().contains(pType)) {
                 return true;
             }
         }

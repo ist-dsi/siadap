@@ -34,9 +34,8 @@ import module.organization.domain.Unit;
 import org.joda.time.LocalDate;
 
 import pt.ist.bennu.core.domain.scheduler.ReadCustomTask;
-import pt.ist.fenixWebFramework.services.ServiceManager;
-import pt.ist.fenixWebFramework.services.ServicePredicate;
-import pt.ist.fenixframework.pstm.AbstractDomainObject;
+import pt.ist.fenixframework.Atomic;
+import pt.ist.fenixframework.FenixFramework;
 
 /**
  * 
@@ -88,7 +87,7 @@ public class ImportOrganizationalStructure extends ReadCustomTask {
 
         configuration = SiadapYearConfiguration.getSiadapYearConfiguration(2010);
         type = AccountabilityType.readBy("Organizational");
-        OrganizationalModel model = AbstractDomainObject.fromExternalId("545460846593");
+        OrganizationalModel model = FenixFramework.getDomainObject("545460846593");
 
         for (Party party : model.getParties()) {
             if (party.isUnit()) {
@@ -97,18 +96,16 @@ public class ImportOrganizationalStructure extends ReadCustomTask {
             }
         }
 
-        ServiceManager.execute(new ServicePredicate() {
+        addChildren();
 
-            @Override
-            public void execute() {
-                for (UnitPair pair : units) {
-                    pair.getUnit1().addChild(pair.getUnit2(), configuration.getUnitRelations(), now, null);
-                }
-
-            }
-
-        });
         out.println("Job done!");
+    }
+
+    @Atomic
+    private void addChildren() {
+        for (UnitPair pair : units) {
+            pair.getUnit1().addChild(pair.getUnit2(), configuration.getUnitRelations(), now, null);
+        }
     }
 
     public void doUnit(Unit unit, HashSet<UnitPair> units) {

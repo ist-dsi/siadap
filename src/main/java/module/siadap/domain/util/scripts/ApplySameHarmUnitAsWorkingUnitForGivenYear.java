@@ -21,7 +21,7 @@ import org.joda.time.LocalDate;
 
 import pt.ist.bennu.core.domain.scheduler.ReadCustomTask;
 import pt.ist.bennu.core.domain.scheduler.TransactionalThread;
-import pt.ist.fenixframework.pstm.AbstractDomainObject;
+import pt.ist.fenixframework.FenixFramework;
 
 import com.google.common.collect.HashMultiset;
 import com.google.common.collect.Multiset;
@@ -63,7 +63,7 @@ public class ApplySameHarmUnitAsWorkingUnitForGivenYear extends ReadCustomTask {
             out.println("Cases corrected:");
             out.println("Tipo de caso|\t Nome|\t Unidade de trabalho|\t Unidade antiga de harmonização|\t Unidade nova de harmonização|\t ano do siadap |\t opcional - estado do siadap|\t");
             for (String siadapId : siadaps) {
-                Siadap siadap = AbstractDomainObject.fromExternalId(siadapId);
+                Siadap siadap = FenixFramework.getDomainObject(siadapId);
 
                 // let's register the SIADAPs whose siadapUniverse changed
                 if (siadap.getYear() == 2012) {

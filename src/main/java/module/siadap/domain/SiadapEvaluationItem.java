@@ -63,7 +63,7 @@ public abstract class SiadapEvaluationItem extends SiadapEvaluationItem_Base {
     public abstract IScoring getItemAutoEvaluation();
 
     protected void delete() {
-        removeSiadapRootModule();
+        setSiadapRootModule(null);
         deleteDomainObject();
 
     }
