@@ -81,20 +81,6 @@
 				<staticText>
 					<reportElement
 						x="0"
-						y="53"
-						width="533"
-						height="12"
-						key="staticText-2"
-						positionType="Float"/>
-					<box></box>
-					<textElement>
-						<font/>
-					</textElement>
-				<text><![CDATA[Avaliado apenas por competências]]></text>
-				</staticText>
-				<staticText>
-					<reportElement
-						x="0"
 						y="72"
 						width="535"
 						height="15"
