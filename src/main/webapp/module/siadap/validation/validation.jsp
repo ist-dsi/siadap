@@ -4,7 +4,6 @@
 <%@page import="java.util.Set"%>
 <%@page import="module.siadap.domain.wrappers.UnitSiadapWrapper"%>
 <%@page import="module.organization.domain.Unit"%>
-<%@page import="pt.ist.fenixframework.pstm.AbstractDomainObject"%>
 <%@page import="module.siadap.presentationTier.renderers.providers.ExceedingQuotaSuggestionProvider"%>
 <%@page import="java.util.List"%>
 <%@page import="module.siadap.domain.SiadapUniverse"%>
