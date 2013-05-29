@@ -58,9 +58,9 @@ public class CompetenceEvaluation extends CompetenceEvaluation_Base {
             // should be thrown here
             throw new Error("Error while trying to delete a competence that has evaluation data assigned");
         }
-        removeSiadapEvaluationUniverse();
-        removeSiadapRootModule();
-        removeCompetence();
+        setSiadapEvaluationUniverse(null);
+        setSiadapRootModule(null);
+        setCompetence(null);
         deleteDomainObject();
     }
 

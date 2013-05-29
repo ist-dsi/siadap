@@ -24,8 +24,8 @@
  */
 package module.siadap.domain.util.scripts;
 
+import java.util.Collection;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 import javax.annotation.Nullable;
@@ -170,7 +170,7 @@ public class ExtendSiadapStructure extends WriteCustomTask {
         //as well as the accountabilities that are set directly between two persons
 
         int nrDirectEvaluatorsFound = 0;
-        List<Siadap> siadaps = SiadapRootModule.getInstance().getSiadaps();
+        Collection<Siadap> siadaps = SiadapRootModule.getInstance().getSiadaps();
         for (Siadap siadap : siadaps) {
             if (siadap.getYear().intValue() == YEAR_TO_EXTEND) {
                 if (siadap.getState().ordinal() > SiadapProcessStateEnum.NOT_CREATED.ordinal()) {
@@ -283,7 +283,7 @@ public class ExtendSiadapStructure extends WriteCustomTask {
             for (SiadapBean siadapBean : siadapsToClone) {
                 Siadap siadap = siadapBean.getSiadap();
                 boolean siadapAlreadyExists = false;
-                for (Siadap currentSiadap : siadap.getEvaluated().getSiadapsAsEvaluated()) {
+                for (Siadap currentSiadap : siadap.getEvaluated().getSiadapsAsEvaluatedSet()) {
                     if (currentSiadap.getYear().intValue() == YEAR_TO_EXTEND_TO) {
                         siadapAlreadyExists = true;
                         break;

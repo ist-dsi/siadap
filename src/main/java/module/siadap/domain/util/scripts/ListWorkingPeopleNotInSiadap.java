@@ -20,7 +20,7 @@ import org.joda.time.LocalDate;
 import pt.ist.bennu.core.domain.scheduler.ReadCustomTask;
 
 import com.google.common.base.Function;
-import com.google.common.collect.Lists;
+import com.google.common.collect.Collections2;
 
 /**
  * @author João Antunes (joao.antunes@tagus.ist.utl.pt) - 19 de Abr de 2013
@@ -52,13 +52,14 @@ public class ListWorkingPeopleNotInSiadap extends ReadCustomTask {
         personsWithSiadapCreated = new HashSet<Person>();
         personsWorkingAtGivenDate = new HashSet<Person>();
 
-        personsWithSiadapCreated.addAll(Lists.transform(siadapToCheck.getSiadaps(), new Function<Siadap, Person>() {
+        personsWithSiadapCreated.addAll(Collections2.transform(siadapToCheck.getSiadapsSet(), new Function<Siadap, Person>() {
 
             @Override
             @Nullable
             public Person apply(@Nullable Siadap input) {
-                if (input == null)
+                if (input == null) {
                     return null;
+                }
                 return input.getEvaluated();
             }
         }));

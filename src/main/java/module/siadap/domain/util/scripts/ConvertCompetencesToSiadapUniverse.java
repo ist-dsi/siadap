@@ -25,6 +25,7 @@
 package module.siadap.domain.util.scripts;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -63,7 +64,7 @@ public class ConvertCompetencesToSiadapUniverse extends ReadCustomTask {
 
         //let's get all the processes for all of the years 
 
-        List<Siadap> siadaps = SiadapRootModule.getInstance().getSiadaps();
+        Collection<Siadap> siadaps = SiadapRootModule.getInstance().getSiadaps();
 
         nrSiadaps = siadaps.size();
 

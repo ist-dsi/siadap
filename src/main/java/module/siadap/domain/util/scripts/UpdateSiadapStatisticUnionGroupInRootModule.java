@@ -42,7 +42,7 @@ public class UpdateSiadapStatisticUnionGroupInRootModule extends WriteCustomTask
         for (PersistentGroup group : statisticsGroup.getPersistentGroups()) {
             statisticsGroup.removePersistentGroups(group);
         }
-        SiadapRootModule.getInstance().removeStatisticsAccessUnionGroup();
+        SiadapRootModule.getInstance().setStatisticsAccessUnionGroup(null);
         statisticsGroup.delete();
 
     }

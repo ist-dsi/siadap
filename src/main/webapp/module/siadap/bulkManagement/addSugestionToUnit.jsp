@@ -1,5 +1,5 @@
+<%@page import="pt.ist.fenixframework.FenixFramework"%>
 <%@page import="module.organization.domain.Unit"%>
-<%@page import="pt.ist.fenixframework.pstm.AbstractDomainObject"%>
 <%@page import="module.siadap.presentationTier.renderers.providers.ExceedingQuotaSuggestionProvider"%>
 <%@page import="java.util.List"%>
 <%@page import="module.siadap.domain.SiadapUniverse"%>
@@ -23,7 +23,7 @@
 <%
 //let's make sure that we know if we have a way to add people or not
 boolean hasPeopleToSuggest = false;
-if (ExceedingQuotaSuggestionProvider.willProviderReturnResults((Unit) AbstractDomainObject.fromExternalId((String)unitId), (Integer)year))
+if (ExceedingQuotaSuggestionProvider.willProviderReturnResults((Unit) FenixFramework.getDomainObject((String)unitId), (Integer)year))
     hasPeopleToSuggest = true;
 request.setAttribute("hasPeopleToSuggest", hasPeopleToSuggest);
     

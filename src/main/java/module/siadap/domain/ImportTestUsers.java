@@ -25,6 +25,7 @@
 package module.siadap.domain;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import pt.ist.bennu.core.domain.MyOrg;
@@ -94,7 +95,7 @@ public class ImportTestUsers extends WriteCustomTask {
 
         // get all of the users from the static list of strings with their
         // userIds, abort if any isn't found
-        List<User> existingSystemUsers = myOrg.getUser();
+        Collection<User> existingSystemUsers = myOrg.getUser();
         List<User> testUsersList = new ArrayList<User>();
         for (User user : existingSystemUsers) {
             if (testUsersListString.contains(user.getUsername())) {
@@ -104,7 +105,7 @@ public class ImportTestUsers extends WriteCustomTask {
                     out.println("*DEBUG* added user with name: " + user.getPerson().getName());
                 } else {
                     out.println("*DEBUG* found a user without name!");
-                    out.println("*DEBUG* users info, comments count: " + user.getCommentsCount() + " password: "
+                    out.println("*DEBUG* users info, comments count: " + user.getCommentsSet().size() + " password: "
                             + user.getPassword() + " ExternalID: " + user.getExternalId());
                     out.println("*DEBUG* Ignoring it!");
                     testUsersList.remove(user);

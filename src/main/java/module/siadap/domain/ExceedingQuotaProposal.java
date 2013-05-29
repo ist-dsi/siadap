@@ -25,6 +25,7 @@
 package module.siadap.domain;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -37,7 +38,7 @@ import module.siadap.domain.wrappers.UnitSiadapWrapper;
 
 import org.apache.commons.collections.Predicate;
 
-import pt.ist.fenixWebFramework.services.Service;
+import pt.ist.fenixframework.Atomic;
 
 /**
  * 
@@ -116,8 +117,8 @@ public class ExceedingQuotaProposal extends ExceedingQuotaProposal_Base {
 
     }
 
-    private static List<ExceedingQuotaProposal> getQuotaProposalsByPredicate(List<ExceedingQuotaProposal> quotaProposalsToFilter,
-            Predicate filterPredicate) {
+    private static List<ExceedingQuotaProposal> getQuotaProposalsByPredicate(
+            Collection<ExceedingQuotaProposal> quotaProposalsToFilter, Predicate filterPredicate) {
         List<ExceedingQuotaProposal> exceedingQuotaProposalsToReturn = new ArrayList<ExceedingQuotaProposal>();
         for (ExceedingQuotaProposal proposal : quotaProposalsToFilter) {
             if (filterPredicate.evaluate(proposal)) {
@@ -221,7 +222,7 @@ public class ExceedingQuotaProposal extends ExceedingQuotaProposal_Base {
             return unitProposals;
         }
         unitProposals =
-                new ArrayList<ExceedingQuotaProposal>(getQuotaProposalsByPredicate(unit.getExceedingQuotasProposals(),
+                new ArrayList<ExceedingQuotaProposal>(getQuotaProposalsByPredicate(unit.getExceedingQuotasProposalsSet(),
                         new Predicate() {
 
                             @Override
@@ -252,7 +253,7 @@ public class ExceedingQuotaProposal extends ExceedingQuotaProposal_Base {
 
         List<ExceedingQuotaProposal> personQuotaProposal = new ArrayList<ExceedingQuotaProposal>(
 
-        person.getExceedingQuotasProposals());
+        person.getExceedingQuotasProposalsSet());
 
         List<ExceedingQuotaProposal> exceedingQuotasProposalsForGivenYear =
                 new ArrayList<ExceedingQuotaProposal>(configuration.getExceedingQuotasProposals());
@@ -282,7 +283,7 @@ public class ExceedingQuotaProposal extends ExceedingQuotaProposal_Base {
 
     }
 
-    @Service
+    @Atomic
     public static void createAndAppendProposal(SiadapUniverse siadapUniverse, Boolean quotasApply,
             ExceedingQuotaSuggestionType type, Integer year, UnitSiadapWrapper unitSiadapWrapper, Person person) {
         if (quotasApply == null || year == null || person == null || siadapUniverse == null) {
@@ -314,7 +315,7 @@ public class ExceedingQuotaProposal extends ExceedingQuotaProposal_Base {
 
     }
 
-    //    @Service
+    //    @Atomic
     //    public static void applyGivenProposals(List<SiadapSuggestionBean> quotaSuggestions, SiadapUniverse siadapUniverse,
     //	    Boolean quotasUniverse, UnitSiadapWrapper unitSiadapWrapper, Integer year) {
     //	if (quotasUniverse == null || year == null)
@@ -460,31 +461,7 @@ public class ExceedingQuotaProposal extends ExceedingQuotaProposal_Base {
         throw new UnsupportedOperationException("must.not.invoke.this.from.outside.use.apply");
     }
 
-    @Override
-    @Deprecated
-    public void removeSiadapRootModule() {
-        throw new UnsupportedOperationException("must.not.invoke.this.from.outside.use.apply");
-    }
-
-    @Override
-    @Deprecated
-    public void removeSuggestion() {
-        throw new UnsupportedOperationException("must.not.invoke.this.from.outside.use.apply");
-    }
-
-    @Override
-    @Deprecated
-    public void removeUnit() {
-        throw new UnsupportedOperationException("must.not.invoke.this.from.outside.use.apply");
-    }
-
-    @Override
-    @Deprecated
-    public void removeYearConfiguration() {
-        throw new UnsupportedOperationException("must.not.invoke.this.from.outside.use.apply");
-    }
-
-    @Service
+    @Atomic
     public void remove() {
         //let's get the 'sister' proposals to adjust them if needed
         List<ExceedingQuotaProposal> quotaProposalsFor =
