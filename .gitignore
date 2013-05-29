@@ -1,4 +1,18 @@
-target
+*.class
+
+# Package Files #
+*.jar
+*.war
+*.ear
+
+.project
+.classpath
+.settings/
+
+# Maven #
+target/
 bin/
+
+#JasperReports iReport backup files
 src/main/jasperreports/*.bak
 .settings
