@@ -22,7 +22,7 @@
 
     <properties>
         <version.pt.ist.bennu.core>1.1.0</version.pt.ist.bennu.core>
-        <version.pt.ist.workflow>1.1.0</version.pt.ist.workflow>
+        <version.pt.ist.workflow>1.1.1</version.pt.ist.workflow>
         <version.pt.ist.organization>1.1.0</version.pt.ist.organization>
         <version.pt.ist.email.dispatch>1.1.0</version.pt.ist.email.dispatch>
         <version.pt.ist.contacts>1.1.0</version.pt.ist.contacts>
