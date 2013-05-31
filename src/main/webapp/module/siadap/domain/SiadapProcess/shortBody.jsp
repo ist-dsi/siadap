@@ -5,8 +5,8 @@
 <%@ taglib uri="http://fenix-ashes.ist.utl.pt/fenix-renderers" prefix="fr" %>
 
 <bean:define id="evaluatedName" name="process" property="siadap.evaluated.name" type="java.lang.String"/>
-<bean:define id="year" name="process" property="siadap.year"/>
+<bean:define id="yearLabel" name="process" property="siadap.siadapYearConfiguration.label" type="java.lang.String"/>
   
 <div>
-	<bean:message key="label.userEvaluationProcess" bundle="SIADAP_RESOURCES" arg0="<%= evaluatedName %>" arg1="<%= year.toString() %>"/>
+	<bean:message key="label.userEvaluationProcess" bundle="SIADAP_RESOURCES" arg0="<%= evaluatedName %>" arg1="<%= yearLabel %>"/>
 </div>

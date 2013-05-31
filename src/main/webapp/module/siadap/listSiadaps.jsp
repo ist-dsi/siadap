@@ -38,7 +38,7 @@ SiadapYearWrapper siadapYearWrapper = (SiadapYearWrapper) request.getAttribute("
 	</fr:edit>
 </fr:form>  
 <div class="infobox">
-	<bean:message key="siadap.more.info" bundle="SIADAP_RESOURCES"/> <html:link target="_blank"  href="http://drh.ist.utl.pt/html/avaliacao/naodocente/"> <bean:message key="siadap.more.info.link" bundle="SIADAP_RESOURCES"/></html:link>
+	<bean:message key="siadap.more.info" bundle="SIADAP_RESOURCES"/> <html:link target="_blank"  href="http://drh.ist.utl.pt/nao-docentes/avaliacao-nao-docentes/"> <bean:message key="siadap.more.info.link" bundle="SIADAP_RESOURCES"/></html:link>
 </div>
 
 <logic:present name="person">
@@ -64,7 +64,7 @@ SiadapYearWrapper siadapYearWrapper = (SiadapYearWrapper) request.getAttribute("
 </fr:view>
 
 <div class="infobox">
-	<bean:message key="label.data.owners.warning" bundle="SIADAP_RESOURCES"/> <a href="mailto:drh@drh.ist.utl.pt?subject=SIADAP%20dados%20hierarquicos%20incorrectos">drh@drh.ist.utl.pt</a>
+	<bean:message key="label.data.owners.warning" bundle="SIADAP_RESOURCES"/> <a href="mailto:siadap@drh.ist.utl.pt?subject=SIADAP%20dados%20hierarquicos%20incorrectos">siadap@drh.ist.utl.pt</a>
 </div>
 
  <logic:notEmpty name="person" property="allSiadaps">

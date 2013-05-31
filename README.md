@@ -7,6 +7,29 @@ More info (in Portuguese) can be found at the [SIADAP's official page](http://ww
 ---
 ##Change Log:
 
+### v1.2.1
+
+** Changes: **
+ 
+ - Bumped workflow version to 1.1.1;
+ - Label changes on contact info of HR email and webpage addresses;
+  
+** Bug Fixes: **
+ 
+ - printed version of the document now displays correctly if the person is evaluated only by competences or not. Related with [#34](https://github.com/ist-dsi/siadap/issues/34);
+ - Minor label fix - to support biennial processes. Related with [#37](https://github.com/ist-dsi/siadap/issues/37);
+ - Major bug with evaluation relations fixed. Now the year is checked as it should. [#38](https://github.com/ist-dsi/siadap/issues/38); 
+
+### v1.2.0
+
+** New Features: **
+
+ - All of the goodies introduced by version 2 of the fenix framework. [FF2 changelog](https://github.com/fenix-framework/fenix-framework/wiki/Changelog)
+
+** Changes: **
+ 
+ - API changed to use fenix framework 2 conventions (relations are now sets, no has, etc); 
+
 ### v1.1.0 
 
 Release milestone and issues can be found [here](https://github.com/ist-dsi/siadap/issues?milestone=1&state=closed)
@@ -19,7 +42,7 @@ Release milestone and issues can be found [here](https://github.com/ist-dsi/siad
 - ExtendSiadapStructure - doesn't extend nulled processes;
 - A more conservative version of the 'Remove from structure' has been implemented, that does not remove eventual responsabilites (harmonization or evaluation) that that person might have;
 
-** Refactor: **
+** Changes: **
 
  - Applied all the ~2012/2013 changes stated in the law to the SIADAP3, specifically:
  	- By default, SIADAP3 processes are Biennial;

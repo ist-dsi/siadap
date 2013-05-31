@@ -158,7 +158,7 @@ pre {
 <div class="highlightBox"> 
 	<logic:notEmpty name="siadap" property="nulled">
 		<logic:equal value="true" name="siadap" property="nulled">
-				<h3 style="color: darkRed"><b><bean:message bundle="SIADAP_RESOURCES" key="label.nullifiedWarning"/></b> <a href="mailto:drh@drh.ist.utl.pt?subject=SIADAP%20processo%20mal%20anulado">drh@drh.ist.utl.pt</a></h3>
+				<h3 style="color: darkRed"><b><bean:message bundle="SIADAP_RESOURCES" key="label.nullifiedWarning"/></b> <a href="mailto:siadap@drh.ist.utl.pt?subject=SIADAP%20processo%20mal%20anulado">siadap@drh.ist.utl.pt</a></h3>
 		</logic:equal>
 	</logic:notEmpty>
 	<logic:empty name="evaluatorPersonWrapper">

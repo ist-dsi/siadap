@@ -298,6 +298,22 @@ $P{personSiadapWrapper}.getCareerName() : $R{competenceType.notDefined}]]></text
 					</textElement>
 				<text><![CDATA[Objectivos e/ou competências ainda não disponibilizados pelo avaliador.]]></text>
 				</staticText>
+				<staticText>
+					<reportElement
+						x="3"
+						y="174"
+						width="535"
+						height="16"
+						key="staticText-135"
+						positionType="Float">
+							<printWhenExpression><![CDATA[new Boolean($P{siadap}.getEvaluatedOnlyByCompetences().booleanValue())]]></printWhenExpression>
+						</reportElement>
+					<box></box>
+					<textElement>
+						<font pdfFontName="Helvetica-Oblique" isItalic="true"/>
+					</textElement>
+				<text><![CDATA[Avaliados apenas por competências]]></text>
+				</staticText>
 			</band>
 			</groupHeader>
 			<groupFooter>
