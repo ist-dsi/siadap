@@ -298,11 +298,6 @@ public class SiadapRootModule extends SiadapRootModule_Base implements ModuleIni
 
     }
 
-    @Override
-    public Integer getNumber() {
-        throw new UnsupportedOperationException("Use getNumberAndIncrement instead");
-    }
-
     public Integer getNumberAndIncrement() {
         Integer processNumber = super.getNumber();
         setNumber(processNumber + 1);
