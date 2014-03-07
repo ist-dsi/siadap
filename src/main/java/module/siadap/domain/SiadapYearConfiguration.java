@@ -617,4 +617,10 @@ public class SiadapYearConfiguration extends SiadapYearConfiguration_Base {
     public java.util.Set<module.organization.domain.Unit> getHarmonizationClosedUnits() {
         return getHarmonizationClosedUnitsSet();
     }
+
+    public boolean containsYear(int year) {
+	final int startYear = getYear();
+	final int endYear = getBiannual() ? startYear + 1 : startYear;
+	return year == startYear || year == endYear;
+    }
 }

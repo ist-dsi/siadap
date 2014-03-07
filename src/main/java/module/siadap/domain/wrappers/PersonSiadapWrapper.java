@@ -1072,7 +1072,7 @@ public class PersonSiadapWrapper extends PartyWrapper implements Serializable {
      *            the date to verify
      */
     private void verifyDate(LocalDate dateToVerify) {
-        if (dateToVerify.getYear() != getYear()) {
+        if (!getConfiguration().containsYear(dateToVerify.getYear())) {
             throw new DomainException("manage.workingUnitOrEvaluator.invalid.date",
                     DomainException.getResourceFor("resources/SiadapResources"), String.valueOf(getYear()));
         }
