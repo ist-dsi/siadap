@@ -31,8 +31,9 @@ import module.siadap.domain.SiadapProcess;
 import module.siadap.domain.SiadapProcessStateEnum;
 import module.workflow.activities.ActivityInformation;
 import module.workflow.activities.WorkflowActivity;
-import pt.ist.bennu.core.domain.User;
-import pt.ist.bennu.core.util.BundleUtil;
+
+import org.fenixedu.bennu.core.domain.User;
+import org.fenixedu.bennu.core.i18n.BundleUtil;
 
 /**
  * 
@@ -93,12 +94,12 @@ public class EditObjectiveEvaluation extends WorkflowActivity<SiadapProcess, Edi
         case INCOMPLETE_OBJ_OR_COMP:
             return null;
         case EVALUATION_NOT_GOING_TO_BE_DONE:
-            return BundleUtil.getStringFromResourceBundle(getUsedBundle(), "edit.warning.evaluation.not.going.to.be.done");
+            return BundleUtil.getString(getUsedBundle(), "edit.warning.evaluation.not.going.to.be.done");
         case NOT_YET_SUBMITTED_FOR_ACK:
             return null;
         case WAITING_EVAL_OBJ_ACK:
         case WAITING_SELF_EVALUATION:
-            return BundleUtil.getStringFromResourceBundle(getUsedBundle(), "edit.warning.reverts.state");
+            return BundleUtil.getString(getUsedBundle(), "edit.warning.reverts.state");
         }
         return null;
     }
@@ -123,12 +124,12 @@ public class EditObjectiveEvaluation extends WorkflowActivity<SiadapProcess, Edi
         String labelBase = "label.description." + getClass().getName();
         if (activityInformation.isEmployJustification()) {
             String[] getBaseArgument =
-                    new String[] { BundleUtil.getFormattedStringFromResourceBundle(getUsedBundle(), labelBase
+                    new String[] { BundleUtil.getString(getUsedBundle(), labelBase
                             + ".withJustification", activityInformation.getObjective(), activityInformation.getJustification()) };
             return getBaseArgument;
         } else {
             String[] getBaseArgument =
-                    new String[] { BundleUtil.getFormattedStringFromResourceBundle(getUsedBundle(), labelBase
+                    new String[] { BundleUtil.getString(getUsedBundle(), labelBase
                             + ".withoutJustification", activityInformation.getObjective()) };
             return getBaseArgument;
         }

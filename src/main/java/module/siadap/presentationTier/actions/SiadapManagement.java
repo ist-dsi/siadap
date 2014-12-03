@@ -63,13 +63,13 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
+import org.fenixedu.bennu.core.groups.DynamicGroup;
+import org.fenixedu.bennu.core.i18n.BundleUtil;
+import org.fenixedu.bennu.core.presentationTier.actions.BaseAction;
+import org.fenixedu.bennu.core.security.Authenticate;
+import org.fenixedu.bennu.core.util.VariantBean;
 import org.joda.time.LocalDate;
 
-import pt.ist.bennu.core.applicationTier.Authenticate.UserView;
-import pt.ist.bennu.core.domain.exceptions.DomainException;
-import pt.ist.bennu.core.presentationTier.actions.ContextBaseAction;
-import pt.ist.bennu.core.util.BundleUtil;
-import pt.ist.bennu.core.util.VariantBean;
 import pt.ist.fenixWebFramework.renderers.utils.RenderUtils;
 import pt.ist.fenixWebFramework.struts.annotations.Mapping;
 
@@ -80,14 +80,14 @@ import pt.ist.fenixWebFramework.struts.annotations.Mapping;
  * @author Paulo Abrantes
  * 
  */
-public class SiadapManagement extends ContextBaseAction {
+public class SiadapManagement extends BaseAction {
 
     // TODO joantune: assert if this is used at all! (and what it was used
     // for..)
     public final ActionForward prepareToCreateNewSiadapProcess(final ActionMapping mapping, final ActionForm form,
             final HttpServletRequest request, final HttpServletResponse response) {
 
-        Person evaluator = UserView.getCurrentUser().getPerson();
+        Person evaluator = Authenticate.getUser().getPerson();
         int year = 0;
         if (request.getParameter("year") == null) {
             year = new LocalDate().getYear();
@@ -101,23 +101,8 @@ public class SiadapManagement extends ContextBaseAction {
             request.setAttribute("peopleToEvaluate", wrapper.getPeopleToEvaluate());
         }
 
-        return forward(request, "/module/siadap/prepareCreateSiadap.jsp");
+        return forward("/module/siadap/prepareCreateSiadap.jsp");
     }
-
-    // public final ActionForward createNewSiadapProcess(final ActionMapping
-    // mapping, final ActionForm form,
-    // final HttpServletRequest request, final HttpServletResponse response) {
-    //
-    // Person person = getDomainObject(request, "personId");
-    // Integer year = Integer.parseInt(request.getParameter("year"));
-    // //let's try to assert the universe by getting previous SIADAPs, if any
-    // exist,
-    // //otherwise, let's assign null here
-    // SiadapProcess siadapProcess = SiadapProcess.createNewProcess(person,
-    // year, Siadap.getLastSiadapUniverseUsedBy(person));
-    //
-    // return ProcessManagement.forwardToProcess(siadapProcess);
-    // }
 
     public final ActionForward manageSiadap(final ActionMapping mapping, final ActionForm form, final HttpServletRequest request,
             final HttpServletResponse response) {
@@ -137,10 +122,10 @@ public class SiadapManagement extends ContextBaseAction {
         SiadapYearConfiguration siadapYearConfiguration = siadapYearWrapper.getSiadapYearConfiguration();
         if (siadapYearConfiguration != null) {
             request.setAttribute("person",
-                    new PersonSiadapWrapper(UserView.getCurrentUser().getPerson(), siadapYearConfiguration.getYear()));
+                    new PersonSiadapWrapper(Authenticate.getUser().getPerson(), siadapYearConfiguration.getYear()));
             request.setAttribute("siadaps", WorkflowProcess.getAllProcesses(SiadapProcess.class));
         }
-        return forward(request, "/module/siadap/listSiadaps.jsp");
+        return forward("/module/siadap/listSiadaps.jsp");
 
     }
 
@@ -158,7 +143,7 @@ public class SiadapManagement extends ContextBaseAction {
         request.setAttribute("addHomologationMember", new VariantBean());
         request.setAttribute("addScheduleExtenderMember", new VariantBean());
         request.setAttribute("addStructureManagementGroupMember", new VariantBean());
-        return forward(request, "/module/siadap/management/configuration.jsp");
+        return forward("/module/siadap/management/configuration.jsp");
     }
 
     public final ActionForward addCCAMember(final ActionMapping mapping, final ActionForm form, final HttpServletRequest request,
@@ -200,7 +185,7 @@ public class SiadapManagement extends ContextBaseAction {
         VariantBean bean = getRenderedObject("homologationMember");
         configuration.addHomologationMembers(((Person) bean.getDomainObject()));
         // add them also to the unique (for now TODO) group
-        SiadapYearConfiguration.addHomologationMember(((Person) bean.getDomainObject()).getUser());
+        DynamicGroup.get("HomologationMembersGroup").mutator().grant(((Person) bean.getDomainObject()).getUser());
         // TODO make the nodes access list to be updated
         RenderUtils.invalidateViewState("homologationMember");
         return showConfiguration(mapping, form, request, response);
@@ -270,7 +255,7 @@ public class SiadapManagement extends ContextBaseAction {
         Person person = getDomainObject(request, "personId");
         configuration.removeHomologationMembers(person);
         // remove them from the persistent group as well
-        SiadapYearConfiguration.removeHomologationMember(person.getUser());
+        DynamicGroup.get("HomologationMembersGroup").mutator().revoke(person.getUser());
         return showConfiguration(mapping, form, request, response);
     }
 
@@ -335,7 +320,7 @@ public class SiadapManagement extends ContextBaseAction {
             // getRenderedObject("people-withQuotas-SIADAP2id"));
             // }
 
-        } catch (DomainException e) {
+        } catch (SiadapException e) {
             addLocalizedMessage(request, e.getLocalizedMessage());
         }
         RenderUtils.invalidateViewState();
@@ -368,7 +353,7 @@ public class SiadapManagement extends ContextBaseAction {
         } catch (ValidationTerminationException ex) {
             addLocalizedMessage(request, ex.getLocalizedMessage());
             return validateUnit(mapping, form, request, response, unitWrapper, null);
-        } catch (DomainException ex) {
+        } catch (SiadapException ex) {
             addLocalizedMessage(request, ex.getLocalizedMessage());
             return validateUnit(mapping, form, request, response, unitWrapper, null);
         } catch (ActivityException ex) {
@@ -427,7 +412,7 @@ public class SiadapManagement extends ContextBaseAction {
             request.setAttribute("siadapUniverseWrappers", siadapUniverseWrappers);
         }
 
-        return forward(request, "/module/siadap/validation/validation.jsp");
+        return forward("/module/siadap/validation/validation.jsp");
     }
 
     public final ActionForward viewUnitHarmonizationData(final ActionMapping mapping, final ActionForm form,
@@ -479,7 +464,7 @@ public class SiadapManagement extends ContextBaseAction {
 
         request.setAttribute("subUnits", wrapper.getSubHarmonizationUnits());
 
-        return forward(request, "/module/siadap/harmonization/viewUnit.jsp");
+        return forward("/module/siadap/harmonization/viewUnit.jsp");
 
     }
 
@@ -576,7 +561,7 @@ public class SiadapManagement extends ContextBaseAction {
             // siadap.markAsHarmonized(localDate);
             // }
             // }
-        } catch (DomainException e) {
+        } catch (SiadapException e) {
             addLocalizedMessage(request, e.getLocalizedMessage());
         }
 
@@ -592,7 +577,7 @@ public class SiadapManagement extends ContextBaseAction {
         try {
             wrapper.reOpenHarmonization();
 
-        } catch (DomainException e) {
+        } catch (SiadapException e) {
             addLocalizedMessage(request, e.getLocalizedMessage());
         }
         return viewUnitHarmonizationData(mapping, form, request, response);
@@ -615,7 +600,7 @@ public class SiadapManagement extends ContextBaseAction {
         // mode = (String) request.getAttribute("mode");
         // }
         // request.setAttribute("mode", mode);
-        return forward(request, "/module/siadap/bulkManagement/listHarmonizationUnits.jsp");
+        return forward("/module/siadap/bulkManagement/listHarmonizationUnits.jsp");
     }
 
     public final ActionForward batchForceReadinessToHomologation(final ActionMapping mapping, final ActionForm form,
@@ -629,7 +614,7 @@ public class SiadapManagement extends ContextBaseAction {
         SiadapYearConfiguration siadapYearConfiguration = SiadapYearConfiguration.getSiadapYearConfiguration(year);
 
         try {
-            if (!siadapYearConfiguration.getCcaMembers().contains(UserView.getCurrentUser().getPerson())) {
+            if (!siadapYearConfiguration.getCcaMembers().contains(Authenticate.getUser().getPerson())) {
                 throw new SiadapException("error.onlyCCA.can.force.readiness.to.homologation");
             }
 
@@ -650,8 +635,6 @@ public class SiadapManagement extends ContextBaseAction {
             }
         } catch (SiadapException ex) {
             warningMessages.add(ex);
-        } catch (DomainException ex) {
-            addLocalizedMessage(request, ex.getLocalizedMessage());
         } catch (ActivityException ex) {
             addLocalizedMessage(request, ex.getMessage());
         }
@@ -660,7 +643,7 @@ public class SiadapManagement extends ContextBaseAction {
         }
 
         if (forceReadinessToHomologationCount != 0) {
-            addLocalizedSuccessMessage(request, BundleUtil.getFormattedStringFromResourceBundle(Siadap.SIADAP_BUNDLE_STRING,
+            addLocalizedSuccessMessage(request, BundleUtil.getString(Siadap.SIADAP_BUNDLE_STRING,
                     "label.batchForceReadinessForhomologation.success", String.valueOf(forceReadinessToHomologationCount)));
 
         }
@@ -678,7 +661,7 @@ public class SiadapManagement extends ContextBaseAction {
         ArrayList<SiadapException> warningMessages = new ArrayList<SiadapException>();
 
         try {
-            if (!SiadapYearConfiguration.getHomologationMembersGroup().isMember(UserView.getCurrentUser())) {
+            if (!DynamicGroup.get("HomologationMembersGroup").isMember(Authenticate.getUser())) {
                 throw new SiadapException("error.onlyCCA.can.homologate");
             }
 
@@ -700,8 +683,6 @@ public class SiadapManagement extends ContextBaseAction {
             }
         } catch (SiadapException ex) {
             warningMessages.add(ex);
-        } catch (DomainException ex) {
-            addLocalizedMessage(request, ex.getLocalizedMessage());
         } catch (ActivityException ex) {
             addLocalizedMessage(request, ex.getMessage());
         }
@@ -710,7 +691,7 @@ public class SiadapManagement extends ContextBaseAction {
         }
 
         if (homologationCount != 0) {
-            addLocalizedSuccessMessage(request, BundleUtil.getFormattedStringFromResourceBundle(Siadap.SIADAP_BUNDLE_STRING,
+            addLocalizedSuccessMessage(request, BundleUtil.getString(Siadap.SIADAP_BUNDLE_STRING,
                     "label.homologation.success", String.valueOf(homologationCount)));
 
         }
@@ -727,7 +708,7 @@ public class SiadapManagement extends ContextBaseAction {
         UnitSiadapWrapper unitSiadapWrapper = new UnitSiadapWrapper(unit, year);
         request.setAttribute("unit", unitSiadapWrapper);
         request.setAttribute("employees", unitSiadapWrapper.getUnitEmployeesWithProcessesPendingHomologation());
-        return forward(request, "/module/siadap/bulkManagement/viewPendingHomologationProcesses.jsp");
+        return forward("/module/siadap/bulkManagement/viewPendingHomologationProcesses.jsp");
     }
 
     public final ActionForward viewOnlyProcesses(final ActionMapping mapping, final ActionForm form,
@@ -750,7 +731,7 @@ public class SiadapManagement extends ContextBaseAction {
 
         }
         request.setAttribute("mode", mode);
-        return forward(request, "/module/siadap/bulkManagement/viewOnlyProcesses.jsp");
+        return forward("/module/siadap/bulkManagement/viewOnlyProcesses.jsp");
     }
 
     // NOTE: Interface with the sequential numbers thing
@@ -781,13 +762,13 @@ public class SiadapManagement extends ContextBaseAction {
     //
     // }
     //
-    // } catch (DomainException ex) {
+    // } catch (SiadapException ex) {
     // addLocalizedMessage(request, ex.getLocalizedMessage());
     // return prepareAddExceedingQuotaSuggestion(mapping, form, request,
     // response, year, wrapper, siadapUniverseWrappers);
     // } catch (ConcurrentModificationException ex) {
     // addLocalizedMessage(request,
-    // BundleUtil.getFormattedStringFromResourceBundle(Siadap.SIADAP_BUNDLE_STRING,
+    // BundleUtil.getString(Siadap.SIADAP_BUNDLE_STRING,
     // ex.getMessage()));
     // }
     //
@@ -812,7 +793,7 @@ public class SiadapManagement extends ContextBaseAction {
     //
     // if (!wrapper.isHarmonizationUnit()) {
     // addLocalizedMessage(request,
-    // BundleUtil.getFormattedStringFromResourceBundle(Siadap.SIADAP_BUNDLE_STRING,
+    // BundleUtil.getString(Siadap.SIADAP_BUNDLE_STRING,
     // "error.must.provide.a.harmonization.unit"));
     // RenderUtils.invalidateViewState();
     // return viewUnitHarmonizationData(mapping, form, request, response);
@@ -927,7 +908,7 @@ public class SiadapManagement extends ContextBaseAction {
         // suggestions
         request.setAttribute("bean", new SiadapSuggestionBean(unitWrapper));
 
-        return forward(request, "/module/siadap/bulkManagement/addSugestionToUnit.jsp");
+        return forward("/module/siadap/bulkManagement/addSugestionToUnit.jsp");
 
     }
 
@@ -937,7 +918,7 @@ public class SiadapManagement extends ContextBaseAction {
         SiadapSuggestionBean bean = getRenderedObject("bean");
         request.setAttribute("bean", bean);
 
-        return forward(request, "/module/siadap/bulkManagement/addSugestionToUnit.jsp");
+        return forward("/module/siadap/bulkManagement/addSugestionToUnit.jsp");
     }
 
     public final ActionForward removeExceedingQuotaProposal(final ActionMapping mapping, final ActionForm form,
@@ -999,7 +980,7 @@ public class SiadapManagement extends ContextBaseAction {
 
         byte[] byteArray =
                 HomologationDocumentFile.generateHomologationDocument(personSiadapWrapper, BundleUtil
-                        .getStringFromResourceBundle(Siadap.SIADAP_BUNDLE_STRING, "SiadapProcessDocument.motive.userOrder"));
+                        .getString(Siadap.SIADAP_BUNDLE_STRING, "SiadapProcessDocument.motive.userOrder"));
         return download(response, "SIADAP_" + process.getProcessNumber() + ".pdf", byteArray, "application/pdf");
 
     }

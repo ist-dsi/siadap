@@ -6,7 +6,7 @@
 <%@page import="module.organization.domain.Person"%>
 <%@page import="pt.ist.bennu.core.domain.RoleType"%>
 <%@page import="pt.ist.bennu.core.domain.groups.Role"%>
-<%@page import="pt.ist.bennu.core.domain.groups.PersistentGroup"%>
+<%@page import="org.fenixedu.bennu.core.domain.groups.PersistentGroup"%>
 <%@page import="module.siadap.domain.SiadapYearConfiguration"%>
 <%@page import="pt.ist.bennu.core.domain.User"%>
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>

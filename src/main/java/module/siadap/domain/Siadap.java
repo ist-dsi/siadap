@@ -31,8 +31,6 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-import javax.annotation.Nullable;
-
 import jvstm.cps.ConsistencyPredicate;
 import module.organization.domain.Accountability;
 import module.organization.domain.AccountabilityType;
@@ -43,11 +41,11 @@ import module.siadap.domain.scoring.SiadapGlobalEvaluation;
 import module.siadap.domain.util.SiadapMiscUtilClass;
 import module.siadap.domain.util.SiadapPendingProcessesCounter;
 import module.siadap.domain.wrappers.PersonSiadapWrapper;
-import module.webserviceutils.client.JerseyRemoteUser;
 import module.workflow.domain.utils.WorkflowCommentCounter;
 import module.workflow.widgets.ProcessListWidget;
 import module.workflow.widgets.UnreadCommentsWidget;
 
+import org.antlr.v4.runtime.misc.Nullable;
 import org.apache.commons.collections.Predicate;
 import org.apache.commons.lang.StringUtils;
 import org.joda.time.Interval;
@@ -1076,10 +1074,6 @@ public class Siadap extends Siadap_Base {
 
         return siadapUniverseToReturn;
 
-    }
-
-    public static String getRemoteEmail(Person person) {
-        return new JerseyRemoteUser(person.getUser()).getEmailForSendingEmails();
     }
 
     @Deprecated

@@ -36,8 +36,8 @@ import module.siadap.domain.dto.CompetenceTypeBean;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
+import org.fenixedu.bennu.core.presentationTier.actions.BaseAction;
 
-import pt.ist.bennu.core.presentationTier.actions.ContextBaseAction;
 import pt.ist.fenixWebFramework.struts.annotations.Mapping;
 
 @Mapping(path = "/competencesManagement")
@@ -47,14 +47,14 @@ import pt.ist.fenixWebFramework.struts.annotations.Mapping;
  * @author Paulo Abrantes
  * 
  */
-public class CompetencesManagement extends ContextBaseAction {
+public class CompetencesManagement extends BaseAction {
 
     public ActionForward manageCompetences(final ActionMapping mapping, final ActionForm form, final HttpServletRequest request,
             final HttpServletResponse response) {
         SiadapRootModule rootModule = SiadapRootModule.getInstance();
         request.setAttribute("competenceTypes", rootModule.getCompetenceTypes());
         request.setAttribute("siadapRoot", rootModule);
-        return forward(request, "/module/siadap/competences/manageCompetences.jsp");
+        return forward("/module/siadap/competences/manageCompetences.jsp");
     }
 
     public ActionForward prepareCompetenceTypeCreation(final ActionMapping mapping, final ActionForm form,
@@ -63,7 +63,7 @@ public class CompetencesManagement extends ContextBaseAction {
         CompetenceTypeBean competenceTypeBean = new CompetenceTypeBean();
         request.setAttribute("bean", competenceTypeBean);
 
-        return forward(request, "/module/siadap/competences/createCompetenceType.jsp");
+        return forward("/module/siadap/competences/createCompetenceType.jsp");
     }
 
     public ActionForward createCompetenceType(final ActionMapping mapping, final ActionForm form,
@@ -83,7 +83,7 @@ public class CompetencesManagement extends ContextBaseAction {
 
         request.setAttribute("bean", competenceBean);
 
-        return forward(request, "/module/siadap/competences/createCompetence.jsp");
+        return forward("/module/siadap/competences/createCompetence.jsp");
     }
 
     public ActionForward createCompetence(final ActionMapping mapping, final ActionForm form, final HttpServletRequest request,
@@ -102,7 +102,7 @@ public class CompetencesManagement extends ContextBaseAction {
         CompetenceType competenceType = getDomainObject(request, "competenceTypeId");
         request.setAttribute("type", competenceType);
 
-        return forward(request, "/module/siadap/competences/listCompetences.jsp");
+        return forward("/module/siadap/competences/listCompetences.jsp");
 
     }
 

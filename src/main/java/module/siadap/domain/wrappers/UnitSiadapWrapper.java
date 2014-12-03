@@ -40,8 +40,6 @@ import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
-import javax.annotation.Nullable;
-
 import module.organization.domain.Accountability;
 import module.organization.domain.AccountabilityType;
 import module.organization.domain.OrganizationalModel;
@@ -68,14 +66,15 @@ import module.workflow.activities.ActivityException;
 import module.workflow.activities.ActivityInformation;
 import module.workflow.activities.WorkflowActivity;
 
+import org.antlr.v4.runtime.misc.Nullable;
 import org.apache.commons.collections.Predicate;
 import org.apache.commons.lang.StringUtils;
+import org.fenixedu.bennu.core.domain.Bennu;
+import org.fenixedu.bennu.core.i18n.BundleUtil;
+import org.fenixedu.commons.i18n.LocalizedString;
 import org.joda.time.Interval;
 import org.joda.time.LocalDate;
 
-import pt.ist.bennu.core.domain.MyOrg;
-import pt.ist.bennu.core.domain.exceptions.DomainException;
-import pt.ist.bennu.core.util.BundleUtil;
 import pt.ist.fenixframework.Atomic;
 import pt.ist.fenixframework.FenixFramework;
 import pt.utl.ist.fenix.tools.util.i18n.MultiLanguageString;
@@ -360,7 +359,7 @@ public class UnitSiadapWrapper extends PartyWrapper implements Serializable {
         int peopleWithNoQuotas =
                 getTotalPeopleWorkingInUnit(getUnit(), continueToSubUnits, getConfiguration().getWorkingRelationWithNoQuota());
 
-        return BundleUtil.getFormattedStringFromResourceBundle("resources/SiadapResources",
+        return BundleUtil.getString("resources/SiadapResources",
                 "label.totalWorkingPeopleInUnit.description", String.valueOf(peopleWithQuotas + peopleWithNoQuotas),
                 String.valueOf(peopleWithQuotas), String.valueOf(peopleWithNoQuotas));
     }
@@ -528,7 +527,7 @@ public class UnitSiadapWrapper extends PartyWrapper implements Serializable {
     @Atomic
     public ArrayList<SiadapException> executeValidation(Collection<SiadapUniverseWrapper> siadapUniverseWrappers,
 
-    ValidationSubActivity validationSubActivity) throws DomainException, ActivityException {
+    ValidationSubActivity validationSubActivity) throws SiadapException, ActivityException {
 
         ArrayList<SiadapException> warningsToReturn = new ArrayList<SiadapException>();
         HashSet<Person> evaluatorsToNotify = new HashSet<Person>();
@@ -852,7 +851,7 @@ public class UnitSiadapWrapper extends PartyWrapper implements Serializable {
      * @param number
      * @return
      */
-    public static Unit createSiadapHarmonizationUnit(int year, MultiLanguageString name, int number) {
+    public static Unit createSiadapHarmonizationUnit(int year, LocalizedString name, int number) {
         // let's get the data we need
         SiadapYearConfiguration siadapYearConfiguration = SiadapYearConfiguration.getSiadapYearConfiguration(year);
         Unit siadapStructureTopUnit = siadapYearConfiguration.getSiadapStructureTopUnit();
@@ -1752,7 +1751,7 @@ public class UnitSiadapWrapper extends PartyWrapper implements Serializable {
      * @return the Organization model of name #SIADAP_ORGANIZATION_MODEL_NAME
      */
     public static OrganizationalModel findRegularOrgModel() {
-        final MyOrg instance = MyOrg.getInstance();
+        final Bennu instance = Bennu.getInstance();
         for (final OrganizationalModel organizationalModel : instance.getOrganizationalModelsSet()) {
             if (organizationalModel.getName().getContent().equals(SIADAP_ORGANIZATION_MODEL_NAME)) {
                 return organizationalModel;
@@ -1813,7 +1812,7 @@ public class UnitSiadapWrapper extends PartyWrapper implements Serializable {
         return true;
     }
 
-    public MultiLanguageString getName() {
+    public LocalizedString getName() {
         return getUnit().getPartyName();
     }
 
@@ -2005,16 +2004,16 @@ public class UnitSiadapWrapper extends PartyWrapper implements Serializable {
 
         // if (configuration.getLockHarmonizationOnQuota() && isAboveQuotas()) {
         // throw new
-        // DomainException("error.canOnlyCloseHarmonizationWhenQuotasDoNotExceedValues",
-        // DomainException
+        // SiadapException("error.canOnlyCloseHarmonizationWhenQuotasDoNotExceedValues",
+        // SiadapException
         // .getResourceFor("resources/SiadapResources"));
         // }
 
         // for (UnitSiadapWrapper wrapper : getSubHarmonizationUnits()) {
         // if (!wrapper.isHarmonizationFinished()) {
         // throw new
-        // DomainException("error.tryingToFinishHarmonizationWithSubHarmonizationOpen",
-        // DomainException
+        // SiadapException("error.tryingToFinishHarmonizationWithSubHarmonizationOpen",
+        // SiadapException
         // .getResourceFor("resources/SiadapResources"), getName().getContent(),
         // wrapper.getName().getContent());
         // }
@@ -2022,8 +2021,8 @@ public class UnitSiadapWrapper extends PartyWrapper implements Serializable {
         // for (UnitSiadapWrapper wrapper : getAllChildUnits()) {
         // if (!wrapper.isWithAllSiadapsFilled(false)) {
         // throw new
-        // DomainException("error.tryingToFinishHarmonizationWithSiadapProcessYetToBeEvaluated",
-        // DomainException
+        // SiadapException("error.tryingToFinishHarmonizationWithSiadapProcessYetToBeEvaluated",
+        // SiadapException
         // .getResourceFor("resources/SiadapResources"), getName().getContent(),
         // wrapper.getName().getContent());
         // }
@@ -2081,8 +2080,8 @@ public class UnitSiadapWrapper extends PartyWrapper implements Serializable {
         // if (topHarmonization != null &&
         // topHarmonization.isHarmonizationFinished()) {
         // throw new
-        // DomainException("error.unableToReopenTopUnitHasAlreadyFinishedHarmonization",
-        // DomainException.getResourceFor("resources/SiadapResources"),
+        // SiadapException("error.unableToReopenTopUnitHasAlreadyFinishedHarmonization",
+        // SiadapException.getResourceFor("resources/SiadapResources"),
         // getName().getContent(), topHarmonization
         // .getName().getContent());
         // }

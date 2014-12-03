@@ -26,11 +26,12 @@ package module.siadap.activities;
 
 import module.siadap.domain.Siadap;
 import module.siadap.domain.SiadapProcess;
-import module.siadap.domain.SiadapRootModule;
 import module.siadap.domain.SiadapYearConfiguration;
 import module.workflow.activities.ActivityInformation;
 import module.workflow.activities.WorkflowActivity;
-import pt.ist.bennu.core.domain.User;
+
+import org.fenixedu.bennu.core.domain.User;
+import org.fenixedu.bennu.core.groups.DynamicGroup;
 
 /**
  * 
@@ -47,7 +48,7 @@ public class Validation extends WorkflowActivity<SiadapProcess, ValidationActivi
         try {
 
             int year = process.getSiadap().getYear();
-            if (SiadapRootModule.getInstance().getSiadapCCAGroup().isMember(user)
+            if (DynamicGroup.get("SiadapCCAGroup").isMember(user)
                     && !SiadapYearConfiguration.getSiadapYearConfiguration(year).getClosedValidation()) {
                 return true;
             }

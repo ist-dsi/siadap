@@ -6,26 +6,18 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.ResourceBundle;
 
-import javax.annotation.Nonnull;
-
 import module.siadap.domain.exceptions.SiadapException;
 import module.siadap.domain.wrappers.PersonSiadapWrapper;
-import module.siadap.domain.wrappers.UnitSiadapWrapper;
-import module.workflow.domain.AbstractWFDocsGroup;
-import module.workflow.domain.ProcessDocumentMetaDataResolver;
-import module.workflow.domain.ProcessFile;
-import module.workflow.domain.WFDocsDefaultWriteGroup;
+import module.siadap.util.ReportUtils;
 import module.workflow.domain.WorkflowLog;
 import module.workflow.domain.WorkflowProcess;
+import module.workflow.util.ClassNameBundle;
 import net.sf.jasperreports.engine.JRException;
 
 import org.apache.commons.lang.StringUtils;
+import org.fenixedu.bennu.core.i18n.BundleUtil;
+import org.fenixedu.bennu.core.util.CoreConfiguration;
 import org.joda.time.DateTime;
-
-import pt.ist.bennu.core.domain.VirtualHost;
-import pt.ist.bennu.core.util.BundleUtil;
-import pt.ist.bennu.core.util.ClassNameBundle;
-import pt.ist.bennu.core.util.ReportUtils;
 
 @ClassNameBundle(bundle = "resources/SiadapResources")
 public class HomologationDocumentFile extends HomologationDocumentFile_Base {
@@ -48,11 +40,11 @@ public class HomologationDocumentFile extends HomologationDocumentFile_Base {
     }
 
     public HomologationDocumentFile(PersonSiadapWrapper personSiadapWrapper) {
-        this(BundleUtil.getStringFromResourceBundle(Siadap.SIADAP_BUNDLE_STRING,
+        this(BundleUtil.getString(Siadap.SIADAP_BUNDLE_STRING,
                 "SiadapProcessDocument.motive.homologation.displayName"), "SIADAP_homologacao_"
                 + StringUtils.replaceEach(personSiadapWrapper.getSiadap().getProcess().getProcessNumber() + ".pdf", new String[] {
                         "\\", "/" }, new String[] { "_", "_" }), generateHomologationDocument(personSiadapWrapper,
-                BundleUtil.getStringFromResourceBundle(Siadap.SIADAP_BUNDLE_STRING, "SiadapProcessDocument.motive.homologation")));
+                BundleUtil.getString(Siadap.SIADAP_BUNDLE_STRING, "SiadapProcessDocument.motive.homologation")));
         personSiadapWrapper.getSiadap().getProcess().addFiles(this);
     }
 
@@ -74,14 +66,14 @@ public class HomologationDocumentFile extends HomologationDocumentFile_Base {
         ArrayList<WorkflowLog> orderedExecutionLogs = new ArrayList<WorkflowLog>(process.getExecutionLogs());
         Collections.sort(orderedExecutionLogs, WorkflowLog.COMPARATOR_BY_WHEN);
         paramMap.put("logs", orderedExecutionLogs);
-        paramMap.put("logoFilename", "Logo_" + VirtualHost.getVirtualHostForThread().getHostname() + ".png");
+        paramMap.put("logoFilename", "Logo_" + CoreConfiguration.getConfiguration().applicationUrl() + ".png");
 
         try {
             return ReportUtils.exportToPdfFileAsByteArray("/reports/siadapProcessDocument.jasper", paramMap, resourceBundle,
                     personSiadapWrapper.getAllObjEvaluationWrapperBeansOfDefaultEval());
         } catch (JRException e) {
             e.printStackTrace();
-            throw new SiadapException("SiadapProcessDocument.error.creating.document", e);
+            throw new SiadapException(e, "SiadapProcessDocument.error.creating.document");
         }
     }
 
@@ -93,52 +85,6 @@ public class HomologationDocumentFile extends HomologationDocumentFile_Base {
     @Override
     public boolean isPossibleToArchieve() {
         return false;
-    }
-
-    @Override
-    public ProcessDocumentMetaDataResolver<? extends ProcessFile> getMetaDataResolver() {
-        return new HomologationDocumentMetadataResolver();
-    }
-
-    public static class HomologationDocumentMetadataResolver extends ProcessDocumentMetaDataResolver<HomologationDocumentFile> {
-
-        private final static String CAREER = "Carreira SIADAP";
-
-        private final static String SIADAP_DEFAULT_UNIVERSE = "Universo SIADAP por omissão";
-
-        private final static String EVALUATOR = "Avaliador";
-
-        private final static String EVALUATED = "Avaliado";
-
-        private final static String WORKING_UNIT = "Unidade de trabalho";
-
-        @Override
-        public @Nonnull
-        Class<? extends AbstractWFDocsGroup> getWriteGroupClass() {
-            return WFDocsDefaultWriteGroup.class;
-        }
-
-        @Override
-        public Map<String, String> getMetadataKeysAndValuesMap(HomologationDocumentFile processDocument) {
-            Map<String, String> metadataKeysAndValuesMap = super.getMetadataKeysAndValuesMap(processDocument);
-
-            SiadapProcess siadapProcess = (SiadapProcess) processDocument.getProcess();
-            metadataKeysAndValuesMap.put(EVALUATED, siadapProcess.getSiadap().getEvaluated().getPresentationName());
-            metadataKeysAndValuesMap.put(CAREER, siadapProcess.getSiadap().getDefaultCompetenceType().getName());
-            metadataKeysAndValuesMap.put(SIADAP_DEFAULT_UNIVERSE, siadapProcess.getSiadap().getDefaultSiadapUniverse()
-                    .getLocalizedName());
-            metadataKeysAndValuesMap.put(EVALUATOR, siadapProcess.getSiadap().getEvaluator().getPerson().getPresentationName());
-
-            PersonSiadapWrapper personSiadapWrapper =
-                    new PersonSiadapWrapper(siadapProcess.getSiadap().getEvaluated(), siadapProcess.getSiadap().getYear());
-            UnitSiadapWrapper workingUnit = personSiadapWrapper.getWorkingUnit();
-            if (workingUnit != null && workingUnit.getUnit() != null) {
-                metadataKeysAndValuesMap.put(WORKING_UNIT, workingUnit.getPresentationName());
-            }
-
-            return metadataKeysAndValuesMap;
-
-        }
     }
 
 }

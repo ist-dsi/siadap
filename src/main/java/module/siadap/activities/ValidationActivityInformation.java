@@ -41,11 +41,8 @@ import module.workflow.activities.WorkflowActivity;
 import module.workflow.domain.WorkflowProcess;
 
 import org.apache.commons.lang.StringUtils;
+import org.fenixedu.bennu.core.i18n.BundleUtil;
 import org.joda.time.LocalDate;
-
-import pt.ist.bennu.core.domain.VirtualHost;
-import pt.ist.bennu.core.util.BundleUtil;
-import pt.ist.emailNotifier.domain.Email;
 
 /**
  * 
@@ -196,7 +193,7 @@ public class ValidationActivityInformation extends ActivityInformation<SiadapPro
         public abstract void process(PersonSiadapWrapper personWrapper, SiadapUniverse siadapUniverse);
 
         public String[] getArgumentsDescription(ValidationActivityInformation activityInformation) {
-            return new String[] { BundleUtil.getFormattedStringFromResourceBundle(Siadap.SIADAP_BUNDLE_STRING, name(),
+            return new String[] { BundleUtil.getString(Siadap.SIADAP_BUNDLE_STRING, name(),
                     activityInformation.getSiadapUniverse().name()) };
         }
 
@@ -206,7 +203,7 @@ public class ValidationActivityInformation extends ActivityInformation<SiadapPro
             try {
                 ArrayList<String> toAddress = new ArrayList<String>();
                 SiadapProcess.checkEmailExistenceImportAndWarnOnError(evaluator);
-                String emailEvaluator = Siadap.getRemoteEmail(evaluator);
+                String emailEvaluator = evaluator.getUser().getProfile().getEmail();
                 if (StringUtils.isBlank(emailEvaluator)) {
                     throw new SiadapException("error.could.not.notify.given.user", evaluator.getPresentationName());
                 }
@@ -222,10 +219,10 @@ public class ValidationActivityInformation extends ActivityInformation<SiadapPro
                     body.append("\n\n---\n");
                     body.append("Esta mensagem foi enviada por meio das Aplicações Centrais do IST.\n");
 
-                    final VirtualHost virtualHost = VirtualHost.getVirtualHostForThread();
-                    new Email(virtualHost.getApplicationSubTitle().getContent(), virtualHost.getSystemEmailAddress(),
-                            new String[] {}, toAddress, Collections.EMPTY_LIST, Collections.EMPTY_LIST, "SIADAP - " + year
-                                    + " - Avaliações validadas", body.toString());
+                    throw new Error("Reimplement this");
+//                    new Email(virtualHost.getApplicationSubTitle().getContent(), virtualHost.getSystemEmailAddress(),
+//                            new String[] {}, toAddress, Collections.EMPTY_LIST, Collections.EMPTY_LIST, "SIADAP - " + year
+//                                    + " - Avaliações validadas", body.toString());
                 }
             } catch (final Throwable ex) {
                 System.out.println("Unable to lookup email address for: " + evaluator.getPresentationName() + " Error: "

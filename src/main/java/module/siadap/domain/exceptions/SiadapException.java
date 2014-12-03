@@ -24,10 +24,7 @@
  */
 package module.siadap.domain.exceptions;
 
-import java.util.ResourceBundle;
-
-import pt.ist.bennu.core.domain.exceptions.DomainException;
-import pt.utl.ist.fenix.tools.util.i18n.Language;
+import org.fenixedu.bennu.core.domain.exceptions.DomainException;
 
 /**
  * 
@@ -36,17 +33,22 @@ import pt.utl.ist.fenix.tools.util.i18n.Language;
  */
 public class SiadapException extends DomainException {
 
+    private static final String BUNDLE = "resources/SiadapResources";
+
     public SiadapException(String key, String... args) {
-        super(key, args);
+        super(BUNDLE, key, args);
     }
 
-    public SiadapException(String key, Throwable throwable, String... args) {
-        super(key, throwable, args);
+//    public SiadapException(Status status, String key, String... args) {
+//        super(status, BUNDLE, key, args);
+//    }
+
+    public SiadapException(Throwable cause, String key, String... args) {
+        super(cause, BUNDLE, key, args);
     }
 
-    @Override
-    public ResourceBundle getBundle() {
-        return ResourceBundle.getBundle("resources/SiadapResources", Language.getLocale());
-    }
+//    public SiadapException(Throwable cause, Status status, String key, String... args) {
+//        super(cause, status, BUNDLE, key, args);
+//    }
 
 }

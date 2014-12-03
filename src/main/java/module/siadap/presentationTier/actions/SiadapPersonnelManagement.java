@@ -64,15 +64,15 @@ import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
+import org.fenixedu.bennu.core.groups.DynamicGroup;
+import org.fenixedu.bennu.core.i18n.BundleUtil;
+import org.fenixedu.bennu.core.presentationTier.actions.BaseAction;
+import org.fenixedu.bennu.core.security.Authenticate;
+import org.fenixedu.bennu.core.util.VariantBean;
 import org.joda.time.LocalDate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import pt.ist.bennu.core.applicationTier.Authenticate.UserView;
-import pt.ist.bennu.core.domain.exceptions.DomainException;
-import pt.ist.bennu.core.presentationTier.actions.ContextBaseAction;
-import pt.ist.bennu.core.util.BundleUtil;
-import pt.ist.bennu.core.util.VariantBean;
 import pt.ist.fenixWebFramework.renderers.utils.RenderUtils;
 import pt.ist.fenixWebFramework.struts.annotations.Mapping;
 import pt.utl.ist.fenix.tools.util.excel.Spreadsheet;
@@ -86,7 +86,7 @@ import pt.utl.ist.fenix.tools.util.excel.Spreadsheet.Row;
  * 
  */
 @Mapping(path = "/siadapPersonnelManagement")
-public class SiadapPersonnelManagement extends ContextBaseAction {
+public class SiadapPersonnelManagement extends BaseAction {
 
     private static Logger logger = LoggerFactory.getLogger(SiadapPersonnelManagement.class.getName());
 
@@ -115,12 +115,12 @@ public class SiadapPersonnelManagement extends ContextBaseAction {
         Set<Siadap> siadapsWithoutValidHarmonizationUnit =
                 siadapYearWrapper.getSiadapYearConfiguration().getSiadapsWithoutValidHarmonizationUnit();
         if (siadapsWithoutValidHarmonizationUnit.isEmpty() == false) {
-            addLocalizedWarningMessage(request, BundleUtil.getFormattedStringFromResourceBundle(Siadap.SIADAP_BUNDLE_STRING,
+            addLocalizedWarningMessage(request, BundleUtil.getString(Siadap.SIADAP_BUNDLE_STRING,
                     "siadapPersonnelManagement.start.warning.withoutValidHarm"));
         }
 
-        request.setAttribute("person", new PersonSiadapWrapper(UserView.getCurrentUser().getPerson(), new LocalDate().getYear()));
-        return forward(request, "/module/siadap/management/start.jsp");
+        request.setAttribute("person", new PersonSiadapWrapper(Authenticate.getUser().getPerson(), new LocalDate().getYear()));
+        return forward("/module/siadap/management/start.jsp");
     }
 
     public final ActionForward manageUsersWithoutValidHarmonizationUnit(final ActionMapping mapping, final ActionForm form,
@@ -135,7 +135,7 @@ public class SiadapPersonnelManagement extends ContextBaseAction {
         request.setAttribute("siadaps", siadapsWithoutValidHarmonizationUnit);
         request.setAttribute("year", year);
 
-        return forward(request, "/module/siadap/management/personsWithInvalidHarmonizationUnit.jsp");
+        return forward("/module/siadap/management/personsWithInvalidHarmonizationUnit.jsp");
 
     }
 
@@ -157,7 +157,7 @@ public class SiadapPersonnelManagement extends ContextBaseAction {
         try {
             return SiadapProcess
                     .createNewProcess(evaluated, new Integer(year), siadapUniverse, competenceType, skipUniverseCheck);
-        } catch (DomainException ex) {
+        } catch (SiadapException ex) {
             addMessage(request, ex.getKey(), ex.getArgs());
         }
 
@@ -182,7 +182,7 @@ public class SiadapPersonnelManagement extends ContextBaseAction {
                 recentlyCreatedProcess.getActivity(NoEvaluation.class.getSimpleName());
         NoEvaluationActivityInformation noEvaluationActivityInformation =
                 new NoEvaluationActivityInformation(recentlyCreatedProcess, noEvaluationActivity);
-        noEvaluationActivityInformation.setNoEvaluationJustification(BundleUtil.getStringFromResourceBundle(
+        noEvaluationActivityInformation.setNoEvaluationJustification(BundleUtil.getString(
                 Siadap.SIADAP_BUNDLE_STRING, "siadap2.process.creation.for.curricularPonderation.noEvaluation.justification"));
 
         try {
@@ -191,7 +191,7 @@ public class SiadapPersonnelManagement extends ContextBaseAction {
             }
             noEvaluationActivity.execute(noEvaluationActivityInformation);
 
-        } catch (DomainException ex) {
+        } catch (SiadapException ex) {
             addLocalizedMessage(request, ex.getLocalizedMessage());
         } catch (ActivityException e) {
             addLocalizedMessage(request, e.getMessage());
@@ -226,7 +226,7 @@ public class SiadapPersonnelManagement extends ContextBaseAction {
                 addLocalizedWarningMessage(request, informationBeanWrapper.getSuccessWarningMessage());
             }
 
-        } catch (DomainException ex) {
+        } catch (SiadapException ex) {
             addLocalizedMessage(request, ex.getLocalizedMessage());
         } catch (ActivityException e) {
             addLocalizedMessage(request, e.getMessage());
@@ -309,7 +309,7 @@ public class SiadapPersonnelManagement extends ContextBaseAction {
         request.setAttribute("changeCompetenceTypeBean", new CompetenceTypeBean(personSiadapWrapper));
         request.setAttribute("forceChangeCompetenceTypeBean", new ForceChangeCompetenceTypeBean(personSiadapWrapper));
         request.setAttribute("history", personSiadapWrapper.getAccountabilitiesHistory());
-        return forward(request, "/module/siadap/management/editPerson.jsp");
+        return forward("/module/siadap/management/editPerson.jsp");
 
     }
 
@@ -396,7 +396,7 @@ public class SiadapPersonnelManagement extends ContextBaseAction {
 
         try {
             new PersonSiadapWrapper(evaluated, year).removeFromSiadapStructure(preserveResponsabilityRelations);
-        } catch (DomainException ex) {
+        } catch (SiadapException ex) {
             addMessage(request, ex.getKey(), ex.getArgs());
         }
 
@@ -628,7 +628,7 @@ public class SiadapPersonnelManagement extends ContextBaseAction {
 
         @Override
         public String[] getArgumentsDescription(SiadapProcess process) {
-            return new String[] { BundleUtil.getFormattedStringFromResourceBundle(Siadap.SIADAP_BUNDLE_STRING,
+            return new String[] { BundleUtil.getString(Siadap.SIADAP_BUNDLE_STRING,
                     RemoveCustomEvaluatorBean.class.getSimpleName(), process.getSiadap().getEvaluator().getPerson()
                             .getPresentationName()) };
         }
@@ -686,7 +686,7 @@ public class SiadapPersonnelManagement extends ContextBaseAction {
         public void execute(SiadapProcess process) throws SiadapException {
             Siadap siadap = process.getSiadap();
             // extra verification
-            if (forceChange && !SiadapRootModule.getInstance().getSiadapCCAGroup().isMember(UserView.getCurrentUser())) {
+            if (forceChange && !DynamicGroup.get("SiadapCCAGroup").isMember(Authenticate.getUser())) {
                 throw new SiadapException("only.cca.should.be.able.to.force.change");
             }
 
@@ -698,11 +698,11 @@ public class SiadapPersonnelManagement extends ContextBaseAction {
         @Override
         public String[] getArgumentsDescription(SiadapProcess process) {
             if (!forceChange) {
-                return new String[] { BundleUtil.getFormattedStringFromResourceBundle(Siadap.SIADAP_BUNDLE_STRING,
+                return new String[] { BundleUtil.getString(Siadap.SIADAP_BUNDLE_STRING,
                         ChangeSiadapUniverseBean.class.getSimpleName(), getSiadapUniverse().getLocalizedName(), getDateOfChange()
                                 .toString()) };
             } else {
-                return new String[] { BundleUtil.getFormattedStringFromResourceBundle(Siadap.SIADAP_BUNDLE_STRING,
+                return new String[] { BundleUtil.getString(Siadap.SIADAP_BUNDLE_STRING,
                         ChangeSiadapUniverseBean.class.getSimpleName() + ".forced", getSiadapUniverse().getLocalizedName(),
                         getDateOfChange().toString(), getJustificationForForcingChange()) };
             }
@@ -793,7 +793,7 @@ public class SiadapPersonnelManagement extends ContextBaseAction {
         @Override
         public String[] getArgumentsDescription(SiadapProcess process) {
             return new String[] { BundleUtil
-                    .getFormattedStringFromResourceBundle(Siadap.SIADAP_BUNDLE_STRING, ChangeEvaluatorBean.class.getSimpleName(),
+                    .getString(Siadap.SIADAP_BUNDLE_STRING, ChangeEvaluatorBean.class.getSimpleName(),
                             getEvaluator().getPresentationName(), getDateOfChange().toString()) };
         }
 
@@ -845,7 +845,7 @@ public class SiadapPersonnelManagement extends ContextBaseAction {
 
         @Override
         public String[] getArgumentsDescription(SiadapProcess process) {
-            return new String[] { BundleUtil.getFormattedStringFromResourceBundle(Siadap.SIADAP_BUNDLE_STRING,
+            return new String[] { BundleUtil.getString(Siadap.SIADAP_BUNDLE_STRING,
                     CompetenceTypeBean.class.getSimpleName(), competenceType.getName()) };
         }
 
@@ -887,7 +887,7 @@ public class SiadapPersonnelManagement extends ContextBaseAction {
 
         @Override
         public String[] getArgumentsDescription(SiadapProcess process) {
-            return new String[] { BundleUtil.getFormattedStringFromResourceBundle(Siadap.SIADAP_BUNDLE_STRING,
+            return new String[] { BundleUtil.getString(Siadap.SIADAP_BUNDLE_STRING,
                     ForceChangeCompetenceTypeBean.class.getSimpleName(), competenceType.getName()) };
         }
 
@@ -947,22 +947,22 @@ public class SiadapPersonnelManagement extends ContextBaseAction {
         public String[] getArgumentsDescription(SiadapProcess process) {
             String countsForInstitutionalQuotas =
                     (withQuotas) ? BundleUtil
-                            .getFormattedStringFromResourceBundle(Siadap.SIADAP_BUNDLE_STRING, "siadap.true.yes") : BundleUtil
-                            .getFormattedStringFromResourceBundle(Siadap.SIADAP_BUNDLE_STRING, "siadap.false.no");
+                            .getString(Siadap.SIADAP_BUNDLE_STRING, "siadap.true.yes") : BundleUtil
+                            .getString(Siadap.SIADAP_BUNDLE_STRING, "siadap.false.no");
             PersonSiadapWrapper evaluator = new PersonSiadapWrapper(process.getSiadap()).getEvaluator();
             String currentEvaluator = evaluator == null ? "-" : evaluator.getPerson().getPresentationName();
-            return new String[] { BundleUtil.getFormattedStringFromResourceBundle(Siadap.SIADAP_BUNDLE_STRING,
+            return new String[] { BundleUtil.getString(Siadap.SIADAP_BUNDLE_STRING,
                     ChangeWorkingUnitBean.class.getSimpleName(), unit.getPresentationName(), countsForInstitutionalQuotas,
                     dateOfChange.toString()) };
             // ,
-            // BundleUtil.getFormattedStringFromResourceBundle(Siadap.SIADAP_BUNDLE_STRING,
+            // BundleUtil.getString(Siadap.SIADAP_BUNDLE_STRING,
             // "ChangeWorkingUnitBean.evaluatorSideEffect", currentEvaluator))
             // };
         }
 
         @Override
         public String getSuccessWarningMessage() {
-            return BundleUtil.getStringFromResourceBundle(Siadap.SIADAP_BUNDLE_STRING,
+            return BundleUtil.getString(Siadap.SIADAP_BUNDLE_STRING,
                     "warning.changed.working.unit.check.evaluator");
         }
 
@@ -1015,10 +1015,10 @@ public class SiadapPersonnelManagement extends ContextBaseAction {
 
         @Override
         public String[] getArgumentsDescription(SiadapProcess process) {
-            return new String[] { BundleUtil.getFormattedStringFromResourceBundle(Siadap.SIADAP_BUNDLE_STRING,
+            return new String[] { BundleUtil.getString(Siadap.SIADAP_BUNDLE_STRING,
                     ChangeHarmonizationUnitBean.class.getSimpleName(), getUnit().getPresentationName(), dateOfChange.toString()) };
             // ,
-            // BundleUtil.getFormattedStringFromResourceBundle(Siadap.SIADAP_BUNDLE_STRING,
+            // BundleUtil.getString(Siadap.SIADAP_BUNDLE_STRING,
             // "ChangeWorkingUnitBean.evaluatorSideEffect", currentEvaluator))
             // };
         }

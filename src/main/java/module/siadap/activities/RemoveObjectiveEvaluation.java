@@ -31,9 +31,10 @@ import module.siadap.domain.SiadapProcessStateEnum;
 import module.siadap.domain.SiadapYearConfiguration;
 import module.workflow.activities.ActivityInformation;
 import module.workflow.activities.WorkflowActivity;
-import pt.ist.bennu.core.applicationTier.Authenticate.UserView;
-import pt.ist.bennu.core.domain.User;
-import pt.ist.bennu.core.util.BundleUtil;
+
+import org.fenixedu.bennu.core.domain.User;
+import org.fenixedu.bennu.core.i18n.BundleUtil;
+import org.fenixedu.bennu.core.security.Authenticate;
 
 /**
  * 
@@ -81,7 +82,7 @@ public class RemoveObjectiveEvaluation extends WorkflowActivity<SiadapProcess, R
         //notify that there have been changes - if we are not a member of the CCA
         SiadapYearConfiguration siadapYearConfiguration = siadap.getSiadapYearConfiguration();
         if (!siadapYearConfiguration.isCurrentUserMemberOfCCA()
-                || siadap.getEvaluator().getPerson().getUser().equals(UserView.getCurrentUser())) {
+                || siadap.getEvaluator().getPerson().getUser().equals(Authenticate.getUser())) {
             process.signalChangesInEvaluationObjectives();
         }
     }
@@ -127,8 +128,8 @@ public class RemoveObjectiveEvaluation extends WorkflowActivity<SiadapProcess, R
         case NOT_YET_EVALUATED:
         case UNIMPLEMENTED_STATE:
             if (!siadapYearConfiguration.isCurrentUserMemberOfCCA()
-                    || siadap.getEvaluator().getPerson().getUser().equals(UserView.getCurrentUser())) {
-                return BundleUtil.getStringFromResourceBundle(getUsedBundle(), "edit.warning.removing.will.change.state");
+                    || siadap.getEvaluator().getPerson().getUser().equals(Authenticate.getUser())) {
+                return BundleUtil.getString(getUsedBundle(), "edit.warning.removing.will.change.state");
             }
         }
         return super.getLocalizedConfirmationMessage(process);

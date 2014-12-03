@@ -37,7 +37,6 @@ import module.siadap.domain.scoring.SiadapGlobalEvaluation;
 import org.apache.commons.collections.Predicate;
 import org.joda.time.LocalDate;
 
-import pt.ist.bennu.core.domain.exceptions.DomainException;
 import pt.ist.fenixframework.Atomic;
 
 /**
@@ -286,8 +285,7 @@ public class SiadapEvaluationUniverse extends SiadapEvaluationUniverse_Base {
         for (SiadapEvaluationItem evaluation : evaluations) {
             IScoring itemEvaluation = evaluation.getItemEvaluation();
             if (itemEvaluation == null) {
-                throw new DomainException("error.siadapEvaluation.mustFillAllItems",
-                        DomainException.getResourceFor("resources/SiadapResources"));
+                throw new SiadapException("resources/SiadapResources", "error.siadapEvaluation.mustFillAllItems");
             }
             result = result.add(itemEvaluation.getPoints());
         }

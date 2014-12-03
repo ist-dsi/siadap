@@ -26,12 +26,10 @@ package module.siadap.domain;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.MissingResourceException;
 
-import module.fileManagement.domain.DirNode;
 import module.organization.domain.Person;
 import module.siadap.activities.AcknowledgeEvaluationObjectives;
 import module.siadap.activities.AcknowledgeEvaluationValidation;
@@ -70,23 +68,18 @@ import module.siadap.domain.wrappers.PersonSiadapWrapper;
 import module.workflow.activities.ActivityInformation;
 import module.workflow.activities.WorkflowActivity;
 import module.workflow.domain.LabelLog;
-import module.workflow.domain.ProcessDirNode;
 import module.workflow.domain.ProcessFile;
 import module.workflow.domain.WorkflowLog;
 import module.workflow.domain.WorkflowProcess;
 import module.workflow.domain.WorkflowSystem;
+import module.workflow.util.ClassNameBundle;
 
+import org.fenixedu.bennu.core.domain.User;
+import org.fenixedu.bennu.core.groups.DynamicGroup;
+import org.fenixedu.bennu.core.i18n.BundleUtil;
+import org.fenixedu.bennu.core.security.Authenticate;
 import org.joda.time.LocalDate;
 
-import pt.ist.bennu.core.applicationTier.Authenticate.UserView;
-import pt.ist.bennu.core.domain.RoleType;
-import pt.ist.bennu.core.domain.User;
-import pt.ist.bennu.core.domain.VirtualHost;
-import pt.ist.bennu.core.domain.exceptions.DomainException;
-import pt.ist.bennu.core.domain.groups.Role;
-import pt.ist.bennu.core.util.BundleUtil;
-import pt.ist.bennu.core.util.ClassNameBundle;
-import pt.ist.emailNotifier.domain.Email;
 import pt.ist.fenixframework.Atomic;
 
 /**
@@ -96,7 +89,7 @@ import pt.ist.fenixframework.Atomic;
  * @author Paulo Abrantes
  * 
  */
-@ClassNameBundle(bundle = "resources/SiadapResources", key = "label.process.siadap")
+@ClassNameBundle(bundle = "resources/SiadapResources")
 public class SiadapProcess extends SiadapProcess_Base {
 
     private static List<WorkflowActivity<SiadapProcess, ? extends ActivityInformation<SiadapProcess>>> activities =
@@ -157,7 +150,7 @@ public class SiadapProcess extends SiadapProcess_Base {
             throw new SiadapException("error.create.siadap.must.fill.competenceType.and.SiadapUniverse");
         }
 
-        User currentUser = UserView.getCurrentUser();
+        User currentUser = Authenticate.getUser();
         Person possibleEvaluator = currentUser.getPerson();
         PersonSiadapWrapper evaluator = new PersonSiadapWrapper(evaluated, year).getEvaluator();
         SiadapYearConfiguration configuration = SiadapYearConfiguration.getSiadapYearConfiguration(year);
@@ -170,13 +163,13 @@ public class SiadapProcess extends SiadapProcess_Base {
         boolean belongsToASuperGroup = false;
         if ((configuration.getCcaMembers() != null && configuration.getCcaMembers().contains(currentUser.getPerson()))
                 || (configuration.getScheduleEditors() != null && configuration.getScheduleEditors().contains(
-                        currentUser.getPerson())) || Role.getRole(RoleType.MANAGER).isMember(currentUser)
+                        currentUser.getPerson())) || DynamicGroup.get("managers").isMember(currentUser)
                 || configuration.getStructureManagementGroupMembers().contains(currentUser.getPerson())) {
             belongsToASuperGroup = true;
         }
         if (!belongsToASuperGroup) {
             if (evaluator == null || evaluator.getPerson() != possibleEvaluator) {
-                throw new DomainException("error.onlyEvaluatorCanCreateSiadap");
+                throw new SiadapException("error.onlyEvaluatorCanCreateSiadap");
             }
         }
 
@@ -204,7 +197,7 @@ public class SiadapProcess extends SiadapProcess_Base {
     }
 
     public List<String> getWarningMessages() {
-        User currentUser = UserView.getCurrentUser();
+        User currentUser = Authenticate.getUser();
         ArrayList<String> warningMessagesToReturn = new ArrayList<String>();
         // for each let's try to translate it using the resources, case it can't
         // be found we print it as it is
@@ -215,7 +208,7 @@ public class SiadapProcess extends SiadapProcess_Base {
         }
         for (String string : warningMessages) {
             try {
-                warningMessagesToReturn.add(BundleUtil.getFormattedStringFromResourceBundle("resources/SiadapResources", string));
+                warningMessagesToReturn.add(BundleUtil.getString("resources/SiadapResources", string));
             } catch (MissingResourceException e) {
                 warningMessagesToReturn.add(string);
             }
@@ -225,7 +218,7 @@ public class SiadapProcess extends SiadapProcess_Base {
     }
 
     public void addWarningMessage(String messageKeyOrContent) {
-        User currentUser = UserView.getCurrentUser();
+        User currentUser = Authenticate.getUser();
         addWarningMessage(currentUser, messageKeyOrContent);
     }
 
@@ -239,7 +232,7 @@ public class SiadapProcess extends SiadapProcess_Base {
     }
 
     protected void clearWarningMessagesForCurrentUser() {
-        User currentUser = UserView.getCurrentUser();
+        User currentUser = Authenticate.getUser();
         clearWarningMessages(currentUser);
     }
 
@@ -305,10 +298,10 @@ public class SiadapProcess extends SiadapProcess_Base {
         String siadapUniverseLocalizedName = evaluationUniverse.getSiadapUniverse().getLocalizedName();
         if (evaluationUniverse.isCurriculumPonderation()) {
             siadapUniverseLocalizedName +=
-                    " (" + BundleUtil.getStringFromResourceBundle(Siadap.SIADAP_BUNDLE_STRING, "label.curricularPonderation")
+                    " (" + BundleUtil.getString(Siadap.SIADAP_BUNDLE_STRING, "label.curricularPonderation")
                             + " )";
         }
-        new LabelLog(this, UserView.getCurrentUser(), "label.terminateHarmonization.for", "resources/SiadapResources",
+        new LabelLog(this, Authenticate.getUser(), "label.terminateHarmonization.for", "resources/SiadapResources",
                 siadapUniverseLocalizedName);
     }
 
@@ -316,10 +309,10 @@ public class SiadapProcess extends SiadapProcess_Base {
         String siadapUniverseLocalizedName = evaluationUniverse.getSiadapUniverse().getLocalizedName();
         if (evaluationUniverse.isCurriculumPonderation()) {
             siadapUniverseLocalizedName +=
-                    " (" + BundleUtil.getStringFromResourceBundle(Siadap.SIADAP_BUNDLE_STRING, "label.curricularPonderation")
+                    " (" + BundleUtil.getString(Siadap.SIADAP_BUNDLE_STRING, "label.curricularPonderation")
                             + " )";
         }
-        new LabelLog(this, UserView.getCurrentUser(), "label.givenHarmonizationAssessment.for", "resources/SiadapResources",
+        new LabelLog(this, Authenticate.getUser(), "label.givenHarmonizationAssessment.for", "resources/SiadapResources",
                 siadapUniverseLocalizedName);
     }
 
@@ -327,10 +320,10 @@ public class SiadapProcess extends SiadapProcess_Base {
         String siadapUniverseLocalizedName = evaluationUniverse.getSiadapUniverse().getLocalizedName();
         if (evaluationUniverse.isCurriculumPonderation()) {
             siadapUniverseLocalizedName +=
-                    " (" + BundleUtil.getStringFromResourceBundle(Siadap.SIADAP_BUNDLE_STRING, "label.curricularPonderation")
+                    " (" + BundleUtil.getString(Siadap.SIADAP_BUNDLE_STRING, "label.curricularPonderation")
                             + " )";
         }
-        new LabelLog(this, UserView.getCurrentUser(), "label.reOpenHarmonization.for", "resources/SiadapResources",
+        new LabelLog(this, Authenticate.getUser(), "label.reOpenHarmonization.for", "resources/SiadapResources",
                 siadapUniverseLocalizedName);
     }
 
@@ -343,16 +336,12 @@ public class SiadapProcess extends SiadapProcess_Base {
     }
 
     public boolean isCurrentUserEvaluated() {
-        return isUserEvaluated(UserView.getCurrentUser());
+        return isUserEvaluated(Authenticate.getUser());
     }
 
     public static void checkEmailExistenceImportAndWarnOnError(Person person) {
         // if we have no info about the person, let's import it
         String emailToUse = person.getUser().getEmail();
-        if (emailToUse == null) {
-            emailToUse = Siadap.getRemoteEmail(person);
-
-        }
         // if that didn't solved it, let's warn the admin by e-mail
         if (emailToUse == null) {
             StringBuilder message =
@@ -362,18 +351,7 @@ public class SiadapProcess extends SiadapProcess_Base {
 
             }
             message.append("Please take appropriate actions\n");
-            notifyAdmin("[Bennu/Myorg] - Error retrieving remote information from fenix for a user", message.toString());
         }
-    }
-
-    // TODO change this so that the e-mail isn't hardcoded and there is a batch
-    // sent not for each error an e-mail
-    private static void notifyAdmin(String subject, String message) {
-        ArrayList<String> toAddress = new ArrayList<String>();
-        toAddress.add("joao.antunes@tagus.ist.utl.pt");
-        final VirtualHost virtualHost = VirtualHost.getVirtualHostForThread();
-        new Email(virtualHost.getApplicationSubTitle().getContent(), virtualHost.getSystemEmailAddress(), new String[] {},
-                toAddress, Collections.EMPTY_LIST, Collections.EMPTY_LIST, subject, message);
     }
 
     @Override
@@ -432,7 +410,7 @@ public class SiadapProcess extends SiadapProcess_Base {
             siadap.setCustomEvaluationEnd(newDate);
             break;
         default:
-            throw new DomainException();
+            throw new SiadapException("error.unknown.type");
         }
 
     }
@@ -480,10 +458,10 @@ public class SiadapProcess extends SiadapProcess_Base {
         String siadapUniverseLocalizedName = siadapEvaluationUniverse.getSiadapUniverse().getLocalizedName();
         if (siadapEvaluationUniverse.isCurriculumPonderation()) {
             siadapUniverseLocalizedName +=
-                    " (" + BundleUtil.getStringFromResourceBundle(Siadap.SIADAP_BUNDLE_STRING, "label.curricularPonderation")
+                    " (" + BundleUtil.getString(Siadap.SIADAP_BUNDLE_STRING, "label.curricularPonderation")
                             + " )";
         }
-        new LabelLog(this, UserView.getCurrentUser(), "label.removedHarmonizationAssessment.for", "resources/SiadapResources",
+        new LabelLog(this, Authenticate.getUser(), "label.removedHarmonizationAssessment.for", "resources/SiadapResources",
                 siadapUniverseLocalizedName);
 
     }
@@ -501,35 +479,6 @@ public class SiadapProcess extends SiadapProcess_Base {
         for (WorkflowLog exLog : executionLogs) {
             removeExecutionLogs(exLog);
         }
-
-        ProcessDirNode documentsRepository = getDocumentsRepository();
-        module.workflow.domain.AbstractWFDocsGroup writeGroup =
-                (module.workflow.domain.AbstractWFDocsGroup) documentsRepository.getWriteGroup();
-        module.workflow.domain.AbstractWFDocsGroup readGroup =
-                (module.workflow.domain.AbstractWFDocsGroup) documentsRepository.getReadGroup();
-        writeGroup.setProcess(null);
-        readGroup.setProcess(null);
-        DirNode dirNode = documentsRepository.getDirNode();
-        DirNode trash = dirNode.getTrash();
-        readGroup.removeDirNodeFromReadGroup(dirNode);
-        readGroup.removeDirNodeFromWriteGroup(dirNode);
-        readGroup.removeDirNodeFromReadGroup(trash);
-        readGroup.removeDirNodeFromWriteGroup(trash);
-
-        writeGroup.removeDirNodeFromReadGroup(trash);
-        writeGroup.removeDirNodeFromWriteGroup(trash);
-        writeGroup.removeDirNodeFromReadGroup(dirNode);
-        writeGroup.removeDirNodeFromWriteGroup(dirNode);
-
-        readGroup.delete();
-        writeGroup.delete();
-        dirNode.setTrash(null);
-        dirNode.setProcessDirNode(null);
-        dirNode.delete();
-
-        trash.delete();
-
-        documentsRepository.delete();
 
         for (WorkflowLog workflowLog : getExecutionLogs()) {
             workflowLog.setProcess(null);

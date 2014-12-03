@@ -26,8 +26,10 @@ package module.siadap.domain.util;
 
 import module.siadap.domain.Siadap;
 import module.siadap.domain.SiadapProcessStateEnum;
-import pt.ist.bennu.core.util.BundleUtil;
-import pt.ist.bennu.core.util.ClassNameBundle;
+import module.workflow.util.ClassNameBundle;
+
+import org.fenixedu.bennu.core.i18n.BundleUtil;
+
 import pt.ist.fenixWebFramework.rendererExtensions.util.IPresentableEnum;
 
 /**
@@ -90,7 +92,7 @@ public enum SiadapStatisticsSummaryBoardUniversesEnum implements IPresentableEnu
         String key = "label." + name();
         String name = key;
         try {
-            name = BundleUtil.getStringFromResourceBundle("resources/SiadapResources", key);
+            name = BundleUtil.getString("resources/SiadapResources", key);
         } catch (java.util.MissingResourceException ex) {
         }
         return name;

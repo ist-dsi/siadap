@@ -28,10 +28,11 @@ import module.siadap.domain.Siadap;
 import module.siadap.domain.SiadapProcess;
 import module.siadap.domain.SiadapProcessStateEnum;
 import module.siadap.domain.SiadapYearConfiguration;
+import module.siadap.domain.exceptions.SiadapException;
 import module.workflow.activities.ActivityInformation;
 import module.workflow.activities.WorkflowActivity;
-import pt.ist.bennu.core.domain.User;
-import pt.ist.bennu.core.domain.exceptions.DomainException;
+
+import org.fenixedu.bennu.core.domain.User;
 
 /**
  * 
@@ -88,8 +89,7 @@ public class RevertState extends WorkflowActivity<SiadapProcess, RevertStateActi
             if (isSideEffect()) {
                 setSideEffect(false);
             }
-            throw new DomainException("activity.RevertState.error.invalidStateToChangeTo",
-                    DomainException.getResourceFor("resources/SiadapResources"));
+            throw new SiadapException("activity.RevertState.error.invalidStateToChangeTo");
 
         }
         if (isSideEffect()) {

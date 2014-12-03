@@ -9,20 +9,17 @@ import java.util.Collections;
 
 import javax.servlet.http.HttpServletRequest;
 
-import module.contacts.domain.EmailAddress;
 import module.organization.domain.Person;
 import module.organization.domain.Unit;
 import module.siadap.domain.Siadap;
-import module.siadap.domain.groups.SiadapStructureManagementGroup;
 
-import org.apache.commons.lang.StringUtils;
 import org.apache.struts.Globals;
 import org.apache.struts.action.ActionMessage;
 import org.apache.struts.action.ActionMessages;
+import org.fenixedu.bennu.core.domain.User;
+import org.fenixedu.bennu.core.groups.DynamicGroup;
+import org.fenixedu.bennu.core.i18n.BundleUtil;
 
-import pt.ist.bennu.core.domain.VirtualHost;
-import pt.ist.bennu.core.util.BundleUtil;
-import pt.ist.emailNotifier.domain.Email;
 import pt.ist.fenixframework.Atomic;
 
 /**
@@ -35,11 +32,11 @@ public class SiadapUtilActions {
     public static void notifyRemovalOfHarmonizationResponsible(Person person, Unit unit, int year, HttpServletRequest request) {
         // notify the users who have access to this interface
         String notificationSubject =
-                BundleUtil.getFormattedStringFromResourceBundle(Siadap.SIADAP_BUNDLE_STRING,
+                BundleUtil.getString(Siadap.SIADAP_BUNDLE_STRING,
                         "manage.siadapStructure.notification.email.managers.terminateUnitHarmonization.subject",
                         String.valueOf(year), person.getName(), unit.getPresentationName());
         String notificationContent =
-                BundleUtil.getFormattedStringFromResourceBundle(Siadap.SIADAP_BUNDLE_STRING,
+                BundleUtil.getString(Siadap.SIADAP_BUNDLE_STRING,
                         "manage.siadapStructure.notification.email.managers.terminateUnitHarmonization.content",
                         person.getName(), person.getUser().getUsername(), unit.getPresentationName(), unit.getAcronym());
 
@@ -47,16 +44,16 @@ public class SiadapUtilActions {
 
         // notify the user
         notificationSubject =
-                BundleUtil.getFormattedStringFromResourceBundle(Siadap.SIADAP_BUNDLE_STRING,
+                BundleUtil.getString(Siadap.SIADAP_BUNDLE_STRING,
                         "manage.siadapStructure.notification.email.person.terminateUnitHarmonization.subject",
                         String.valueOf(year), unit.getPresentationName());
 
         notificationContent =
-                BundleUtil.getFormattedStringFromResourceBundle(Siadap.SIADAP_BUNDLE_STRING,
+                BundleUtil.getString(Siadap.SIADAP_BUNDLE_STRING,
                         "manage.siadapStructure.notification.email.person.terminateUnitHarmonization.content",
                         String.valueOf(year), unit.getPresentationName(), unit.getAcronym());
 
-        SiadapUtilActions.notifyUser(request, notificationSubject, notificationContent, person);
+        SiadapUtilActions.notifyUser(request, notificationSubject, notificationContent, Collections.singleton(person.getUser()));
 
     }
 
@@ -65,11 +62,11 @@ public class SiadapUtilActions {
         // notify the users who have access to this interface
 
         String notificationSubject =
-                BundleUtil.getFormattedStringFromResourceBundle(Siadap.SIADAP_BUNDLE_STRING,
+                BundleUtil.getString(Siadap.SIADAP_BUNDLE_STRING,
                         "manage.siadapStructure.notification.email.managers.addHarmonizationUnit.subject", String.valueOf(year),
                         person.getUser().getUsername(), unit.getAcronym());
         String notificationContent =
-                BundleUtil.getFormattedStringFromResourceBundle(Siadap.SIADAP_BUNDLE_STRING,
+                BundleUtil.getString(Siadap.SIADAP_BUNDLE_STRING,
                         "manage.siadapStructure.notification.email.managers.addHarmonizationUnit.content", person.getName(),
                         person.getUser().getUsername(), unit.getPresentationName(), unit.getAcronym());
 
@@ -77,51 +74,47 @@ public class SiadapUtilActions {
 
         // notify the user
         notificationSubject =
-                BundleUtil.getFormattedStringFromResourceBundle(Siadap.SIADAP_BUNDLE_STRING,
+                BundleUtil.getString(Siadap.SIADAP_BUNDLE_STRING,
                         "manage.siadapStructure.notification.email.person.addHarmonizationUnit.subject", String.valueOf(year),
                         unit.getPresentationName());
 
         notificationContent =
-                BundleUtil.getFormattedStringFromResourceBundle(Siadap.SIADAP_BUNDLE_STRING,
+                BundleUtil.getString(Siadap.SIADAP_BUNDLE_STRING,
                         "manage.siadapStructure.notification.email.person.addHarmonizationUnit.content", String.valueOf(year),
                         unit.getPresentationName(), unit.getAcronym());
 
-        SiadapUtilActions.notifyUser(request, notificationSubject, notificationContent, person);
+        SiadapUtilActions.notifyUser(request, notificationSubject, notificationContent, Collections.singleton(person.getUser()));
 
     }
 
     public static void notifySiadapStructureManagementUsers(final HttpServletRequest request, String subject, String content) {
         // get the SiadapStructureManagementUsers
         int year = Integer.parseInt(request.getParameter("year"));
-        Collection<Person> persons = SiadapStructureManagementGroup.getListOfMembers(year);
-        Person[] personArray = new Person[persons.size()];
-        int i = 0;
-        for (Person person : persons) {
-            personArray[i++] = person;
-        }
+        Collection<User> users = DynamicGroup.get("SiadapStructureManagementGroup").getMembers();
 
         // notify them
-        notifyUser(request, subject, content, personArray);
+        notifyUser(request, subject, content, users);
     }
 
     public static void notifyUser(HttpServletRequest request, String notificationSubject, String notificationContent,
-            Person... persons) {
+            Collection<User> users) {
         // get the user e-mail
         ArrayList<String> usersEmails = new ArrayList<String>();
-        for (Person person : persons) {
-            try {
-                String emailAddress = EmailAddress.getEmailForSendingEmails(person);
-                if (StringUtils.isBlank(emailAddress)) {
-                    String[] arguments = { person.getName() };
-                    addMessage(request, "WARNING", "manage.siadapStructure.notification.email.notAbleToSendTo", arguments);
-
-                } else {
-                    usersEmails.add(emailAddress);
-                }
-            } catch (Throwable ex) {
-                String[] arguments = { person.getName() };
-                addMessage(request, "WARNING", "manage.siadapStructure.notification.email.notAbleToSendTo", arguments);
-            }
+        for (User user : users) {
+            throw new Error("Reimplement this");
+//            try {
+//                String emailAddress = EmailAddress.getEmailForSendingEmails(person);
+//                if (StringUtils.isBlank(emailAddress)) {
+//                    String[] arguments = { person.getName() };
+//                    addMessage(request, "WARNING", "manage.siadapStructure.notification.email.notAbleToSendTo", arguments);
+//
+//                } else {
+//                    usersEmails.add(emailAddress);
+//                }
+//            } catch (Throwable ex) {
+//                String[] arguments = { person.getName() };
+//                addMessage(request, "WARNING", "manage.siadapStructure.notification.email.notAbleToSendTo", arguments);
+//            }
         }
         auxNotifyUser(usersEmails, notificationSubject, notificationContent);
     }
@@ -140,10 +133,9 @@ public class SiadapUtilActions {
     // created because of the faulty dml injector
     @Atomic
     private static void auxNotifyUser(ArrayList<String> usersEmails, String notificationSubject, String notificationContent) {
-        final VirtualHost virtualHost = VirtualHost.getVirtualHostForThread();
-        new Email(virtualHost.getApplicationSubTitle().getContent(), virtualHost.getSystemEmailAddress(), new String[] {},
-                usersEmails, Collections.EMPTY_LIST, Collections.EMPTY_LIST, notificationSubject, notificationContent);
-
+        throw new Error("Reimplement this");
+//        new Email(virtualHost.getApplicationSubTitle().getContent(), virtualHost.getSystemEmailAddress(), new String[] {},
+//                usersEmails, Collections.EMPTY_LIST, Collections.EMPTY_LIST, notificationSubject, notificationContent);
     }
 
     private static ActionMessages getMessages(HttpServletRequest request) {

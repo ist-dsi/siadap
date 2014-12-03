@@ -31,7 +31,9 @@ import java.util.TreeSet;
 
 import module.siadap.domain.SiadapRootModule;
 import module.siadap.domain.SiadapYearConfiguration;
-import pt.ist.bennu.core.applicationTier.Authenticate.UserView;
+
+import org.fenixedu.bennu.core.security.Authenticate;
+
 import pt.ist.fenixWebFramework.renderers.DataProvider;
 import pt.ist.fenixWebFramework.renderers.components.converters.Converter;
 
@@ -64,13 +66,7 @@ public class SiadapYearsFromExistingSiadapConfigurations implements DataProvider
     static public Set<String> getLabelsWithExistingConfigs() {
         Set<String> years = new TreeSet<String>();
         for (SiadapYearConfiguration siadapYearConfiguration : SiadapRootModule.getInstance().getYearConfigurations()) {
-            //let's make the 2010 year disappear for all of the users which aren't on the test group
-            if (siadapYearConfiguration.getYear() == 2010
-                    && !SiadapRootModule.getInstance().getSiadapTestUserGroup().getUsersSet().contains(UserView.getCurrentUser())) {
-                continue;
-            } else {
-                years.add(siadapYearConfiguration.getLabel());
-            }
+            years.add(siadapYearConfiguration.getLabel());
         }
         return years;
     }
@@ -85,13 +81,7 @@ public class SiadapYearsFromExistingSiadapConfigurations implements DataProvider
     static public ArrayList<Integer> getYearsWithExistingConfigs() {
         ArrayList<Integer> years = new ArrayList<Integer>();
         for (SiadapYearConfiguration siadapYearConfiguration : SiadapRootModule.getInstance().getYearConfigurations()) {
-            //let's make the 2010 year disappear for all of the users which aren't on the test group
-            if (siadapYearConfiguration.getYear() == 2010
-                    && !SiadapRootModule.getInstance().getSiadapTestUserGroup().getUsersSet().contains(UserView.getCurrentUser())) {
-                continue;
-            } else {
-                years.add(siadapYearConfiguration.getYear());
-            }
+            years.add(siadapYearConfiguration.getYear());
         }
         Collections.sort(years);
         return years;

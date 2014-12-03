@@ -8,6 +8,12 @@ enum module.siadap.domain.ExceedingQuotaSuggestionType as ExceedingQuotaSuggesti
 enum module.siadap.domain.SiadapProcessStateEnum as SiadapProcessStateEnum;
 enum module.siadap.domain.SiadapUniverse as SiadapUniverse;
 
+valueType java.math.BigDecimal as BigDecimal {
+    externalizeWith {
+        String toString();
+    }
+}
+
 class SiadapRootModule {
 	Integer number;
 }
@@ -17,18 +23,6 @@ class HomologationDocumentFile extends .module.workflow.domain.ProcessFile {
 }	
 
 class SiadapProcess extends .module.workflow.domain.WorkflowProcess {
-}
-
-class groups.SiadapScheduleEditorsGroup extends .pt.ist.bennu.core.domain.groups.PersistentGroup {
-}
-
-class groups.SiadapRevertStateGroup extends .pt.ist.bennu.core.domain.groups.PersistentGroup {
-}
-
-class groups.SiadapCCAGroup extends .pt.ist.bennu.core.domain.groups.PersistentGroup {
-}
-
-class groups.SiadapStructureManagementGroup extends .pt.ist.bennu.core.domain.groups.PersistentGroup {
 }
 
 class SiadapYearConfiguration {
@@ -242,33 +236,8 @@ class ExceedingQuotaProposal {
 }
 
 relation SiadapModuleRootMyOrg {
-	.pt.ist.bennu.core.domain.MyOrg playsRole myOrg;
+	.org.fenixedu.bennu.core.domain.Bennu playsRole bennu;
 	SiadapRootModule playsRole siadapRootModule;
-}
-
-relation SiadapRootModuleSiadapScheduleEditorsGroup {
-	SiadapRootModule playsRole siadapRootModule;
-	groups.SiadapScheduleEditorsGroup playsRole siadapScheduleEditorsGroup;
-}
-
-relation SiadapRootModuleSiadapRevertStateGroup {
-	SiadapRootModule playsRole siadapRootModule;
-	groups.SiadapRevertStateGroup playsRole siadapRevertStateGroup;
-}
-
-relation SiadapRootModuleStatisticsAccessUnionGroup {
-	SiadapRootModule playsRole siadapRootModule;
-	 .pt.ist.bennu.core.domain.groups.UnionGroup playsRole statisticsAccessUnionGroup;
-}
-
-relation SiadapRootModuleSiadapCCAGroup {
-	SiadapRootModule playsRole siadapRootModule;
-	groups.SiadapCCAGroup playsRole siadapCCAGroup;
-}
-
-relation SiadapRootModuleSiadapStructureManagementGroup {
-	SiadapRootModule playsRole siadapRootModule;
-	groups.SiadapStructureManagementGroup playsRole siadapStructureManagementGroup;
 }
 
 relation SiadapRootModuleSiadap {

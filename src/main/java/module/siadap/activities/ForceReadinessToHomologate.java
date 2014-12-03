@@ -9,7 +9,8 @@ import module.siadap.domain.SiadapProcessStateEnum;
 import module.siadap.domain.SiadapYearConfiguration;
 import module.workflow.activities.ActivityInformation;
 import module.workflow.activities.WorkflowActivity;
-import pt.ist.bennu.core.domain.User;
+
+import org.fenixedu.bennu.core.domain.User;
 
 /**
  * @author João Antunes (joao.antunes@tagus.ist.utl.pt) - 19 de Dez de 2012
