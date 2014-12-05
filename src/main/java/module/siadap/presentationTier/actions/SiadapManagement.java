@@ -58,6 +58,7 @@ import module.siadap.domain.wrappers.UnitSiadapWrapper;
 import module.workflow.activities.ActivityException;
 import module.workflow.activities.ActivityInformation;
 import module.workflow.domain.WorkflowProcess;
+import module.workflow.util.WorkflowProcessViewer;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.struts.action.ActionForm;
@@ -69,10 +70,13 @@ import org.fenixedu.bennu.core.security.Authenticate;
 import org.fenixedu.bennu.core.util.VariantBean;
 import org.fenixedu.bennu.struts.annotations.Mapping;
 import org.fenixedu.bennu.struts.base.BaseAction;
+import org.fenixedu.bennu.struts.portal.EntryPoint;
+import org.fenixedu.bennu.struts.portal.StrutsApplication;
 import org.joda.time.LocalDate;
 
 import pt.ist.fenixWebFramework.renderers.utils.RenderUtils;
 
+@StrutsApplication(bundle = "SiadapResources", path = "siadap", titleKey = "link.siadapManagement", accessGroup = "logged", hint = "Siadap")
 @Mapping(path = "/siadapManagement")
 /**
  * 
@@ -80,6 +84,7 @@ import pt.ist.fenixWebFramework.renderers.utils.RenderUtils;
  * @author Paulo Abrantes
  * 
  */
+@WorkflowProcessViewer(value = SiadapProcess.class)
 public class SiadapManagement extends BaseAction {
 
     // TODO joantune: assert if this is used at all! (and what it was used
@@ -104,6 +109,7 @@ public class SiadapManagement extends BaseAction {
         return forward("/module/siadap/prepareCreateSiadap.jsp");
     }
 
+    @EntryPoint
     public final ActionForward manageSiadap(final ActionMapping mapping, final ActionForm form, final HttpServletRequest request,
             final HttpServletResponse response) {
 

@@ -62,6 +62,8 @@ import org.apache.struts.action.ActionMapping;
 import org.fenixedu.bennu.core.presentationTier.component.OrganizationChart;
 import org.fenixedu.bennu.struts.annotations.Mapping;
 import org.fenixedu.bennu.struts.base.BaseAction;
+import org.fenixedu.bennu.struts.portal.EntryPoint;
+import org.fenixedu.bennu.struts.portal.StrutsFunctionality;
 import org.joda.time.LocalDate;
 
 import pt.ist.fenixWebFramework.renderers.utils.RenderUtils;
@@ -69,6 +71,7 @@ import pt.ist.fenixframework.Atomic;
 
 import com.google.common.collect.ArrayListMultimap;
 
+@StrutsFunctionality(app = SiadapManagement.class, path = "siadapProcessCount", titleKey = "link.siadapProcessCount", accessGroup = "#managers")
 @Mapping(path = "/siadapProcessCount")
 /**
  * 
@@ -269,6 +272,7 @@ public class SiadapProcessCountAction extends BaseAction {
 
     }
 
+    @EntryPoint
     public ActionForward showUnit(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response)
             throws Exception {
 

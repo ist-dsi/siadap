@@ -1,3 +1,5 @@
+<%@page import="org.fenixedu.bennu.core.groups.DynamicGroup"%>
+<%@page import="org.fenixedu.bennu.core.security.Authenticate"%>
 <%@page import="java.util.Collection"%>
 <%@page import="com.google.common.collect.Multiset"%>
 <%@page import="java.util.Set"%>
@@ -37,7 +39,7 @@
 				PersonSiadapWrapper siadapWrapper = new PersonSiadapWrapper(siadapObtained.getEvaluated(),siadapObtained.getYear());
 				Siadap defaultSiadap = siadapWrapper.getSiadap();
 				%>
-			<logic:present role="pt.ist.bennu.core.domain.RoleType.MANAGER">
+			<% if (DynamicGroup.get("managers").isMember(Authenticate.getUser())) { %>
 					<html:link  page="<%= "/workflowProcessManagement.do?method=viewProcess&processId=" + defaultSiadap.getProcess().getExternalId()%>" >
 						Default siadap
 					</html:link>
@@ -57,7 +59,7 @@
 						</td>
 					</logic:equal>
 				</logic:present>
-			</logic:present>
+			<% } %>
 			<logic:present name="renderManageSiadapPersonLink">
 				<logic:equal value="true" name="renderManageSiadapPersonLink">
 					<td>
@@ -65,14 +67,13 @@
 							Gerir estrutura SIADAP
 						</html:link>
 					</td>
-					<logic:present role="pt.ist.bennu.core.domain.RoleType.MANAGER">
+					<% if (DynamicGroup.get("managers").isMember(Authenticate.getUser())) { %>
 						<td>
 							<html:link page="<%="/organization.do?method=viewParty&partyOid=" + siadapObtained.getEvaluated().getExternalId()%>">
 								Gerir accs
 							</html:link>
 						</td>
-					</logic:present>
-					
+					<% } %>
 				</logic:equal>
 			</logic:present>
 		</tr>
@@ -97,7 +98,7 @@ if (configuration == null)
     request.setAttribute("duplicateUnits", duplicateUnits);
 %>
 
-<logic:present role="pt.ist.bennu.core.domain.RoleType.MANAGER">
+<% if (DynamicGroup.get("managers").isMember(Authenticate.getUser())) { %>
 	<p>Unidades duplicadas: <%=duplicateUnits.size() %></p>
 	<logic:notEmpty name="duplicateUnits">
 		<logic:iterate id="duplicateUnit" name="duplicateUnits">
@@ -111,6 +112,5 @@ if (configuration == null)
 		</logic:iterate>
 	
 	</logic:notEmpty>
-</logic:present>
-
+<% } %>
 

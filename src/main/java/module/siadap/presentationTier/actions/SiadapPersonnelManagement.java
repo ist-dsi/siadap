@@ -70,6 +70,8 @@ import org.fenixedu.bennu.core.security.Authenticate;
 import org.fenixedu.bennu.core.util.VariantBean;
 import org.fenixedu.bennu.struts.annotations.Mapping;
 import org.fenixedu.bennu.struts.base.BaseAction;
+import org.fenixedu.bennu.struts.portal.EntryPoint;
+import org.fenixedu.bennu.struts.portal.StrutsFunctionality;
 import org.joda.time.LocalDate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -85,11 +87,13 @@ import pt.utl.ist.fenix.tools.util.excel.Spreadsheet.Row;
  * @author Paulo Abrantes
  * 
  */
+@StrutsFunctionality(app = SiadapManagement.class, path = "siadapPersonnelManagement", titleKey = "link.siadap.structureManagement", accessGroup = "#managers")
 @Mapping(path = "/siadapPersonnelManagement")
 public class SiadapPersonnelManagement extends BaseAction {
 
     private static Logger logger = LoggerFactory.getLogger(SiadapPersonnelManagement.class.getName());
 
+    @EntryPoint
     public final ActionForward start(final ActionMapping mapping, final ActionForm form, final HttpServletRequest request,
             final HttpServletResponse response) throws Exception {
 

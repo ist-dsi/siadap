@@ -89,7 +89,7 @@ import pt.ist.fenixframework.Atomic;
  * @author Paulo Abrantes
  * 
  */
-@ClassNameBundle(bundle = "resources/SiadapResources")
+@ClassNameBundle(bundle = "SiadapResources")
 public class SiadapProcess extends SiadapProcess_Base {
 
     private static List<WorkflowActivity<SiadapProcess, ? extends ActivityInformation<SiadapProcess>>> activities =

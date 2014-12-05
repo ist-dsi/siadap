@@ -1,14 +1,14 @@
+<%@page import="org.fenixedu.bennu.core.groups.DynamicGroup"%>
+<%@page import="org.fenixedu.bennu.core.security.Authenticate"%>
+<%@page import="org.fenixedu.bennu.core.domain.User"%>
 <%@page import="module.siadap.domain.SiadapRootModule"%>
 <%@page import="module.organization.domain.AccountabilityType"%>
 <%@page import="module.organization.domain.Accountability"%>
 <%@page import="java.util.ArrayList"%>
 <%@page import="module.siadap.domain.wrappers.PersonSiadapWrapper"%>
 <%@page import="module.organization.domain.Person"%>
-<%@page import="pt.ist.bennu.core.domain.RoleType"%>
-<%@page import="pt.ist.bennu.core.domain.groups.Role"%>
 <%@page import="org.fenixedu.bennu.core.domain.groups.PersistentGroup"%>
 <%@page import="module.siadap.domain.SiadapYearConfiguration"%>
-<%@page import="pt.ist.bennu.core.domain.User"%>
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib uri="http://jakarta.apache.org/struts/tags-html" prefix="html"%>
 <%@ taglib uri="http://jakarta.apache.org/struts/tags-bean" prefix="bean"%>
@@ -19,7 +19,6 @@
 <script src="<%= request.getContextPath() + "/javaScript/jquery.alerts.js"%>" type="text/javascript"></script>
 <script src="<%= request.getContextPath() + "/javaScript/alertHandlers.js"%>" type="text/javascript"></script>
 
-<bean:define id="user" name="USER_SESSION_ATTRIBUTE" property="user"/>
 <bean:define id="year" name="person" property="year"/>
 <bean:define id="yearLabel" name="person" property="configuration.label" type="java.lang.String"/>
 <bean:define id="personWrapper" name="person"  type="module.siadap.domain.wrappers.PersonSiadapWrapper"/>
@@ -106,22 +105,22 @@
 
 <%-- ACL for the ability to change anything --%>
 <%
-User currentUser = (User)user;
+User currentUser = Authenticate.getUser();
 Person person = currentUser.getPerson();
 SiadapYearConfiguration configuration = SiadapYearConfiguration.getSiadapYearConfiguration((Integer)year);
 
 boolean isAbleToChangeAnything = false;
 boolean isManager = false;
 boolean isCCAMember = false;
-if (SiadapRootModule.getInstance().getSiadapCCAGroup().isMember(currentUser)) {
+if (configuration.isCurrentUserMemberOfCCA()) {
     isCCAMember = true;
 }
 //if (configuration.getCcaMembers().contains(person) || Role.getRole(RoleType.MANAGER).isMember(currentUser) )
-if (Role.getRole(RoleType.MANAGER).isMember(currentUser) || configuration.isUserMemberOfStructureManagementGroup(currentUser) )
+if (DynamicGroup.get("managers").isMember(Authenticate.getUser()) || configuration.isUserMemberOfStructureManagementGroup(currentUser) )
 {
     isAbleToChangeAnything = true;
 }
-if (Role.getRole(RoleType.MANAGER).isMember(currentUser))
+if (DynamicGroup.get("managers").isMember(Authenticate.getUser()))
 	{
     isManager = true;
 	}
@@ -403,7 +402,7 @@ request.setAttribute("isCCAMember", isCCAMember);
 		<fr:edit id="changeEvaluator1" name="changeEvaluator" slot="evaluator">
 		<fr:layout name="autoComplete">
 	        <fr:property name="labelField" value="name"/>
-			<fr:property name="format" value="${name} (${user.username})"/>
+			<fr:property name="format" value="<%= "${name} (${user.username})" %>"/>
 			<fr:property name="minChars" value="3"/>		
 			<fr:property name="args" value="provider=module.organization.presentationTier.renderers.providers.PersonAutoCompleteProvider"/>
 			<fr:property name="size" value="60"/>

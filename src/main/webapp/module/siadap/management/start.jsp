@@ -1,13 +1,9 @@
-<%@page import="pt.ist.bennu.core.domain.User"%>
-<%@page import="pt.ist.fenixWebFramework.security.UserView"%>
 <%@page import="module.siadap.domain.SiadapYearConfiguration"%>
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib uri="http://jakarta.apache.org/struts/tags-html" prefix="html"%>
 <%@ taglib uri="http://jakarta.apache.org/struts/tags-bean" prefix="bean"%>
 <%@ taglib uri="http://jakarta.apache.org/struts/tags-logic" prefix="logic"%>
 <%@ taglib uri="http://fenix-ashes.ist.utl.pt/fenix-renderers" prefix="fr"%>
-
-<bean:define id="user" name="USER_SESSION_ATTRIBUTE" property="user"/>
 
 <h2><bean:message key="link.siadap.structureManagement" bundle="SIADAP_RESOURCES"/></h2>
 
@@ -64,17 +60,17 @@
 </html:link>
 
 <%-- Link for the hierarchy excel file with SIADAP universe and confidential data--%>
-<% if (SiadapYearConfiguration.getSiadapYearConfiguration((Integer)year).getCcaMembers().contains(((User)user).getPerson())) { %>
+<% if (SiadapYearConfiguration.getSiadapYearConfiguration((Integer)year).isCurrentUserMemberOfCCA()) { %>
 <html:link action="/siadapPersonnelManagement.do?method=downloadSIADAPRawDataWithConfidentialData" paramId="year" paramName="siadapYearWrapper" paramProperty="chosenYear">
 <p>Download da listagem com todos os dados SIADAP e detalhes de avaliações (apenas disponível ao CCA)</p>
 </html:link>
 <% } %>
 
 <fr:edit id="searchPerson" name="bean" action="<%="/siadapPersonnelManagement.do?method=viewPerson&year=" + year.toString()%>" >
-<fr:schema type="pt.ist.bennu.core.util.VariantBean" bundle="SIADAP_RESOURCES">
+<fr:schema type="org.fenixedu.bennu.core.util.VariantBean" bundle="SIADAP_RESOURCES">
 		<fr:slot name="domainObject" layout="autoComplete" key="label.person" bundle="ORGANIZATION_RESOURCES">
         <fr:property name="labelField" value="name"/>
-		<fr:property name="format" value="${name} (${user.username})"/>
+		<fr:property name="format" value="<%= "${name} (${user.username})" %>"/>
 		<fr:property name="minChars" value="3"/>		
 		<fr:property name="args" value="provider=module.organization.presentationTier.renderers.providers.PersonAutoCompleteProvider"/>
 		<fr:property name="size" value="60"/>

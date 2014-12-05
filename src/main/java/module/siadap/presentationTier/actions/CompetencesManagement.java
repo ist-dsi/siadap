@@ -38,7 +38,10 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.fenixedu.bennu.struts.annotations.Mapping;
 import org.fenixedu.bennu.struts.base.BaseAction;
+import org.fenixedu.bennu.struts.portal.EntryPoint;
+import org.fenixedu.bennu.struts.portal.StrutsFunctionality;
 
+@StrutsFunctionality(app = SiadapManagement.class, path = "competencesManagement", titleKey = "link.siadap.compentencesManagement", accessGroup = "#managers")
 @Mapping(path = "/competencesManagement")
 /**
  * 
@@ -48,6 +51,7 @@ import org.fenixedu.bennu.struts.base.BaseAction;
  */
 public class CompetencesManagement extends BaseAction {
 
+    @EntryPoint
     public ActionForward manageCompetences(final ActionMapping mapping, final ActionForm form, final HttpServletRequest request,
             final HttpServletResponse response) {
         SiadapRootModule rootModule = SiadapRootModule.getInstance();

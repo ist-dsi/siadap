@@ -1,3 +1,5 @@
+<%@page import="org.fenixedu.bennu.core.security.Authenticate"%>
+<%@page import="org.fenixedu.bennu.core.domain.User"%>
 <%@page import="module.siadap.domain.SiadapProcessStateEnum"%>
 <%@page import="module.siadap.domain.wrappers.PersonSiadapWrapper"%>
 <%@page import="module.siadap.domain.Siadap"%>
@@ -17,7 +19,6 @@
 	<bean:define id="evaluatorPersonWrapper" name="process" property="siadap.evaluator" type="module.siadap.domain.wrappers.PersonSiadapWrapper"/>
 </logic:notEmpty>
 <bean:define id="evaluatedPersonWrapper" name="process" property="siadap.evaluatedWrapper" type="module.siadap.domain.wrappers.PersonSiadapWrapper"/>
-<bean:define id="user" name="USER_SESSION_ATTRIBUTE" property="user"/>
 <bean:define id="siadap" name="process" property="siadap"/>
 <% SiadapProcess siadapProcess = (SiadapProcess) request.getAttribute("process");
 boolean objectivesVisibileToEvaluated = siadapProcess.getSiadap().getObjectivesAndCompetencesSealedDate() != null;
@@ -203,7 +204,7 @@ pre {
 			</logic:equal>
 			
 			<%-- Messages only shown to the evaluator: --%>
-			<logic:equal name="evaluatorPersonWrapper" property="person.user.username" value="<%=user.toString()%>">
+			<logic:equal name="evaluatorPersonWrapper" property="person.user.username" value="<%=Authenticate.getUser().toString()%>">
 				<logic:equal value="false" name="process" property="siadap.allEvaluationItemsValid" >
 					<div class="highlightBox mtop05 mbottom15" style="background: lightPink">
 						<bean:message key="warning.invalid.objectives.ponderationFactors" bundle="SIADAP_RESOURCES"/>

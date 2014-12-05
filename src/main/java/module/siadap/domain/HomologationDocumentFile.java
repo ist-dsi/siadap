@@ -19,7 +19,7 @@ import org.fenixedu.bennu.core.i18n.BundleUtil;
 import org.fenixedu.bennu.core.util.CoreConfiguration;
 import org.joda.time.DateTime;
 
-@ClassNameBundle(bundle = "resources/SiadapResources")
+@ClassNameBundle(bundle = "SiadapResources")
 public class HomologationDocumentFile extends HomologationDocumentFile_Base {
 
     public HomologationDocumentFile() {

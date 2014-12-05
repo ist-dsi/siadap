@@ -42,6 +42,8 @@ import org.fenixedu.bennu.core.presentationTier.component.OrganizationChart;
 import org.fenixedu.bennu.core.util.VariantBean;
 import org.fenixedu.bennu.struts.annotations.Mapping;
 import org.fenixedu.bennu.struts.base.BaseAction;
+import org.fenixedu.bennu.struts.portal.EntryPoint;
+import org.fenixedu.bennu.struts.portal.StrutsFunctionality;
 import org.joda.time.LocalDate;
 
 import pt.ist.fenixWebFramework.renderers.utils.RenderUtils;
@@ -52,6 +54,7 @@ import pt.utl.ist.fenix.tools.spreadsheet.WorkbookExportFormat;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Collections2;
 
+@StrutsFunctionality(app = SiadapManagement.class, path = "unitManagementInterface", titleKey = "link.unitManagementInterface", accessGroup = "#managers")
 @Mapping(path = "/unitManagementInterface")
 /**
  * 
@@ -246,6 +249,7 @@ public class UnitManagementInterfaceAction extends BaseAction {
         return null;
     }
 
+    @EntryPoint
     public ActionForward showUnit(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response)
             throws Exception {
 

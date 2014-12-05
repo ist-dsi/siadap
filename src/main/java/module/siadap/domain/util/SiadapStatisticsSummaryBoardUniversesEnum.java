@@ -37,7 +37,7 @@ import pt.ist.fenixWebFramework.rendererExtensions.util.IPresentableEnum;
  * @author João Antunes
  * 
  */
-@ClassNameBundle(bundle = "resources/SiadapResources")
+@ClassNameBundle(bundle = "SiadapResources")
 public enum SiadapStatisticsSummaryBoardUniversesEnum implements IPresentableEnum {
     KNOWN_CATEGORY {
         @Override
