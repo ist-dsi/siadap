@@ -24,8 +24,6 @@
  */
 package module.siadap.activities;
 
-import java.util.ResourceBundle;
-
 import module.siadap.activities.ChangeCustomScheduleActivityInformation.CustomScheduleRepresentation;
 import module.siadap.domain.Siadap;
 import module.siadap.domain.SiadapProcess;

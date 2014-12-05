@@ -36,9 +36,8 @@ import module.siadap.domain.dto.CompetenceTypeBean;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
-import org.fenixedu.bennu.core.presentationTier.actions.BaseAction;
-
-import pt.ist.fenixWebFramework.struts.annotations.Mapping;
+import org.fenixedu.bennu.struts.annotations.Mapping;
+import org.fenixedu.bennu.struts.base.BaseAction;
 
 @Mapping(path = "/competencesManagement")
 /**

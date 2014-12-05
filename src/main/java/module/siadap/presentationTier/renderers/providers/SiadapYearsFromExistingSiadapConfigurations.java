@@ -31,9 +31,6 @@ import java.util.TreeSet;
 
 import module.siadap.domain.SiadapRootModule;
 import module.siadap.domain.SiadapYearConfiguration;
-
-import org.fenixedu.bennu.core.security.Authenticate;
-
 import pt.ist.fenixWebFramework.renderers.DataProvider;
 import pt.ist.fenixWebFramework.renderers.components.converters.Converter;
 

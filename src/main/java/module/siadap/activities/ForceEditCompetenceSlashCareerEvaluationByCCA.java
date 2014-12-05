@@ -25,7 +25,6 @@
 package module.siadap.activities;
 
 import java.util.List;
-import java.util.ResourceBundle;
 
 import module.siadap.domain.Competence;
 import module.siadap.domain.CompetenceEvaluation;

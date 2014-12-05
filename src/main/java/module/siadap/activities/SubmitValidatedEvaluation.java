@@ -25,7 +25,6 @@
 package module.siadap.activities;
 
 import java.util.ArrayList;
-import java.util.Collections;
 
 import module.organization.domain.Person;
 import module.siadap.domain.Siadap;
