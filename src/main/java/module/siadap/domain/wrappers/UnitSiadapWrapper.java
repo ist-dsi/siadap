@@ -243,7 +243,7 @@ public class UnitSiadapWrapper extends PartyWrapper implements Serializable {
         }
     }
 
-    /**
+    /*
      * 
      * @param unit
      *            the unit to check
@@ -265,7 +265,7 @@ public class UnitSiadapWrapper extends PartyWrapper implements Serializable {
 
     }
 
-    /**
+    /*
      * 
      * @param accountabilityType
      *            the accountabilityType to check for
@@ -488,7 +488,7 @@ public class UnitSiadapWrapper extends PartyWrapper implements Serializable {
         return counter;
     }
 
-    /**
+    /*
      * 
      * @param descendOnStructure
      * @return a {@link PersonSiadapWrapper#PERSON_COMPARATOR_BY_NAME_FALLBACK_YEAR_THEN_PERSON_OID} sorted tree set with the
@@ -842,7 +842,7 @@ public class UnitSiadapWrapper extends PartyWrapper implements Serializable {
         });
     }
 
-    /**
+    /*
      * Creates an o
      * 
      * @param year
@@ -936,7 +936,7 @@ public class UnitSiadapWrapper extends PartyWrapper implements Serializable {
                 && getConfiguration().isCurrentUserMemberOfCCA();
     }
 
-    /**
+    /*
      * Convenience method call for {@link #isResponsibleForHarmonization()} to
      * make struts happy
      * 
@@ -1335,7 +1335,7 @@ public class UnitSiadapWrapper extends PartyWrapper implements Serializable {
 
     }
 
-    /**
+    /*
      * 
      * @param includePositivelyHarmonizedOnly
      *            if null, do not consider harmonization. If true, only the ones
@@ -1587,7 +1587,7 @@ public class UnitSiadapWrapper extends PartyWrapper implements Serializable {
                     configuration.getWorkingRelationWithNoQuota());
         }
 
-        /**
+        /*
          * 
          * @param unit
          * @param configuration

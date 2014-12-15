@@ -110,14 +110,6 @@ public class SiadapProcessCounter implements Serializable {
         init(distinguishBetweenUniverses);
     }
 
-    /**
-     * 
-     * @param unit
-     * @param distinguishBetweenUniverses
-     * @param configuration
-     * @param mode
-     * @throws OperationNotSupportedException if a mode is not supported
-     */
     public SiadapProcessCounter(final Unit unit, boolean distinguishBetweenUniverses, SiadapYearConfiguration configuration,
             Mode mode) throws OperationNotSupportedException {
         this(unit, distinguishBetweenUniverses, configuration, mode.getUnitAccType(configuration), mode

@@ -223,7 +223,7 @@ public class SiadapRootModule extends SiadapRootModule_Base {
         return siadapTestUserGroup;
     }
 
-    /**
+    /*
      * Method that exports the SIADAP hierarchy
      * 
      * @param year

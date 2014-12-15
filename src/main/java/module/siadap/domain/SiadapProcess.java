@@ -466,7 +466,7 @@ public class SiadapProcess extends SiadapProcess_Base {
 
     }
 
-    /**
+    /*
      * Deletes the proccess if it has no relevant info on it (more than one
      * logged activity, any comment, etc)
      */

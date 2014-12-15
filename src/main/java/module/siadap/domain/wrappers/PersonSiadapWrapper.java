@@ -648,7 +648,7 @@ public class PersonSiadapWrapper extends PartyWrapper implements Serializable {
         }
     }
 
-    /**
+    /*
      * 
      * @return the unit where is harmonized for the default harmonization universe. The harmoniztion unit must be a valid one,
      *         i.e. connected to the top structure unit for this year
@@ -1353,7 +1353,7 @@ public class PersonSiadapWrapper extends PartyWrapper implements Serializable {
         return emailAddress;
     }
 
-    /**
+    /*
      * @see #changeDefaultUniverseTo(SiadapUniverse, LocalDate, boolean) - it's
      *      equal but with a force of false
      */
@@ -1565,7 +1565,7 @@ public class PersonSiadapWrapper extends PartyWrapper implements Serializable {
         this.harmonizationCurrentAssessmentForSIADAP2 = assessment;
     }
 
-    /**
+    /*
      * @param perserveResponsabilityRelations preserve evaluation responsabilities, as well as harmonization ones. Only removes
      *            the working relations and the relations that tell you where you are harmonized i.e.
      *            {@link SiadapYearConfiguration#getSiadap2HarmonizationRelation()},

@@ -1046,7 +1046,7 @@ public class SiadapPersonnelManagement extends BaseAction {
 
         public abstract boolean hasAllNeededInfo();
 
-        /**
+        /*
          * Executes the change
          * 
          * @throws SiadapException
@@ -1054,13 +1054,13 @@ public class SiadapPersonnelManagement extends BaseAction {
          */
         public abstract void execute(SiadapProcess process) throws SiadapException;
 
-        /**
+        /*
          * 
          * @return an array of strings with the arguments description
          */
         public abstract String[] getArgumentsDescription(SiadapProcess process);
 
-        /**
+        /*
          * 
          * @return a warning message to be displayed in the interface, if the
          *         activity executes successfully

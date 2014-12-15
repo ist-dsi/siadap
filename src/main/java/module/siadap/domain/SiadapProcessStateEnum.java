@@ -77,7 +77,7 @@ public enum SiadapProcessStateEnum implements IPresentableEnum {
     private SiadapProcessStateEnum() {
     }
 
-    /**
+    /*
      * 
      * @return the String representing the state, used on the list of evaluated
      *         persons, currently prepareCreateSiadap.jsp
@@ -147,7 +147,7 @@ public enum SiadapProcessStateEnum implements IPresentableEnum {
         return state.ordinal() <= NOT_YET_SUBMITTED_FOR_ACK.ordinal();
     }
 
-    /**
+    /*
      * 
      * @param siadap
      * @param currentUser
