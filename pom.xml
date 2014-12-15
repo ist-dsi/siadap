@@ -10,7 +10,7 @@
     <groupId>pt.ist</groupId>
     <artifactId>siadap</artifactId>
     <name>SIADAP</name>
-    <version>2.0.0-SNAPSHOT</version>
+    <version>2.0.0-rc1</version>
     <packaging>jar</packaging>
 
     <scm>
@@ -23,9 +23,9 @@
     <properties>
         <version.org.fenixedu.bennu.core>3.4.0</version.org.fenixedu.bennu.core>
         <version.org.fenixedu.bennu.renderers>5.0.0</version.org.fenixedu.bennu.renderers>
-        <version.org.fenixedu.messaging>2.0.0-SNAPSHOT</version.org.fenixedu.messaging>
-        <version.org.fenixedu.organization>1.2.0-SNAPSHOT</version.org.fenixedu.organization>
-        <version.org.fenixedu.workflow>2.0.0-SNAPSHOT</version.org.fenixedu.workflow>
+        <version.org.fenixedu.messaging>2.0.0-rc1</version.org.fenixedu.messaging>
+        <version.org.fenixedu.organization>2.0.0-rc1</version.org.fenixedu.organization>
+        <version.org.fenixedu.workflow>2.0.0-rc1</version.org.fenixedu.workflow>
         <version.jfree.jfreechart>0.9.18</version.jfree.jfreechart>
         <version.net.sf.jasperreports>3.6.0</version.net.sf.jasperreports>
     </properties>
@@ -71,16 +71,16 @@
             <artifactId>bennu-core</artifactId>
             <version>${version.org.fenixedu.bennu.core}</version>
         </dependency>
-		<dependency>
-			<groupId>org.fenixedu</groupId>
-			<artifactId>bennu-renderers</artifactId>
-			<version>${version.org.fenixedu.bennu.renderers}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.fenixedu</groupId>
-			<artifactId>bennu-struts</artifactId>
-			<version>${version.org.fenixedu.bennu.renderers}</version>
-		</dependency>
+	<dependency>
+		<groupId>org.fenixedu</groupId>
+		<artifactId>bennu-renderers</artifactId>
+		<version>${version.org.fenixedu.bennu.renderers}</version>
+	</dependency>
+	<dependency>
+		<groupId>org.fenixedu</groupId>
+		<artifactId>bennu-struts</artifactId>
+		<version>${version.org.fenixedu.bennu.renderers}</version>
+	</dependency>
         <dependency>
             <groupId>org.fenixedu</groupId>
             <artifactId>messaging</artifactId>
@@ -96,11 +96,11 @@
             <artifactId>workflow</artifactId>
             <version>${version.org.fenixedu.workflow}</version>
         </dependency>
-		<dependency>
-			<groupId>com.sun.jersey</groupId>
-			<artifactId>jersey-client</artifactId>
-			<version>1.18.2</version>
-		</dependency>
+	<dependency>
+		<groupId>com.sun.jersey</groupId>
+		<artifactId>jersey-client</artifactId>
+		<version>1.18.2</version>
+	</dependency>
         <dependency>
             <groupId>net.sf.jasperreports</groupId>
             <artifactId>jasperreports</artifactId>
@@ -115,11 +115,11 @@
                         <groupId>commons-beanutils</groupId>
                 </exclusion>
             </exclusions>
-		</dependency>
-		 <dependency>
-                <groupId>pt.ist</groupId>
-                <artifactId>fenix-legacy-tools</artifactId>
-                <version>2.0.0</version>
+	</dependency>
+	<dependency>
+            <groupId>pt.ist</groupId>
+            <artifactId>fenix-legacy-tools</artifactId>
+            <version>2.0.0</version>
         </dependency>
     </dependencies>
 
