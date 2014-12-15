@@ -197,7 +197,7 @@ if (defaultSiadapUniverse.equals(SiadapUniverse.SIADAP3))
 		excellencyAwardProcessEvent();
 	 });
 	<%
-		String message = BundleUtil.getStringFromResourceBundle("resources.SiadapResources","label.evaluationLine");
+		String message = BundleUtil.getString("resources.SiadapResources","label.evaluationLine");
 	%>
 	var message = "<%= message.toString() %>";
 			 

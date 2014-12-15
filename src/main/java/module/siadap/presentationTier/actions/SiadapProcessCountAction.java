@@ -41,7 +41,6 @@ import module.organization.domain.OrganizationalModel;
 import module.organization.domain.Party;
 import module.organization.domain.Person;
 import module.organization.domain.Unit;
-import module.organization.presentationTier.actions.OrganizationModelAction;
 import module.siadap.domain.Siadap;
 import module.siadap.domain.SiadapProcess;
 import module.siadap.domain.SiadapProcessStateEnum;
@@ -60,16 +59,19 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
+import org.fenixedu.bennu.core.presentationTier.component.OrganizationChart;
+import org.fenixedu.bennu.struts.annotations.Mapping;
+import org.fenixedu.bennu.struts.base.BaseAction;
+import org.fenixedu.bennu.struts.portal.EntryPoint;
+import org.fenixedu.bennu.struts.portal.StrutsFunctionality;
 import org.joda.time.LocalDate;
 
-import pt.ist.bennu.core.presentationTier.actions.ContextBaseAction;
-import pt.ist.bennu.core.presentationTier.component.OrganizationChart;
 import pt.ist.fenixWebFramework.renderers.utils.RenderUtils;
-import pt.ist.fenixWebFramework.struts.annotations.Mapping;
 import pt.ist.fenixframework.Atomic;
 
 import com.google.common.collect.ArrayListMultimap;
 
+@StrutsFunctionality(app = SiadapManagement.class, path = "siadapProcessCount", titleKey = "link.siadapProcessCount", accessGroup = "#managers")
 @Mapping(path = "/siadapProcessCount")
 /**
  * 
@@ -77,15 +79,7 @@ import com.google.common.collect.ArrayListMultimap;
  * @author Luis Cruz
  * 
  */
-public class SiadapProcessCountAction extends ContextBaseAction {
-
-    @Override
-    public ActionForward execute(final ActionMapping mapping, final ActionForm form, final HttpServletRequest request,
-            final HttpServletResponse response) throws Exception {
-        final ActionForward forward = super.execute(mapping, form, request, response);
-        OrganizationModelAction.addHeadToLayoutContext(request);
-        return forward;
-    }
+public class SiadapProcessCountAction extends BaseAction {
 
     public ActionForward listSiadapsByStateAndYear(ActionMapping mapping, ActionForm form, HttpServletRequest request,
             HttpServletResponse response) throws Exception {
@@ -111,7 +105,7 @@ public class SiadapProcessCountAction extends ContextBaseAction {
         request.setAttribute("renderRemoveLink", Boolean.FALSE);
         request.setAttribute("siadaps", siadapsOfYearAndState);
 
-        return forward(request, "/module/siadap/listGivenCollectionOfSiadaps.jsp");
+        return forward("/module/siadap/listGivenCollectionOfSiadaps.jsp");
     }
 
     public ActionForward removeSiadap(ActionMapping mapping, ActionForm form, HttpServletRequest request,
@@ -160,7 +154,7 @@ public class SiadapProcessCountAction extends ContextBaseAction {
 
         request.setAttribute("siadaps", siadaps);
         request.setAttribute("renderRemoveLink", Boolean.TRUE);
-        return forward(request, "/module/siadap/listGivenCollectionOfSiadaps.jsp");
+        return forward("/module/siadap/listGivenCollectionOfSiadaps.jsp");
     }
 
     public ActionForward manageDuplicateSiadaps(ActionMapping mapping, ActionForm form, HttpServletRequest request,
@@ -188,7 +182,7 @@ public class SiadapProcessCountAction extends ContextBaseAction {
         request.setAttribute("siadaps", siadapProcessCounter.getOrCreateSiadapsNotListed());
         request.setAttribute("renderRemoveLink", Boolean.FALSE);
         request.setAttribute("renderManageSiadapPersonLink", Boolean.TRUE);
-        return forward(request, "/module/siadap/listGivenCollectionOfSiadaps.jsp");
+        return forward("/module/siadap/listGivenCollectionOfSiadaps.jsp");
 
         //	TypeOfList siadapsNotListedInStatistics = ListSiadapsComponent.TypeOfList.SIADAPS_NOT_LISTED_IN_STATISTICS;
 
@@ -219,7 +213,7 @@ public class SiadapProcessCountAction extends ContextBaseAction {
                 .getSiadapsForThisCategory());
         request.setAttribute("renderRemoveLink", Boolean.FALSE);
         request.setAttribute("renderManageSiadapPersonLink", Boolean.FALSE);
-        return forward(request, "/module/siadap/listGivenCollectionOfSiadaps.jsp");
+        return forward("/module/siadap/listGivenCollectionOfSiadaps.jsp");
 
         //	TypeOfList siadapsNotListedInStatistics = ListSiadapsComponent.TypeOfList.SIADAPS_NOT_LISTED_IN_STATISTICS;
 
@@ -253,7 +247,7 @@ public class SiadapProcessCountAction extends ContextBaseAction {
         request.setAttribute("siadaps", siadaps);
         request.setAttribute("renderRemoveLink", Boolean.TRUE);
         request.setAttribute("renderManageSiadapPersonLink", Boolean.TRUE);
-        return forward(request, "/module/siadap/listGivenCollectionOfSiadaps.jsp");
+        return forward("/module/siadap/listGivenCollectionOfSiadaps.jsp");
 
     }
 
@@ -274,10 +268,11 @@ public class SiadapProcessCountAction extends ContextBaseAction {
         request.setAttribute("showDeletedAccountabilities", Boolean.TRUE);
         request.setAttribute("returnPageURL", "/siadapProcessCount.do?method=manageDuplicatePersons&year=" + year.toString());
 
-        return forward(request, "/organization/viewAccsAndHistory.jsp");
+        return forward("/organization/viewAccsAndHistory.jsp");
 
     }
 
+    @EntryPoint
     public ActionForward showUnit(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response)
             throws Exception {
 
@@ -302,7 +297,7 @@ public class SiadapProcessCountAction extends ContextBaseAction {
         SiadapYearConfiguration configuration = siadapYearWrapper.getSiadapYearConfiguration();
 
         if (configuration == null) {
-            return forward(request, "/module/siadap/unit.jsp");
+            return forward("/module/siadap/unit.jsp");
         }
         request.setAttribute("configuration", configuration);
 
@@ -373,7 +368,7 @@ public class SiadapProcessCountAction extends ContextBaseAction {
 
         request.setAttribute("unitHarmonizers", unitHarmonizers);
 
-        return forward(request, "/module/siadap/unit.jsp");
+        return forward("/module/siadap/unit.jsp");
     }
 
     public ActionForward showSummaryTables(ActionMapping mapping, ActionForm form, HttpServletRequest request,
@@ -391,7 +386,7 @@ public class SiadapProcessCountAction extends ContextBaseAction {
                 SiadapYearConfiguration.getSiadapYearConfiguration(Integer.valueOf(year));
         request.setAttribute("configuration", siadapYearConfiguration);
 
-        return forward(request, "/module/siadap/summaryBoard.jsp");
+        return forward("/module/siadap/summaryBoard.jsp");
 
     }
 

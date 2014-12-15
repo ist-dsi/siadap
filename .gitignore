@@ -16,3 +16,4 @@ bin/
 #JasperReports iReport backup files
 src/main/jasperreports/*.bak
 .settings
+/output

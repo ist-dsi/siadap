@@ -27,13 +27,12 @@ package module.siadap.activities;
 import module.siadap.domain.Siadap;
 import module.siadap.domain.SiadapProcess;
 import module.siadap.domain.SiadapProcessStateEnum;
-import module.siadap.domain.SiadapRootModule;
 import module.workflow.activities.ActivityInformation;
 import module.workflow.activities.WorkflowActivity;
 
+import org.fenixedu.bennu.core.domain.User;
+import org.fenixedu.bennu.core.groups.DynamicGroup;
 import org.joda.time.LocalDate;
-
-import pt.ist.bennu.core.domain.User;
 
 /**
  * 
@@ -49,8 +48,7 @@ public class SendToReviewCommission extends WorkflowActivity<SiadapProcess, Acti
         if (!process.isActive()) {
             return false;
         }
-        int year = process.getSiadap().getYear();
-        if (SiadapRootModule.getInstance().getSiadapCCAGroup().isMember(user)
+        if (DynamicGroup.get("SiadapCCAGroup").isMember(user)
                 && (process.getSiadap().getState().equals(SiadapProcessStateEnum.VALIDATION_ACKNOWLEDGED) || process.getSiadap()
                         .getState().equals(SiadapProcessStateEnum.WAITING_HOMOLOGATION))) {
             return true;

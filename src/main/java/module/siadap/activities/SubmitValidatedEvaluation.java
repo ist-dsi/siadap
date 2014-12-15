@@ -25,7 +25,6 @@
 package module.siadap.activities;
 
 import java.util.ArrayList;
-import java.util.Collections;
 
 import module.organization.domain.Person;
 import module.siadap.domain.Siadap;
@@ -34,11 +33,8 @@ import module.siadap.domain.SiadapProcessStateEnum;
 import module.workflow.activities.ActivityInformation;
 import module.workflow.activities.WorkflowActivity;
 
+import org.fenixedu.bennu.core.domain.User;
 import org.joda.time.LocalDate;
-
-import pt.ist.bennu.core.domain.User;
-import pt.ist.bennu.core.domain.VirtualHost;
-import pt.ist.emailNotifier.domain.Email;
 
 /**
  * 
@@ -83,7 +79,7 @@ public class SubmitValidatedEvaluation extends WorkflowActivity<SiadapProcess, A
 
         try {
             SiadapProcess.checkEmailExistenceImportAndWarnOnError(evaluatedPerson);
-            emailEvaluated = Siadap.getRemoteEmail(evaluatedPerson);
+            emailEvaluated = evaluatedPerson.getUser().getProfile().getEmail();
 
             if (emailEvaluated != null) {
                 toAddress.add(emailEvaluated);
@@ -96,10 +92,10 @@ public class SubmitValidatedEvaluation extends WorkflowActivity<SiadapProcess, A
                 body.append("\n\n---\n");
                 body.append("Esta mensagem foi enviada por meio das Aplicações Centrais do IST.\n");
 
-                final VirtualHost virtualHost = VirtualHost.getVirtualHostForThread();
-                new Email(virtualHost.getApplicationSubTitle().getContent(), virtualHost.getSystemEmailAddress(),
-                        new String[] {}, toAddress, ccAddress, Collections.EMPTY_LIST, "SIADAP - " + year
-                        + " Nota final disponível", body.toString());
+                throw new Error("Reimplement this");
+//                new Email(virtualHost.getApplicationSubTitle().getContent(), virtualHost.getSystemEmailAddress(),
+//                        new String[] {}, toAddress, ccAddress, Collections.EMPTY_LIST, "SIADAP - " + year
+//                        + " Nota final disponível", body.toString());
             }
         } catch (Throwable ex) {
             System.out.println("Unable to lookup email address for: " + evaluatedPerson.getUser().getUsername() + " Error: "

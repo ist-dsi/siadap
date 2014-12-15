@@ -182,7 +182,7 @@ $P{personSiadapWrapper}.getCareerName() : $R{competenceType.notDefined}]]></text
 					<textElement verticalAlignment="Middle">
 						<font/>
 					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[$P{documentGeneratedDate}.toString("dd/MM/yyyy HH:mm:ss") + " - " + $P{generationMotive} + " - " + pt.ist.bennu.core.applicationTier.Authenticate.UserView.getCurrentUser().getPerson().getPresentationName()]]></textFieldExpression>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$P{documentGeneratedDate}.toString("dd/MM/yyyy HH:mm:ss") + " - " + $P{generationMotive} + " - " + org.fenixedu.bennu.core.security.Authenticate.getUser().getPerson().getPresentationName()]]></textFieldExpression>
 				</textField>
 				<staticText>
 					<reportElement
@@ -929,7 +929,7 @@ $P{personSiadapWrapper}.getCareerName() : $R{competenceType.notDefined}]]></text
 					<textElement textAlignment="Right">
 						<font/>
 					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA["(" + $P{process}.getProcessNumber() + ") - " + $P{documentGeneratedDate}.toString("dd/MM/yyyy HH:mm:ss") + " - " + $P{generationMotive} + " - " + pt.ist.bennu.core.applicationTier.Authenticate.UserView.getCurrentUser().getUsername() +  "  Pág. " + $V{PAGE_NUMBER} + " de "]]></textFieldExpression>
+				<textFieldExpression   class="java.lang.String"><![CDATA["(" + $P{process}.getProcessNumber() + ") - " + $P{documentGeneratedDate}.toString("dd/MM/yyyy HH:mm:ss") + " - " + $P{generationMotive} + " - " + org.fenixedu.bennu.core.security.Authenticate.getUser().getUsername() +  "  Pág. " + $V{PAGE_NUMBER} + " de "]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Report" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
@@ -959,7 +959,7 @@ $P{personSiadapWrapper}.getCareerName() : $R{competenceType.notDefined}]]></text
 					<textElement textAlignment="Right">
 						<font/>
 					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA["(" + $P{process}.getProcessNumber() + ") - " + $P{documentGeneratedDate}.toString("dd/MM/yyyy HH:mm:ss") + " - " + $P{generationMotive} + " - " + pt.ist.bennu.core.applicationTier.Authenticate.UserView.getCurrentUser().getUsername() +  "  Pág. " + $V{PAGE_NUMBER} + " de "]]></textFieldExpression>
+				<textFieldExpression   class="java.lang.String"><![CDATA["(" + $P{process}.getProcessNumber() + ") - " + $P{documentGeneratedDate}.toString("dd/MM/yyyy HH:mm:ss") + " - " + $P{generationMotive} + " - " + org.fenixedu.bennu.core.security.Authenticate.getUser().getUsername() +  "  Pág. " + $V{PAGE_NUMBER} + " de "]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Report" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement

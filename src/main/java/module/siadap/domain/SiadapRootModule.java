@@ -36,12 +36,10 @@ import module.organization.domain.PartyType;
 import module.organization.domain.Person;
 import module.organization.domain.Unit;
 import module.siadap.domain.exceptions.SiadapException;
-import module.siadap.domain.groups.SiadapCCAGroup;
-import module.siadap.domain.groups.SiadapScheduleEditorsGroup;
-import module.siadap.domain.groups.SiadapStructureManagementGroup;
 import module.siadap.domain.wrappers.PersonSiadapWrapper;
 import module.siadap.domain.wrappers.UnitSiadapWrapper;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFCellStyle;
 import org.apache.poi.hssf.usermodel.HSSFFont;
@@ -60,17 +58,14 @@ import org.apache.poi.ss.usermodel.Font;
 import org.apache.poi.ss.usermodel.PrintSetup;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.util.CellRangeAddress;
-import org.apache.poi.util.IOUtils;
+import org.apache.xmlbeans.impl.xb.xsdschema.NamedGroup;
+import org.fenixedu.bennu.core.domain.Bennu;
+import org.fenixedu.bennu.core.domain.User;
+import org.fenixedu.bennu.core.groups.DynamicGroup;
+import org.fenixedu.bennu.core.security.Authenticate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import pt.ist.bennu.core.applicationTier.Authenticate.UserView;
-import pt.ist.bennu.core.domain.ModuleInitializer;
-import pt.ist.bennu.core.domain.MyOrg;
-import pt.ist.bennu.core.domain.User;
-import pt.ist.bennu.core.domain.groups.NamedGroup;
-import pt.ist.bennu.core.domain.groups.PersistentGroup;
-import pt.ist.bennu.core.domain.groups.UnionGroup;
 import pt.ist.fenixframework.Atomic;
 
 /**
@@ -80,7 +75,7 @@ import pt.ist.fenixframework.Atomic;
  * @author Paulo Abrantes
  * 
  */
-public class SiadapRootModule extends SiadapRootModule_Base implements ModuleInitializer {
+public class SiadapRootModule extends SiadapRootModule_Base {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(SiadapRootModule.class);
 
@@ -100,7 +95,7 @@ public class SiadapRootModule extends SiadapRootModule_Base implements ModuleIni
             istLogoBytes = IOUtils.toByteArray(is);
             is.close();
         } catch (IOException e) {
-            throw new SiadapException("error.loading.logo", e);
+            throw new SiadapException(e, "error.loading.logo");
         }
 
         // TODO SIADAP-155
@@ -110,7 +105,7 @@ public class SiadapRootModule extends SiadapRootModule_Base implements ModuleIni
 
     private SiadapRootModule() {
         super();
-        setMyOrg(MyOrg.getInstance());
+        setBennu(Bennu.getInstance());
         setNumber(0);
     }
 
@@ -122,45 +117,8 @@ public class SiadapRootModule extends SiadapRootModule_Base implements ModuleIni
         if (!isInitialized) {
             initialize();
         }
-        final MyOrg myOrg = MyOrg.getInstance();
-        return myOrg.getSiadapRootModule();
-    }
-
-    @Override
-    public void init(MyOrg root) {
-        if (getSiadapTestUserGroup() == null) {
-            initializeSiadapGroups(root);
-        }
-        // migrateDataToNewSiadapEvaluationUniverseClass();
-        migrateDataSoThatTheYearsHaveNewPonderationPercentages();
-        // migrateCurrentObjectiveVersion();
-    }
-
-    // private void migrateCurrentObjectiveVersion() {
-    // int counter = 0;
-    // for (Siadap siadap : getSiadaps()) {
-    // SiadapEvaluationUniverse defaultSiadapEvaluationUniverse =
-    // siadap.getDefaultSiadapEvaluationUniverse();
-    // Integer currentObjectiveVersion = siadap.getCurrentObjectiveVersion();
-    // if (defaultSiadapEvaluationUniverse != null &&
-    // defaultSiadapEvaluationUniverse.getCurrentObjectiveVersion() == null
-    // && currentObjectiveVersion != null) {
-    // defaultSiadapEvaluationUniverse.setCurrentObjectiveVersion(currentObjectiveVersion);
-    // counter++;
-    // }
-    // }
-    // LOGGER.warn("Migrated " + counter +
-    // " SIADAP's current objective versions");
-    //
-    // }
-
-    private void migrateDataSoThatTheYearsHaveNewPonderationPercentages() {
-        for (SiadapYearConfiguration siadapYearConfiguration : getYearConfigurations()) {
-            if (siadapYearConfiguration.initializePonderationsIfNeeded()) {
-                LOGGER.warn("MIGRATED SiadapYearConfiguration for year: " + siadapYearConfiguration.getYear());
-            }
-        }
-
+        final Bennu bennu = Bennu.getInstance();
+        return bennu.getSiadapRootModule();
     }
 
     /**
@@ -214,13 +172,13 @@ public class SiadapRootModule extends SiadapRootModule_Base implements ModuleIni
     public synchronized static void initialize() {
         if (!isInitialized) {
             try {
-                final MyOrg myOrg = MyOrg.getInstance();
-                final SiadapRootModule system = myOrg.getSiadapRootModule();
+                final Bennu bennu = Bennu.getInstance();
+                final SiadapRootModule system = bennu.getSiadapRootModule();
                 if (system == null) {
                     new SiadapRootModule();
                 }
                 init = new ThreadLocal<SiadapRootModule>();
-                init.set(myOrg.getSiadapRootModule());
+                init.set(bennu.getSiadapRootModule());
 
                 isInitialized = true;
             } finally {
@@ -230,72 +188,8 @@ public class SiadapRootModule extends SiadapRootModule_Base implements ModuleIni
 
     }
 
-    /*
-     * private static void migrateDataToNewSiadapEvaluationUniverseClass() {
-     * //let's do the migration to all of the Siadaps that we find
-     * SiadapRootModule siadapRootModule = getInstance();
-     * 
-     * int siadapsMigrated = 0; for (Siadap siadap :
-     * siadapRootModule.getSiadaps()) { //let's create a new
-     * SiadapEvaluationUniverse, if we have none List<SiadapEvaluationUniverse>
-     * siadapEvaluationUniverses = siadap.getSiadapEvaluationUniverses(); //we
-     * only migrate the ones that we need to if (siadapEvaluationUniverses ==
-     * null || siadapEvaluationUniverses.size() == 0) {
-     * LOGGER.info("Migrating some data"); siadapsMigrated++;
-     * SiadapEvaluationUniverse siadapEvaluationUniverse = new
-     * SiadapEvaluationUniverse(siadap, siadap.getSiadapUniverse(), true);
-     * 
-     * //now let's migrate the rest of the items
-     * 
-     * //SIADAPEvaluationItems for (SiadapEvaluationItem siadapEvaluationItem :
-     * siadap.getSiadapEvaluationItems()) {
-     * siadapEvaluationUniverse.addSiadapEvaluationItems(siadapEvaluationItem);
-     * }
-     * 
-     * //SIADAPAutoEvaluation SiadapAutoEvaluation autoEvaluationData =
-     * siadap.getAutoEvaluationData();
-     * 
-     * siadapEvaluationUniverse.setSiadapAutoEvaluation(autoEvaluationData);
-     * 
-     * //SIADAPEvaluation SiadapEvaluation siadapEvaluation =
-     * siadap.getEvaluationData();
-     * siadapEvaluationUniverse.setSiadapEvaluation(siadapEvaluation); } }
-     * 
-     * LOGGER.warn("Migrated " + siadapsMigrated + " SIADAPs");
-     * 
-     * }
-     */
-
-    private void initializeSiadapGroups(MyOrg root) {
+    private void initializeSiadapGroups(Bennu root) {
         SiadapRootModule.getInstance();
-        for (PersistentGroup group : root.getPersistentGroups()) {
-            if (group instanceof NamedGroup) {
-                // init the named groups
-                if (((NamedGroup) group).getGroupName().equals(ImportTestUsers.groupName)) {
-                    // init the test user group
-                    setSiadapTestUserGroup((NamedGroup) group);
-                }
-            }
-        }
-
-        if (getSiadapTestUserGroup() == null) {
-            // TODO create it ?!
-        }
-        if (getSiadapCCAGroup() == null) {
-            setSiadapCCAGroup(new SiadapCCAGroup());
-        }
-        if (getSiadapScheduleEditorsGroup() == null) {
-            setSiadapScheduleEditorsGroup(new SiadapScheduleEditorsGroup());
-        }
-        if (getSiadapStructureManagementGroup() == null) {
-            setSiadapStructureManagementGroup(new SiadapStructureManagementGroup());
-        }
-        if (getStatisticsAccessUnionGroup() == null) {
-            setStatisticsAccessUnionGroup(new UnionGroup(
-                    pt.ist.bennu.core.domain.groups.Role.getRole(pt.ist.bennu.core.domain.RoleType.MANAGER),
-                    getSiadapScheduleEditorsGroup(), getSiadapCCAGroup(), getSiadapStructureManagementGroup()));
-        }
-
     }
 
     public Integer getNumberAndIncrement() {
@@ -343,10 +237,10 @@ public class SiadapRootModule extends SiadapRootModule_Base implements ModuleIni
      */
     public HSSFWorkbook exportSIADAPHierarchy(int year, boolean shouldIncludeEndOfRole, boolean includeHarmonizationResponsibles,
             boolean shouldIncludeUniverse) {
-        User user = UserView.getCurrentUser();
+        User user = Authenticate.getUser();
 
         // let's first verify the current user can actually get the information
-        if (!SiadapStructureManagementGroup.isMember(user, year)) {
+        if (!DynamicGroup.get("SiadapStructureManagementGroup").isMember(user)) {
             throw new SiadapException("user.not.allowed.to.access.data");
         }
 
@@ -359,7 +253,6 @@ public class SiadapRootModule extends SiadapRootModule_Base implements ModuleIni
         UnitSiadapWrapper wrappedUnit = new UnitSiadapWrapper(siadapStructureTopUnit, year);
 
         HSSFWorkbook hierarchyWorkbook = new HSSFWorkbook();
-        CreationHelper creationHelper = hierarchyWorkbook.getCreationHelper();
         HSSFSheet workingRelationWithQuotasSheet = hierarchyWorkbook.createSheet("Ordenação por Serviço (IST)");
         populateSheet(workingRelationWithQuotasSheet, true, wrappedUnit, hierarchyWorkbook, shouldIncludeEndOfRole,
                 includeHarmonizationResponsibles, shouldIncludeUniverse);

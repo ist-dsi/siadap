@@ -14,7 +14,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
-import javax.annotation.Nullable;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -23,7 +22,6 @@ import module.organization.domain.AccountabilityType;
 import module.organization.domain.Party;
 import module.organization.domain.Person;
 import module.organization.domain.Unit;
-import module.organization.presentationTier.actions.OrganizationModelAction;
 import module.siadap.domain.Siadap;
 import module.siadap.domain.SiadapProcessStateEnum;
 import module.siadap.domain.SiadapRootModule;
@@ -35,17 +33,20 @@ import module.siadap.domain.wrappers.SiadapYearWrapper;
 import module.siadap.domain.wrappers.UnitSiadapWrapper;
 import module.siadap.presentationTier.renderers.providers.SiadapYearsFromExistingSiadapConfigurations;
 
+import org.antlr.v4.runtime.misc.Nullable;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
+import org.fenixedu.bennu.core.i18n.BundleUtil;
+import org.fenixedu.bennu.core.presentationTier.component.OrganizationChart;
+import org.fenixedu.bennu.core.util.VariantBean;
+import org.fenixedu.bennu.struts.annotations.Mapping;
+import org.fenixedu.bennu.struts.base.BaseAction;
+import org.fenixedu.bennu.struts.portal.EntryPoint;
+import org.fenixedu.bennu.struts.portal.StrutsFunctionality;
 import org.joda.time.LocalDate;
 
-import pt.ist.bennu.core.presentationTier.actions.ContextBaseAction;
-import pt.ist.bennu.core.presentationTier.component.OrganizationChart;
-import pt.ist.bennu.core.util.BundleUtil;
-import pt.ist.bennu.core.util.VariantBean;
 import pt.ist.fenixWebFramework.renderers.utils.RenderUtils;
-import pt.ist.fenixWebFramework.struts.annotations.Mapping;
 import pt.utl.ist.fenix.tools.spreadsheet.SheetData;
 import pt.utl.ist.fenix.tools.spreadsheet.SpreadsheetBuilder;
 import pt.utl.ist.fenix.tools.spreadsheet.WorkbookExportFormat;
@@ -53,6 +54,7 @@ import pt.utl.ist.fenix.tools.spreadsheet.WorkbookExportFormat;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Collections2;
 
+@StrutsFunctionality(app = SiadapManagement.class, path = "unitManagementInterface", titleKey = "link.unitManagementInterface", accessGroup = "#managers")
 @Mapping(path = "/unitManagementInterface")
 /**
  * 
@@ -65,15 +67,7 @@ import com.google.common.collect.Collections2;
  * 
  * 
  */
-public class UnitManagementInterfaceAction extends ContextBaseAction {
-
-    @Override
-    public ActionForward execute(final ActionMapping mapping, final ActionForm form, final HttpServletRequest request,
-            final HttpServletResponse response) throws Exception {
-        final ActionForward forward = super.execute(mapping, form, request, response);
-        OrganizationModelAction.addHeadToLayoutContext(request);
-        return forward;
-    }
+public class UnitManagementInterfaceAction extends BaseAction {
 
     public static enum Mode {
         REGULAR_UNIT_MODE {
@@ -120,7 +114,7 @@ public class UnitManagementInterfaceAction extends ContextBaseAction {
 
             @Override
             public String getLabelActivePersons() {
-                return BundleUtil.getStringFromResourceBundle(Siadap.SIADAP_BUNDLE_STRING,
+                return BundleUtil.getString(Siadap.SIADAP_BUNDLE_STRING,
                         "label.unitManagementInterface.harmonizedActivePersons");
             }
 
@@ -255,6 +249,7 @@ public class UnitManagementInterfaceAction extends ContextBaseAction {
         return null;
     }
 
+    @EntryPoint
     public ActionForward showUnit(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response)
             throws Exception {
 
@@ -290,7 +285,7 @@ public class UnitManagementInterfaceAction extends ContextBaseAction {
         SiadapYearConfiguration configuration = siadapYearWrapper.getSiadapYearConfiguration();
 
         if (configuration == null) {
-            return forward(request, "/module/siadap/unitManagement/showUnit.jsp");
+            return forward("/module/siadap/unitManagement/showUnit.jsp");
         }
         request.setAttribute("configuration", configuration);
 
@@ -363,7 +358,7 @@ public class UnitManagementInterfaceAction extends ContextBaseAction {
         VariantBean bean = new VariantBean();
         request.setAttribute("bean", bean);
 
-        return forward(request, "/module/siadap/unitManagement/showUnit.jsp");
+        return forward("/module/siadap/unitManagement/showUnit.jsp");
     }
 
 }

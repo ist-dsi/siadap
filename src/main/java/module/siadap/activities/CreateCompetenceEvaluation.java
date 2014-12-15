@@ -24,17 +24,15 @@
  */
 package module.siadap.activities;
 
-import java.util.ResourceBundle;
-
 import module.siadap.domain.Competence;
 import module.siadap.domain.CompetenceEvaluation;
 import module.siadap.domain.Siadap;
 import module.siadap.domain.SiadapProcess;
+import module.siadap.domain.exceptions.SiadapException;
 import module.workflow.activities.ActivityInformation;
 import module.workflow.activities.WorkflowActivity;
-import pt.ist.bennu.core.domain.User;
-import pt.ist.bennu.core.domain.exceptions.DomainException;
-import pt.utl.ist.fenix.tools.util.i18n.Language;
+
+import org.fenixedu.bennu.core.domain.User;
 
 /**
  * 
@@ -79,8 +77,7 @@ public class CreateCompetenceEvaluation extends
             nrRequiredItems = Integer.MAX_VALUE;
         }
         if (activityInformation.getCompetences().size() < nrRequiredItems) {
-            throw new DomainException("renderers.validator.invalid.nrCompetences", ResourceBundle.getBundle(
-                    "resources/SiadapResources", Language.getLocale()), Integer.toString(nrRequiredItems));
+            throw new SiadapException("renderers.validator.invalid.nrCompetences", Integer.toString(nrRequiredItems));
         }
         for (Competence competence : activityInformation.getCompetences()) {
             new CompetenceEvaluation(activityInformation.getSiadap(), competence);

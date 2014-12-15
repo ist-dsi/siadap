@@ -29,27 +29,23 @@ import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
-import javax.annotation.Nullable;
-
 import jvstm.cps.ConsistencyPredicate;
 import module.organization.domain.Person;
 import module.organization.domain.Unit;
-import module.siadap.domain.groups.SiadapCCAGroup;
-import module.siadap.domain.groups.SiadapStructureManagementGroup;
 import module.siadap.domain.wrappers.PersonSiadapWrapper;
 import module.siadap.domain.wrappers.UnitSiadapWrapper;
 
+import org.antlr.v4.runtime.misc.Nullable;
 import org.apache.commons.lang.StringUtils;
+import org.apache.xmlbeans.impl.xb.xsdschema.NamedGroup;
+import org.fenixedu.bennu.core.domain.Bennu;
+import org.fenixedu.bennu.core.domain.User;
+import org.fenixedu.bennu.core.security.Authenticate;
 import org.jfree.data.time.Month;
 import org.joda.time.LocalDate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import pt.ist.bennu.core.applicationTier.Authenticate.UserView;
-import pt.ist.bennu.core.domain.MyOrg;
-import pt.ist.bennu.core.domain.User;
-import pt.ist.bennu.core.domain.groups.NamedGroup;
-import pt.ist.bennu.core.domain.groups.PersistentGroup;
 import pt.ist.fenixframework.Atomic;
 
 import com.google.common.base.Predicate;
@@ -74,32 +70,11 @@ public class SiadapYearConfiguration extends SiadapYearConfiguration_Base {
     //    public static final Double MAXIMUM_HIGH_GRADE_QUOTA = 25.0;
     //    public static final Double MAXIMUM_EXCELLENCY_GRADE_QUOTA = 5.0; // 1.25; //
 
-    private static final String CCA_MEMBERS_GROUPNAME = "CCA Members";
-    private static final String HOMOLOGATION_MEMBERS_GROUPNAME = "Homologation Members";
-
-    private static SiadapCCAGroup ccaMembersGroup;
-    private static SiadapStructureManagementGroup siadapStructureManagementGroup;
-
     private static final Logger LOGGER = LoggerFactory.getLogger(SiadapYearConfiguration.class);
-
-    public static SiadapCCAGroup getCcaMembersGroup() {
-        initGroups();
-        return ccaMembersGroup;
-    }
-
-    public static PersistentGroup getStructureManagementGroup() {
-        initGroups();
-        return SiadapRootModule.getInstance().getSiadapStructureManagementGroup();
-    }
-
-    public static NamedGroup getHomologationMembersGroup() {
-        initGroups();
-        return homologationMembersGroup;
-    }
 
     public static int getNextYear() {
         int nextYear = -1;
-        for (SiadapYearConfiguration configuration : MyOrg.getInstance().getSiadapRootModule().getYearConfigurations()) {
+        for (SiadapYearConfiguration configuration : Bennu.getInstance().getSiadapRootModule().getYearConfigurations()) {
             int endYear = configuration.getBiannual() ? configuration.getYear() + 1 : configuration.getYear();
             endYear += 1;
             if (endYear > nextYear) {
@@ -149,64 +124,6 @@ public class SiadapYearConfiguration extends SiadapYearConfiguration_Base {
 
     private static NamedGroup homologationMembersGroup;
     private static boolean groupsInitialized = false;
-
-    private static void initGroups() {
-        if (groupsInitialized) {
-            return;
-        }
-        //get the ccaMembersGroup
-        for (PersistentGroup group : MyOrg.getInstance().getPersistentGroups()) {
-            if (group instanceof SiadapCCAGroup) {
-                ccaMembersGroup = (SiadapCCAGroup) group;
-            }
-        }
-        //let us create the group if we haven't found it
-        if (ccaMembersGroup == null) {
-            createCCAMembersGroup();
-        }
-
-        //get the homologationMembersGroup
-        for (PersistentGroup group : MyOrg.getInstance().getPersistentGroups()) {
-            if (group instanceof NamedGroup) {
-                if (((NamedGroup) group).getName().equals(HOMOLOGATION_MEMBERS_GROUPNAME)) {
-                    homologationMembersGroup = (NamedGroup) group;
-                }
-            }
-        }
-        //let us create the group if we haven't found it
-        if (homologationMembersGroup == null) {
-            createHomologationMembersGroup();
-        }
-        if (siadapStructureManagementGroup == null) {
-            createStructureManagementGroup();
-        }
-        groupsInitialized = true;
-    }
-
-    @Atomic
-    private static void createStructureManagementGroup() {
-        siadapStructureManagementGroup = new SiadapStructureManagementGroup();
-    }
-
-    @Atomic
-    private static void createHomologationMembersGroup() {
-        homologationMembersGroup = new NamedGroup(HOMOLOGATION_MEMBERS_GROUPNAME);
-    }
-
-    @Atomic
-    private static void createCCAMembersGroup() {
-        ccaMembersGroup = new SiadapCCAGroup();
-    }
-
-    @Atomic
-    public static void addHomologationMember(User user) {
-        getHomologationMembersGroup().addUsers(user);
-    }
-
-    @Atomic
-    public static void removeHomologationMember(User user) {
-        getHomologationMembersGroup().removeUsers(user);
-    }
 
     // 5% of
 
@@ -480,7 +397,7 @@ public class SiadapYearConfiguration extends SiadapYearConfiguration_Base {
     }
 
     public boolean isCurrentUserMemberOfScheduleExtenders() {
-        return isPersonMemberOfScheduleExtenders(UserView.getCurrentUser().getPerson());
+        return isPersonMemberOfScheduleExtenders(Authenticate.getUser().getPerson());
 
     }
 
@@ -493,11 +410,11 @@ public class SiadapYearConfiguration extends SiadapYearConfiguration_Base {
     }
 
     public boolean isCurrentUserMemberOfCCA() {
-        return isPersonMemberOfCCA(UserView.getCurrentUser().getPerson());
+        return isPersonMemberOfCCA(Authenticate.getUser().getPerson());
     }
 
     public boolean isCurrentUserMemberOfStructureManagementGroup() {
-        return isPersonMemberOfStructureManagementGroup(UserView.getCurrentUser().getPerson());
+        return isPersonMemberOfStructureManagementGroup(Authenticate.getUser().getPerson());
     }
 
     public boolean isUserMemberOfStructureManagementGroup(User user) {
@@ -538,7 +455,7 @@ public class SiadapYearConfiguration extends SiadapYearConfiguration_Base {
     }
 
     public boolean isCurrentUserResponsibleForHomologation() {
-        return isPersonResponsibleForHomologation(UserView.getCurrentUser().getPerson());
+        return isPersonResponsibleForHomologation(Authenticate.getUser().getPerson());
     }
 
     //    public List<ExceedingQuotaProposal> getSuggestionsForUnit(Unit unit, ExceedingQuotaSuggestionType type) {

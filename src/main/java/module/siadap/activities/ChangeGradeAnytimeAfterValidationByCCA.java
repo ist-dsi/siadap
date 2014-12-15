@@ -17,9 +17,8 @@ import module.workflow.activities.ActivityInformation;
 import module.workflow.activities.WorkflowActivity;
 
 import org.apache.commons.lang.StringUtils;
-
-import pt.ist.bennu.core.domain.User;
-import pt.ist.bennu.core.util.BundleUtil;
+import org.fenixedu.bennu.core.domain.User;
+import org.fenixedu.bennu.core.i18n.BundleUtil;
 
 /**
  * @author João Antunes (joao.antunes@tagus.ist.utl.pt) - 12 de Abr de 2012
@@ -98,13 +97,13 @@ public class ChangeGradeAnytimeAfterValidationByCCA extends
                     stringToReturn = "";
                 }
                 String currentExcellencyAwardString =
-                        BundleUtil.getStringFromResourceBundle("resources/MyorgResources",
+                        BundleUtil.getString("resources/MyorgResources",
                                 String.valueOf(gradePerUniverseBean.getSiadapEvaluationUniverse().getCurrentExcellencyAward()));
                 String newExcellencyAwardString =
-                        BundleUtil.getStringFromResourceBundle("resources/MyorgResources",
+                        BundleUtil.getString("resources/MyorgResources",
                                 String.valueOf(gradePerUniverseBean.isAssignExcellency()));
                 stringToReturn +=
-                        BundleUtil.getFormattedStringFromResourceBundle(getUsedBundle(),
+                        BundleUtil.getString(getUsedBundle(),
                                 "label.description.module.siadap.activities.ChangeGradeAnytimeAfterValidationByCCA.gradeChange",
                                 gradePerUniverseBean.getSiadapEvaluationUniverse().getSiadapUniverse().getLocalizedName(),
                                 gradePerUniverseBean.getSiadapEvaluationUniverse().getCurrentGrade().toString(),

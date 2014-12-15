@@ -29,7 +29,6 @@ import java.util.Comparator;
 
 import module.siadap.domain.exceptions.SiadapException;
 import module.siadap.domain.scoring.IScoring;
-import pt.ist.bennu.core.domain.exceptions.DomainException;
 
 /**
  * 
@@ -107,8 +106,7 @@ public class ObjectiveEvaluation extends ObjectiveEvaluation_Base {
             sum = sum.add(indicator.getPonderationFactor());
         }
         if (sum.add(ponderationFactor).compareTo(BigDecimal.ONE) > 0) {
-            throw new DomainException("error.ponderation.cannot.be.over.100",
-                    DomainException.getResourceFor("resources/SiadapResources"));
+            throw new SiadapException("resources/SiadapResources", "error.ponderation.cannot.be.over.100");
         }
         checkSizeOfIndicators();
         new ObjectiveEvaluationIndicator(this, measurementIndicator, superationCriteria, ponderationFactor);

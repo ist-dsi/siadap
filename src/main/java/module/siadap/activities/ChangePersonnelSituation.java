@@ -31,9 +31,9 @@ import module.siadap.domain.SiadapUniverse;
 import module.siadap.domain.SiadapYearConfiguration;
 import module.workflow.activities.ActivityInformation;
 import module.workflow.activities.WorkflowActivity;
-import pt.ist.bennu.core.domain.RoleType;
-import pt.ist.bennu.core.domain.User;
-import pt.ist.bennu.core.domain.groups.Role;
+
+import org.fenixedu.bennu.core.domain.User;
+import org.fenixedu.bennu.core.groups.DynamicGroup;
 
 /**
  * 
@@ -59,7 +59,7 @@ public class ChangePersonnelSituation extends WorkflowActivity<SiadapProcess, Ch
             return false;
         }
         SiadapYearConfiguration configuration = SiadapYearConfiguration.getSiadapYearConfiguration(process.getSiadap().getYear());
-        return Role.getRole(RoleType.MANAGER).isMember(user) || configuration.isUserMemberOfStructureManagementGroup(user);
+        return DynamicGroup.get("managers").isMember(user) || configuration.isUserMemberOfStructureManagementGroup(user);
     }
 
     @Override
