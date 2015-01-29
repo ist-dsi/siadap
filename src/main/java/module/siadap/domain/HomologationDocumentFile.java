@@ -66,7 +66,7 @@ public class HomologationDocumentFile extends HomologationDocumentFile_Base {
         ArrayList<WorkflowLog> orderedExecutionLogs = new ArrayList<WorkflowLog>(process.getExecutionLogs());
         Collections.sort(orderedExecutionLogs, WorkflowLog.COMPARATOR_BY_WHEN);
         paramMap.put("logs", orderedExecutionLogs);
-        paramMap.put("logoFilename", "Logo_" + CoreConfiguration.getConfiguration().applicationUrl() + ".png");
+        paramMap.put("logoFilename", "Logo.png");
 
         try {
             return ReportUtils.exportToPdfFileAsByteArray("/reports/siadapProcessDocument.jasper", paramMap, resourceBundle,

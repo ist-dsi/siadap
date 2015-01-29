@@ -21,13 +21,19 @@ import net.sf.jasperreports.engine.JasperPrint;
 import net.sf.jasperreports.engine.JasperReport;
 import net.sf.jasperreports.engine.export.JRPdfExporter;
 import net.sf.jasperreports.engine.export.JRPrintServiceExporterParameter;
+import net.sf.jasperreports.engine.fill.JRSubreportRunnerFactory;
 import net.sf.jasperreports.engine.util.JRLoader;
+import net.sf.jasperreports.engine.util.JRProperties;
 
 import org.apache.commons.lang.StringUtils;
 
 import pt.utl.ist.fenix.tools.util.PropertiesManager;
 
 public class ReportUtils extends PropertiesManager {
+
+    static {
+        JRProperties.setProperty(JRSubreportRunnerFactory.SUBREPORT_RUNNER_FACTORY, JRTxThreadSubreportRunnerFactory.class.getName());
+    }
 
     static final private Map<String, JasperReport> reportsMap = new ConcurrentHashMap<String, JasperReport>();
 
