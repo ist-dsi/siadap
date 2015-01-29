@@ -32,9 +32,8 @@ import module.siadap.domain.SiadapYearConfiguration;
 import module.siadap.presentationTier.renderers.providers.SiadapYearsFromExistingSiadapConfigurations;
 
 import org.apache.commons.lang.ObjectUtils;
+import org.fenixedu.bennu.core.i18n.BundleUtil;
 import org.joda.time.LocalDate;
-
-import pt.ist.bennu.core.util.BundleUtil;
 
 /**
  * The purpose of this class is to provide to the interface a bean with the year
@@ -122,7 +121,7 @@ public class SiadapYearWrapper implements Serializable, Comparable<SiadapYearWra
     }
 
     public static String getNewYearLabel() {
-        return BundleUtil.getFormattedStringFromResourceBundle(Siadap.SIADAP_BUNDLE_STRING, NEW);
+        return BundleUtil.getString(Siadap.SIADAP_BUNDLE_STRING, NEW);
     }
 
 }

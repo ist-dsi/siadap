@@ -24,7 +24,8 @@
  */
 package module.siadap.domain;
 
-import pt.ist.bennu.core.util.BundleUtil;
+import org.fenixedu.bennu.core.i18n.BundleUtil;
+
 import pt.ist.fenixWebFramework.rendererExtensions.util.IPresentableEnum;
 
 /**
@@ -39,7 +40,7 @@ public enum SiadapEvaluationObjectivesType implements IPresentableEnum {
 
     @Override
     public String getLocalizedName() {
-        return BundleUtil.getStringFromResourceBundle("resources/SiadapResources", getClass().getName() + "." + name());
+        return BundleUtil.getString("resources/SiadapResources", getClass().getName() + "." + name());
     }
 
 }

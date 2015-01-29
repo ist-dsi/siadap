@@ -108,8 +108,8 @@ public class SiadapMiscUtilClass {
      * It is useful to get the previous to the last day due to the fact that an
      * accountability is considered not active in the last day
      * 
-     * @param year
-     * @return
+     * @param year year
+     * @return LocalDate
      */
     public static LocalDate lastDayOfYearWhereAccsAreActive(int year) {
         SiadapYearConfiguration configuration = SiadapYearConfiguration.getSiadapYearConfiguration(year);

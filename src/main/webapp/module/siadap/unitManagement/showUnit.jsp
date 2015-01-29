@@ -1,3 +1,4 @@
+<%@page import="org.fenixedu.bennu.core.domain.User"%>
 <%@page import="module.siadap.domain.wrappers.UnitSiadapWrapper"%>
 <%@page import="module.siadap.presentationTier.actions.UnitManagementInterfaceAction.Mode"%>
 <%@page import="module.siadap.presentationTier.actions.UnitManagementInterfaceAction"%>
@@ -241,8 +242,10 @@ int j =0;
 				</h4>
 				<logic:notEmpty name="unitHarmonizers">
 					<logic:iterate id="unitHarmonizer" name="unitHarmonizers">
-						<bean:define id="urlUnitHarmonizer" type="java.lang.String">https://fenix.ist.utl.pt/publico/retrievePersonalPhoto.do?method=retrieveByUUID&amp;contentContextPath_PATH=/homepage&amp;uuid=<bean:write name="unitHarmonizer" property="user.username"/></bean:define>
-						<img src="<%= urlUnitHarmonizer %>">
+						<bean:define id="username" name="unitHarmonizer" property="user.username" type="java.lang.String"/>
+						<% if (User.findByUsername(username).getProfile() != null) { %>
+							<img src="<%= User.findByUsername(username).getProfile().getAvatarUrl() %>">
+						<% } %>
 					</logic:iterate>
 				</logic:notEmpty>
 					<logic:notEmpty name="unitHarmonizers">
@@ -319,8 +322,10 @@ int j =0;
 					<bean:message key="label.unit.responsible" bundle="SIADAP_RESOURCES"/>
 				</h4>
 				<logic:present name="unitResponsible">
-					<bean:define id="urlUnitResponsible" type="java.lang.String">https://fenix.ist.utl.pt/publico/retrievePersonalPhoto.do?method=retrieveByUUID&amp;contentContextPath_PATH=/homepage&amp;uuid=<bean:write name="unitResponsible" property="user.username"/></bean:define>
-					<img src="<%= urlUnitResponsible %>">
+					<bean:define id="username" name="unitResponsible" property="user.username" type="java.lang.String"/>
+					<% if (User.findByUsername(username).getProfile() != null) { %>
+						<img src="<%= User.findByUsername(username).getProfile().getAvatarUrl() %>">
+					<% } %>
 				</logic:present>
 				<p>
 					<logic:present name="unitResponsible">
@@ -368,8 +373,10 @@ int j =0;
 			<bean:define id="person" type="module.organization.domain.Person" name="personSiadapWrapper" property="person"/>
 			<tr>
 				<td>
-					<bean:define id="url" type="java.lang.String">https://fenix.ist.utl.pt/publico/retrievePersonalPhoto.do?method=retrieveByUUID&amp;contentContextPath_PATH=/homepage&amp;uuid=<bean:write name="person" property="user.username"/></bean:define>
-					<img src="<%= url %>">
+					<bean:define id="username" name="person" property="user.username" type="java.lang.String"/>
+					<% if (User.findByUsername(username).getProfile() != null) { %>
+						<img src="<%= User.findByUsername(username).getProfile().getAvatarUrl() %>">
+					<% } %>
 				</td>
 				<td>
 					<html:link page="<%= "/siadapPersonnelManagement.do?method=viewPerson&year=" + configuration.getYear() %>"

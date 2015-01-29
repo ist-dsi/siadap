@@ -11,13 +11,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import javax.annotation.Nullable;
-
 import module.organization.domain.Unit;
 import module.siadap.domain.SiadapYearConfiguration;
 import module.siadap.domain.wrappers.UnitSiadapWrapper;
-import pt.ist.bennu.core.presentationTier.renderers.autoCompleteProvider.AutoCompleteProvider;
-import pt.utl.ist.fenix.tools.util.StringNormalizer;
+
+import org.antlr.v4.runtime.misc.Nullable;
+import org.fenixedu.bennu.core.presentationTier.renderers.autoCompleteProvider.AutoCompleteProvider;
+import org.fenixedu.commons.StringNormalizer;
 
 import com.google.common.base.Function;
 import com.google.common.collect.Collections2;
@@ -30,14 +30,13 @@ import com.google.common.collect.Collections2;
 public class HarmonizationUnitAutoCompleteProvider implements AutoCompleteProvider {
 
     @Override
-    public Collection getSearchResults(Map<String, String> argsMap, String value, int maxCount) {
+    public Collection getSearchResults(Map argsMap, String value, int maxCount) {
         final List<Unit> units = new ArrayList<Unit>();
 
         final String trimmedValue = value.trim();
-        final String[] input = trimmedValue.split(" ");
-        StringNormalizer.normalize(input);
+        final String[] input = StringNormalizer.normalize(trimmedValue).split(" ");
 
-        for (final Unit unit : getParties(argsMap, value)) {
+        for (final Unit unit : getParties((Map<String, String>) argsMap, value)) {
             final String unitName = StringNormalizer.normalize(unit.getPartyName().getContent());
             if (hasMatch(input, unitName)) {
                 units.add(unit);

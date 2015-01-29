@@ -25,9 +25,9 @@
 package module.siadap.domain;
 
 import org.apache.commons.lang.StringUtils;
+import org.fenixedu.bennu.core.domain.User;
+import org.fenixedu.bennu.core.i18n.BundleUtil;
 
-import pt.ist.bennu.core.domain.User;
-import pt.ist.bennu.core.util.BundleUtil;
 import pt.ist.fenixWebFramework.rendererExtensions.util.IPresentableEnum;
 
 /**
@@ -77,13 +77,13 @@ public enum SiadapProcessStateEnum implements IPresentableEnum {
     private SiadapProcessStateEnum() {
     }
 
-    /**
+    /*
      * 
      * @return the String representing the state, used on the list of evaluated
      *         persons, currently prepareCreateSiadap.jsp
      */
     public static String getStateForListOfProcessesString(Siadap siadap) {
-        return BundleUtil.getStringFromResourceBundle("resources/SiadapResources", getState(siadap).getLabelPrefix());
+        return BundleUtil.getString("resources/SiadapResources", getState(siadap).getLabelPrefix());
     }
 
     public String getLabelPrefix() {
@@ -131,7 +131,7 @@ public enum SiadapProcessStateEnum implements IPresentableEnum {
     }
 
     public String getDescription() {
-        return BundleUtil.getStringFromResourceBundle("resources/SiadapResources", getLabelPrefix());
+        return BundleUtil.getString("resources/SiadapResources", getLabelPrefix());
     }
 
     public static SiadapProcessStateEnum getState(Siadap siadap) {
@@ -147,7 +147,7 @@ public enum SiadapProcessStateEnum implements IPresentableEnum {
         return state.ordinal() <= NOT_YET_SUBMITTED_FOR_ACK.ordinal();
     }
 
-    /**
+    /*
      * 
      * @param siadap
      * @param currentUser
@@ -156,11 +156,11 @@ public enum SiadapProcessStateEnum implements IPresentableEnum {
      */
     public static String getNextStep(Siadap siadap, User currentUser) {
         if (siadap.getEvaluator().getPerson().getUser().equals(currentUser)) {
-            return BundleUtil.getStringFromResourceBundle("resources/SiadapResources", getState(siadap).getLabelPrefix()
+            return BundleUtil.getString("resources/SiadapResources", getState(siadap).getLabelPrefix()
                     + ".nextstep.evaluator");
         }
         if (siadap.getEvaluated().getUser().equals(currentUser)) {
-            return BundleUtil.getStringFromResourceBundle("resources/SiadapResources", getState(siadap).getLabelPrefix()
+            return BundleUtil.getString("resources/SiadapResources", getState(siadap).getLabelPrefix()
                     + ".nextstep.evaluated");
         }
         return null;
@@ -169,7 +169,7 @@ public enum SiadapProcessStateEnum implements IPresentableEnum {
     @Override
     public String getLocalizedName() {
         if (getLabelPrefix() != null) {
-            return BundleUtil.getStringFromResourceBundle("resources/SiadapResources", getLabelPrefix());
+            return BundleUtil.getString("resources/SiadapResources", getLabelPrefix());
         } else {
             return StringUtils.EMPTY;
         }

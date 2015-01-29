@@ -26,7 +26,8 @@ package module.siadap.domain.scoring;
 
 import java.math.BigDecimal;
 
-import pt.ist.bennu.core.util.BundleUtil;
+import org.fenixedu.bennu.core.i18n.BundleUtil;
+
 import pt.ist.fenixWebFramework.rendererExtensions.util.IPresentableEnum;
 
 /**
@@ -74,7 +75,7 @@ public enum SiadapGlobalEvaluation implements IPresentableEnum, IScoring {
 
     @Override
     public String getLocalizedName() {
-        return BundleUtil.getStringFromResourceBundle("resources/SiadapResources", getClass().getName() + "." + name());
+        return BundleUtil.getString("resources/SiadapResources", getClass().getName() + "." + name());
     }
 
     public boolean accepts(BigDecimal totalEvaluationScoring, boolean excellencyAwarded) {

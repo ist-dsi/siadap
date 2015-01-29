@@ -1,6 +1,4 @@
 <%@page import="module.siadap.domain.util.SiadapStatisticsSummaryBoardUniversesEnum"%>
-<%@page import="module.siadap.presentationTier.vaadin.ListSiadapsComponent"%>
-<%@page import="pt.ist.vaadinframework.fragment.FragmentQuery"%>
 <%@page import="module.siadap.domain.scoring.SiadapGlobalEvaluation"%>
 <%@page import="module.siadap.domain.util.SiadapProcessCounter.NumberAndGradeCounter"%>
 <%@page import="java.util.HashMap"%>
@@ -34,14 +32,6 @@
 	HashMap<String, NumberAndGradeCounter> counterHashMap;
 	request.setAttribute("counter", counter);
 %>
-
-<%-- <logic:greaterThan name="counter" property="orCreateSiadapsNotListedSize" value="0">
-	<div class="infobox">
-		<p>Atenção, existem <%=counter.getOrCreateSiadapsNotListedSize()%> processos não incluidos nas listagens em baixo</p>
-		<p>Pode consultar esses casos <html:link page="<%="/vaadinContext.do?method=forwardToVaadin#" + 
-	new FragmentQuery(ListSiadapsComponent.class, String.valueOf(configuration.getYear()), ListSiadapsComponent.TypeOfList.SIADAPS_NOT_LISTED_IN_STATISTICS.name()).getQueryString() %>" target="_blank">aqui</html:link></p>
-	</div>
-</logic:greaterThan> --%>
 
 <%
 for (Boolean booleanKey : counter.getCountsByQuotaAndCategories().keySet())

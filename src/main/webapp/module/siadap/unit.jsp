@@ -1,3 +1,6 @@
+<%@page import="org.fenixedu.bennu.core.security.Authenticate"%>
+<%@page import="org.fenixedu.bennu.core.groups.DynamicGroup"%>
+<%@page import="org.fenixedu.bennu.core.domain.User"%>
 <%@page import="java.util.Map.Entry"%>
 <%@page import="module.siadap.presentationTier.renderers.providers.SiadapStateToShowInCount"%>
 <%@page import="org.joda.time.LocalDate"%>
@@ -138,31 +141,31 @@
 	</table>
 </div>
 
-<logic:present role="pt.ist.bennu.core.domain.RoleType.MANAGER">
+<% if (DynamicGroup.get("managers").isMember(Authenticate.getUser())) { %>
 	<p>Secção só apresentada a administrador, usar com cuidado</p>
 	<logic:present name="siadapsCount">
 		<p>SiadapsCount: <bean:write name="siadapsCount"/></p>
 	</logic:present>
-</logic:present>
+<% } %>
 <logic:present name="siadapsDefinitiveCount">
 <%	int siadapsDefinitiveCount = (Integer) request.getAttribute("siadapsDefinitiveCount"); %>
 	<logic:notEqual value="<%=String.valueOf(siadapTotalCount)%>" name="siadapsDefinitiveCount" >
 		<div class="highlightBox">
 			<p>Atenção, existem <%=siadapsDefinitiveCount - siadapTotalCount%> processos não listados</p>
-			<logic:present role="pt.ist.bennu.core.domain.RoleType.MANAGER">
+			<% if (DynamicGroup.get("managers").isMember(Authenticate.getUser())) { %>
 				<p>Secção só apresentada a administrador, usar com cuidado</p>
 				<html:link page="/siadapProcessCount.do?method=manageDuplicatePersons" paramId="year" paramName="year" >
 					<p>Número de pessoas duplicadas: <%=nrDuplicatedPersons%></p>
 				</html:link>
 				<p>siadapsDefinitiveCount: <bean:write name="siadapsDefinitiveCount"/></p>
-			</logic:present>
+			<% } %>
 			<html:link page="/siadapProcessCount.do?method=manageUnlistedUsers" paramId="year" paramName="year" >
 				<p>Gerir pessoas não listadas</p>
 			</html:link>
 		</div>
 	</logic:notEqual>
 </logic:present>
-<logic:present role="pt.ist.bennu.core.domain.RoleType.MANAGER">
+<% if (DynamicGroup.get("managers").isMember(Authenticate.getUser())) { %>
 	<p>Secção só apresentada a administrador, usar com cuidado</p>
 	<logic:present name="totalDefinitiveCount">
 		<logic:iterate id="stateEntry" name="totalDefinitiveCount" >
@@ -174,8 +177,7 @@
 	<html:link page="<%="/siadapProcessCount.do?method=manageDuplicateSiadaps&year=" + year %>">
 		<p>Gerir siadaps duplicados</p>
 	</html:link>
-</logic:present>
-
+<% } %>
 
 
 <%
@@ -269,8 +271,10 @@ int j =0;
 				</h4>
 				<logic:notEmpty name="unitHarmonizers">
 					<logic:iterate id="unitHarmonizer" name="unitHarmonizers">
-						<bean:define id="urlUnitHarmonizer" type="java.lang.String">https://fenix.ist.utl.pt/publico/retrievePersonalPhoto.do?method=retrieveByUUID&amp;contentContextPath_PATH=/homepage&amp;uuid=<bean:write name="unitHarmonizer" property="user.username"/></bean:define>
-						<img src="<%= urlUnitHarmonizer %>">
+						<bean:define id="username" name="unitHarmonizer" property="user.username" type="java.lang.String"/>
+						<% if (User.findByUsername(username).getProfile() != null) { %>
+							<img src="<%= User.findByUsername(username).getProfile().getAvatarUrl() %>">
+						<% } %>
 					</logic:iterate>
 				</logic:notEmpty>
 				<p>
@@ -295,8 +299,10 @@ int j =0;
 					<bean:message key="label.unit.responsible" bundle="SIADAP_RESOURCES"/>
 				</h4>
 				<logic:present name="unitResponsible">
-					<bean:define id="urlUnitResponsible" type="java.lang.String">https://fenix.ist.utl.pt/publico/retrievePersonalPhoto.do?method=retrieveByUUID&amp;contentContextPath_PATH=/homepage&amp;uuid=<bean:write name="unitResponsible" property="user.username"/></bean:define>
-					<img src="<%= urlUnitResponsible %>">
+					<bean:define id="username" name="unitResponsible" property="user.username" type="java.lang.String"/>
+					<% if (User.findByUsername(username).getProfile() != null) { %>
+						<img src="<%= User.findByUsername(username).getProfile().getAvatarUrl() %>">
+					<% } %>
 				</logic:present>
 					<logic:present name="unitResponsible">
 						<p>
@@ -346,8 +352,10 @@ int j =0;
 			%>
 			<tr>
 				<td>
-					<bean:define id="url" type="java.lang.String">https://fenix.ist.utl.pt/publico/retrievePersonalPhoto.do?method=retrieveByUUID&amp;contentContextPath_PATH=/homepage&amp;uuid=<bean:write name="person" property="user.username"/></bean:define>
-					<img src="<%= url %>">
+					<bean:define id="username" name="person" property="user.username" type="java.lang.String"/>
+					<% if (User.findByUsername(username).getProfile() != null) { %>
+						<img src="<%= User.findByUsername(username).getProfile().getAvatarUrl() %>">
+					<% } %>
 				</td>
 				<td>
 					<html:link page="<%= "/siadapPersonnelManagement.do?method=viewPerson&year=" + configuration.getYear() %>"

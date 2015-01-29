@@ -37,7 +37,6 @@ import module.siadap.domain.scoring.SiadapGlobalEvaluation;
 import org.apache.commons.collections.Predicate;
 import org.joda.time.LocalDate;
 
-import pt.ist.bennu.core.domain.exceptions.DomainException;
 import pt.ist.fenixframework.Atomic;
 
 /**
@@ -286,8 +285,7 @@ public class SiadapEvaluationUniverse extends SiadapEvaluationUniverse_Base {
         for (SiadapEvaluationItem evaluation : evaluations) {
             IScoring itemEvaluation = evaluation.getItemEvaluation();
             if (itemEvaluation == null) {
-                throw new DomainException("error.siadapEvaluation.mustFillAllItems",
-                        DomainException.getResourceFor("resources/SiadapResources"));
+                throw new SiadapException("resources/SiadapResources", "error.siadapEvaluation.mustFillAllItems");
             }
             result = result.add(itemEvaluation.getPoints());
         }
@@ -305,20 +303,6 @@ public class SiadapEvaluationUniverse extends SiadapEvaluationUniverse_Base {
         return result.setScale(PRECISION, ROUND_MODE);
     }
 
-    /**
-     * 
-     * @param <T>
-     * @param clazz
-     *            the class of the SiadapEvaluationItem that one is interested
-     *            in getting
-     * @param predicate
-     *            the predicate that is evaluated for each of the
-     *            SiadapEvaluationItem
-     * @param comparator
-     *            a comparator of {@link SiadapEvaluationItem} or null if we
-     *            want to use the default {@link SiadapEvaluationItem#COMPARATOR_BY_DATE}
-     * @return a list of <T> elements
-     */
     protected <T extends SiadapEvaluationItem> List<T> getEvaluations(Class<T> clazz, Predicate predicate,
             Comparator<T> comparator) {
         List<T> evaluationItems = new ArrayList<T>();

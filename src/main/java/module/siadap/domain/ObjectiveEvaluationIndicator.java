@@ -26,7 +26,7 @@ package module.siadap.domain;
 
 import java.math.BigDecimal;
 
-import pt.ist.bennu.core.domain.exceptions.DomainException;
+import module.siadap.domain.exceptions.SiadapException;
 
 /**
  * 
@@ -40,8 +40,7 @@ public class ObjectiveEvaluationIndicator extends ObjectiveEvaluationIndicator_B
             BigDecimal ponderationFactor) {
         super();
         if (!(ponderationFactor.compareTo(BigDecimal.ZERO) >= 0 && ponderationFactor.compareTo(BigDecimal.ONE) <= 0)) {
-            throw new DomainException("error.ponderation.has.to.be.between.0.and.1",
-                    DomainException.getResourceFor("resources/SiadapResources"));
+            throw new SiadapException("resources/SiadapResources", "error.ponderation.has.to.be.between.0.and.1");
         }
 
         setObjectiveEvaluation(objective);

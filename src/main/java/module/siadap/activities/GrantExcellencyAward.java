@@ -32,7 +32,8 @@ import module.siadap.domain.wrappers.PersonSiadapWrapper;
 import module.siadap.domain.wrappers.UnitSiadapWrapper;
 import module.workflow.activities.ActivityInformation;
 import module.workflow.activities.WorkflowActivity;
-import pt.ist.bennu.core.domain.User;
+
+import org.fenixedu.bennu.core.domain.User;
 
 /**
  * 

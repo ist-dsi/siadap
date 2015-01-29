@@ -26,10 +26,11 @@ package module.siadap.domain;
 
 import java.util.MissingResourceException;
 
+import module.siadap.domain.exceptions.SiadapException;
+
+import org.fenixedu.bennu.core.i18n.BundleUtil;
 import org.joda.time.LocalDate;
 
-import pt.ist.bennu.core.domain.exceptions.DomainException;
-import pt.ist.bennu.core.util.BundleUtil;
 import pt.ist.fenixWebFramework.rendererExtensions.util.IPresentableEnum;
 
 /**
@@ -41,7 +42,7 @@ import pt.ist.fenixWebFramework.rendererExtensions.util.IPresentableEnum;
 public enum SiadapProcessSchedulesEnum implements IPresentableEnum {
     OBJECTIVES_SPECIFICATION_BEGIN_DATE {
         @Override
-        public void validateDate(LocalDate newDate, Siadap siadap) throws DomainException {
+        public void validateDate(LocalDate newDate, Siadap siadap) throws SiadapException {
             if (!siadap.getObjectiveSpecificationEndDate().isAfter(newDate)) {
                 triggerInvalidDateException();
             }
@@ -51,7 +52,7 @@ public enum SiadapProcessSchedulesEnum implements IPresentableEnum {
     },
     OBJECTIVES_SPECIFICATION_END_DATE {
         @Override
-        public void validateDate(LocalDate newDate, Siadap siadap) throws DomainException {
+        public void validateDate(LocalDate newDate, Siadap siadap) throws SiadapException {
             if (!siadap.getObjectiveSpecificationBeginDate().isBefore(newDate)) {
                 triggerInvalidDateException();
             }
@@ -60,7 +61,7 @@ public enum SiadapProcessSchedulesEnum implements IPresentableEnum {
 
     AUTOEVALUATION_BEGIN_DATE {
         @Override
-        public void validateDate(LocalDate newDate, Siadap siadap) throws DomainException {
+        public void validateDate(LocalDate newDate, Siadap siadap) throws SiadapException {
             if (!siadap.getAutoEvaluationEndDate().isAfter(newDate)) {
                 triggerInvalidDateException();
             }
@@ -68,7 +69,7 @@ public enum SiadapProcessSchedulesEnum implements IPresentableEnum {
     },
     AUTOEVALUATION_END_DATE {
         @Override
-        public void validateDate(LocalDate newDate, Siadap siadap) throws DomainException {
+        public void validateDate(LocalDate newDate, Siadap siadap) throws SiadapException {
             if (!siadap.getAutoEvaluationBeginDate().isBefore(newDate)) {
                 triggerInvalidDateException();
             }
@@ -77,7 +78,7 @@ public enum SiadapProcessSchedulesEnum implements IPresentableEnum {
 
     EVALUATION_BEGIN_DATE {
         @Override
-        public void validateDate(LocalDate newDate, Siadap siadap) throws DomainException {
+        public void validateDate(LocalDate newDate, Siadap siadap) throws SiadapException {
             if (!siadap.getEvaluationEndDate().isAfter(newDate)) {
                 triggerInvalidDateException();
             }
@@ -86,7 +87,7 @@ public enum SiadapProcessSchedulesEnum implements IPresentableEnum {
     },
     EVALUATION_END_DATE {
         @Override
-        public void validateDate(LocalDate newDate, Siadap siadap) throws DomainException {
+        public void validateDate(LocalDate newDate, Siadap siadap) throws SiadapException {
             if (siadap.getEvaluationBeginDate().isAfter(newDate)) {
                 triggerInvalidDateException();
             }
@@ -97,7 +98,7 @@ public enum SiadapProcessSchedulesEnum implements IPresentableEnum {
     }
 
     private static void triggerInvalidDateException() {
-        throw new DomainException("invalid.date.begin.must.be.before.end.date");
+        throw new SiadapException("invalid.date.begin.must.be.before.end.date");
 
     }
 
@@ -111,15 +112,15 @@ public enum SiadapProcessSchedulesEnum implements IPresentableEnum {
      * @param siadap
      *            the siadap instance for which we should check if the given
      *            date is valid
-     * @throws DomainException
+     * @throws SiadapException
      *             if the date isn't valid
      */
-    public abstract void validateDate(LocalDate newDate, Siadap siadap) throws DomainException;
+    public abstract void validateDate(LocalDate newDate, Siadap siadap) throws SiadapException;
 
     @Override
     public String getLocalizedName() {
         try {
-            return BundleUtil.getStringFromResourceBundle("resources/SiadapResources",
+            return BundleUtil.getString("resources/SiadapResources",
                     SiadapProcessSchedulesEnum.class.getSimpleName() + "." + name());
         } catch (MissingResourceException ex) {
             return name();

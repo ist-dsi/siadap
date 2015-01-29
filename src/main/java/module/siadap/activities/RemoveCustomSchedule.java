@@ -27,10 +27,11 @@ package module.siadap.activities;
 import module.siadap.domain.Siadap;
 import module.siadap.domain.SiadapProcess;
 import module.siadap.domain.SiadapProcessSchedulesEnum;
+import module.siadap.domain.exceptions.SiadapException;
 import module.workflow.activities.ActivityInformation;
 import module.workflow.activities.WorkflowActivity;
-import pt.ist.bennu.core.domain.User;
-import pt.ist.bennu.core.domain.exceptions.DomainException;
+
+import org.fenixedu.bennu.core.domain.User;
 
 /**
  * 
@@ -50,7 +51,7 @@ public class RemoveCustomSchedule extends WorkflowActivity<SiadapProcess, Remove
                 SiadapProcessSchedulesEnum.valueOf(activityInformation.getSiadapProcessSchedulesEnumToRemove());
         Siadap siadap = activityInformation.getSiadap();
         if (processSchedulesEnum == null || siadap == null) {
-            throw new DomainException("error.could.not.remove.custom.schedule");
+            throw new SiadapException("error.could.not.remove.custom.schedule");
         }
         activityInformation.getProcess().changeCustomSiadapSchedule(processSchedulesEnum, null);
 

@@ -65,12 +65,12 @@ import module.siadap.domain.util.actions.SiadapUtilActions;
 import module.siadap.presentationTier.actions.SiadapManagement;
 
 import org.apache.commons.collections.Predicate;
+import org.fenixedu.bennu.core.domain.User;
+import org.fenixedu.bennu.core.groups.DynamicGroup;
+import org.fenixedu.bennu.core.i18n.BundleUtil;
+import org.fenixedu.bennu.core.security.Authenticate;
 import org.joda.time.LocalDate;
 
-import pt.ist.bennu.core.applicationTier.Authenticate.UserView;
-import pt.ist.bennu.core.domain.User;
-import pt.ist.bennu.core.domain.exceptions.DomainException;
-import pt.ist.bennu.core.util.BundleUtil;
 import pt.ist.fenixframework.Atomic;
 
 /**
@@ -207,7 +207,7 @@ public class PersonSiadapWrapper extends PartyWrapper implements Serializable {
                 hasNeededAccountability = true;
             } else {
                 //let us close it
-                acc.setEndDate(getConfiguration().getFirstDay(), BundleUtil.getStringFromResourceBundle(
+                acc.setEndDate(getConfiguration().getFirstDay(), BundleUtil.getString(
                         Siadap.SIADAP_BUNDLE_STRING, "harmonization.unit.process.creation.justification"));
             }
         }
@@ -215,7 +215,7 @@ public class PersonSiadapWrapper extends PartyWrapper implements Serializable {
             //let us create it
             if (getWorkingUnit() != null) {
                 changeHarmonizationUnitTo(getWorkingUnit().getUnit(), getConfiguration().getFirstDay(),
-                        BundleUtil.getStringFromResourceBundle(Siadap.SIADAP_BUNDLE_STRING,
+                        BundleUtil.getString(Siadap.SIADAP_BUNDLE_STRING,
                                 "harmonization.unit.process.creation.justification"));
             }
         }
@@ -367,7 +367,7 @@ public class PersonSiadapWrapper extends PartyWrapper implements Serializable {
      *         on the user, if he is an evaluator or an evaluated
      */
     public String getNextStep() {
-        return SiadapProcessStateEnum.getNextStep(getSiadap(), UserView.getCurrentUser());
+        return SiadapProcessStateEnum.getNextStep(getSiadap(), Authenticate.getUser());
 
     }
 
@@ -418,7 +418,7 @@ public class PersonSiadapWrapper extends PartyWrapper implements Serializable {
      *         process, false otherwise
      */
     public boolean isCurrentUserAbleToSeeDetails() {
-        User currentUser = UserView.getCurrentUser();
+        User currentUser = Authenticate.getUser();
         SiadapYearConfiguration configuration = getConfiguration();
         if (getSiadap().getProcess().isAccessibleToCurrentUser()) {
             if (isResponsibleForHarmonization(currentUser.getPerson())) {
@@ -448,7 +448,7 @@ public class PersonSiadapWrapper extends PartyWrapper implements Serializable {
     public boolean isEmailDefined() {
         if (getEmailAddress() == null || getEmailAddress().equalsIgnoreCase("")) {
             try {
-                String fetchedEmail = Siadap.getRemoteEmail(getPerson());
+                String fetchedEmail = getPerson().getUser().getProfile().getEmail();
                 if (fetchedEmail == null || fetchedEmail.equalsIgnoreCase("")) {
                     return false;
                 }
@@ -478,7 +478,7 @@ public class PersonSiadapWrapper extends PartyWrapper implements Serializable {
      */
     public boolean getShouldShowObjectivesAndCompetences() {
         return getSiadap().getObjectivesAndCompetencesSealedDate() != null
-                || getSiadap().getEvaluator().getPerson().getUser().equals(UserView.getCurrentUser());
+                || getSiadap().getEvaluator().getPerson().getUser().equals(Authenticate.getUser());
     }
 
     public PersonSiadapWrapper getEvaluator() {
@@ -648,7 +648,7 @@ public class PersonSiadapWrapper extends PartyWrapper implements Serializable {
         }
     }
 
-    /**
+    /*
      * 
      * @return the unit where is harmonized for the default harmonization universe. The harmoniztion unit must be a valid one,
      *         i.e. connected to the top structure unit for this year
@@ -705,15 +705,15 @@ public class PersonSiadapWrapper extends PartyWrapper implements Serializable {
     }
 
     public boolean isCurrentUserAbleToEvaluate() {
-        return getEvaluator() != null && getEvaluator().getPerson() == UserView.getCurrentUser().getPerson();
+        return getEvaluator() != null && getEvaluator().getPerson() == Authenticate.getUser().getPerson();
     }
 
     public boolean isCurrentUserAbleToCreateProcess() {
-        return getSiadap() == null && SiadapYearConfiguration.getStructureManagementGroup().isMember(UserView.getCurrentUser());
+        return getSiadap() == null && DynamicGroup.get("StructureManagementGroup").isMember(Authenticate.getUser());
     }
 
     public boolean isCurrentUserAbleToSeeAutoEvaluationDetails() {
-        User currentUser = UserView.getCurrentUser();
+        User currentUser = Authenticate.getUser();
         if (!isCurrentUserAbleToSeeDetails()) {
             return false;
         }
@@ -934,7 +934,7 @@ public class PersonSiadapWrapper extends PartyWrapper implements Serializable {
     }
 
     public boolean isCurrentUserAbleToSeeEvaluationDetails() {
-        User currentUser = UserView.getCurrentUser();
+        User currentUser = Authenticate.getUser();
         if (!isCurrentUserAbleToSeeDetails()) {
             return false;
         }
@@ -1047,7 +1047,7 @@ public class PersonSiadapWrapper extends PartyWrapper implements Serializable {
 
     public String getName() {
         if (getPerson() == null || getPerson().getName() == null) {
-            throw new DomainException("Person or person's name not defined");
+            throw new SiadapException("Person or person's name not defined");
         }
         return getPerson().getName();
     }
@@ -1066,15 +1066,15 @@ public class PersonSiadapWrapper extends PartyWrapper implements Serializable {
     }
 
     /**
-     * Verifies that the given date is indeed within the {@link #getYear()} year. If it isn't, it will throw a DomainException
+     * Verifies that the given date is indeed within the {@link #getYear()} year. If it isn't, it will throw a SiadapException
      * 
      * @param dateToVerify
      *            the date to verify
      */
     private void verifyDate(LocalDate dateToVerify) {
         if (!getConfiguration().containsYear(dateToVerify.getYear())) {
-            throw new DomainException("manage.workingUnitOrEvaluator.invalid.date",
-                    DomainException.getResourceFor("resources/SiadapResources"), String.valueOf(getYear()));
+            throw new SiadapException("resources/SiadapResources", "manage.workingUnitOrEvaluator.invalid.date",
+                    String.valueOf(getYear()));
         }
     }
 
@@ -1309,7 +1309,7 @@ public class PersonSiadapWrapper extends PartyWrapper implements Serializable {
     }
 
     public boolean isCCAMember() {
-        return SiadapRootModule.getInstance().getSiadapCCAGroup().isMember(getPerson().getUser());
+        return DynamicGroup.get("SiadapCCAGroup").isMember(getPerson().getUser());
     }
 
     public boolean isHomologationMember() {
@@ -1353,7 +1353,7 @@ public class PersonSiadapWrapper extends PartyWrapper implements Serializable {
         return emailAddress;
     }
 
-    /**
+    /*
      * @see #changeDefaultUniverseTo(SiadapUniverse, LocalDate, boolean) - it's
      *      equal but with a force of false
      */
@@ -1565,7 +1565,7 @@ public class PersonSiadapWrapper extends PartyWrapper implements Serializable {
         this.harmonizationCurrentAssessmentForSIADAP2 = assessment;
     }
 
-    /**
+    /*
      * @param perserveResponsabilityRelations preserve evaluation responsabilities, as well as harmonization ones. Only removes
      *            the working relations and the relations that tell you where you are harmonized i.e.
      *            {@link SiadapYearConfiguration#getSiadap2HarmonizationRelation()},

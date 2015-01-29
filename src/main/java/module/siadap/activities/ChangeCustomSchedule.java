@@ -24,17 +24,16 @@
  */
 package module.siadap.activities;
 
-import java.util.ResourceBundle;
-
 import module.siadap.activities.ChangeCustomScheduleActivityInformation.CustomScheduleRepresentation;
 import module.siadap.domain.Siadap;
 import module.siadap.domain.SiadapProcess;
 import module.siadap.domain.SiadapYearConfiguration;
+import module.siadap.domain.exceptions.SiadapException;
 import module.workflow.activities.ActivityInformation;
 import module.workflow.activities.WorkflowActivity;
-import pt.ist.bennu.core.domain.User;
-import pt.ist.bennu.core.domain.exceptions.DomainException;
-import pt.ist.bennu.core.util.BundleUtil;
+
+import org.fenixedu.bennu.core.domain.User;
+import org.fenixedu.bennu.core.i18n.BundleUtil;
 
 /**
  * 
@@ -72,10 +71,9 @@ public class ChangeCustomSchedule extends WorkflowActivity<SiadapProcess, Change
         boolean foundEvaluationEndPeriod = false;
 
         for (CustomScheduleRepresentation customScheduleRepresentation : activityInformation.getCustomScheduleRepresentations()) {
-            ResourceBundle resourceBundle = DomainException.getResourceFor("resources/SiadapResources");
 
             if (!customScheduleRepresentation.isComplete()) {
-                throw new DomainException("error.incomplete.CustomScheduleRepresentation", resourceBundle);
+                throw new SiadapException("error.incomplete.CustomScheduleRepresentation");
             }
 
             switch (customScheduleRepresentation.getTypeOfSchedule()) {
@@ -83,7 +81,7 @@ public class ChangeCustomSchedule extends WorkflowActivity<SiadapProcess, Change
                 if (!foundObjectiveSpecificationBeginPeriod) {
                     foundEvaluationBeginPeriod = true;
                 } else {
-                    throw new DomainException("error.duplicated.CustomScheduleRepresentation", resourceBundle,
+                    throw new SiadapException("error.duplicated.CustomScheduleRepresentation",
                             customScheduleRepresentation.getTypeOfSchedule().getLocalizedName());
                 }
                 break;
@@ -91,7 +89,7 @@ public class ChangeCustomSchedule extends WorkflowActivity<SiadapProcess, Change
                 if (!foundObjectiveSpecificationEndPeriod) {
                     foundObjectiveSpecificationEndPeriod = true;
                 } else {
-                    throw new DomainException("error.duplicated.CustomScheduleRepresentation", resourceBundle,
+                    throw new SiadapException("error.duplicated.CustomScheduleRepresentation",
                             customScheduleRepresentation.getTypeOfSchedule().getLocalizedName());
                 }
                 break;
@@ -99,7 +97,7 @@ public class ChangeCustomSchedule extends WorkflowActivity<SiadapProcess, Change
                 if (!foundValidAutoEvaluationBeginPeriod) {
                     foundValidAutoEvaluationBeginPeriod = true;
                 } else {
-                    throw new DomainException("error.duplicated.CustomScheduleRepresentation", resourceBundle,
+                    throw new SiadapException("error.duplicated.CustomScheduleRepresentation",
                             customScheduleRepresentation.getTypeOfSchedule().getLocalizedName());
                 }
                 break;
@@ -107,7 +105,7 @@ public class ChangeCustomSchedule extends WorkflowActivity<SiadapProcess, Change
                 if (!foundValidAutoEvaluationEndPeriod) {
                     foundValidAutoEvaluationEndPeriod = true;
                 } else {
-                    throw new DomainException("error.duplicated.CustomScheduleRepresentation", resourceBundle,
+                    throw new SiadapException("error.duplicated.CustomScheduleRepresentation",
                             customScheduleRepresentation.getTypeOfSchedule().getLocalizedName());
                 }
                 break;
@@ -115,7 +113,7 @@ public class ChangeCustomSchedule extends WorkflowActivity<SiadapProcess, Change
                 if (!foundEvaluationBeginPeriod) {
                     foundEvaluationBeginPeriod = true;
                 } else {
-                    throw new DomainException("error.duplicated.CustomScheduleRepresentation", resourceBundle,
+                    throw new SiadapException("error.duplicated.CustomScheduleRepresentation",
                             customScheduleRepresentation.getTypeOfSchedule().getLocalizedName());
                 }
                 break;
@@ -123,7 +121,7 @@ public class ChangeCustomSchedule extends WorkflowActivity<SiadapProcess, Change
                 if (!foundEvaluationEndPeriod) {
                     foundEvaluationEndPeriod = true;
                 } else {
-                    throw new DomainException("error.duplicated.CustomScheduleRepresentation", resourceBundle,
+                    throw new SiadapException("error.duplicated.CustomScheduleRepresentation",
                             customScheduleRepresentation.getTypeOfSchedule().getLocalizedName());
                 }
                 break;
@@ -164,7 +162,7 @@ public class ChangeCustomSchedule extends WorkflowActivity<SiadapProcess, Change
         String[] stringToReturn = { "" };
         for (CustomScheduleRepresentation scheduleRepresentation : activityInformation.getCustomScheduleRepresentations()) {
             stringToReturn[0] =
-                    stringToReturn[0].concat(BundleUtil.getFormattedStringFromResourceBundle(getUsedBundle(), labelBase
+                    stringToReturn[0].concat(BundleUtil.getString(getUsedBundle(), labelBase
                             + ".oneChangeSchedule", scheduleRepresentation.getTypeOfSchedule().getLocalizedName(),
                             scheduleRepresentation.getNewDeadlineDate().toString(), scheduleRepresentation.getJustification()));
 

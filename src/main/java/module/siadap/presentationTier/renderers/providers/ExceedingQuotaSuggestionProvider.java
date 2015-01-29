@@ -33,9 +33,11 @@ import module.organization.domain.Person;
 import module.organization.domain.Unit;
 import module.siadap.domain.wrappers.PersonSiadapWrapper;
 import module.siadap.domain.wrappers.UnitSiadapWrapper;
-import pt.ist.bennu.core.presentationTier.renderers.autoCompleteProvider.AutoCompleteProvider;
+
+import org.fenixedu.bennu.core.presentationTier.renderers.autoCompleteProvider.AutoCompleteProvider;
+import org.fenixedu.commons.StringNormalizer;
+
 import pt.ist.fenixframework.FenixFramework;
-import pt.utl.ist.fenix.tools.util.StringNormalizer;
 
 /**
  * 
@@ -45,9 +47,9 @@ import pt.utl.ist.fenix.tools.util.StringNormalizer;
 public class ExceedingQuotaSuggestionProvider implements AutoCompleteProvider {
 
     @Override
-    public Collection getSearchResults(Map<String, String> argsMap, String value, int maxCount) {
-        Unit unit = FenixFramework.getDomainObject(argsMap.get("unitId"));
-        int year = Integer.parseInt(argsMap.get("year"));
+    public Collection getSearchResults(Map argsMap, String value, int maxCount) {
+        Unit unit = FenixFramework.getDomainObject((String) argsMap.get("unitId"));
+        int year = Integer.parseInt((String) argsMap.get("year"));
 
         //we have to get the people with any kind of no given
         List<PersonSiadapWrapper> unitCandidatesForSuggestion =

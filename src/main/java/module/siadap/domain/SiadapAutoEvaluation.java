@@ -27,8 +27,7 @@ package module.siadap.domain;
 import module.siadap.domain.exceptions.SiadapException;
 
 import org.apache.commons.lang.StringUtils;
-
-import pt.ist.bennu.core.util.BundleUtil;
+import org.fenixedu.bennu.core.i18n.BundleUtil;
 
 /**
  * 
@@ -66,11 +65,11 @@ public class SiadapAutoEvaluation extends SiadapAutoEvaluation_Base {
         Siadap siadap = getSiadapEvaluationUniverse().getSiadap();
 
         if (StringUtils.isBlank(getObjectivesJustification())) {
-            throw new SiadapException("error.siadapAutoEvaluation.mustFillX", BundleUtil.getStringFromResourceBundle(
+            throw new SiadapException("error.siadapAutoEvaluation.mustFillX", BundleUtil.getString(
                     SiadapRootModule.SIADAP_RESOURCES, "label.autoEvaluation.objectivesJustification"));
         }
         if (StringUtils.isBlank(getCompetencesJustification())) {
-            throw new SiadapException("error.siadapAutoEvaluation.mustFillX", BundleUtil.getStringFromResourceBundle(
+            throw new SiadapException("error.siadapAutoEvaluation.mustFillX", BundleUtil.getString(
                     SiadapRootModule.SIADAP_RESOURCES, "label.autoEvaluation.competencesJustification"));
         }
 
@@ -91,12 +90,12 @@ public class SiadapAutoEvaluation extends SiadapAutoEvaluation_Base {
         //   	String trainningNeeds = getTrainningNeeds();
         //   	if (siadap.isInadequate() && (StringUtils.isEmpty(personalDevelopment) || StringUtils.isEmpty(trainningNeeds))) {
         //
-        //   	    throw new DomainException("error.siadapEvaluation.mustFillDataForBadEvaluation",
-        //   		    DomainException.getResourceFor("resources/SiadapResources"));
+        //   	    throw new SiadapException("error.siadapEvaluation.mustFillDataForBadEvaluation",
+        //   		    SiadapException.getResourceFor("resources/SiadapResources"));
         //   	}
         //   	if ((siadap.isInadequate() || siadap.hasRelevantEvaluation()) && StringUtils.isEmpty(evaluationJustification)) {
-        //   	    throw new DomainException("error.siadapEvaluation.mustFillEvaluationJustification",
-        //   		    DomainException.getResourceFor("resources/SiadapResources"));
+        //   	    throw new SiadapException("error.siadapEvaluation.mustFillEvaluationJustification",
+        //   		    SiadapException.getResourceFor("resources/SiadapResources"));
         //
         //   	}
     }

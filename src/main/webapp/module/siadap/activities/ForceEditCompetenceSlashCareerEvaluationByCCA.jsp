@@ -1,4 +1,4 @@
-<%@page import="pt.ist.bennu.core.domain.exceptions.DomainException"%>
+<%@page import="pt.ist.bennu.core.domain.exceptions.SiadapException"%>
 <%@page import="module.siadap.domain.Siadap"%>
 <%@page import="module.siadap.activities.CreateOrEditCompetenceEvaluationActivityInformation"%>
 <%@page import="pt.ist.bennu.core.util.BundleUtil"%>

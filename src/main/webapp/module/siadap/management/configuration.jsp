@@ -41,14 +41,14 @@
 		<fr:slot name="unitRelations" layout="menu-select" key="label.config.unitRelations">
 			<fr:property name="providerClass"
 				value="module.organization.presentationTier.renderers.providers.AccountabilityTypesProvider" />
-			<fr:property name="format" value="${name}" />
+			<fr:property name="format" value="<%= "${name.content}" %>" />
 			<fr:property name="sortBy" value="name" />
 			<fr:property name="saveOptions" value="true" />
 		</fr:slot>
 		<fr:slot name="harmonizationResponsibleRelation" layout="menu-select" key="label.config.harmonizationResponsibleRelation">
 			<fr:property name="providerClass"
 				value="module.organization.presentationTier.renderers.providers.AccountabilityTypesProvider" />
-			<fr:property name="format" value="${name}" />
+			<fr:property name="format" value="<%= "${name.content}" %>" />
 			<fr:property name="sortBy" value="name" />
 			<fr:property name="saveOptions" value="true" />
 		</fr:slot>
@@ -56,7 +56,7 @@
 		<fr:slot name="workingRelation" layout="menu-select" key="label.config.workingRelation">
 			<fr:property name="providerClass"
 				value="module.organization.presentationTier.renderers.providers.AccountabilityTypesProvider" />
-			<fr:property name="format" value="${name}" />
+			<fr:property name="format" value="<%= "${name.content}" %>" />
 			<fr:property name="sortBy" value="name" />
 			<fr:property name="saveOptions" value="true" />
 		</fr:slot>
@@ -64,7 +64,7 @@
 		<fr:slot name="workingRelationWithNoQuota" layout="menu-select" key="label.config.workingRelationWithNoQuota">
 			<fr:property name="providerClass"
 				value="module.organization.presentationTier.renderers.providers.AccountabilityTypesProvider" />
-			<fr:property name="format" value="${name}" />
+			<fr:property name="format" value="<%= "${name.content}" %>" />
 			<fr:property name="sortBy" value="name" />
 			<fr:property name="saveOptions" value="true" />
 		</fr:slot>
@@ -72,7 +72,7 @@
 		<fr:slot name="evaluationRelation" layout="menu-select" key="label.config.evaluationRelation">
 			<fr:property name="providerClass"
 				value="module.organization.presentationTier.renderers.providers.AccountabilityTypesProvider" />
-			<fr:property name="format" value="${name}" />
+			<fr:property name="format" value="<%= "${name.content}" %>" />
 			<fr:property name="sortBy" value="name" />
 			<fr:property name="saveOptions" value="true" />
 		</fr:slot>
@@ -82,7 +82,7 @@
 				value="module.organization.presentationTier.renderers.providers.AccountabilityTypesProvider" />
 			<fr:property name="choiceType"
 				value="module.organization.domain.AccountabilityType" />
-			<fr:property name="format" value="${name}" />
+			<fr:property name="format" value="<%= "${name.content}" %>" />
 			<fr:property name="sortBy" value="name" />
 			<fr:property name="saveOptions" value="true" />
 		</fr:slot>
@@ -92,7 +92,7 @@
 				value="module.organization.presentationTier.renderers.providers.AccountabilityTypesProvider" />
 			<fr:property name="choiceType"
 				value="module.organization.domain.AccountabilityType" />
-			<fr:property name="format" value="${name}" />
+			<fr:property name="format" value="<%= "${name.content}" %>" />
 			<fr:property name="sortBy" value="name" />
 			<fr:property name="saveOptions" value="true" />
 		</fr:slot>
@@ -100,7 +100,7 @@
 		<fr:slot name="harmonizationUnitRelations" layout="menu-select" key="label.config.harmonizationUnitRelations">
 			<fr:property name="providerClass"
 				value="module.organization.presentationTier.renderers.providers.AccountabilityTypesProvider" />
-			<fr:property name="format" value="${name}" />
+			<fr:property name="format" value="<%= "${name.content}" %>" />
 			<fr:property name="sortBy" value="name" />
 			<fr:property name="saveOptions" value="true" />
 		</fr:slot>
@@ -108,7 +108,7 @@
 		
 		<fr:slot name="siadapStructureTopUnit" layout="autoComplete" key="label.config.siadapStructureTopUnit">
 			<fr:property name="labelField" value="partyName.content" />
-			<fr:property name="format" value="${presentationName}" />
+			<fr:property name="format" value="<%= "${presentationName}" %>" />
 			<fr:property name="minChars" value="3" />
 			<fr:property name="args"
 				value="provider=module.organization.presentationTier.renderers.providers.UnitAutoCompleteProvider" />
@@ -123,7 +123,7 @@
 		
 		<fr:slot name="siadapSpecialHarmonizationUnit" layout="autoComplete" key="label.config.siadapSpecialHarmonizationUnit">
 			<fr:property name="labelField" value="partyName.content" />
-			<fr:property name="format" value="${presentationName}" />
+			<fr:property name="format" value="<%= "${presentationName}" %>" />
 			<fr:property name="minChars" value="3" />
 			<fr:property name="args"
 				value="provider=module.organization.presentationTier.renderers.providers.UnitAutoCompleteProvider" />
@@ -195,10 +195,10 @@
 		<fr:slot name="user.username"/>
 		<fr:slot name="partyName"/>
 	</fr:schema>
-<fr:schema type="pt.ist.bennu.core.util.VariantBean" bundle="SIADAP_RESOURCES">
+<fr:schema type="org.fenixedu.bennu.core.util.VariantBean" bundle="SIADAP_RESOURCES">
 	<fr:slot name="domainObject" layout="autoComplete" key="label.person" bundle="ORGANIZATION_RESOURCES">
 		<fr:property name="labelField" value="name"/>
-		<fr:property name="format" value="${name} (${user.username})"/>
+		<fr:property name="format" value="<%= "${name} (${user.username})" %>"/>
 		<fr:property name="minChars" value="3"/>		
 		<fr:property name="args" value="provider=module.organization.presentationTier.renderers.providers.PersonAutoCompleteProvider"/>
 		<fr:property name="size" value="60"/>
@@ -236,10 +236,10 @@
 		<fr:slot name="user.username"/>
 		<fr:slot name="partyName"/>
 	</fr:schema>
-<fr:schema type="pt.ist.bennu.core.util.VariantBean" bundle="SIADAP_RESOURCES">
+<fr:schema type="org.fenixedu.bennu.core.util.VariantBean" bundle="SIADAP_RESOURCES">
 		<fr:slot name="domainObject" layout="autoComplete" key="label.person" bundle="ORGANIZATION_RESOURCES">
 		<fr:property name="labelField" value="name"/>
-		<fr:property name="format" value="${name} (${user.username})"/>
+		<fr:property name="format" value="<%= "${name} (${user.username})" %>"/>
 		<fr:property name="minChars" value="3"/>		
 		<fr:property name="args" value="provider=module.organization.presentationTier.renderers.providers.PersonAutoCompleteProvider"/>
 		<fr:property name="size" value="60"/>
@@ -277,10 +277,10 @@
 		<fr:slot name="user.username"/>
 		<fr:slot name="partyName"/>
 	</fr:schema>
-<fr:schema type="pt.ist.bennu.core.util.VariantBean" bundle="SIADAP_RESOURCES">
+<fr:schema type="org.fenixedu.bennu.core.util.VariantBean" bundle="SIADAP_RESOURCES">
 		<fr:slot name="domainObject" layout="autoComplete" key="label.person" bundle="ORGANIZATION_RESOURCES">
 		<fr:property name="labelField" value="name"/>
-		<fr:property name="format" value="${name} (${user.username})"/>
+		<fr:property name="format" value="<%= "${name} (${user.username})" %>"/>
 		<fr:property name="minChars" value="3"/>		
 		<fr:property name="args" value="provider=module.organization.presentationTier.renderers.providers.PersonAutoCompleteProvider"/>
 		<fr:property name="size" value="60"/>
@@ -309,10 +309,10 @@
 	</fr:layout>	
 </fr:view>
 <fr:edit id="homologationMember" name="addHomologationMember" action="<%=  "/siadapManagement.do?method=addHomologationMember&configurationId=" + configurationId %>">
-<fr:schema type="pt.ist.bennu.core.util.VariantBean" bundle="SIADAP_RESOURCES">
+<fr:schema type="org.fenixedu.bennu.core.util.VariantBean" bundle="SIADAP_RESOURCES">
 		<fr:slot name="domainObject" layout="autoComplete" key="label.person" bundle="ORGANIZATION_RESOURCES">
 		<fr:property name="labelField" value="name"/>
-		<fr:property name="format" value="${name} (${user.username})"/>
+		<fr:property name="format" value="<%= "${name} (${user.username})" %>"/>
 		<fr:property name="minChars" value="3"/>		
 		<fr:property name="args" value="provider=module.organization.presentationTier.renderers.providers.PersonAutoCompleteProvider"/>
 		<fr:property name="size" value="60"/>
@@ -341,10 +341,10 @@
 	</fr:layout>	
 </fr:view>
 <fr:edit id="structureManagementMember" name="addStructureManagementGroupMember" action="<%=  "/siadapManagement.do?method=addStructureManagementMember&configurationId=" + configurationId %>">
-<fr:schema type="pt.ist.bennu.core.util.VariantBean" bundle="SIADAP_RESOURCES">
+<fr:schema type="org.fenixedu.bennu.core.util.VariantBean" bundle="SIADAP_RESOURCES">
 		<fr:slot name="domainObject" layout="autoComplete" key="label.person" bundle="ORGANIZATION_RESOURCES">
 		<fr:property name="labelField" value="name"/>
-		<fr:property name="format" value="${name} (${user.username})"/>
+		<fr:property name="format" value="<%= "${name} (${user.username})" %>"/>
 		<fr:property name="minChars" value="3"/>		
 		<fr:property name="args" value="provider=module.organization.presentationTier.renderers.providers.PersonAutoCompleteProvider"/>
 		<fr:property name="size" value="60"/>

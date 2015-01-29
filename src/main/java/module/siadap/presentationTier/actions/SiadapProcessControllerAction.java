@@ -31,17 +31,16 @@ import module.siadap.activities.ChangeCustomScheduleActivityInformation;
 import module.siadap.activities.CreateObjectiveEvaluationActivityInformation;
 import module.siadap.domain.exceptions.SiadapException;
 import module.workflow.domain.WorkflowProcess;
-import module.workflow.presentationTier.WorkflowLayoutContext;
 import module.workflow.presentationTier.actions.ProcessManagement;
 
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
+import org.fenixedu.bennu.struts.annotations.Mapping;
+import org.fenixedu.bennu.struts.base.BaseAction;
+import org.fenixedu.bennu.struts.portal.StrutsFunctionality;
 
-import pt.ist.bennu.core.presentationTier.Context;
-import pt.ist.bennu.core.presentationTier.actions.ContextBaseAction;
 import pt.ist.fenixWebFramework.renderers.utils.RenderUtils;
-import pt.ist.fenixWebFramework.struts.annotations.Mapping;
 
 @Mapping(path = "/siadapProcessController")
 /**
@@ -50,7 +49,7 @@ import pt.ist.fenixWebFramework.struts.annotations.Mapping;
  * @author Paulo Abrantes
  * 
  */
-public class SiadapProcessControllerAction extends ContextBaseAction {
+public class SiadapProcessControllerAction extends BaseAction {
 
     public ActionForward addNewIndicator(ActionMapping mapping, ActionForm form, HttpServletRequest request,
             HttpServletResponse response) throws Exception {
@@ -62,7 +61,7 @@ public class SiadapProcessControllerAction extends ContextBaseAction {
             addLocalizedMessage(request, ex.getLocalizedMessage());
         }
         RenderUtils.invalidateViewState();
-        return ProcessManagement.performActivityPostback(information, request);
+        return new ProcessManagement().performActivityPostback(information, request);
     }
 
     public ActionForward addNewScheduleRepresentation(ActionMapping mapping, ActionForm form, HttpServletRequest request,
@@ -70,7 +69,7 @@ public class SiadapProcessControllerAction extends ContextBaseAction {
         ChangeCustomScheduleActivityInformation information = getRenderedObject("activityBean");
         information.addCustomScheduleRepresentation();
         RenderUtils.invalidateViewState();
-        return ProcessManagement.performActivityPostback(information, request);
+        return new ProcessManagement().performActivityPostback(information, request);
     }
 
     public ActionForward removeScheduleRepresentation(ActionMapping mapping, ActionForm form, HttpServletRequest request,
@@ -80,7 +79,7 @@ public class SiadapProcessControllerAction extends ContextBaseAction {
         RenderUtils.invalidateViewState();
 
         information.removeCustomScheduleRepresentation(removeIndex);
-        return ProcessManagement.performActivityPostback(information, request);
+        return new ProcessManagement().performActivityPostback(information, request);
     }
 
     public ActionForward removeIndicator(ActionMapping mapping, ActionForm form, HttpServletRequest request,
@@ -90,25 +89,7 @@ public class SiadapProcessControllerAction extends ContextBaseAction {
         RenderUtils.invalidateViewState();
 
         information.removeIndicator(removeIndex);
-        return ProcessManagement.performActivityPostback(information, request);
-    }
-
-    //    public ActionForward removeCustomSchedule(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-    //	    HttpServletResponse response) throws Exception {
-    //	SiadapProcess process = getProcess(request);
-    //	SiadapProcessSchedulesEnum processSchedulesEnum = SiadapProcessSchedulesEnum.valueOf(request.getParameter("type"));
-    //	process.removeCustomSchedule(processSchedulesEnum);
-    //	RenderUtils.invalidateViewState();
-    //
-    //	return ProcessManagement.forwardToProcess(process);
-    //    }
-
-    @Override
-    public Context createContext(String contextPathString, HttpServletRequest request) {
-        WorkflowProcess process = getProcess(request);
-        WorkflowLayoutContext layout = process.getLayout();
-        layout.setElements(contextPathString);
-        return layout;
+        return new ProcessManagement().performActivityPostback(information, request);
     }
 
     protected <T extends WorkflowProcess> T getProcess(HttpServletRequest request) {

@@ -8,7 +8,7 @@
 
 
 <%@page import="module.siadap.domain.SiadapYearConfiguration"%>
-<%@page import="pt.ist.bennu.core.util.BundleUtil"%>
+<%@page import="org.fenixedu.bennu.core.i18n.BundleUtil"%>
 <bean:define id="processId" name="process" property="externalId"
 	type="java.lang.String" />
 <bean:define id="name" name="information" property="activityName" />
@@ -197,7 +197,7 @@ if (defaultSiadapUniverse.equals(SiadapUniverse.SIADAP3))
 		excellencyAwardProcessEvent();
 	 });
 	<%
-		String message = BundleUtil.getStringFromResourceBundle("resources.SiadapResources","label.evaluationLine");
+		String message = BundleUtil.getString("resources/SiadapResources","label.evaluationLine");
 	%>
 	var message = "<%= message.toString() %>";
 			 

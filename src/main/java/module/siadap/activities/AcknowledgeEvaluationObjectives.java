@@ -25,7 +25,6 @@
 package module.siadap.activities;
 
 import java.util.ArrayList;
-import java.util.Collections;
 
 import module.organization.domain.Person;
 import module.siadap.domain.Siadap;
@@ -34,11 +33,8 @@ import module.siadap.domain.SiadapProcess;
 import module.workflow.activities.ActivityInformation;
 import module.workflow.activities.WorkflowActivity;
 
+import org.fenixedu.bennu.core.domain.User;
 import org.joda.time.LocalDate;
-
-import pt.ist.bennu.core.domain.User;
-import pt.ist.bennu.core.domain.VirtualHost;
-import pt.ist.emailNotifier.domain.Email;
 
 /**
  * 
@@ -74,7 +70,7 @@ public class AcknowledgeEvaluationObjectives extends WorkflowActivity<SiadapProc
 
             evaluatedPerson = activityInformation.getProcess().getSiadap().getEvaluated();
             siadapProcess.checkEmailExistenceImportAndWarnOnError(evaluatedPerson);
-            emailEvaluated = Siadap.getRemoteEmail(evaluatedPerson);
+            emailEvaluated = evaluatedPerson.getUser().getProfile().getEmail();
 
         } catch (Throwable ex) {
             if (evaluatorPerson != null) {
@@ -87,7 +83,7 @@ public class AcknowledgeEvaluationObjectives extends WorkflowActivity<SiadapProc
         try {
             evaluatorPerson = activityInformation.getProcess().getSiadap().getEvaluator().getPerson();
             siadapProcess.checkEmailExistenceImportAndWarnOnError(evaluatorPerson);
-            emailEvaluator = Siadap.getRemoteEmail(evaluatorPerson);
+            emailEvaluator = evaluatorPerson.getUser().getProfile().getEmail();
             if (emailEvaluator != null) {
                 toAddress.add(emailEvaluator);
                 if (emailEvaluated != null) {
@@ -101,10 +97,10 @@ public class AcknowledgeEvaluationObjectives extends WorkflowActivity<SiadapProc
                 body.append("\n\n---\n");
                 body.append("Esta mensagem foi enviada por meio das Aplicações Centrais do IST.\n");
 
-                final VirtualHost virtualHost = VirtualHost.getVirtualHostForThread();
-                new Email(virtualHost.getApplicationSubTitle().getContent(), virtualHost.getSystemEmailAddress(),
-                        new String[] {}, toAddress, ccAddress, Collections.EMPTY_LIST,
-                        "SIADAP - Tomada de conhecimento de objectivos e competências", body.toString());
+                throw new Error("Reimplmement this");
+//                new Email(virtualHost.getApplicationSubTitle().getContent(), virtualHost.getSystemEmailAddress(),
+//                        new String[] {}, toAddress, ccAddress, Collections.EMPTY_LIST,
+//                        "SIADAP - Tomada de conhecimento de objectivos e competências", body.toString());
             }
         } catch (final Throwable ex) {
             System.out.println("Unable to lookup email address for: "
@@ -138,7 +134,7 @@ public class AcknowledgeEvaluationObjectives extends WorkflowActivity<SiadapProc
 
                 evaluatedPerson = activityInformation.getProcess().getSiadap().getEvaluated();
                 siadapProcess.checkEmailExistenceImportAndWarnOnError(evaluatedPerson);
-                emailEvaluated = Siadap.getRemoteEmail(evaluatedPerson);
+                emailEvaluated = evaluatedPerson.getUser().getProfile().getEmail();
 
             } catch (Throwable ex) {
                 if (evaluatorPerson != null) {
@@ -151,7 +147,7 @@ public class AcknowledgeEvaluationObjectives extends WorkflowActivity<SiadapProc
             try {
                 evaluatorPerson = activityInformation.getProcess().getSiadap().getEvaluator().getPerson();
                 siadapProcess.checkEmailExistenceImportAndWarnOnError(evaluatorPerson);
-                emailEvaluator = Siadap.getRemoteEmail(evaluatorPerson);
+                emailEvaluator = evaluatorPerson.getUser().getProfile().getEmail();
                 if (emailEvaluated != null) {
                     toAddress.add(emailEvaluated);
                     if (emailEvaluator != null) {
@@ -169,18 +165,18 @@ public class AcknowledgeEvaluationObjectives extends WorkflowActivity<SiadapProc
                     body.append("\n\n---\n");
                     body.append("Esta mensagem foi enviada por meio das Aplicações Centrais do IST.\n");
 
-                    final VirtualHost virtualHost = VirtualHost.getVirtualHostForThread();
-                    new Email(
-                            virtualHost.getApplicationSubTitle().getContent(),
-                            virtualHost.getSystemEmailAddress(),
-                            new String[] {},
-                            toAddress,
-                            ccAddress,
-                            Collections.EMPTY_LIST,
-                            "SIADAP - "
-                                    + siadap.getYear()
-                                    + " - Processo revertido para o estado anterior ao de tomar conhecimento dos obj./competências",
-                            body.toString());
+                    throw new Error("Reimplement this");
+//                    new Email(
+//                            PortalConfiguration.getInstance().getApplicationSubTitle(),
+//                            virtualHost.getSystemEmailAddress(),
+//                            new String[] {},
+//                            toAddress,
+//                            ccAddress,
+//                            Collections.EMPTY_LIST,
+//                            "SIADAP - "
+//                                    + siadap.getYear()
+//                                    + " - Processo revertido para o estado anterior ao de tomar conhecimento dos obj./competências",
+//                            body.toString());
                 }
             } catch (final Throwable ex) {
                 System.out.println("Unable to lookup email address for: "

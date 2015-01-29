@@ -33,10 +33,9 @@ import module.workflow.activities.ActivityException;
 import module.workflow.activities.ActivityInformation;
 import module.workflow.activities.WorkflowActivity;
 
+import org.fenixedu.bennu.core.domain.User;
+import org.fenixedu.bennu.core.i18n.BundleUtil;
 import org.joda.time.LocalDate;
-
-import pt.ist.bennu.core.domain.User;
-import pt.ist.bennu.core.util.BundleUtil;
 
 /**
  * 
@@ -68,7 +67,7 @@ public class SubmitEvaluation extends WorkflowActivity<SiadapProcess, ActivityIn
         Siadap siadap = activityInformation.getProcess().getSiadap();
         for (SiadapEvaluationItem item : siadap.getCurrentEvaluationItems()) {
             if (item.getItemEvaluation() == null || item.getItemEvaluation().getPoints() == null) {
-                throw new ActivityException(BundleUtil.getStringFromResourceBundle(getUsedBundle(),
+                throw new ActivityException(BundleUtil.getString(getUsedBundle(),
                         "error.siadapEvaluation.mustFillAllItems"), getLocalizedName());
             }
         }

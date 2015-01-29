@@ -5,11 +5,12 @@ package module.siadap.activities;
 
 import module.siadap.domain.Siadap;
 import module.siadap.domain.SiadapProcess;
-import module.siadap.domain.SiadapYearConfiguration;
 import module.workflow.activities.ActivityInformation;
 import module.workflow.activities.WorkflowActivity;
-import pt.ist.bennu.core.applicationTier.Authenticate.UserView;
-import pt.ist.bennu.core.domain.User;
+
+import org.fenixedu.bennu.core.domain.User;
+import org.fenixedu.bennu.core.groups.DynamicGroup;
+import org.fenixedu.bennu.core.security.Authenticate;
 
 /**
  * @author João Antunes (joao.antunes@tagus.ist.utl.pt) - 4 de Jul de 2012
@@ -22,8 +23,8 @@ public class RectifyNullifiedProcess extends WorkflowActivity<SiadapProcess, Nul
     @Override
     public boolean isActive(SiadapProcess process, User user) {
         Boolean nulled = process.getSiadap().getNulled();
-        return ((nulled != null && nulled) && (SiadapYearConfiguration.getStructureManagementGroup().isMember(
-                UserView.getCurrentUser()) || SiadapYearConfiguration.getCcaMembersGroup().isMember(UserView.getCurrentUser())));
+        return ((nulled != null && nulled) && (DynamicGroup.get("StructureManagementGroup").isMember(Authenticate.getUser()) || DynamicGroup
+                .get("CcaMembersGroup").isMember(Authenticate.getUser())));
     }
 
     @Override

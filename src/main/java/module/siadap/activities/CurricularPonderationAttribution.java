@@ -32,8 +32,7 @@ import module.workflow.activities.ActivityInformation;
 import module.workflow.activities.WorkflowActivity;
 
 import org.apache.commons.lang.StringUtils;
-
-import pt.ist.bennu.core.domain.User;
+import org.fenixedu.bennu.core.domain.User;
 
 /**
  * 

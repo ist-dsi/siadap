@@ -25,19 +25,18 @@
 package module.siadap.activities;
 
 import java.util.List;
-import java.util.ResourceBundle;
 
 import module.siadap.domain.Competence;
 import module.siadap.domain.CompetenceEvaluation;
 import module.siadap.domain.Siadap;
 import module.siadap.domain.SiadapProcess;
 import module.siadap.domain.SiadapProcessStateEnum;
+import module.siadap.domain.exceptions.SiadapException;
 import module.workflow.activities.ActivityInformation;
 import module.workflow.activities.WorkflowActivity;
-import pt.ist.bennu.core.domain.User;
-import pt.ist.bennu.core.domain.exceptions.DomainException;
-import pt.ist.bennu.core.util.BundleUtil;
-import pt.utl.ist.fenix.tools.util.i18n.Language;
+
+import org.fenixedu.bennu.core.domain.User;
+import org.fenixedu.bennu.core.i18n.BundleUtil;
 
 /**
  * 
@@ -81,8 +80,7 @@ public class EditCompetenceEvaluation extends
         }
         if (activityInformation.getEvaluatedOnlyByCompetences() == null
                 || activityInformation.getCompetences().size() < nrRequiredItems) {
-            throw new DomainException("renderers.validator.invalid.nrCompetences", ResourceBundle.getBundle(
-                    "resources/SiadapResources", Language.getLocale()), Integer.toString(nrRequiredItems));
+            throw new SiadapException("renderers.validator.invalid.nrCompetences", Integer.toString(nrRequiredItems));
         }
         Siadap siadap = activityInformation.getSiadap();
         // TODO ist154457 make this more efficient, for now, let's just remove
@@ -140,12 +138,12 @@ public class EditCompetenceEvaluation extends
         case INCOMPLETE_OBJ_OR_COMP:
             return null;
         case EVALUATION_NOT_GOING_TO_BE_DONE:
-            return BundleUtil.getStringFromResourceBundle(getUsedBundle(), "edit.warning.evaluation.not.going.to.be.done");
+            return BundleUtil.getString(getUsedBundle(), "edit.warning.evaluation.not.going.to.be.done");
         case NOT_YET_SUBMITTED_FOR_ACK:
             return null;
         case WAITING_EVAL_OBJ_ACK:
         case WAITING_SELF_EVALUATION:
-            return BundleUtil.getStringFromResourceBundle(getUsedBundle(), "edit.warning.reverts.state");
+            return BundleUtil.getString(getUsedBundle(), "edit.warning.reverts.state");
         }
         return null;
     }

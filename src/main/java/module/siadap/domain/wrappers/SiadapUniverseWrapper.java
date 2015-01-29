@@ -159,7 +159,7 @@ public class SiadapUniverseWrapper implements Serializable {
         public abstract RoundingMode getQuotaRoundingMode();
     }
 
-    /**
+    /*
      * Constructor used to make a wrapper suitable for harmonization purposes;
      * 
      * @param siadapUniverseOfPeople
