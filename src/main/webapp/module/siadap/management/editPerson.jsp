@@ -194,7 +194,7 @@ request.setAttribute("isCCAMember", isCCAMember);
 						</fr:slot>
 						<fr:slot name="competenceType" layout="menu-select">
 							<fr:property name="providerClass" value="module.siadap.presentationTier.renderers.providers.CompetenceTypeProvider" />
-							<fr:property name="format" value="${name}" />
+							<fr:property name="format" value="\${name}" />
 							<fr:property name="sortBy" value="name" />
 						</fr:slot>
 					</fr:schema>
@@ -214,7 +214,7 @@ request.setAttribute("isCCAMember", isCCAMember);
 					<fr:schema bundle="SIADAP_RESOURCES" type="module.siadap.presentationTier.actions.SiadapPersonnelManagement$SiadapCreationBean">
 						<fr:slot name="competenceType" layout="menu-select">
 							<fr:property name="providerClass" value="module.siadap.presentationTier.renderers.providers.CompetenceTypeProvider" />
-							<fr:property name="format" value="${name}" />
+							<fr:property name="format" value="\${name}" />
 							<fr:property name="sortBy" value="name" />
 						</fr:slot>
 					</fr:schema>
@@ -234,7 +234,7 @@ request.setAttribute("isCCAMember", isCCAMember);
 					<fr:schema bundle="SIADAP_RESOURCES" type="module.siadap.presentationTier.actions.SiadapPersonnelManagement$CompetenceTypeBean">
 						<fr:slot name="competenceType" layout="menu-select">
 							<fr:property name="providerClass" value="module.siadap.presentationTier.renderers.providers.CompetenceTypeProvider" />
-							<fr:property name="format" value="${name}" />
+							<fr:property name="format" value="\${name}" />
 							<fr:property name="sortBy" value="name" />
 						</fr:slot>
 					</fr:schema>
@@ -255,7 +255,7 @@ request.setAttribute("isCCAMember", isCCAMember);
 					<fr:schema bundle="SIADAP_RESOURCES" type="module.siadap.presentationTier.actions.SiadapPersonnelManagement$ForceChangeCompetenceTypeBean">
 						<fr:slot name="competenceType" layout="menu-select">
 							<fr:property name="providerClass" value="module.siadap.presentationTier.renderers.providers.CompetenceTypeProvider" />
-							<fr:property name="format" value="${name}" />
+							<fr:property name="format" value="\${name}" />
 							<fr:property name="sortBy" value="name" />
 						</fr:slot>
 					</fr:schema>
@@ -276,7 +276,7 @@ request.setAttribute("isCCAMember", isCCAMember);
 		<fr:layout name="autoComplete">
 			<fr:property name="classes" value="tstyle2"/>
 			<fr:property name="labelField" value="partyName.content"/>
-			<fr:property name="format" value="${presentationName}"/>
+			<fr:property name="format" value="\${presentationName}"/>
 			<fr:property name="minChars" value="3"/>		
 			<fr:property name="args" value="provider=module.organization.presentationTier.renderers.providers.UnitAutoCompleteProvider"/>
 			<fr:property name="size" value="60"/>
@@ -324,7 +324,7 @@ request.setAttribute("isCCAMember", isCCAMember);
 		<fr:layout name="autoComplete">
 			<fr:property name="classes" value="tstyle2"/>
 			<fr:property name="labelField" value="partyName.content"/>
-			<fr:property name="format" value="${presentationName}"/>
+			<fr:property name="format" value="\${presentationName}"/>
 			<fr:property name="minChars" value="3"/>		
 			<fr:property name="args" value="<%="provider=module.siadap.presentationTier.renderers.providers.HarmonizationUnitAutoCompleteProvider," + "year=" + year%>"/>
 			<fr:property name="size" value="60"/>
