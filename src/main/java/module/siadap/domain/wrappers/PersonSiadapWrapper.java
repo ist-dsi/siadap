@@ -709,7 +709,7 @@ public class PersonSiadapWrapper extends PartyWrapper implements Serializable {
     }
 
     public boolean isCurrentUserAbleToCreateProcess() {
-        return getSiadap() == null && DynamicGroup.get("StructureManagementGroup").isMember(Authenticate.getUser());
+        return getSiadap() == null && DynamicGroup.get("SiadapStructureManagementGroup").isMember(Authenticate.getUser());
     }
 
     public boolean isCurrentUserAbleToSeeAutoEvaluationDetails() {

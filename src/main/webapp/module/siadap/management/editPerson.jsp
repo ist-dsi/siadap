@@ -116,7 +116,7 @@ if (configuration.isCurrentUserMemberOfCCA()) {
     isCCAMember = true;
 }
 //if (configuration.getCcaMembers().contains(person) || Role.getRole(RoleType.MANAGER).isMember(currentUser) )
-if (DynamicGroup.get("managers").isMember(Authenticate.getUser()) || configuration.isUserMemberOfStructureManagementGroup(currentUser) )
+if (DynamicGroup.get("managers").isMember(Authenticate.getUser()) || DynamicGroup.get("SiadapStructureManagementGroup").isMember(Authenticate.getUser()))
 {
     isAbleToChangeAnything = true;
 }
@@ -129,7 +129,6 @@ request.setAttribute("isAbleToChangeAnything", isAbleToChangeAnything);
 request.setAttribute("isManager", isManager);
 request.setAttribute("isCCAMember", isCCAMember);
 %>
-
 
 	<%-- Part responsible for the changes on the SIADAP proccess (and the SIADAP user) --%>
 <logic:equal name="isAbleToChangeAnything" value="true">

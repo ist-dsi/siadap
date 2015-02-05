@@ -23,7 +23,7 @@ public class RectifyNullifiedProcess extends WorkflowActivity<SiadapProcess, Nul
     @Override
     public boolean isActive(SiadapProcess process, User user) {
         Boolean nulled = process.getSiadap().getNulled();
-        return ((nulled != null && nulled) && (DynamicGroup.get("StructureManagementGroup").isMember(Authenticate.getUser()) || DynamicGroup
+        return ((nulled != null && nulled) && (DynamicGroup.get("SiadapStructureManagementGroup").isMember(Authenticate.getUser()) || DynamicGroup
                 .get("CcaMembersGroup").isMember(Authenticate.getUser())));
     }
 

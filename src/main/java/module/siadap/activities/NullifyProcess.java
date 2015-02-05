@@ -14,7 +14,7 @@ public class NullifyProcess extends WorkflowActivity<SiadapProcess, NullifyRatif
     @Override
     public boolean isActive(SiadapProcess process, User user) {
         Boolean nulled = process.getSiadap().getNulled();
-        return ((nulled == null || !nulled) && (DynamicGroup.get("StructureManagementGroup").isMember(
+        return ((nulled == null || !nulled) && (DynamicGroup.get("SiadapStructureManagementGroup").isMember(
                 Authenticate.getUser()) || DynamicGroup.get("CcaMembersGroup").isMember(Authenticate.getUser())));
     }
 
