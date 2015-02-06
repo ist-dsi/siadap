@@ -106,7 +106,7 @@ public class ObjectiveEvaluation extends ObjectiveEvaluation_Base {
             sum = sum.add(indicator.getPonderationFactor());
         }
         if (sum.add(ponderationFactor).compareTo(BigDecimal.ONE) > 0) {
-            throw new SiadapException("resources/SiadapResources", "error.ponderation.cannot.be.over.100");
+            throw new SiadapException("error.ponderation.cannot.be.over.100");
         }
         checkSizeOfIndicators();
         new ObjectiveEvaluationIndicator(this, measurementIndicator, superationCriteria, ponderationFactor);

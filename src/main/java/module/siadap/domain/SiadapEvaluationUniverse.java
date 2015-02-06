@@ -285,7 +285,7 @@ public class SiadapEvaluationUniverse extends SiadapEvaluationUniverse_Base {
         for (SiadapEvaluationItem evaluation : evaluations) {
             IScoring itemEvaluation = evaluation.getItemEvaluation();
             if (itemEvaluation == null) {
-                throw new SiadapException("resources/SiadapResources", "error.siadapEvaluation.mustFillAllItems");
+                throw new SiadapException("error.siadapEvaluation.mustFillAllItems");
             }
             result = result.add(itemEvaluation.getPoints());
         }

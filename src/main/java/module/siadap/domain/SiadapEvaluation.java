@@ -69,14 +69,14 @@ public class SiadapEvaluation extends SiadapEvaluation_Base {
         if (siadap.getDefaultSiadapEvaluationUniverse().isInadequate()
                 && (StringUtils.isEmpty(personalDevelopment) || StringUtils.isEmpty(trainningNeeds))) {
 
-            throw new SiadapException("resources/SiadapResources", "error.siadapEvaluation.mustFillDataForBadEvaluation");
+            throw new SiadapException("error.siadapEvaluation.mustFillDataForBadEvaluation");
         }
         if ((siadap.getDefaultSiadapEvaluationUniverse().isInadequate() || siadap.getDefaultSiadapEvaluationUniverse()
                 .hasRelevantEvaluation()) && StringUtils.isEmpty(evaluationJustification)) {
-            throw new SiadapException("resources/SiadapResources", "error.siadapEvaluation.mustFillEvaluationJustification");
+            throw new SiadapException("error.siadapEvaluation.mustFillEvaluationJustification");
         }
         if (getExcellencyAward().booleanValue() && StringUtils.isBlank(getExcellencyAwardJustification())) {
-            throw new SiadapException("resources/SiadapResources", "error.siadapEvaluation.mustFillExcellencyAwardJustification");
+            throw new SiadapException("error.siadapEvaluation.mustFillExcellencyAwardJustification");
         }
     }
 
