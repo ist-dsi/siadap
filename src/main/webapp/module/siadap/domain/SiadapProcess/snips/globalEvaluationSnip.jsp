@@ -11,15 +11,17 @@
 </logic:equal>
 
 <logic:iterate id="siadapEvaluationUniverse" name="process" property="siadap.siadapEvaluationUniverses">
-	<logic:equal name="siadapEvaluationUniverse" property="evaluationDone" value="true">			
+
 	<%--Showing regular evaluations --%>
 		<logic:equal name="siadapEvaluationUniverse" property="curriculumPonderation" value="false">
 					<%-- R1 refactoring evaluationData --%>
+<logic:equal name="siadapEvaluationUniverse" property="evaluationDone" value="true"> 
 				<logic:equal name="process" property="siadap.evaluationData2.excellencyAward" value="true">
 					<div class="highlightBox">
 						<bean:message key="label.suggestedForExcellencyAward" bundle="SIADAP_RESOURCES"/>
 					</div>
 				</logic:equal>
+</logic:equal>
 			
 			<logic:equal value="true" name="siadapEvaluationUniverse" property="defaultEvaluationUniverse">
  				<p><b><i>Avaliação principal:</i></b></p>
@@ -88,7 +90,5 @@
 						<fr:view name="siadapEvaluationUniverse" property="currentGrade"/>
 					(<fr:view name="siadapEvaluationUniverse" property="latestSiadapGlobalEvaluationEnum"/>) </p> 
 				</logic:equal>
-			
-	</logic:equal>
 
 </logic:iterate>
