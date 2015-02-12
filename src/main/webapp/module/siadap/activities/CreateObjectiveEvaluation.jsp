@@ -1,3 +1,4 @@
+<%@page import="module.siadap.domain.SiadapYearConfiguration"%>
 <%@page import="module.siadap.domain.SiadapProcess"%>
 <%@page import="module.siadap.activities.CreateObjectiveEvaluationActivityInformation"%>
 <%@page import="module.siadap.activities.EditObjectiveEvaluationActivityInformation"%>
@@ -15,11 +16,12 @@
 <div class="dinline forminline">
 <% ActivityInformation ai = (ActivityInformation) request.getAttribute("information"); 
 		SiadapProcess siadapProcess = (SiadapProcess) request.getAttribute("process");
-		boolean shouldTypeBeEditable =  siadapProcess.isNotSubmittedForConfirmation() ; //(ai instanceof EditObjectiveEvaluationActivityInformation) ? false : true;
+        SiadapYearConfiguration configuration = siadapProcess.getSiadap().getSiadapYearConfiguration();
+		boolean shouldTypeBeEditable =  siadapProcess.isNotSubmittedForConfirmation() || configuration.isCurrentUserMemberOfCCA() ; //(ai instanceof EditObjectiveEvaluationActivityInformation) ? false : true;
 		request.setAttribute("shouldTypeBeEditable", shouldTypeBeEditable);
 %>
 
-<fr:form id="form" action='<%="/workflowProcessManagement.do?method=process&processId=" + processId + "&activity=" + name%>'>
+<fr:form id="form" action='<%="/workflowProcessManagement.do?method=process&processId=" + processId + "&activity=" + name %>'>
 
 	<html:hidden property="removeIndex" value=""/>
 	
@@ -41,7 +43,6 @@
 				</fr:slot>
 			</logic:equal>
 		</logic:present>
-		
 		<logic:equal name="shouldTypeBeEditable" value="true">
 			<fr:slot name="type" required="true"/>	
 		</logic:equal>
@@ -53,7 +54,6 @@
 		</fr:layout>
 		<fr:destination name="invalid" path='<%="/workflowProcessManagement.do?method=process&processId=" + processId + "&activity=" + name%>' />
 	</fr:edit>
-	
 	<logic:notEqual name="shouldTypeBeEditable" value="true">
 		<fr:view name="information">
 			<fr:schema type="module.siadap.activities.CreateObjectiveEvaluationActivityInformation" bundle="SIADAP_RESOURCES">
@@ -117,7 +117,7 @@
 	boolean hideAddNewIndicator = maxNrIndicators == null ? false : nrCurrentIndicators >= maxNrIndicators; 
 	request.setAttribute("hideAddNewIndicator", hideAddNewIndicator);
 	%>
-	
+	<html:submit styleClass="inputbutton"><bean:message key="button.save" bundle="SIADAP_RESOURCES"/></html:submit>
 	<logic:equal value="false" name="hideAddNewIndicator">
 		 <%--	hovering tooltip stuff:  --%>
 		 <div style="text-align: right;">
@@ -131,7 +131,6 @@
 	     </div>
 		<input id="addNewIndicator" type="hidden" value="+"/>
 	</logic:equal>
-	<html:submit styleClass="inputbutton"><bean:message key="button.save" bundle="SIADAP_RESOURCES"/></html:submit>
 </fr:form>
 <fr:form id="form" action='<%="/workflowProcessManagement.do?method=viewProcess&processId=" + processId %>'>
 	<html:submit styleClass="inputbutton"><bean:message key="button.back" bundle="SIADAP_RESOURCES"/></html:submit>
@@ -141,7 +140,7 @@
 	
 <a id="addIndicator" style="display: none;" href="<%= request.getContextPath() + "/siadapProcessController.do?skipValidation=true&method=addNewIndicator&processId=" + processId + "#form" %>"></a>
 <a id="removeIndicator" style="display: none;" href="<%= request.getContextPath() + "/siadapProcessController.do?skipValidation=true&method=removeIndicator&processId=" + processId + "#form" %>"></a>
-	
+
 	<script type="text/javascript">
 
 		$("a[id^=remove-]").click(function() {
@@ -158,6 +157,3 @@
 			form.submit();
 		});
 	</script>
-<jsp:include page="/module/siadap/tracFeedBackSnip.jsp">	
-   <jsp:param name="href" value="https://fenix-ashes.ist.utl.pt/trac/siadap/report/11" />	
-</jsp:include>

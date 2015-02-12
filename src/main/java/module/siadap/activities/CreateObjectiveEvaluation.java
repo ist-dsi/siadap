@@ -29,6 +29,7 @@ import module.siadap.domain.ObjectiveEvaluation;
 import module.siadap.domain.Siadap;
 import module.siadap.domain.SiadapProcess;
 import module.siadap.domain.SiadapProcessStateEnum;
+import module.siadap.domain.SiadapYearConfiguration;
 import module.workflow.activities.ActivityInformation;
 import module.workflow.activities.WorkflowActivity;
 
@@ -47,6 +48,10 @@ public class CreateObjectiveEvaluation extends WorkflowActivity<SiadapProcess, C
         Siadap siadap = process.getSiadap();
         if (!process.isActive()) {
             return false;
+        }
+        SiadapYearConfiguration configuration = siadap.getSiadapYearConfiguration();
+        if (configuration.isCurrentUserMemberOfCCA()) {
+            return true;
         }
         Integer maximumNumberOfObjectives = siadap.getSiadapYearConfiguration().getMaximumNumberOfObjectives();
         if (maximumNumberOfObjectives != null && siadap.getObjectiveEvaluations().size() >= maximumNumberOfObjectives)

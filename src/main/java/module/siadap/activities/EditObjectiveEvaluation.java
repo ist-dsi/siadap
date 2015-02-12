@@ -29,6 +29,7 @@ import module.siadap.domain.ObjectiveEvaluation;
 import module.siadap.domain.Siadap;
 import module.siadap.domain.SiadapProcess;
 import module.siadap.domain.SiadapProcessStateEnum;
+import module.siadap.domain.SiadapYearConfiguration;
 import module.workflow.activities.ActivityInformation;
 import module.workflow.activities.WorkflowActivity;
 
@@ -49,6 +50,10 @@ public class EditObjectiveEvaluation extends WorkflowActivity<SiadapProcess, Edi
         Siadap siadap = process.getSiadap();
         if (siadap.getEvaluator() == null) {
             return false;
+        }
+        SiadapYearConfiguration configuration = siadap.getSiadapYearConfiguration();
+        if (configuration.isCurrentUserMemberOfCCA()) {
+            return true;
         }
         return siadap.getObjectiveSpecificationInterval().containsNow()
                 && SiadapProcessStateEnum.getState(siadap).ordinal() <= SiadapProcessStateEnum.WAITING_EVAL_OBJ_ACK.ordinal()
