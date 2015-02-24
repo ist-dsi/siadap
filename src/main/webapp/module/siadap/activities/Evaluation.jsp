@@ -49,7 +49,7 @@
 					<i><bean:message bundle="SIADAP_RESOURCES" key="label.autoEvaluation"/>:</i><fr:view name="indicator" property="autoEvaluation" type="module.siadap.domain.scoring.SiadapObjectivesEvaluation" />
 				</td>
 				<bean:define id="ponderation" name="indicator" property="ponderationFactor"/>
-				<td name="<%= ponderation %>"><fr:edit name="indicator" slot="evaluation" /></td>
+				<td name="<%= ponderation %>" style="width: 195px;"><fr:edit name="indicator" slot="evaluation" /></td>
 				</tr>
 			</logic:iterate>
 			<tr><td> </td></tr>
