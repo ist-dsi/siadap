@@ -25,7 +25,6 @@
 package module.siadap.activities;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
 
 import module.organization.domain.Person;
 import module.siadap.domain.Siadap;
@@ -40,7 +39,11 @@ import module.workflow.activities.WorkflowActivity;
 import module.workflow.domain.WorkflowProcess;
 
 import org.apache.commons.lang.StringUtils;
+import org.fenixedu.bennu.core.groups.UserGroup;
 import org.fenixedu.bennu.core.i18n.BundleUtil;
+import org.fenixedu.messaging.domain.Message.MessageBuilder;
+import org.fenixedu.messaging.domain.MessagingSystem;
+import org.fenixedu.messaging.domain.Sender;
 import org.joda.time.LocalDate;
 
 /**
@@ -192,37 +195,32 @@ public class ValidationActivityInformation extends ActivityInformation<SiadapPro
         public abstract void process(PersonSiadapWrapper personWrapper, SiadapUniverse siadapUniverse);
 
         public String[] getArgumentsDescription(ValidationActivityInformation activityInformation) {
-            return new String[] { BundleUtil.getString(Siadap.SIADAP_BUNDLE_STRING, name(),
-                    activityInformation.getSiadapUniverse().name()) };
+            return new String[] { BundleUtil.getString(Siadap.SIADAP_BUNDLE_STRING, name(), activityInformation
+                    .getSiadapUniverse().name()) };
         }
 
         public abstract boolean hasAllneededInfo(PersonSiadapWrapper personWrapper, SiadapUniverse universe);
 
         public static void notifyEvaluatorOfFinishedValidation(Person evaluator, int year) throws SiadapException {
             try {
-                ArrayList<String> toAddress = new ArrayList<String>();
                 SiadapProcess.checkEmailExistenceImportAndWarnOnError(evaluator);
                 String emailEvaluator = evaluator.getUser().getProfile().getEmail();
                 if (StringUtils.isBlank(emailEvaluator)) {
                     throw new SiadapException("error.could.not.notify.given.user", evaluator.getPresentationName());
                 }
-                if (!StringUtils.isBlank(emailEvaluator)) {
-                    toAddress.add(emailEvaluator);
+                StringBuilder body =
+                        new StringBuilder(
+                                "Os processos SIADAP do ano "
+                                        + year
+                                        + " estão validados, com a nota final atríbuida, e prontos a submeter para conhecimento do avaliado");
+                body.append("\nPara mais informações consulte https://dot.ist.utl.pt\n");
+                body.append("\n\n---\n");
+                body.append("Esta mensagem foi enviada por meio das Aplicações Centrais do IST.\n");
 
-                    StringBuilder body =
-                            new StringBuilder(
-                                    "Os processos SIADAP do ano "
-                                            + year
-                                            + " estão validados, com a nota final atríbuida, e prontos a submeter para conhecimento do avaliado");
-                    body.append("\nPara mais informações consulte https://dot.ist.utl.pt\n");
-                    body.append("\n\n---\n");
-                    body.append("Esta mensagem foi enviada por meio das Aplicações Centrais do IST.\n");
-
-                    throw new Error("Reimplement this");
-//                    new Email(virtualHost.getApplicationSubTitle().getContent(), virtualHost.getSystemEmailAddress(),
-//                            new String[] {}, toAddress, Collections.EMPTY_LIST, Collections.EMPTY_LIST, "SIADAP - " + year
-//                                    + " - Avaliações validadas", body.toString());
-                }
+                final Sender sender = MessagingSystem.getInstance().getSystemSender();
+                final MessageBuilder message = sender.message("SIADAP - " + year + " - Avaliações validadas", body.toString());
+                message.to(UserGroup.of(evaluator.getUser()));
+                message.send();
             } catch (final Throwable ex) {
                 System.out.println("Unable to lookup email address for: " + evaluator.getPresentationName() + " Error: "
                         + ex.getMessage());

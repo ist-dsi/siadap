@@ -3,9 +3,10 @@
  */
 package module.siadap.domain.util.actions;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -13,12 +14,17 @@ import module.organization.domain.Person;
 import module.organization.domain.Unit;
 import module.siadap.domain.Siadap;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.struts.Globals;
 import org.apache.struts.action.ActionMessage;
 import org.apache.struts.action.ActionMessages;
 import org.fenixedu.bennu.core.domain.User;
 import org.fenixedu.bennu.core.groups.DynamicGroup;
+import org.fenixedu.bennu.core.groups.UserGroup;
 import org.fenixedu.bennu.core.i18n.BundleUtil;
+import org.fenixedu.messaging.domain.Message.MessageBuilder;
+import org.fenixedu.messaging.domain.MessagingSystem;
+import org.fenixedu.messaging.domain.Sender;
 
 import pt.ist.fenixframework.Atomic;
 
@@ -99,22 +105,20 @@ public class SiadapUtilActions {
     public static void notifyUser(HttpServletRequest request, String notificationSubject, String notificationContent,
             Collection<User> users) {
         // get the user e-mail
-        ArrayList<String> usersEmails = new ArrayList<String>();
+        Set<User> usersEmails = new HashSet<User>();
         for (User user : users) {
-            throw new Error("Reimplement this");
-//            try {
-//                String emailAddress = EmailAddress.getEmailForSendingEmails(person);
-//                if (StringUtils.isBlank(emailAddress)) {
-//                    String[] arguments = { person.getName() };
-//                    addMessage(request, "WARNING", "manage.siadapStructure.notification.email.notAbleToSendTo", arguments);
-//
-//                } else {
-//                    usersEmails.add(emailAddress);
-//                }
-//            } catch (Throwable ex) {
-//                String[] arguments = { person.getName() };
-//                addMessage(request, "WARNING", "manage.siadapStructure.notification.email.notAbleToSendTo", arguments);
-//            }
+            try {
+                String emailAddress = user.getProfile() == null ? "" : user.getProfile().getEmail();
+                if (StringUtils.isBlank(emailAddress)) {
+                    String[] arguments = { user.getPerson().getName() };
+                    addMessage(request, "WARNING", "manage.siadapStructure.notification.email.notAbleToSendTo", arguments);
+                } else {
+                    usersEmails.add(user);
+                }
+            } catch (Throwable ex) {
+                String[] arguments = { user.getPerson().getName() };
+                addMessage(request, "WARNING", "manage.siadapStructure.notification.email.notAbleToSendTo", arguments);
+            }
         }
         auxNotifyUser(usersEmails, notificationSubject, notificationContent);
     }
@@ -132,10 +136,11 @@ public class SiadapUtilActions {
 
     // created because of the faulty dml injector
     @Atomic
-    private static void auxNotifyUser(ArrayList<String> usersEmails, String notificationSubject, String notificationContent) {
-        throw new Error("Reimplement this");
-//        new Email(virtualHost.getApplicationSubTitle().getContent(), virtualHost.getSystemEmailAddress(), new String[] {},
-//                usersEmails, Collections.EMPTY_LIST, Collections.EMPTY_LIST, notificationSubject, notificationContent);
+    private static void auxNotifyUser(Set<User> users, String notificationSubject, String notificationContent) {
+        final Sender sender = MessagingSystem.getInstance().getSystemSender();
+        final MessageBuilder message = sender.message(notificationSubject, notificationContent);
+        message.to(UserGroup.of(users));
+        message.send();
     }
 
     private static ActionMessages getMessages(HttpServletRequest request) {

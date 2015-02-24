@@ -24,8 +24,6 @@
  */
 package module.siadap.activities;
 
-import java.util.ArrayList;
-
 import module.organization.domain.Person;
 import module.siadap.domain.Siadap;
 import module.siadap.domain.SiadapProcess;
@@ -34,6 +32,10 @@ import module.workflow.activities.ActivityInformation;
 import module.workflow.activities.WorkflowActivity;
 
 import org.fenixedu.bennu.core.domain.User;
+import org.fenixedu.bennu.core.groups.UserGroup;
+import org.fenixedu.messaging.domain.Message.MessageBuilder;
+import org.fenixedu.messaging.domain.MessagingSystem;
+import org.fenixedu.messaging.domain.Sender;
 import org.joda.time.LocalDate;
 
 /**
@@ -72,31 +74,24 @@ public class SubmitValidatedEvaluation extends WorkflowActivity<SiadapProcess, A
     @Override
     protected void notifyUsers(SiadapProcess process) {
 
-        ArrayList<String> toAddress = new ArrayList<String>();
-        ArrayList<String> ccAddress = new ArrayList<String>();
-        String emailEvaluated = null;
         Person evaluatedPerson = process.getSiadap().getEvaluated();
 
         try {
             SiadapProcess.checkEmailExistenceImportAndWarnOnError(evaluatedPerson);
-            emailEvaluated = evaluatedPerson.getUser().getProfile().getEmail();
 
-            if (emailEvaluated != null) {
-                toAddress.add(emailEvaluated);
-                Integer year = process.getSiadap().getYear();
+            Integer year = process.getSiadap().getYear();
 
-                StringBuilder body =
-                        new StringBuilder("A nota final (pós-validação) do seu processo SIADAP de " + year
-                                + " encontra-se disponível na plataforma. Necessita de tomar conhecimento da validação\n");
-                body.append("\nPara mais informações consulte https://dot.ist.utl.pt\n");
-                body.append("\n\n---\n");
-                body.append("Esta mensagem foi enviada por meio das Aplicações Centrais do IST.\n");
+            StringBuilder body =
+                    new StringBuilder("A nota final (pós-validação) do seu processo SIADAP de " + year
+                            + " encontra-se disponível na plataforma. Necessita de tomar conhecimento da validação\n");
+            body.append("\nPara mais informações consulte https://dot.ist.utl.pt\n");
+            body.append("\n\n---\n");
+            body.append("Esta mensagem foi enviada por meio das Aplicações Centrais do IST.\n");
 
-                throw new Error("Reimplement this");
-//                new Email(virtualHost.getApplicationSubTitle().getContent(), virtualHost.getSystemEmailAddress(),
-//                        new String[] {}, toAddress, ccAddress, Collections.EMPTY_LIST, "SIADAP - " + year
-//                        + " Nota final disponível", body.toString());
-            }
+            final Sender sender = MessagingSystem.getInstance().getSystemSender();
+            final MessageBuilder message = sender.message("SIADAP - " + year + " Nota final disponível", body.toString());
+            message.to(UserGroup.of(evaluatedPerson.getUser()));
+            message.send();
         } catch (Throwable ex) {
             System.out.println("Unable to lookup email address for: " + evaluatedPerson.getUser().getUsername() + " Error: "
                     + ex.getMessage());
