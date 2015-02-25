@@ -86,16 +86,11 @@ public class RevertState extends WorkflowActivity<SiadapProcess, RevertStateActi
         case NOT_CREATED:
         case UNIMPLEMENTED_STATE:
         default:
-            if (isSideEffect()) {
-                setSideEffect(false);
-            }
             throw new SiadapException("activity.RevertState.error.invalidStateToChangeTo");
-
         }
         if (isSideEffect()) {
             setSideEffect(false);
         }
-
     }
 
     @Override

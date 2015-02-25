@@ -59,6 +59,7 @@ public class SealObjectivesAndCompetences extends WorkflowActivity<SiadapProcess
 
     protected static void revertProcess(ActivityInformation<SiadapProcess> activityInformation) {
         activityInformation.getProcess().getSiadap().setObjectivesAndCompetencesSealedDate(null);
+        activityInformation.getProcess().getSiadap().setAutoEvaluationSealedDate(null);
     }
 
     @Override

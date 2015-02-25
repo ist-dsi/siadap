@@ -60,6 +60,7 @@ public class SubmitForObjectivesAcknowledge extends WorkflowActivity<SiadapProce
 
     static protected void revertProcess(RevertStateActivityInformation activityInformation, boolean notifyIntervenients) {
         activityInformation.getProcess().getSiadap().setRequestedAcknowledgeDate(null);
+        activityInformation.getProcess().getSiadap().setAutoEvaluationSealedDate(null);
         if (notifyIntervenients) {
 
             SiadapProcess siadapProcess = activityInformation.getProcess();

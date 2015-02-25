@@ -107,6 +107,7 @@ public class AcknowledgeEvaluationObjectives extends WorkflowActivity<SiadapProc
         SiadapProcess siadapProcess = activityInformation.getProcess();
         Siadap siadap = siadapProcess.getSiadap();
         siadap.setAcknowledgeDate(null);
+        siadap.setAutoEvaluationSealedDate(null);
         // also do revert the acknowledgeDate on the individual items
         if (siadap.getCurrentEvaluationItems() == null || siadap.getCurrentEvaluationItems().isEmpty()) {
             return;
