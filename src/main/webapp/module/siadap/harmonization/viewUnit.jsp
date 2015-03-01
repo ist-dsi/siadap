@@ -8,7 +8,7 @@
 <%@ taglib uri="http://jakarta.apache.org/struts/tags-logic" prefix="logic"%>
 <%@ taglib uri="http://fenix-ashes.ist.utl.pt/fenix-renderers" prefix="fr"%>
 
-<bean:define id="unitName" name="currentUnit" property="unit.partyName"/>
+<bean:define id="unitName" name="currentUnit" property="unit.partyName.content"/>
 <bean:define id="unitId" name="currentUnit" property="unit.externalId"/>
 
 <bean:define id="unitId" name="currentUnit" property="unit.externalId"/>

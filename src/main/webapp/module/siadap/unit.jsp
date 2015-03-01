@@ -90,7 +90,7 @@
 						%>
 							<div class="orgTBox orgTBoxLight">
 								<strong>
-									<bean:write name="party" property="partyName"/>
+									<bean:write name="party" property="partyName.content"/>
 								</strong>
 							</div>
 						<%			    
@@ -129,7 +129,7 @@
 							</bean:define>
 							<div class="orgTBox orgTBoxLight" style="<%= styleSuffix %> " title="header=[ <%= toolTipTitle %> ] body=[<%= toolTip %>]">
 								<html:link page="<%="/siadapProcessCount.do?method=showUnit&year=" + year + "&siadapProcessStateEnumToFilterOrdinal="+siadapProcessStateEnumToFilter%>" paramId="unitId" paramName="party" paramProperty="externalId" styleClass="secondaryLink">
-									<bean:write name="party" property="partyName"/>
+									<bean:write name="party" property="partyName.content"/>
 								</html:link>
 							</div>
 						<%			    

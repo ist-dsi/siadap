@@ -138,7 +138,7 @@
 							</bean:define>
 							<div class="orgTBox orgTBoxLight"  title="header=[ <%= toolTipTitle %> ] body=[<%= toolTip %>]">
 								<html:link page="<%="/unitManagementInterface.do?method=showUnit&year=" + year +"&mode=" + mode.name() %>" paramId="unitId" paramName="party" paramProperty="externalId" styleClass="secondaryLink">
-									<bean:write name="party" property="partyName"/>
+									<bean:write name="party" property="partyName.content"/>
 								</html:link>
 							</div>
 						<%			    

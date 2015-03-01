@@ -13,7 +13,7 @@
  
 <fr:view name="peopleToEvaluate">
 		<fr:schema type="module.siadap.domain.wrappers.PersonSiadapWrapper" bundle="SIADAP_RESOURCES">
-			<fr:slot name="person.partyName" key="label.evaluated"/>
+			<fr:slot name="person.user.profile.fullName" key="label.evaluated"/>
 			<fr:slot name="person.user.username" key="label.login.username" bundle="MYORG_RESOURCES"/>
 			<fr:slot name="workingUnit.unit.partyName" key="label.unit" bundle="ORGANIZATION_RESOURCES"/>
 			<fr:slot name="quotaAware" key="label.quotaAware"/>
@@ -40,7 +40,7 @@
 			
 			<fr:property name="sortParameter" value="sortBy"/>
        		<fr:property name="sortUrl" value="<%="/siadapManagement.do?method=prepareToCreateNewSiadapProcess&year=" + String.valueOf(request.getAttribute("year"))%>"/>
-		    <fr:property name="sortBy" value="<%= request.getParameter("sortBy") == null ? "person.partyName=asc" : request.getParameter("sortBy") %>"/>
+		    <fr:property name="sortBy" value="<%= request.getParameter("sortBy") == null ? "person.user.profile.fullName=asc" : request.getParameter("sortBy") %>"/>
 		</fr:layout>
 </fr:view>
 <jsp:include page="processStateLegend.jsp"/>
