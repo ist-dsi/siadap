@@ -980,7 +980,7 @@ public class UnitSiadapWrapper extends PartyWrapper implements Serializable {
                         return;
                     }
                 } else if (!accountability.getChild().equals(person)) {
-                    accountability.editDates(accountability.getBeginDate(), getConfiguration().getFirstDay());
+                    accountability.editDates(accountability.getBeginDate(), accountability.getBeginDate().plusDays(1));
                 }
             }
         }
