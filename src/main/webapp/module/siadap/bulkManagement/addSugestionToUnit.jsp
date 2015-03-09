@@ -160,7 +160,7 @@ request.setAttribute("hasPeopleToSuggest", hasPeopleToSuggest);
 				<fr:slot name="autoCompletePerson" layout="autoComplete" key="label.person"
 					bundle="ORGANIZATION_RESOURCES">
 					<fr:property name="labelField" value="partyName.content" />
-					<fr:property name="format" value="${presentationName}" />
+					<fr:property name="format" value="\${presentationName}" />
 					<fr:property name="minChars" value="3" />
 					<fr:property name="args"
 						value="<%="provider=module.siadap.presentationTier.renderers.providers.ExceedingQuotaSuggestionProvider,unitId="+unitId+",year="+year%>" />
