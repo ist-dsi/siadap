@@ -44,7 +44,6 @@ import module.organization.domain.AccountabilityType;
 import module.organization.domain.Party;
 import module.organization.domain.Person;
 import module.organization.domain.Unit;
-import module.siadap.activities.NullifyProcess;
 import module.siadap.domain.CompetenceType;
 import module.siadap.domain.CurricularPonderationEvaluationItem;
 import module.siadap.domain.ExceedingQuotaProposal;
@@ -280,6 +279,9 @@ public class PersonSiadapWrapper extends PartyWrapper implements Serializable {
     }
 
     public BigDecimal getLatestClassification(SiadapUniverse siadapUniverse) {
+        if (getSiadap() == null) {
+            return null;
+        }
         SiadapEvaluationUniverse siadapEvaluationUniverse =
                 getSiadap().getSiadapEvaluationUniverseForSiadapUniverse(siadapUniverse);
         if (siadapEvaluationUniverse == null) {
@@ -388,6 +390,9 @@ public class PersonSiadapWrapper extends PartyWrapper implements Serializable {
     }
 
     private boolean isWithoutExcellencyAwardFor(SiadapUniverse siadapUniverse) {
+        if (getSiadap() == null) {
+            return true;
+        }
         SiadapEvaluationUniverse siadapEvaluationUniverseForSiadapUniverse =
                 getSiadap().getSiadapEvaluationUniverseForSiadapUniverse(siadapUniverse);
         if (siadapEvaluationUniverseForSiadapUniverse == null) {
@@ -420,7 +425,7 @@ public class PersonSiadapWrapper extends PartyWrapper implements Serializable {
     public boolean isCurrentUserAbleToSeeDetails() {
         User currentUser = Authenticate.getUser();
         SiadapYearConfiguration configuration = getConfiguration();
-        if (getSiadap().getProcess().isAccessibleToCurrentUser()) {
+        if (getSiadap() != null && getSiadap().getProcess().isAccessibleToCurrentUser()) {
             if (isResponsibleForHarmonization(currentUser.getPerson())) {
                 return true;
             }
@@ -477,8 +482,8 @@ public class PersonSiadapWrapper extends PartyWrapper implements Serializable {
      *         the evaluator, true otherwise
      */
     public boolean getShouldShowObjectivesAndCompetences() {
-        return getSiadap().getObjectivesAndCompetencesSealedDate() != null
-                || getSiadap().getEvaluator().getPerson().getUser().equals(Authenticate.getUser());
+        return getSiadap() != null && (getSiadap().getObjectivesAndCompetencesSealedDate() != null
+                || getSiadap().getEvaluator().getPerson().getUser().equals(Authenticate.getUser()));
     }
 
     public PersonSiadapWrapper getEvaluator() {
@@ -717,10 +722,10 @@ public class PersonSiadapWrapper extends PartyWrapper implements Serializable {
         if (!isCurrentUserAbleToSeeDetails()) {
             return false;
         }
-        if (getSiadap().getEvaluated().equals(currentUser.getPerson())) {
+        if (getSiadap() != null && getSiadap().getEvaluated().equals(currentUser.getPerson())) {
             return true;
         }
-        if (getSiadap().isAutoEvaliationDone()) {
+        if (getSiadap() != null && getSiadap().isAutoEvaliationDone()) {
             return true;
         }
         return false;
@@ -902,8 +907,10 @@ public class PersonSiadapWrapper extends PartyWrapper implements Serializable {
     public List<ObjectiveEvaluationWrapperBean> getAllObjEvaluationWrapperBeansOfDefaultEval() {
         ArrayList<ObjectiveEvaluationWrapperBean> objBeans = new ArrayList<PersonSiadapWrapper.ObjectiveEvaluationWrapperBean>();
 
-        for (ObjectiveEvaluation objectiveEvaluation : getSiadap().getDefaultSiadapEvaluationUniverse().getObjectiveEvaluations()) {
-            objBeans.add(new ObjectiveEvaluationWrapperBean(objectiveEvaluation));
+        if (getSiadap() != null) {
+            for (ObjectiveEvaluation objectiveEvaluation : getSiadap().getDefaultSiadapEvaluationUniverse().getObjectiveEvaluations()) {
+                objBeans.add(new ObjectiveEvaluationWrapperBean(objectiveEvaluation));
+            }
         }
         if (objBeans.size() == 0) {
             objBeans.add(new ObjectiveEvaluationWrapperBean(null));
@@ -938,17 +945,17 @@ public class PersonSiadapWrapper extends PartyWrapper implements Serializable {
         if (!isCurrentUserAbleToSeeDetails()) {
             return false;
         }
-        if (getSiadap().getEvaluator().getPerson().equals(currentUser.getPerson())) {
+        if (getSiadap() != null && getSiadap().getEvaluator().getPerson().equals(currentUser.getPerson())) {
             return true;
         }
-        if (getSiadap().isDefaultEvaluationDone() && getSiadap().getEvaluated().equals(currentUser.getPerson())
+        if (getSiadap() != null && getSiadap().isDefaultEvaluationDone() && getSiadap().getEvaluated().equals(currentUser.getPerson())
                 && getSiadap().getRequestedAcknowledegeValidationDate() != null) {
             return true;
         }
-        if (getSiadap().isDefaultEvaluationDone() && isResponsibleForHarmonization(currentUser.getPerson())) {
+        if (getSiadap() != null && getSiadap().isDefaultEvaluationDone() && isResponsibleForHarmonization(currentUser.getPerson())) {
             return true;
         }
-        if (getSiadap().isDefaultEvaluationDone() && getConfiguration().isCurrentUserMemberOfCCA()) {
+        if (getSiadap() != null && getSiadap().isDefaultEvaluationDone() && getConfiguration().isCurrentUserMemberOfCCA()) {
             return true;
         }
         return false;
@@ -961,8 +968,11 @@ public class PersonSiadapWrapper extends PartyWrapper implements Serializable {
 
     public BigDecimal getTotalEvaluationScoring(SiadapUniverse siadapUniverse) {
         Siadap siadap = getSiadap();
+        if (siadap == null) {
+            return null;
+        }
         SiadapEvaluationUniverse siadapEvaluationUniverse = siadap.getSiadapEvaluationUniverseForSiadapUniverse(siadapUniverse);
-        if (siadap == null || siadapEvaluationUniverse == null || !siadap.isEvaluationDone(siadapUniverse)) {
+        if (siadapEvaluationUniverse == null || !siadap.isEvaluationDone(siadapUniverse)) {
             return null;
         }
 
@@ -1490,6 +1500,9 @@ public class PersonSiadapWrapper extends PartyWrapper implements Serializable {
     }
 
     private boolean isAbleToRemoveAssessmentsFor(SiadapUniverse siadapUniverse) {
+        if (getSiadap() == null) {
+            return false;
+        }
         SiadapEvaluationUniverse siadapEvaluationUniverseForSiadapUniverse =
                 getSiadap().getSiadapEvaluationUniverseForSiadapUniverse(siadapUniverse);
 
@@ -1512,6 +1525,9 @@ public class PersonSiadapWrapper extends PartyWrapper implements Serializable {
 
     @Atomic
     public void setHarmonizationCurrentAssessments(SiadapUniverse siadapUniverse) {
+        if (getSiadap() == null) {
+            return;
+        }
         SiadapEvaluationUniverse siadapEvaluationUniverseForSiadapUniverse =
                 getSiadap().getSiadapEvaluationUniverseForSiadapUniverse(siadapUniverse);
         Boolean harmonizationCurrentAssessment = null;
