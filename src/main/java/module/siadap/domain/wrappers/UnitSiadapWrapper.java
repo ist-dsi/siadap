@@ -2038,7 +2038,9 @@ public class UnitSiadapWrapper extends PartyWrapper implements Serializable {
             personsToHarmonize.addAll(getSiadap3AndWorkingRelationWithQuotaUniverse());
         }
         for (PersonSiadapWrapper personToHarmonize : personsToHarmonize) {
-            personToHarmonize.getSiadap().markAsHarmonized(currentDate, siadapUniverse);
+            if (personToHarmonize.getSiadap() != null) {
+                personToHarmonize.getSiadap().markAsHarmonized(currentDate, siadapUniverse);
+            }
         }
     }
 
@@ -2099,14 +2101,16 @@ public class UnitSiadapWrapper extends PartyWrapper implements Serializable {
                     @Override
                     public boolean evaluate(Object arg0) {
                         PersonSiadapWrapper personWrapper = (PersonSiadapWrapper) arg0;
-                        for (SiadapEvaluationUniverse evalUniverse : personWrapper.getSiadap().getSiadapEvaluationUniverses()) {
-                            if (evalUniverse.getHarmonizationAssessment() != null
-                                    && evalUniverse.getHarmonizationAssessment() == false) {
-                                return true;
-                            }
-                            if (evalUniverse.getHarmonizationAssessmentForExcellencyAward() != null
-                                    && evalUniverse.getHarmonizationAssessmentForExcellencyAward() == false) {
-                                return true;
+                        if (personWrapper.getSiadap() != null) {
+                            for (SiadapEvaluationUniverse evalUniverse : personWrapper.getSiadap().getSiadapEvaluationUniverses()) {
+                                if (evalUniverse.getHarmonizationAssessment() != null
+                                        && evalUniverse.getHarmonizationAssessment() == false) {
+                                    return true;
+                                }
+                                if (evalUniverse.getHarmonizationAssessmentForExcellencyAward() != null
+                                        && evalUniverse.getHarmonizationAssessmentForExcellencyAward() == false) {
+                                    return true;
+                                }
                             }
                         }
                         return false;
