@@ -172,10 +172,12 @@ request.setAttribute("hasPeopleToSuggest", hasPeopleToSuggest);
 						<fr:property name="key" value="true" />
 					</fr:validator>
 				</fr:slot>
-				<fr:slot name="type" required="true" />
+				<fr:slot name="type" required="true">
+					<fr:validator name="pt.ist.fenixWebFramework.renderers.validators.RequiredValidator"/>
+				</fr:slot>
 			</fr:schema>
-			<fr:destination name="invalidate"
-				path='<%="/siadapManagement.do?unitId=" + unitId + "&method=invalidateAddExceedingQuotaSuggestion=" + year.toString()%>' />
+			<fr:destination name="input"
+				path='<%="/siadapManagement.do?unitId=" + unitId + "&method=prepareAddExceedingQuotaSuggestion&year=" + year.toString()%>' />
 			<fr:destination name="cancel"
 				path='<%="/siadapManagement.do?unitId=" + unitId + "&method=viewUnitHarmonizationData&year=" + year.toString()%>' />
 		</fr:edit>
