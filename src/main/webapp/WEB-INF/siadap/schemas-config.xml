@@ -97,7 +97,7 @@
 		
 <schema name="view.competence.name" bundle="SIADAP_RESOURCES"
 	type="module.siadap.domain.Competence">
-	<slot name="name" layout="output-with-hover">
+	<slot name="nameAndDescription" layout="output">
 		<property name="useParent" value="true" />
 		<property name="format" value="${description}" />
 	</slot>

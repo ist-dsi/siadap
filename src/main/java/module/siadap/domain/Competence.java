@@ -64,4 +64,14 @@ public class Competence extends Competence_Base {
         return getCompetenceEvaluationSet();
     }
 
+    public String getNameAndDescription() {
+        final StringBuilder builder = new StringBuilder();
+        builder.append(getName());
+        builder.append("\n");
+        builder.append(getDescription());
+        builder.append("\n");
+        builder.append("\n");
+        return builder.toString();
+    }
+
 }
