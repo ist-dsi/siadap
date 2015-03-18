@@ -307,8 +307,6 @@ public class UnitSiadapWrapper extends PartyWrapper implements Serializable {
                         if (wrapper.isQuotaAware() != belongsToInstitutionalQuota) {
                             return false;
                         }
-                        SiadapEvaluationUniverse siadapEvaluationUniverseForSiadapUniverse =
-                                wrapper.getSiadap().getSiadapEvaluationUniverseForSiadapUniverse(universe);
                         if (wrapper.isWithSkippedEval(universe)) {
                             return false;
                         }
@@ -1041,7 +1039,8 @@ public class UnitSiadapWrapper extends PartyWrapper implements Serializable {
             @Override
             public boolean evaluate(Object personObject) {
                 PersonSiadapWrapper personWrapper = (PersonSiadapWrapper) personObject;
-                return personWrapper.getSiadap().isOngoing();
+                final Siadap siadap = personWrapper.getSiadap();
+                return siadap != null && siadap.isOngoing();
             }
         });
         Collections.sort(unitEmployees, PersonSiadapWrapper.PERSON_COMPARATOR_BY_NAME_FALLBACK_YEAR_THEN_PERSON_OID);
@@ -1447,20 +1446,19 @@ public class UnitSiadapWrapper extends PartyWrapper implements Serializable {
 
     }
 
+    private static void addProcess(final Set<SiadapProcess> set, final PersonSiadapWrapper wrapper) {
+        final Siadap siadap = wrapper.getSiadap();
+        if (siadap != null) {
+            set.add(siadap.getProcess());
+        }
+    }
+
     public Collection<SiadapProcess> getAllSiadapProcesses() {
-        Set<SiadapProcess> allProcesses = new HashSet<SiadapProcess>();
-        for (PersonSiadapWrapper person : getSiadap3AndWorkingRelationWithoutQuotaUniverse()) {
-            allProcesses.add(person.getSiadap().getProcess());
-        }
-        for (PersonSiadapWrapper person : getSiadap3AndWorkingRelationWithQuotaUniverse()) {
-            allProcesses.add(person.getSiadap().getProcess());
-        }
-        for (PersonSiadapWrapper person : getSiadap2AndWorkingRelationWithoutQuotaUniverse()) {
-            allProcesses.add(person.getSiadap().getProcess());
-        }
-        for (PersonSiadapWrapper person : getSiadap2AndWorkingRelationWithQuotaUniverse()) {
-            allProcesses.add(person.getSiadap().getProcess());
-        }
+        final Set<SiadapProcess> allProcesses = new HashSet<SiadapProcess>();
+        getSiadap3AndWorkingRelationWithoutQuotaUniverse().forEach(w -> addProcess(allProcesses, w));
+        getSiadap3AndWorkingRelationWithQuotaUniverse().forEach(w -> addProcess(allProcesses, w));
+        getSiadap2AndWorkingRelationWithoutQuotaUniverse().forEach(w -> addProcess(allProcesses, w));
+        getSiadap2AndWorkingRelationWithQuotaUniverse().forEach(w -> addProcess(allProcesses, w));
         return allProcesses;
     }
 

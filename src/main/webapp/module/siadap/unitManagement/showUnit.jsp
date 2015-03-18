@@ -49,16 +49,33 @@
 --%>
 
 <%-- the temporary mode chooser, because the regular unit mode is disabled: --%>
+<%--
 <p>
 			<bean:message bundle="SIADAP_RESOURCES" key="link.unitManagementInterface.regularUnitMode"/> (desactivado)
 		| 
 			<b><bean:message bundle="SIADAP_RESOURCES" key="link.unitManagementInterface.harmonizationUnitMode"/></b>
 </p>
+ --%>
 
-<%-- Structure download link --%>
 <html:link action="<%="/unitManagementInterface.do?method=downloadUnitStructure&year=" + year + "&mode="+mode.name()%>" >
 	Download da listagem da estructura
 </html:link>
+
+<span style="float: right;">
+<html:link action="<%= "/siadapManagement.do?method=validate" %>">
+	<bean:message bundle="SIADAP_RESOURCES" key="link.siadap.validationProcedure"/>
+</html:link>
+|
+<html:link action="<%= "/siadapManagement.do?method=manageHarmonizationUnitsForMode&mode=homologationDone" %>">
+	<bean:message bundle="SIADAP_RESOURCES" key="label.harmonization"/>
+</html:link>
+</span>
+
+<br/>
+<br/>
+
+
+<br/>
 
 <%-- The year chooser: --%>
 <fr:form action="<%="/unitManagementInterface.do?method=showUnit&mode=" + mode.name()%>" >

@@ -491,7 +491,7 @@ color: darkRed;
 							<fr:property name="classes" value="inline-list"/>
 						</fr:slot>
 						<fr:slot name="validationClassificationForSIADAP2" key="label.validation.classification" readOnly="<%=unitWrapper.isClosedValidation()%>">
-							<fr:property name="size" value="5"/>
+							<fr:property name="size" value="75"/>
 							<fr:property name="maxLength" value="5"/>
 						</fr:slot>
 						<%
@@ -515,7 +515,7 @@ color: darkRed;
 						</fr:slot>
 						
 						<fr:slot name="validationClassificationForSIADAP3" key="label.validation.classification" readOnly="<%=unitWrapper.isClosedValidation()%>">
-							<fr:property name="size" value="5"/>
+							<fr:property name="size" value="75"/>
 							<fr:property name="maxLength" value="5"/>
 						</fr:slot>
 						<% } %>
