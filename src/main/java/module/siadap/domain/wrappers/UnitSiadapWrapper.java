@@ -2053,7 +2053,10 @@ public class UnitSiadapWrapper extends PartyWrapper implements Serializable {
         }
 
         for (PersonSiadapWrapper personToHarmonize : personsToHarmonize) {
-            personToHarmonize.getSiadap().removeHarmonizationMark(siadapUniverse);
+            final Siadap siadap = personToHarmonize.getSiadap();
+            if (siadap != null) {
+                personToHarmonize.getSiadap().removeHarmonizationMark(siadapUniverse);
+            }
         }
 
     }
