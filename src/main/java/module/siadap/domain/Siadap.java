@@ -550,7 +550,7 @@ public class Siadap extends Siadap_Base {
 
             if (item instanceof CompetenceEvaluation) {
                 competencesCounter++;
-            } else {
+            } else if (item instanceof ObjectiveEvaluation) {
                 ObjectiveEvaluation objectiveEvaluation = (ObjectiveEvaluation) item;
                 if (objectiveEvaluation.isValidForVersion(currentObjectiveVersion)) {
                     switch (objectiveEvaluation.getType()) {

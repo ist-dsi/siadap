@@ -593,7 +593,8 @@ public class PersonSiadapWrapper extends PartyWrapper implements Serializable {
         } else {
             excellencyGiven = siadapEvaluationUniverseForSiadapUniverse.hasExcellencyAwarded();
         }
-        if (!siadap.isEvaluationDone(siadapUniverse) && !siadapEvaluationUniverseForSiadapUniverse.isWithSkippedEvaluation()) {
+        if (!siadap.isEvaluationDone(siadapUniverse) && !siadapEvaluationUniverseForSiadapUniverse.isWithSkippedEvaluation()
+                && !siadapEvaluationUniverseForSiadapUniverse.isCurriculumPonderation()) {
             return SiadapGlobalEvaluation.NONEXISTING;
         }
         if (siadapEvaluationUniverseForSiadapUniverse.isWithSkippedEvaluation()) {
@@ -972,7 +973,7 @@ public class PersonSiadapWrapper extends PartyWrapper implements Serializable {
             return null;
         }
         SiadapEvaluationUniverse siadapEvaluationUniverse = siadap.getSiadapEvaluationUniverseForSiadapUniverse(siadapUniverse);
-        if (siadapEvaluationUniverse == null || !siadap.isEvaluationDone(siadapUniverse)) {
+        if (siadapEvaluationUniverse == null || (!siadap.isEvaluationDone(siadapUniverse) && !siadapEvaluationUniverse.isCurriculumPonderation())) {
             return null;
         }
 
