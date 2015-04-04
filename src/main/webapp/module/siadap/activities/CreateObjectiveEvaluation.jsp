@@ -117,20 +117,19 @@
 	boolean hideAddNewIndicator = maxNrIndicators == null ? false : nrCurrentIndicators >= maxNrIndicators; 
 	request.setAttribute("hideAddNewIndicator", hideAddNewIndicator);
 	%>
-	<html:submit styleClass="inputbutton"><bean:message key="button.save" bundle="SIADAP_RESOURCES"/></html:submit>
 	<logic:equal value="false" name="hideAddNewIndicator">
 		 <%--	hovering tooltip stuff:  --%>
 		 <div style="text-align: right;">
-		   <div onmouseover="document.getElementById('adicionarDiv').className='tooltip tooltipOpen';" onmouseout="document.getElementById('adicionarDiv').className='tooltip tooltipClosed';" id="adicionarDiv" class="tooltip tooltipClosed">
+		   <div id="adicionarDiv">
 				<a id='addNewIndicator' href="#"><bean:message bundle="SIADAP_RESOURCES" key="activity.CreateOrEditObjectiveEvaluation.indicator.add"/></a>
 	            <div class="tooltipText">
 	            	<bean:message bundle="SIADAP_RESOURCES" key="activity.CreateOrEditObjectiveEvaluation.indicator.add.explanation"/>
 	            </div>
-	            <script type="text/javascript">document.getElementById('adicionarDiv').className='tooltip tooltipClosed';</script>
 	        </div>
 	     </div>
 		<input id="addNewIndicator" type="hidden" value="+"/>
 	</logic:equal>
+	<html:submit styleClass="inputbutton"><bean:message key="button.save" bundle="SIADAP_RESOURCES"/></html:submit>
 </fr:form>
 <fr:form id="form" action='<%="/workflowProcessManagement.do?method=viewProcess&processId=" + processId %>'>
 	<html:submit styleClass="inputbutton"><bean:message key="button.back" bundle="SIADAP_RESOURCES"/></html:submit>
