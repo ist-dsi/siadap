@@ -864,7 +864,7 @@ public class Siadap extends Siadap_Base {
         // let's also make sure that this person either has been marked as not
         // having an evaluation or has the evaluation done
         if (!isEvaluationDone(siadapUniverse) && !getState().equals(SiadapProcessStateEnum.NULLED)) {
-            if (evaluationUniverse.getDefaultEvaluationUniverse() && isWithSkippedEvaluation()) {
+            if ((evaluationUniverse.getDefaultEvaluationUniverse() && isWithSkippedEvaluation()) || evaluationUniverse.isCurriculumPonderation()) {
                 // do nothing :)
             } else {
                 throw new SiadapException("error.harmonization.can't.harmonize.with.users.without.grade");

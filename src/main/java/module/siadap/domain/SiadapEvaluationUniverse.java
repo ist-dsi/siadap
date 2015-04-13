@@ -361,7 +361,7 @@ public class SiadapEvaluationUniverse extends SiadapEvaluationUniverse_Base {
         if (getHarmonizationDate() != null) {
             throw new SiadapException("error.harmonization.closed.cannot.change.assessment.reopen.first");
         }
-        if (!isEvaluationDone() && !(isWithSkippedEvaluation()) && harmonizationAssessment != null) {
+        if (!isEvaluationDone() && !(isWithSkippedEvaluation()) && harmonizationAssessment != null && !isCurriculumPonderation()) {
             throw new SiadapException("error.harmonization.assessment.cant.be.done.with.non.existing.evaluation");
         }
         super.setHarmonizationAssessment(harmonizationAssessment);
@@ -372,10 +372,11 @@ public class SiadapEvaluationUniverse extends SiadapEvaluationUniverse_Base {
                 setHarmonizationClassification(getTotalEvaluationScoring());
                 if (isCurriculumPonderation()) {
                     for (SiadapEvaluationItem evaluationItem : getSiadapEvaluationItems()) {
-                        CurricularPonderationEvaluationItem ponderationEvaluationItem =
-                                (CurricularPonderationEvaluationItem) evaluationItem;
-                        setHarmonizationClassificationExcellencyAward(ponderationEvaluationItem.getExcellencyAward());
-
+                        if (evaluationItem instanceof CurricularPonderationEvaluationItem) {
+                            CurricularPonderationEvaluationItem ponderationEvaluationItem =
+                                    (CurricularPonderationEvaluationItem) evaluationItem;
+                            setHarmonizationClassificationExcellencyAward(ponderationEvaluationItem.getExcellencyAward());
+                        }
                     }
                 } else {
                     setHarmonizationClassificationExcellencyAward(getSiadapEvaluation().getExcellencyAward());
