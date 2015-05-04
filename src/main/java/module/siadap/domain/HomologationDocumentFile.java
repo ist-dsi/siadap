@@ -1,10 +1,11 @@
 package module.siadap.domain;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
+import java.util.stream.Collectors;
 
 import module.siadap.domain.exceptions.SiadapException;
 import module.siadap.domain.wrappers.PersonSiadapWrapper;
@@ -15,8 +16,8 @@ import module.workflow.util.ClassNameBundle;
 import net.sf.jasperreports.engine.JRException;
 
 import org.apache.commons.lang.StringUtils;
+import org.fenixedu.bennu.core.domain.User;
 import org.fenixedu.bennu.core.i18n.BundleUtil;
-import org.fenixedu.bennu.core.util.CoreConfiguration;
 import org.joda.time.DateTime;
 
 @ClassNameBundle(bundle = "SiadapResources")
@@ -48,6 +49,37 @@ public class HomologationDocumentFile extends HomologationDocumentFile_Base {
         personSiadapWrapper.getSiadap().getProcess().addFiles(this);
     }
 
+    public static class LogBean implements Comparable<LogBean> {
+        final DateTime whenOperationWasRan;
+        final String description;
+        final User activityExecutor;
+
+        public LogBean(final WorkflowLog log) {
+            whenOperationWasRan = log.getWhenOperationWasRan();
+            description = log.getDescription();
+            activityExecutor = log.getActivityExecutor();
+        }
+
+        public DateTime getWhenOperationWasRan() {
+            return whenOperationWasRan;
+        }
+        public String getDescription() {
+            return description;
+        }
+        public User getActivityExecutor() {
+            return activityExecutor;
+        }
+
+        @Override
+        public int compareTo(LogBean o) {
+            final DateTime when1 = whenOperationWasRan;
+            final DateTime when2 = o.whenOperationWasRan;
+            final int result = when1.compareTo(when2);
+            return result == 0 ? o.hashCode() - hashCode() : result;
+        }
+        
+    }
+
     public static byte[] generateHomologationDocument(PersonSiadapWrapper personSiadapWrapper, String generationMotive)
             throws SiadapException {
         final Map<String, Object> paramMap = new HashMap<String, Object>();
@@ -63,8 +95,8 @@ public class HomologationDocumentFile extends HomologationDocumentFile_Base {
         paramMap.put("documentGeneratedDate", new DateTime());
         paramMap.put("generationMotive", generationMotive);
         paramMap.put("siadap", process.getSiadap());
-        ArrayList<WorkflowLog> orderedExecutionLogs = new ArrayList<WorkflowLog>(process.getExecutionLogs());
-        Collections.sort(orderedExecutionLogs, WorkflowLog.COMPARATOR_BY_WHEN);
+        List<LogBean> orderedExecutionLogs = process.getExecutionLogs().stream().map(l -> new LogBean(l)).collect(Collectors.toList());
+        Collections.sort(orderedExecutionLogs);
         paramMap.put("logs", orderedExecutionLogs);
         paramMap.put("logoFilename", "Logo.png");
 
