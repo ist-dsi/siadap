@@ -554,16 +554,18 @@ public class UnitSiadapWrapper extends PartyWrapper implements Serializable {
 
         for (SiadapUniverseWrapper universeWrapper : siadapUniverseWrappers) {
             for (PersonSiadapWrapper personSiadapWrapper : universeWrapper.getSiadapUniverse()) {
-                ActivityInformation<?> validationActivityInformation =
+                if (personSiadapWrapper.getSiadap() != null) {
+                    ActivityInformation<?> validationActivityInformation =
                         new ValidationActivityInformation(personSiadapWrapper, activity, validationSubActivity,
-                                universeWrapper.getSiadapUniverseEnum());
-                if (validationActivityInformation.hasAllneededInfo()) {
-                    activity.execute(validationActivityInformation);
-                    if (validationSubActivity.equals(ValidationSubActivity.TERMINATE_VALIDATION)) {
-                        // let's add the evaluator to the list of evaluators to
-                        // notify
-                        if (personSiadapWrapper.getEvaluator() != null) {
-                            evaluatorsToNotify.add(personSiadapWrapper.getEvaluator().getPerson());
+                                    universeWrapper.getSiadapUniverseEnum());
+                    if (validationActivityInformation.hasAllneededInfo()) {
+                        activity.execute(validationActivityInformation);
+                        if (validationSubActivity.equals(ValidationSubActivity.TERMINATE_VALIDATION)) {
+                            // let's add the evaluator to the list of evaluators to
+                            // notify
+                            if (personSiadapWrapper.getEvaluator() != null) {
+                                evaluatorsToNotify.add(personSiadapWrapper.getEvaluator().getPerson());
+                            }
                         }
                     }
                 }
