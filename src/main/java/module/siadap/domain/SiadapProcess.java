@@ -76,8 +76,14 @@ import module.workflow.util.ClassNameBundle;
 
 import org.fenixedu.bennu.core.domain.User;
 import org.fenixedu.bennu.core.groups.DynamicGroup;
+import org.fenixedu.bennu.core.groups.Group;
+import org.fenixedu.bennu.core.groups.UserGroup;
 import org.fenixedu.bennu.core.i18n.BundleUtil;
 import org.fenixedu.bennu.core.security.Authenticate;
+import org.fenixedu.bennu.core.util.CoreConfiguration;
+import org.fenixedu.messaging.domain.MessagingSystem;
+import org.fenixedu.messaging.domain.Sender;
+import org.fenixedu.messaging.domain.Message.MessageBuilder;
 import org.joda.time.LocalDate;
 
 import pt.ist.fenixframework.Atomic;
@@ -270,7 +276,14 @@ public class SiadapProcess extends SiadapProcess_Base {
 
     @Override
     public void notifyUserDueToComment(User user, String comment) {
-        // TODO Auto-generated method stub
+        final User loggedUser = Authenticate.getUser();
+        final Sender sender = MessagingSystem.getInstance().getSystemSender();
+        final Group ug = UserGroup.of(user);
+        final MessageBuilder message = sender.message(BundleUtil.getString("resources/SiadapResources", "label.email.commentCreated.subject",
+                getProcessNumber()), BundleUtil.getString("resources/SiadapResources",
+                "label.email.commentCreated.body", loggedUser.getPerson().getName(), getProcessNumber(), comment,
+                CoreConfiguration.getConfiguration().applicationUrl()));
+        message.to(ug);
     }
 
     @Atomic
