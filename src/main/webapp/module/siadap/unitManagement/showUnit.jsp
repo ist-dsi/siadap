@@ -67,7 +67,7 @@
 </html:link>
 |
 <html:link action="<%= "/siadapManagement.do?method=manageHarmonizationUnitsForMode&mode=homologationDone" %>">
-	<bean:message bundle="SIADAP_RESOURCES" key="label.harmonization"/>
+	<bean:message bundle="SIADAP_RESOURCES" key="link.siadap.homologationProcedure"/>
 </html:link>
 </span>
 
