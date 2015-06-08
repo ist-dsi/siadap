@@ -284,6 +284,7 @@ public class SiadapProcess extends SiadapProcess_Base {
                 "label.email.commentCreated.body", loggedUser.getPerson().getName(), getProcessNumber(), comment,
                 CoreConfiguration.getConfiguration().applicationUrl()));
         message.to(ug);
+        message.send();
     }
 
     @Atomic
