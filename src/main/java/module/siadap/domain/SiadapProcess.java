@@ -29,6 +29,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.MissingResourceException;
+import java.util.stream.Stream;
 
 import module.organization.domain.Person;
 import module.siadap.activities.AcknowledgeEvaluationObjectives;
@@ -251,6 +252,10 @@ public class SiadapProcess extends SiadapProcess_Base {
         return (List<T>) activities;
     }
 
+    public <T extends WorkflowActivity<? extends WorkflowProcess, ? extends ActivityInformation>> Stream<T> getActivityStream() {
+        return ((List<T>) activities).stream();
+    }
+
     public static WorkflowActivity<? extends WorkflowProcess, ? extends ActivityInformation<?>> getActivityStaticly(
             String activityName) {
         for (WorkflowActivity<? extends WorkflowProcess, ? extends ActivityInformation<?>> activity : activities) {
@@ -268,10 +273,7 @@ public class SiadapProcess extends SiadapProcess_Base {
 
     @Override
     public boolean isActive() {
-        if (getSiadap().getState().equals(SiadapProcessStateEnum.NULLED)) {
-            return false;
-        }
-        return true;
+        return !getSiadap().getState().equals(SiadapProcessStateEnum.NULLED);
     }
 
     @Override
