@@ -3,9 +3,9 @@
  *
  * Copyright 2010 Instituto Superior Tecnico
  * Founding Authors: Paulo Abrantes
- * 
+ *
  *      https://fenix-ashes.ist.utl.pt/
- * 
+ *
  *   This file is part of the SIADAP Module.
  *
  *   The SIADAP Module is free software: you can
@@ -20,7 +20,7 @@
  *
  *   You should have received a copy of the GNU Lesser General Public License
  *   along with the SIADAP Module. If not, see <http://www.gnu.org/licenses/>.
- * 
+ *
  */
 package module.siadap.domain;
 
@@ -77,25 +77,30 @@ import module.workflow.util.ClassNameBundle;
 
 import org.fenixedu.bennu.core.domain.User;
 import org.fenixedu.bennu.core.groups.DynamicGroup;
-import org.fenixedu.bennu.core.groups.Group;
 import org.fenixedu.bennu.core.groups.UserGroup;
 import org.fenixedu.bennu.core.i18n.BundleUtil;
 import org.fenixedu.bennu.core.security.Authenticate;
 import org.fenixedu.bennu.core.util.CoreConfiguration;
-import org.fenixedu.messaging.domain.MessagingSystem;
-import org.fenixedu.messaging.domain.Sender;
-import org.fenixedu.messaging.domain.Message.MessageBuilder;
+import org.fenixedu.messaging.domain.Message;
+import org.fenixedu.messaging.template.DeclareMessageTemplate;
+import org.fenixedu.messaging.template.TemplateParameter;
 import org.joda.time.LocalDate;
 
 import pt.ist.fenixframework.Atomic;
 
 /**
- * 
+ *
  * @author João Antunes
  * @author Luis Cruz
  * @author Paulo Abrantes
- * 
+ *
  */
+@DeclareMessageTemplate(id = "siadap.comment", bundle = Siadap.SIADAP_BUNDLE_STRING, description = "template.siadap.comment",
+        subject = "template.siadap.comment.subject", text = "template.siadap.comment.text", parameters = {
+                @TemplateParameter(id = "applicationUrl", description = "template.parameter.application.url"),
+                @TemplateParameter(id = "comment", description = "template.parameter.comment"),
+                @TemplateParameter(id = "commenter", description = "template.parameter.commenter"),
+                @TemplateParameter(id = "process", description = "template.parameter.process") })
 @ClassNameBundle(bundle = "SiadapResources")
 public class SiadapProcess extends SiadapProcess_Base {
 
@@ -252,6 +257,7 @@ public class SiadapProcess extends SiadapProcess_Base {
         return (List<T>) activities;
     }
 
+    @Override
     public <T extends WorkflowActivity<? extends WorkflowProcess, ? extends ActivityInformation>> Stream<T> getActivityStream() {
         return ((List<T>) activities).stream();
     }
@@ -278,15 +284,10 @@ public class SiadapProcess extends SiadapProcess_Base {
 
     @Override
     public void notifyUserDueToComment(User user, String comment) {
-        final User loggedUser = Authenticate.getUser();
-        final Sender sender = MessagingSystem.getInstance().getSystemSender();
-        final Group ug = UserGroup.of(user);
-        final MessageBuilder message = sender.message(BundleUtil.getString("resources/SiadapResources", "label.email.commentCreated.subject",
-                getProcessNumber()), BundleUtil.getString("resources/SiadapResources",
-                "label.email.commentCreated.body", loggedUser.getPerson().getName(), getProcessNumber(), comment,
-                CoreConfiguration.getConfiguration().applicationUrl()));
-        message.to(ug);
-        message.send();
+        Message.fromSystem().to(UserGroup.of(user)).template("siadap.comment")
+                .parameter("commenter", Authenticate.getUser().getPerson().getName()).parameter("comment", comment)
+                .parameter("process", getProcessNumber())
+                .parameter("applicationUrl", CoreConfiguration.getConfiguration().applicationUrl()).and().send();
     }
 
     @Atomic
@@ -314,8 +315,7 @@ public class SiadapProcess extends SiadapProcess_Base {
         String siadapUniverseLocalizedName = evaluationUniverse.getSiadapUniverse().getLocalizedName();
         if (evaluationUniverse.isCurriculumPonderation()) {
             siadapUniverseLocalizedName +=
-                    " (" + BundleUtil.getString(Siadap.SIADAP_BUNDLE_STRING, "label.curricularPonderation")
-                            + " )";
+                    " (" + BundleUtil.getString(Siadap.SIADAP_BUNDLE_STRING, "label.curricularPonderation") + " )";
         }
         new LabelLog(this, Authenticate.getUser(), "label.terminateHarmonization.for", "resources/SiadapResources",
                 siadapUniverseLocalizedName);
@@ -325,8 +325,7 @@ public class SiadapProcess extends SiadapProcess_Base {
         String siadapUniverseLocalizedName = evaluationUniverse.getSiadapUniverse().getLocalizedName();
         if (evaluationUniverse.isCurriculumPonderation()) {
             siadapUniverseLocalizedName +=
-                    " (" + BundleUtil.getString(Siadap.SIADAP_BUNDLE_STRING, "label.curricularPonderation")
-                            + " )";
+                    " (" + BundleUtil.getString(Siadap.SIADAP_BUNDLE_STRING, "label.curricularPonderation") + " )";
         }
         new LabelLog(this, Authenticate.getUser(), "label.givenHarmonizationAssessment.for", "resources/SiadapResources",
                 siadapUniverseLocalizedName);
@@ -336,8 +335,7 @@ public class SiadapProcess extends SiadapProcess_Base {
         String siadapUniverseLocalizedName = evaluationUniverse.getSiadapUniverse().getLocalizedName();
         if (evaluationUniverse.isCurriculumPonderation()) {
             siadapUniverseLocalizedName +=
-                    " (" + BundleUtil.getString(Siadap.SIADAP_BUNDLE_STRING, "label.curricularPonderation")
-                            + " )";
+                    " (" + BundleUtil.getString(Siadap.SIADAP_BUNDLE_STRING, "label.curricularPonderation") + " )";
         }
         new LabelLog(this, Authenticate.getUser(), "label.reOpenHarmonization.for", "resources/SiadapResources",
                 siadapUniverseLocalizedName);
@@ -397,7 +395,7 @@ public class SiadapProcess extends SiadapProcess_Base {
     /**
      * Changes the custom deadlines as specified by the parameter
      * processSchedulesEnum which must be one of {@link SiadapProcessSchedulesEnum}
-     * 
+     *
      * @param processSchedulesEnum
      *            the representation of which schedule {@link SiadapProcessSchedulesEnum}
      * @param newDate
@@ -474,8 +472,7 @@ public class SiadapProcess extends SiadapProcess_Base {
         String siadapUniverseLocalizedName = siadapEvaluationUniverse.getSiadapUniverse().getLocalizedName();
         if (siadapEvaluationUniverse.isCurriculumPonderation()) {
             siadapUniverseLocalizedName +=
-                    " (" + BundleUtil.getString(Siadap.SIADAP_BUNDLE_STRING, "label.curricularPonderation")
-                            + " )";
+                    " (" + BundleUtil.getString(Siadap.SIADAP_BUNDLE_STRING, "label.curricularPonderation") + " )";
         }
         new LabelLog(this, Authenticate.getUser(), "label.removedHarmonizationAssessment.for", "resources/SiadapResources",
                 siadapUniverseLocalizedName);

@@ -3,14 +3,14 @@
  *
  * Copyright 2010 Instituto Superior Tecnico
  * Founding Authors: Paulo Abrantes
- * 
+ *
  *      https://fenix-ashes.ist.utl.pt/
- * 
+ *
  *   This file is part of the SIADAP Module.
  *
  *   The SIADAP Module is free software: you can
  *   redistribute it and/or modify it under the terms of the GNU Lesser General
- *   Public License as published by the Free Software Foundation, either version 
+ *   Public License as published by the Free Software Foundation, either version
  *   3 of the License, or (at your option) any later version.
  *
  *   The SIADAP Module is distributed in the hope that it will be useful,
@@ -20,7 +20,7 @@
  *
  *   You should have received a copy of the GNU Lesser General Public License
  *   along with the SIADAP Module. If not, see <http://www.gnu.org/licenses/>.
- * 
+ *
  */
 package module.siadap.activities;
 
@@ -33,18 +33,29 @@ import module.workflow.activities.WorkflowActivity;
 
 import org.fenixedu.bennu.core.domain.User;
 import org.fenixedu.bennu.core.groups.UserGroup;
-import org.fenixedu.messaging.domain.Message.MessageBuilder;
-import org.fenixedu.messaging.domain.MessagingSystem;
-import org.fenixedu.messaging.domain.Sender;
+import org.fenixedu.bennu.core.util.CoreConfiguration;
+import org.fenixedu.messaging.domain.Message;
+import org.fenixedu.messaging.template.DeclareMessageTemplate;
+import org.fenixedu.messaging.template.TemplateParameter;
 import org.joda.time.LocalDate;
 
 /**
- * 
+ *
  * @author João Antunes
  * @author Luis Cruz
  * @author Paulo Abrantes
- * 
+ *
  */
+@DeclareMessageTemplate(id = "siadap.submit", bundle = Siadap.SIADAP_BUNDLE_STRING, description = "template.siadap.submit",
+        subject = "template.siadap.submit.subject", text = "template.siadap.submit.text", parameters = {
+                @TemplateParameter(id = "applicationUrl", description = "template.parameter.application.url"),
+                @TemplateParameter(id = "year", description = "template.parameter.year") })
+@DeclareMessageTemplate(id = "siadap.submit.revert", bundle = Siadap.SIADAP_BUNDLE_STRING,
+        description = "template.siadap.submit.revert", subject = "template.siadap.submit.revert.subject",
+        text = "template.siadap.submit.revert.text", parameters = {
+                @TemplateParameter(id = "year", description = "template.parameter.year"),
+                @TemplateParameter(id = "reason", description = "template.parameter.revert.reason"),
+                @TemplateParameter(id = "applicationUrl", description = "template.parameter.application.url") })
 public class SubmitForObjectivesAcknowledge extends WorkflowActivity<SiadapProcess, ActivityInformation<SiadapProcess>> {
 
     @Override
@@ -80,29 +91,13 @@ public class SubmitForObjectivesAcknowledge extends WorkflowActivity<SiadapProce
             try {
                 final Person evaluatedPerson = activityInformation.getProcess().getSiadap().getEvaluated();
                 siadapProcess.checkEmailExistenceImportAndWarnOnError(evaluatedPerson);
-
-                Integer year = activityInformation.getProcess().getSiadap().getYear();
-
-                StringBuilder body =
-                        new StringBuilder(
-                                "O seu processo SIADAP de "
-                                        + year
-                                        + " foi excepcionalmente revertido para o estado anterior ao de ter sido submetido para seu conhecimento.\n Esta situação ocorre apenas em situações excepcionais, a justificação dada foi: '"
-                                        + activityInformation.getJustification() + "'.\n");
-                body.append("\nPara mais informações consulte https://dot.ist.utl.pt\n");
-                body.append("\n\n---\n");
-                body.append("Esta mensagem foi enviada por meio das Aplicações Centrais do IST.\n");
-
-                final Sender sender = MessagingSystem.getInstance().getSystemSender();
-                final MessageBuilder message =
-                        sender.message("SIADAP - " + year
-                                + " Reversão excepcional do estado do processo SIADAP para o estado anterior ao de ",
-                                body.toString());
-                message.to(UserGroup.of(evaluatedPerson.getUser()));
-                message.cc(UserGroup.of(evaluatorPerson.getUser()));
-                message.send();
+                Message.fromSystem().to(UserGroup.of(evaluatedPerson.getUser())).cc(UserGroup.of(evaluatorPerson.getUser()))
+                        .template("siadap.submit.revert")
+                        .parameter("applicationUrl", CoreConfiguration.getConfiguration().applicationUrl())
+                        .parameter("year", siadap.getYear()).parameter("reason", activityInformation.getJustification()).and()
+                        .send();
             } catch (Throwable ex) {
-                System.out.println("Unable to lookup email address for: "
+                System.out.println("Unable to send email to: "
                         + activityInformation.getProcess().getSiadap().getEvaluated().getUser().getUsername() + " Error: "
                         + ex.getMessage());
                 siadapProcess.addWarningMessage("warning.message.could.not.send.email.now");
@@ -135,21 +130,9 @@ public class SubmitForObjectivesAcknowledge extends WorkflowActivity<SiadapProce
         try {
             final Person evaluatedPerson = activityInformation.getProcess().getSiadap().getEvaluated();
             siadapProcess.checkEmailExistenceImportAndWarnOnError(evaluatedPerson);
-
-            StringBuilder body =
-                    new StringBuilder(
-                            "Encontram-se disponiveis em https://dot.ist.utl.pt os objectivos e competências relativos ao ano de "
-                                    + siadap.getYear() + ".\n");
-            body.append("\nPara mais informações consulte https://dot.ist.utl.pt\n");
-            body.append("\n\n---\n");
-            body.append("Esta mensagem foi enviada por meio das Aplicações Centrais do IST.\n");
-
-            final Sender sender = MessagingSystem.getInstance().getSystemSender();
-            final MessageBuilder message =
-                    sender.message("SIADAP - Tomada de conhecimento de objectivos e competências", body.toString());
-            message.to(UserGroup.of(evaluatedPerson.getUser()));
-            message.cc(UserGroup.of(evaluatorPerson.getUser()));
-            message.send();
+            Message.fromSystem().to(UserGroup.of(evaluatedPerson.getUser())).cc(UserGroup.of(evaluatorPerson.getUser()))
+                    .template("siadap.submit").parameter("applicationUrl", CoreConfiguration.getConfiguration().applicationUrl())
+                    .parameter("year", siadap.getYear()).and().send();
         } catch (Throwable ex) {
             System.out.println("Unable to lookup email address for: "
                     + activityInformation.getProcess().getSiadap().getEvaluated().getUser().getUsername() + " Error: "
