@@ -3,33 +3,27 @@
  */
 package module.siadap.domain.util.actions;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashSet;
 import java.util.Map;
-import java.util.Set;
+import java.util.stream.Stream;
 
 import javax.servlet.http.HttpServletRequest;
 
-import module.organization.domain.Person;
-import module.organization.domain.Unit;
-import module.siadap.domain.Siadap;
-
-import org.apache.commons.lang.StringUtils;
 import org.apache.struts.Globals;
 import org.apache.struts.action.ActionMessage;
 import org.apache.struts.action.ActionMessages;
 import org.fenixedu.bennu.core.domain.User;
-import org.fenixedu.bennu.core.groups.DynamicGroup;
-import org.fenixedu.bennu.core.groups.UserGroup;
+import org.fenixedu.bennu.core.groups.Group;
 import org.fenixedu.bennu.core.util.CoreConfiguration;
 import org.fenixedu.messaging.domain.Message;
 import org.fenixedu.messaging.template.DeclareMessageTemplate;
 import org.fenixedu.messaging.template.TemplateParameter;
 
-import pt.ist.fenixframework.Atomic;
-
 import com.google.common.collect.Maps;
+
+import module.organization.domain.Person;
+import module.organization.domain.Unit;
+import module.siadap.domain.Siadap;
+import pt.ist.fenixframework.Atomic;
 
 /**
  * @author João Antunes (joao.antunes@tagus.ist.utl.pt) - 30 de Jan de 2013
@@ -73,7 +67,7 @@ public class SiadapUtilActions {
         parameters.put("unitAcronym", unit.getAcronym());
         parameters.put("action", action);
         parameters.put("applicationUrl", CoreConfiguration.getConfiguration().applicationUrl());
-        SiadapUtilActions.notifyUser(request, Collections.singleton(person.getUser()), template, parameters);
+        SiadapUtilActions.notifyUser(request, Stream.of(person.getUser()), template, parameters);
 
         template = "siadap.harmonization.managers";
         parameters.put("personName", person.getName());
@@ -85,31 +79,15 @@ public class SiadapUtilActions {
             Map<String, Object> parameters) {
         // get the SiadapStructureManagementUsers
         int year = Integer.parseInt(request.getParameter("year"));
-        Collection<User> users = DynamicGroup.get("SiadapStructureManagementGroup").getMembers();
+        Stream<User> users = Group.dynamic("SiadapStructureManagementGroup").getMembers();
 
         // notify them
-        notifyUser(request, users, template, parameters);
+        auxNotifyUser(users, template, parameters);
     }
 
-    public static void notifyUser(HttpServletRequest request, Collection<User> users, String template,
+    public static void notifyUser(HttpServletRequest request, Stream<User> users, String template,
             Map<String, Object> parameters) {
-        // get the user e-mail
-        Set<User> usersEmails = new HashSet<User>();
-        for (User user : users) {
-            try {
-                String emailAddress = user.getProfile() == null ? "" : user.getProfile().getEmail();
-                if (StringUtils.isBlank(emailAddress)) {
-                    String[] arguments = { user.getPerson().getName() };
-                    addMessage(request, "WARNING", "manage.siadapStructure.notification.email.notAbleToSendTo", arguments);
-                } else {
-                    usersEmails.add(user);
-                }
-            } catch (Throwable ex) {
-                String[] arguments = { user.getPerson().getName() };
-                addMessage(request, "WARNING", "manage.siadapStructure.notification.email.notAbleToSendTo", arguments);
-            }
-        }
-        auxNotifyUser(usersEmails, template, parameters);
+        auxNotifyUser(users, template, parameters);
     }
 
     protected static void addMessage(final HttpServletRequest request, final String key, final String... args) {
@@ -125,8 +103,8 @@ public class SiadapUtilActions {
 
     // created because of the faulty dml injector
     @Atomic
-    private static void auxNotifyUser(Set<User> users, String template, Map<String, Object> parameters) {
-        Message.fromSystem().to(UserGroup.of(users)).template(template, parameters).send();
+    private static void auxNotifyUser(Stream<User> users, String template, Map<String, Object> parameters) {
+        Message.fromSystem().to(Group.users(users)).template(template, parameters).send();
     }
 
     private static ActionMessages getMessages(HttpServletRequest request) {

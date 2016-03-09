@@ -24,20 +24,20 @@
  */
 package module.siadap.activities;
 
+import org.fenixedu.bennu.core.domain.User;
+import org.fenixedu.bennu.core.groups.Group;
+import org.fenixedu.bennu.core.util.CoreConfiguration;
+import org.fenixedu.messaging.domain.Message;
+import org.fenixedu.messaging.template.DeclareMessageTemplate;
+import org.fenixedu.messaging.template.TemplateParameter;
+import org.joda.time.LocalDate;
+
 import module.organization.domain.Person;
 import module.siadap.domain.Siadap;
 import module.siadap.domain.SiadapProcess;
 import module.siadap.domain.exceptions.SiadapException;
 import module.workflow.activities.ActivityInformation;
 import module.workflow.activities.WorkflowActivity;
-
-import org.fenixedu.bennu.core.domain.User;
-import org.fenixedu.bennu.core.groups.UserGroup;
-import org.fenixedu.bennu.core.util.CoreConfiguration;
-import org.fenixedu.messaging.domain.Message;
-import org.fenixedu.messaging.template.DeclareMessageTemplate;
-import org.fenixedu.messaging.template.TemplateParameter;
-import org.joda.time.LocalDate;
 
 /**
  *
@@ -47,13 +47,13 @@ import org.joda.time.LocalDate;
  *
  */
 @DeclareMessageTemplate(id = "siadap.submit", bundle = Siadap.SIADAP_BUNDLE_STRING, description = "template.siadap.submit",
-        subject = "template.siadap.submit.subject", text = "template.siadap.submit.text", parameters = {
-                @TemplateParameter(id = "applicationUrl", description = "template.parameter.application.url"),
+        subject = "template.siadap.submit.subject", text = "template.siadap.submit.text",
+        parameters = { @TemplateParameter(id = "applicationUrl", description = "template.parameter.application.url"),
                 @TemplateParameter(id = "year", description = "template.parameter.year") })
 @DeclareMessageTemplate(id = "siadap.submit.revert", bundle = Siadap.SIADAP_BUNDLE_STRING,
         description = "template.siadap.submit.revert", subject = "template.siadap.submit.revert.subject",
-        text = "template.siadap.submit.revert.text", parameters = {
-                @TemplateParameter(id = "year", description = "template.parameter.year"),
+        text = "template.siadap.submit.revert.text",
+        parameters = { @TemplateParameter(id = "year", description = "template.parameter.year"),
                 @TemplateParameter(id = "reason", description = "template.parameter.revert.reason"),
                 @TemplateParameter(id = "applicationUrl", description = "template.parameter.application.url") })
 public class SubmitForObjectivesAcknowledge extends WorkflowActivity<SiadapProcess, ActivityInformation<SiadapProcess>> {
@@ -91,7 +91,7 @@ public class SubmitForObjectivesAcknowledge extends WorkflowActivity<SiadapProce
             try {
                 final Person evaluatedPerson = activityInformation.getProcess().getSiadap().getEvaluated();
                 siadapProcess.checkEmailExistenceImportAndWarnOnError(evaluatedPerson);
-                Message.fromSystem().to(UserGroup.of(evaluatedPerson.getUser())).cc(UserGroup.of(evaluatorPerson.getUser()))
+                Message.fromSystem().to(Group.users(evaluatedPerson.getUser())).cc(Group.users(evaluatorPerson.getUser()))
                         .template("siadap.submit.revert")
                         .parameter("applicationUrl", CoreConfiguration.getConfiguration().applicationUrl())
                         .parameter("year", siadap.getYear()).parameter("reason", activityInformation.getJustification()).and()
@@ -130,7 +130,7 @@ public class SubmitForObjectivesAcknowledge extends WorkflowActivity<SiadapProce
         try {
             final Person evaluatedPerson = activityInformation.getProcess().getSiadap().getEvaluated();
             siadapProcess.checkEmailExistenceImportAndWarnOnError(evaluatedPerson);
-            Message.fromSystem().to(UserGroup.of(evaluatedPerson.getUser())).cc(UserGroup.of(evaluatorPerson.getUser()))
+            Message.fromSystem().to(Group.users(evaluatedPerson.getUser())).cc(Group.users(evaluatorPerson.getUser()))
                     .template("siadap.submit").parameter("applicationUrl", CoreConfiguration.getConfiguration().applicationUrl())
                     .parameter("year", siadap.getYear()).and().send();
         } catch (Throwable ex) {

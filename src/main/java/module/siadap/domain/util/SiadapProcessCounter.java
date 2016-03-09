@@ -30,8 +30,17 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.function.Consumer;
 
 import javax.naming.OperationNotSupportedException;
+
+import org.joda.time.LocalDate;
+
+import com.google.common.base.Predicate;
+import com.google.common.collect.ConcurrentHashMultiset;
+import com.google.common.collect.HashMultiset;
+import com.google.common.collect.Multiset;
+import com.google.common.collect.Sets;
 
 import module.organization.domain.Accountability;
 import module.organization.domain.AccountabilityType;
@@ -45,15 +54,6 @@ import module.siadap.domain.SiadapYearConfiguration;
 import module.siadap.domain.scoring.SiadapGlobalEvaluation;
 import module.siadap.domain.wrappers.PersonSiadapWrapper;
 import module.siadap.presentationTier.actions.UnitManagementInterfaceAction.Mode;
-
-import org.antlr.v4.runtime.misc.Nullable;
-import org.joda.time.LocalDate;
-
-import com.google.common.base.Predicate;
-import com.google.common.collect.ConcurrentHashMultiset;
-import com.google.common.collect.HashMultiset;
-import com.google.common.collect.Multiset;
-import com.google.common.collect.Sets;
 
 /**
  * 
@@ -112,8 +112,8 @@ public class SiadapProcessCounter implements Serializable {
 
     public SiadapProcessCounter(final Unit unit, boolean distinguishBetweenUniverses, SiadapYearConfiguration configuration,
             Mode mode) throws OperationNotSupportedException {
-        this(unit, distinguishBetweenUniverses, configuration, mode.getUnitAccType(configuration), mode
-                .getEmployeeAccTypes(configuration)[0], mode.getEmployeeAccTypes(configuration)[1]);
+        this(unit, distinguishBetweenUniverses, configuration, mode.getUnitAccType(configuration),
+                mode.getEmployeeAccTypes(configuration)[0], mode.getEmployeeAccTypes(configuration)[1]);
         AccountabilityType[] employeeAccTypes = mode.getEmployeeAccTypes(configuration);
         if (employeeAccTypes.length != 2) {
             throw new OperationNotSupportedException("do not support Mode: " + mode.name());
@@ -122,8 +122,8 @@ public class SiadapProcessCounter implements Serializable {
     }
 
     public SiadapProcessCounter(final Unit unit, boolean distinguishBetweenUniverses, SiadapYearConfiguration configuration) {
-        this(unit, distinguishBetweenUniverses, configuration, configuration.getUnitRelations(), configuration
-                .getWorkingRelation(), configuration.getWorkingRelationWithNoQuota());
+        this(unit, distinguishBetweenUniverses, configuration, configuration.getUnitRelations(),
+                configuration.getWorkingRelation(), configuration.getWorkingRelationWithNoQuota());
 
     }
 
@@ -142,8 +142,9 @@ public class SiadapProcessCounter implements Serializable {
     }
 
     private void count(Unit unit, boolean distinguishBetweenUniverses) {
-        for (final Accountability accountability : unit.getChildAccountabilitiesSet()) {
-            if (accountability.isActive(dayToUse)) {
+        unit.getChildAccountabilityStream().filter(a -> a.isActive(dayToUse)).forEach(new Consumer<Accountability>() {
+            @Override
+            public void accept(Accountability accountability) {
                 final AccountabilityType accountabilityType = accountability.getAccountabilityType();
                 if (accountabilityType == unitRelations) {
                     final Unit child = (Unit) accountability.getChild();
@@ -160,13 +161,13 @@ public class SiadapProcessCounter implements Serializable {
                 }
 
             }
-        }
-
+        });
     }
 
     private void count(final Unit unit) {
-        for (final Accountability accountability : unit.getChildAccountabilitiesSet()) {
-            if (accountability.isActive(dayToUse)) {
+        unit.getChildAccountabilityStream().filter(a -> a.isActive(dayToUse)).forEach(new Consumer<Accountability>() {
+            @Override
+            public void accept(Accountability accountability) {
                 final AccountabilityType accountabilityType = accountability.getAccountabilityType();
                 if (accountabilityType == unitRelations) {
                     final Unit child = (Unit) accountability.getChild();
@@ -177,7 +178,7 @@ public class SiadapProcessCounter implements Serializable {
                     count(person);
                 }
             }
-        }
+        });
     }
 
     private void count(final Person person) {
@@ -198,11 +199,11 @@ public class SiadapProcessCounter implements Serializable {
             notListedSiadapsForGivenYear =
                     new TreeSet<Siadap>(Siadap.COMPARATOR_BY_EVALUATED_PRESENTATION_NAME_FALLBACK_YEAR_THEN_OID);
 
-            notListedSiadapsForGivenYear.addAll(Sets.filter(SiadapRootModule.getInstance().getSiadapsSet(),
-                    new Predicate<Siadap>() {
+            notListedSiadapsForGivenYear
+                    .addAll(Sets.filter(SiadapRootModule.getInstance().getSiadapsSet(), new Predicate<Siadap>() {
 
                         @Override
-                        public boolean apply(@Nullable Siadap input) {
+                        public boolean apply(Siadap input) {
                             if (input == null) {
                                 return false;
                             }
@@ -435,7 +436,7 @@ public class SiadapProcessCounter implements Serializable {
         allSiadapsInGivenStates.addAll(Sets.filter(SiadapRootModule.getInstance().getSiadapsSet(), new Predicate<Siadap>() {
 
             @Override
-            public boolean apply(@Nullable Siadap siadapInstance) {
+            public boolean apply(Siadap siadapInstance) {
                 if (siadapInstance == null) {
                     return false;
                 }

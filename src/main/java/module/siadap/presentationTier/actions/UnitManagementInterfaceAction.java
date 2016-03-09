@@ -18,6 +18,21 @@ import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.struts.action.ActionForm;
+import org.apache.struts.action.ActionForward;
+import org.apache.struts.action.ActionMapping;
+import org.fenixedu.bennu.core.i18n.BundleUtil;
+import org.fenixedu.bennu.core.presentationTier.component.OrganizationChart;
+import org.fenixedu.bennu.core.util.VariantBean;
+import org.fenixedu.bennu.struts.annotations.Mapping;
+import org.fenixedu.bennu.struts.base.BaseAction;
+import org.fenixedu.bennu.struts.portal.EntryPoint;
+import org.fenixedu.bennu.struts.portal.StrutsFunctionality;
+import org.joda.time.LocalDate;
+
+import com.google.common.base.Predicate;
+import com.google.common.collect.Collections2;
+
 import module.organization.domain.AccountabilityType;
 import module.organization.domain.Party;
 import module.organization.domain.Person;
@@ -32,27 +47,10 @@ import module.siadap.domain.wrappers.PersonSiadapWrapper;
 import module.siadap.domain.wrappers.SiadapYearWrapper;
 import module.siadap.domain.wrappers.UnitSiadapWrapper;
 import module.siadap.presentationTier.renderers.providers.SiadapYearsFromExistingSiadapConfigurations;
-
-import org.antlr.v4.runtime.misc.Nullable;
-import org.apache.struts.action.ActionForm;
-import org.apache.struts.action.ActionForward;
-import org.apache.struts.action.ActionMapping;
-import org.fenixedu.bennu.core.i18n.BundleUtil;
-import org.fenixedu.bennu.core.presentationTier.component.OrganizationChart;
-import org.fenixedu.bennu.core.util.VariantBean;
-import org.fenixedu.bennu.struts.annotations.Mapping;
-import org.fenixedu.bennu.struts.base.BaseAction;
-import org.fenixedu.bennu.struts.portal.EntryPoint;
-import org.fenixedu.bennu.struts.portal.StrutsFunctionality;
-import org.joda.time.LocalDate;
-
 import pt.ist.fenixWebFramework.renderers.utils.RenderUtils;
 import pt.utl.ist.fenix.tools.spreadsheet.SheetData;
 import pt.utl.ist.fenix.tools.spreadsheet.SpreadsheetBuilder;
 import pt.utl.ist.fenix.tools.spreadsheet.WorkbookExportFormat;
-
-import com.google.common.base.Predicate;
-import com.google.common.collect.Collections2;
 
 @StrutsFunctionality(app = SiadapManagement.class, path = "unitManagementInterface", titleKey = "link.unitManagementInterface", accessGroup = "#managers")
 @Mapping(path = "/unitManagementInterface")
@@ -189,7 +187,7 @@ public class UnitManagementInterfaceAction extends BaseAction {
                 new ArrayList<UnitSiadapWrapper>(Collections2.filter(allWrapperUnits, new Predicate<UnitSiadapWrapper>() {
 
                     @Override
-                    public boolean apply(@Nullable UnitSiadapWrapper input) {
+                    public boolean apply(UnitSiadapWrapper input) {
                         if (input == null || input.isHarmonizationUnit()) {
                             return false;
                         }

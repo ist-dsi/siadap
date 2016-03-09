@@ -31,6 +31,17 @@ import java.util.List;
 import java.util.MissingResourceException;
 import java.util.stream.Stream;
 
+import org.fenixedu.bennu.core.domain.User;
+import org.fenixedu.bennu.core.groups.DynamicGroup;
+import org.fenixedu.bennu.core.groups.Group;
+import org.fenixedu.bennu.core.i18n.BundleUtil;
+import org.fenixedu.bennu.core.security.Authenticate;
+import org.fenixedu.bennu.core.util.CoreConfiguration;
+import org.fenixedu.messaging.domain.Message;
+import org.fenixedu.messaging.template.DeclareMessageTemplate;
+import org.fenixedu.messaging.template.TemplateParameter;
+import org.joda.time.LocalDate;
+
 import module.organization.domain.Person;
 import module.siadap.activities.AcknowledgeEvaluationObjectives;
 import module.siadap.activities.AcknowledgeEvaluationValidation;
@@ -74,18 +85,6 @@ import module.workflow.domain.WorkflowLog;
 import module.workflow.domain.WorkflowProcess;
 import module.workflow.domain.WorkflowSystem;
 import module.workflow.util.ClassNameBundle;
-
-import org.fenixedu.bennu.core.domain.User;
-import org.fenixedu.bennu.core.groups.DynamicGroup;
-import org.fenixedu.bennu.core.groups.UserGroup;
-import org.fenixedu.bennu.core.i18n.BundleUtil;
-import org.fenixedu.bennu.core.security.Authenticate;
-import org.fenixedu.bennu.core.util.CoreConfiguration;
-import org.fenixedu.messaging.domain.Message;
-import org.fenixedu.messaging.template.DeclareMessageTemplate;
-import org.fenixedu.messaging.template.TemplateParameter;
-import org.joda.time.LocalDate;
-
 import pt.ist.fenixframework.Atomic;
 
 /**
@@ -96,8 +95,8 @@ import pt.ist.fenixframework.Atomic;
  *
  */
 @DeclareMessageTemplate(id = "siadap.comment", bundle = Siadap.SIADAP_BUNDLE_STRING, description = "template.siadap.comment",
-        subject = "template.siadap.comment.subject", text = "template.siadap.comment.text", parameters = {
-                @TemplateParameter(id = "applicationUrl", description = "template.parameter.application.url"),
+        subject = "template.siadap.comment.subject", text = "template.siadap.comment.text",
+        parameters = { @TemplateParameter(id = "applicationUrl", description = "template.parameter.application.url"),
                 @TemplateParameter(id = "comment", description = "template.parameter.comment"),
                 @TemplateParameter(id = "commenter", description = "template.parameter.commenter"),
                 @TemplateParameter(id = "process", description = "template.parameter.process") })
@@ -174,8 +173,9 @@ public class SiadapProcess extends SiadapProcess_Base {
 
         boolean belongsToASuperGroup = false;
         if ((configuration.getCcaMembers() != null && configuration.getCcaMembers().contains(currentUser.getPerson()))
-                || (configuration.getScheduleEditors() != null && configuration.getScheduleEditors().contains(
-                        currentUser.getPerson())) || DynamicGroup.get("managers").isMember(currentUser)
+                || (configuration.getScheduleEditors() != null
+                        && configuration.getScheduleEditors().contains(currentUser.getPerson()))
+                || DynamicGroup.get("managers").isMember(currentUser)
                 || configuration.getStructureManagementGroupMembers().contains(currentUser.getPerson())) {
             belongsToASuperGroup = true;
         }
@@ -193,8 +193,8 @@ public class SiadapProcess extends SiadapProcess_Base {
         PersonSiadapWrapper personSiadapWrapper = new PersonSiadapWrapper(getSiadap());
         personSiadapWrapper.correctHarmonizationRelationsForRecentlyCreatedProcess();
 
-        new LabelLog(this, currentUser, this.getClass().getName() + ".creation", "resources/SiadapResources",
-                evaluated.getName(), year.toString(), siadapUniverse.getLocalizedName(), competenceType.getName());
+        new LabelLog(this, currentUser, this.getClass().getName() + ".creation", "resources/SiadapResources", evaluated.getName(),
+                year.toString(), siadapUniverse.getLocalizedName(), competenceType.getName());
     }
 
     public List<String> getAndClearWarningMessages() {
@@ -284,7 +284,7 @@ public class SiadapProcess extends SiadapProcess_Base {
 
     @Override
     public void notifyUserDueToComment(User user, String comment) {
-        Message.fromSystem().to(UserGroup.of(user)).template("siadap.comment")
+        Message.fromSystem().to(Group.users(user)).template("siadap.comment")
                 .parameter("commenter", Authenticate.getUser().getPerson().getName()).parameter("comment", comment)
                 .parameter("process", getProcessNumber())
                 .parameter("applicationUrl", CoreConfiguration.getConfiguration().applicationUrl()).and().send();

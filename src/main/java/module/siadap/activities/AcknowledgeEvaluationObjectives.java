@@ -24,20 +24,20 @@
  */
 package module.siadap.activities;
 
+import org.fenixedu.bennu.core.domain.User;
+import org.fenixedu.bennu.core.groups.Group;
+import org.fenixedu.bennu.core.util.CoreConfiguration;
+import org.fenixedu.messaging.domain.Message;
+import org.fenixedu.messaging.template.DeclareMessageTemplate;
+import org.fenixedu.messaging.template.TemplateParameter;
+import org.joda.time.LocalDate;
+
 import module.organization.domain.Person;
 import module.siadap.domain.Siadap;
 import module.siadap.domain.SiadapEvaluationItem;
 import module.siadap.domain.SiadapProcess;
 import module.workflow.activities.ActivityInformation;
 import module.workflow.activities.WorkflowActivity;
-
-import org.fenixedu.bennu.core.domain.User;
-import org.fenixedu.bennu.core.groups.UserGroup;
-import org.fenixedu.bennu.core.util.CoreConfiguration;
-import org.fenixedu.messaging.domain.Message;
-import org.fenixedu.messaging.template.DeclareMessageTemplate;
-import org.fenixedu.messaging.template.TemplateParameter;
-import org.joda.time.LocalDate;
 
 /**
  *
@@ -48,13 +48,13 @@ import org.joda.time.LocalDate;
  */
 @DeclareMessageTemplate(id = "siadap.acknowledge", bundle = Siadap.SIADAP_BUNDLE_STRING,
         description = "template.siadap.acknowledge", subject = "template.siadap.acknowledge.subject",
-        text = "template.siadap.acknowledge.text", parameters = {
-                @TemplateParameter(id = "applicationUrl", description = "template.parameter.application.url"),
+        text = "template.siadap.acknowledge.text",
+        parameters = { @TemplateParameter(id = "applicationUrl", description = "template.parameter.application.url"),
                 @TemplateParameter(id = "evaluee", description = "template.parameter.evaluee") })
 @DeclareMessageTemplate(id = "siadap.acknowledge.revert", bundle = Siadap.SIADAP_BUNDLE_STRING,
         description = "template.siadap.acknowledge.revert", subject = "template.siadap.acknowledge.revert.subject",
-        text = "template.siadap.acknowledge.revert.text", parameters = {
-                @TemplateParameter(id = "applicationUrl", description = "template.parameter.application.url"),
+        text = "template.siadap.acknowledge.revert.text",
+        parameters = { @TemplateParameter(id = "applicationUrl", description = "template.parameter.application.url"),
                 @TemplateParameter(id = "evaluee", description = "template.parameter.evaluee"),
                 @TemplateParameter(id = "year", description = "template.parameter.year") })
 public class AcknowledgeEvaluationObjectives extends WorkflowActivity<SiadapProcess, ActivityInformation<SiadapProcess>> {
@@ -90,7 +90,7 @@ public class AcknowledgeEvaluationObjectives extends WorkflowActivity<SiadapProc
         try {
             evaluatorPerson = activityInformation.getProcess().getSiadap().getEvaluator().getPerson();
             siadapProcess.checkEmailExistenceImportAndWarnOnError(evaluatorPerson);
-            Message.fromSystem().to(UserGroup.of(evaluatorPerson.getUser())).cc(UserGroup.of(evaluatedPerson.getUser()))
+            Message.fromSystem().to(Group.users(evaluatorPerson.getUser())).cc(Group.users(evaluatedPerson.getUser()))
                     .template("siadap.acknowledge")
                     .parameter("applicationUrl", CoreConfiguration.getConfiguration().applicationUrl())
                     .parameter("evaluee", evaluatedPerson.getName()).and().send();
@@ -135,7 +135,7 @@ public class AcknowledgeEvaluationObjectives extends WorkflowActivity<SiadapProc
             try {
                 evaluatorPerson = activityInformation.getProcess().getSiadap().getEvaluator().getPerson();
                 siadapProcess.checkEmailExistenceImportAndWarnOnError(evaluatorPerson);
-                Message.fromSystem().to(UserGroup.of(evaluatedPerson.getUser())).cc(UserGroup.of(evaluatorPerson.getUser()))
+                Message.fromSystem().to(Group.users(evaluatedPerson.getUser())).cc(Group.users(evaluatorPerson.getUser()))
                         .template("siadap.acknowledge.revert")
                         .parameter("applicationUrl", CoreConfiguration.getConfiguration().applicationUrl())
                         .parameter("year", siadap.getYear()).parameter("evaluee", evaluatedPerson.getName()).and().send();

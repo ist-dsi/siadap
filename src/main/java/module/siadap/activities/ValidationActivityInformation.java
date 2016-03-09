@@ -26,6 +26,15 @@ package module.siadap.activities;
 
 import java.math.BigDecimal;
 
+import org.apache.commons.lang.StringUtils;
+import org.fenixedu.bennu.core.groups.Group;
+import org.fenixedu.bennu.core.i18n.BundleUtil;
+import org.fenixedu.bennu.core.util.CoreConfiguration;
+import org.fenixedu.messaging.domain.Message;
+import org.fenixedu.messaging.template.DeclareMessageTemplate;
+import org.fenixedu.messaging.template.TemplateParameter;
+import org.joda.time.LocalDate;
+
 import module.organization.domain.Person;
 import module.siadap.domain.Siadap;
 import module.siadap.domain.SiadapEvaluationUniverse;
@@ -38,15 +47,6 @@ import module.workflow.activities.ActivityInformation;
 import module.workflow.activities.WorkflowActivity;
 import module.workflow.domain.WorkflowProcess;
 
-import org.apache.commons.lang.StringUtils;
-import org.fenixedu.bennu.core.groups.UserGroup;
-import org.fenixedu.bennu.core.i18n.BundleUtil;
-import org.fenixedu.bennu.core.util.CoreConfiguration;
-import org.fenixedu.messaging.domain.Message;
-import org.fenixedu.messaging.template.DeclareMessageTemplate;
-import org.fenixedu.messaging.template.TemplateParameter;
-import org.joda.time.LocalDate;
-
 /**
  *
  * ActivityInformation for all validation related activities.
@@ -56,8 +56,8 @@ import org.joda.time.LocalDate;
  */
 @DeclareMessageTemplate(id = "siadap.validation", bundle = Siadap.SIADAP_BUNDLE_STRING,
         description = "template.siadap.validation", subject = "template.siadap.validation.subject",
-        text = "template.siadap.validation.text", parameters = {
-                @TemplateParameter(id = "applicationUrl", description = "template.parameter.application.url"),
+        text = "template.siadap.validation.text",
+        parameters = { @TemplateParameter(id = "applicationUrl", description = "template.parameter.application.url"),
                 @TemplateParameter(id = "year", description = "template.parameter.year") })
 public class ValidationActivityInformation extends ActivityInformation<SiadapProcess> {
 
@@ -87,9 +87,8 @@ public class ValidationActivityInformation extends ActivityInformation<SiadapPro
                 }
 
                 // now let's check the values:
-                validationGrade =
-                        checkValidationDataAndAssignGrade(validationAssessment, validationExcellencyAssessment, validationGrade,
-                                harmonizationClassification);
+                validationGrade = checkValidationDataAndAssignGrade(validationAssessment, validationExcellencyAssessment,
+                        validationGrade, harmonizationClassification);
 
                 // let's apply them
                 siadapEvaluationUniverseForSiadapUniverse.setCcaAssessment(validationAssessment);
@@ -119,7 +118,7 @@ public class ValidationActivityInformation extends ActivityInformation<SiadapPro
              */
             private BigDecimal checkValidationDataAndAssignGrade(Boolean validationAssessment,
                     Boolean validationExcellencyAssessment, BigDecimal validationGrade, BigDecimal harmonizationClassification)
-                    throws SiadapException {
+                            throws SiadapException {
                 if (harmonizationClassification == null) {
                     throw new SiadapException("error.validation.must.have.harmonization.grade");
                 }
@@ -157,20 +156,24 @@ public class ValidationActivityInformation extends ActivityInformation<SiadapPro
                 switch (universe) {
                 case SIADAP2:
                     return ((siadapEvaluationUniverse.getCcaAssessment() != personWrapper
-                            .getValidationCurrentAssessmentForSIADAP2()) || (siadapEvaluationUniverse
-                            .getCcaClassificationExcellencyAward() != personWrapper
-                            .getValidationCurrentAssessmentForExcellencyAwardForSIADAP2() || ((siadapEvaluationUniverse
-                            .getCcaClassification() == null && personWrapper.getValidationClassificationForSIADAP2() != null) || (siadapEvaluationUniverse
-                            .getCcaClassification() != null && !siadapEvaluationUniverse.getCcaClassification().equals(
-                            personWrapper.getValidationClassificationForSIADAP2())))));
+                            .getValidationCurrentAssessmentForSIADAP2())
+                            || (siadapEvaluationUniverse.getCcaClassificationExcellencyAward() != personWrapper
+                                    .getValidationCurrentAssessmentForExcellencyAwardForSIADAP2()
+                                    || ((siadapEvaluationUniverse.getCcaClassification() == null
+                                            && personWrapper.getValidationClassificationForSIADAP2() != null)
+                                            || (siadapEvaluationUniverse.getCcaClassification() != null
+                                                    && !siadapEvaluationUniverse.getCcaClassification()
+                                                            .equals(personWrapper.getValidationClassificationForSIADAP2())))));
                 case SIADAP3:
                     return ((siadapEvaluationUniverse.getCcaAssessment() != personWrapper
-                            .getValidationCurrentAssessmentForSIADAP3()) || (siadapEvaluationUniverse
-                            .getCcaClassificationExcellencyAward() != personWrapper
-                            .getValidationCurrentAssessmentForExcellencyAwardForSIADAP3() || ((siadapEvaluationUniverse
-                            .getCcaClassification() == null && personWrapper.getValidationClassificationForSIADAP3() != null) || (siadapEvaluationUniverse
-                            .getCcaClassification() != null && !siadapEvaluationUniverse.getCcaClassification().equals(
-                            personWrapper.getValidationClassificationForSIADAP3())))));
+                            .getValidationCurrentAssessmentForSIADAP3())
+                            || (siadapEvaluationUniverse.getCcaClassificationExcellencyAward() != personWrapper
+                                    .getValidationCurrentAssessmentForExcellencyAwardForSIADAP3()
+                                    || ((siadapEvaluationUniverse.getCcaClassification() == null
+                                            && personWrapper.getValidationClassificationForSIADAP3() != null)
+                                            || (siadapEvaluationUniverse.getCcaClassification() != null
+                                                    && !siadapEvaluationUniverse.getCcaClassification()
+                                                            .equals(personWrapper.getValidationClassificationForSIADAP3())))));
                 default:
                     return false;
                 }
@@ -201,8 +204,8 @@ public class ValidationActivityInformation extends ActivityInformation<SiadapPro
         public abstract void process(PersonSiadapWrapper personWrapper, SiadapUniverse siadapUniverse);
 
         public String[] getArgumentsDescription(ValidationActivityInformation activityInformation) {
-            return new String[] { BundleUtil.getString(Siadap.SIADAP_BUNDLE_STRING, name(), activityInformation
-                    .getSiadapUniverse().name()) };
+            return new String[] {
+                    BundleUtil.getString(Siadap.SIADAP_BUNDLE_STRING, name(), activityInformation.getSiadapUniverse().name()) };
         }
 
         public abstract boolean hasAllneededInfo(PersonSiadapWrapper personWrapper, SiadapUniverse universe);
@@ -215,8 +218,7 @@ public class ValidationActivityInformation extends ActivityInformation<SiadapPro
                     throw new SiadapException("error.could.not.notify.given.user", evaluator.getPresentationName());
                 }
 
-                Message.fromSystem().to(UserGroup.of(evaluator.getUser())).template("siadap.validation")
-                        .parameter("year", year)
+                Message.fromSystem().to(Group.users(evaluator.getUser())).template("siadap.validation").parameter("year", year)
                         .parameter("applicationUrl", CoreConfiguration.getConfiguration().applicationUrl()).and().send();
             } catch (final Throwable ex) {
                 System.out.println("Unable to send email to: " + evaluator.getPresentationName() + " Error: " + ex.getMessage());
