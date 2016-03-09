@@ -32,13 +32,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import module.organization.domain.PartyType;
-import module.organization.domain.Person;
-import module.organization.domain.Unit;
-import module.siadap.domain.exceptions.SiadapException;
-import module.siadap.domain.wrappers.PersonSiadapWrapper;
-import module.siadap.domain.wrappers.UnitSiadapWrapper;
-
 import org.apache.commons.io.IOUtils;
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFCellStyle;
@@ -66,6 +59,12 @@ import org.fenixedu.bennu.core.security.Authenticate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import module.organization.domain.PartyType;
+import module.organization.domain.Person;
+import module.organization.domain.Unit;
+import module.siadap.domain.exceptions.SiadapException;
+import module.siadap.domain.wrappers.PersonSiadapWrapper;
+import module.siadap.domain.wrappers.UnitSiadapWrapper;
 import pt.ist.fenixframework.Atomic;
 
 /**
@@ -88,6 +87,7 @@ public class SiadapRootModule extends SiadapRootModule_Base {
     public static final String SIADAP_RESOURCES = "resources/SiadapResources";
 
     private static final byte[] istLogoBytes;
+
     // let's init the IST logo needed
     static {
         try {
@@ -188,10 +188,6 @@ public class SiadapRootModule extends SiadapRootModule_Base {
 
     }
 
-    private void initializeSiadapGroups(Bennu root) {
-        SiadapRootModule.getInstance();
-    }
-
     public Integer getNumberAndIncrement() {
         Integer processNumber = super.getNumber();
         setNumber(processNumber + 1);
@@ -200,11 +196,14 @@ public class SiadapRootModule extends SiadapRootModule_Base {
 
     private void addHarmonizationUnits(Set<Unit> set, SiadapYearConfiguration siadapYearConfiguration, Unit unit) {
         set.add(unit);
-        for (Unit iteratingUnit : unit.getChildUnits(siadapYearConfiguration.getHarmonizationUnitRelations())) {
-            if (!iteratingUnit.getChildPersons(siadapYearConfiguration.getHarmonizationResponsibleRelation()).isEmpty()) {
-                addHarmonizationUnits(set, siadapYearConfiguration, iteratingUnit);
-            }
-        }
+        unit.getChildAccountabilityStream()
+                .filter(a -> a.getAccountabilityType() == siadapYearConfiguration.getHarmonizationUnitRelations()
+                        && a.getChild().isUnit())
+                .map(a -> (Unit) a.getChild()).filter(
+                        u -> !u.getChildAccountabilityStream()
+                                .anyMatch(a -> a.getAccountabilityType() == siadapYearConfiguration
+                                        .getHarmonizationResponsibleRelation() && a.getChild().isPerson()))
+                .forEach(u -> addHarmonizationUnits(set, siadapYearConfiguration, u));;
     }
 
     public Set<Unit> getHarmonizationUnits(Integer year) {
@@ -213,10 +212,6 @@ public class SiadapRootModule extends SiadapRootModule_Base {
         Set<Unit> units = new HashSet<Unit>();
         addHarmonizationUnits(units, siadapYearConfiguration, topUnit);
         return units;
-    }
-
-    private static void setSiadapTestUserGroup(NamedGroup siadapTestUserGroup) {
-        SiadapRootModule.siadapTestUserGroup = siadapTestUserGroup;
     }
 
     public NamedGroup getSiadapTestUserGroup() {
@@ -488,7 +483,7 @@ public class SiadapRootModule extends SiadapRootModule_Base {
                 cellIndex = START_CELL_INDEX;
                 // write the unit name and cost center
                 String unitNameWithCC = eachUnit.getUnit().getPartyName().getContent();
-                if (eachUnit.getUnit().getPartyTypes().contains(PartyType.readBy("CostCenter"))) {
+                if (eachUnit.getUnit().getPartyTypesSet().contains(PartyType.readBy("CostCenter"))) {
                     unitNameWithCC += " - " + eachUnit.getUnit().getAcronym();
                 }
                 cell = row.createCell(cellIndex++);
@@ -515,8 +510,8 @@ public class SiadapRootModule extends SiadapRootModule_Base {
                 cell.setCellStyle(unitHeaderStyle);
 
                 // merge the IST id
-                sheetToWriteTo.addMergedRegion(new CellRangeAddress(firstLineAfterUnitNameIndex, secondLineAfterUnitNameIndex,
-                        cellIndex, cellIndex));
+                sheetToWriteTo.addMergedRegion(
+                        new CellRangeAddress(firstLineAfterUnitNameIndex, secondLineAfterUnitNameIndex, cellIndex, cellIndex));
 
                 // Nome avaliado
                 row = sheetToWriteTo.getRow(firstLineAfterUnitNameIndex);
@@ -529,8 +524,8 @@ public class SiadapRootModule extends SiadapRootModule_Base {
                 cell.setCellStyle(unitHeaderStyle);
 
                 // merge
-                sheetToWriteTo.addMergedRegion(new CellRangeAddress(firstLineAfterUnitNameIndex, secondLineAfterUnitNameIndex,
-                        cellIndex, cellIndex));
+                sheetToWriteTo.addMergedRegion(
+                        new CellRangeAddress(firstLineAfterUnitNameIndex, secondLineAfterUnitNameIndex, cellIndex, cellIndex));
 
                 if (shouldIncludeUniverse) {
 
@@ -545,8 +540,8 @@ public class SiadapRootModule extends SiadapRootModule_Base {
                     cell.setCellStyle(unitHeaderStyle);
 
                     // merge
-                    sheetToWriteTo.addMergedRegion(new CellRangeAddress(firstLineAfterUnitNameIndex,
-                            secondLineAfterUnitNameIndex, cellIndex, cellIndex));
+                    sheetToWriteTo.addMergedRegion(new CellRangeAddress(firstLineAfterUnitNameIndex, secondLineAfterUnitNameIndex,
+                            cellIndex, cellIndex));
                 }
 
                 // Ist id do avaliador
@@ -560,8 +555,8 @@ public class SiadapRootModule extends SiadapRootModule_Base {
                 cell.setCellStyle(unitHeaderStyle);
 
                 // merge
-                sheetToWriteTo.addMergedRegion(new CellRangeAddress(firstLineAfterUnitNameIndex, secondLineAfterUnitNameIndex,
-                        cellIndex, cellIndex));
+                sheetToWriteTo.addMergedRegion(
+                        new CellRangeAddress(firstLineAfterUnitNameIndex, secondLineAfterUnitNameIndex, cellIndex, cellIndex));
 
                 // avaliador
                 row = sheetToWriteTo.getRow(firstLineAfterUnitNameIndex);
@@ -574,74 +569,73 @@ public class SiadapRootModule extends SiadapRootModule_Base {
                 cell.setCellStyle(unitHeaderStyle);
 
                 // merge
-                sheetToWriteTo.addMergedRegion(new CellRangeAddress(firstLineAfterUnitNameIndex, secondLineAfterUnitNameIndex,
-                        cellIndex, cellIndex));
+                sheetToWriteTo.addMergedRegion(
+                        new CellRangeAddress(firstLineAfterUnitNameIndex, secondLineAfterUnitNameIndex, cellIndex, cellIndex));
 
-                List<PersonSiadapWrapper> listToUse =
-                        (considerQuotas) ? eachUnit.getUnitEmployeesWithQuotas(false) : eachUnit
-                                .getUnitEmployeesWithoutQuotas(true);
+                List<PersonSiadapWrapper> listToUse = (considerQuotas) ? eachUnit.getUnitEmployeesWithQuotas(false) : eachUnit
+                        .getUnitEmployeesWithoutQuotas(true);
 
-                        // now let's take care of exporting the persons
-                        for (PersonSiadapWrapper personWrapper : listToUse) {
-                            row = sheetToWriteTo.createRow(++rowIndex);
-                            // restart the cell's index
-                            cellIndex = START_CELL_INDEX;
-                            String istIdEvaluated = personWrapper.getPerson().getUser().getUsername();
-                            cell = row.createCell(cellIndex++);
-                            cell.setCellValue(istIdEvaluated);
-                            cell.setCellStyle(defaultTextIstIdStyle);
+                // now let's take care of exporting the persons
+                for (PersonSiadapWrapper personWrapper : listToUse) {
+                    row = sheetToWriteTo.createRow(++rowIndex);
+                    // restart the cell's index
+                    cellIndex = START_CELL_INDEX;
+                    String istIdEvaluated = personWrapper.getPerson().getUser().getUsername();
+                    cell = row.createCell(cellIndex++);
+                    cell.setCellValue(istIdEvaluated);
+                    cell.setCellStyle(defaultTextIstIdStyle);
 
-                            String nameEvaluatedPerson = personWrapper.getPerson().getName();
-                            cell = row.createCell(cellIndex++);
-                            cell.setCellValue(nameEvaluatedPerson);
-                            cell.setCellStyle(defaultTextNameStyle);
+                    String nameEvaluatedPerson = personWrapper.getPerson().getName();
+                    cell = row.createCell(cellIndex++);
+                    cell.setCellValue(nameEvaluatedPerson);
+                    cell.setCellStyle(defaultTextNameStyle);
 
-                            if (shouldIncludeUniverse) {
+                    if (shouldIncludeUniverse) {
 
-                                Siadap siadap = personWrapper.getSiadap();
-                                String siadapUniverseToBeWritten =
-                                        (siadap == null || siadap.getDefaultSiadapUniverse() == null) ? "Não definido" : siadap
-                                                .getDefaultSiadapUniverse().getLocalizedName();
-                                cell = row.createCell(cellIndex++);
-                                cell.setCellValue(siadapUniverseToBeWritten);
-                                cell.setCellStyle(defaultTextNameStyle);
-                            }
+                        Siadap siadap = personWrapper.getSiadap();
+                        String siadapUniverseToBeWritten =
+                                (siadap == null || siadap.getDefaultSiadapUniverse() == null) ? "Não definido" : siadap
+                                        .getDefaultSiadapUniverse().getLocalizedName();
+                        cell = row.createCell(cellIndex++);
+                        cell.setCellValue(siadapUniverseToBeWritten);
+                        cell.setCellStyle(defaultTextNameStyle);
+                    }
 
-                            PersonSiadapWrapper evaluatorWrapper = personWrapper.getEvaluator();
-                            String istIdEvaluator = evaluatorWrapper == null ? "-" : evaluatorWrapper.getPerson().getUser().getUsername();
-                            cell = row.createCell(cellIndex++);
-                            cell.setCellValue(istIdEvaluator);
-                            cell.setCellStyle(defaultTextIstIdStyle);
+                    PersonSiadapWrapper evaluatorWrapper = personWrapper.getEvaluator();
+                    String istIdEvaluator = evaluatorWrapper == null ? "-" : evaluatorWrapper.getPerson().getUser().getUsername();
+                    cell = row.createCell(cellIndex++);
+                    cell.setCellValue(istIdEvaluator);
+                    cell.setCellStyle(defaultTextIstIdStyle);
 
-                            String nameEvaluatorWrapper = evaluatorWrapper == null ? "-" : evaluatorWrapper.getName();
-                            cell = row.createCell(cellIndex++);
-                            cell.setCellValue(nameEvaluatorWrapper);
-                            cell.setCellStyle(defaultTextNameStyle);
+                    String nameEvaluatorWrapper = evaluatorWrapper == null ? "-" : evaluatorWrapper.getName();
+                    cell = row.createCell(cellIndex++);
+                    cell.setCellValue(nameEvaluatorWrapper);
+                    cell.setCellStyle(defaultTextNameStyle);
 
-                        }
-                        // let's make a bottom border on the last four cells
-                        for (int i = START_CELL_INDEX; i < START_CELL_INDEX + 4; i++) {
-                            cell = row.getCell(i);
-                            // let's diferentaitate between the IST-id and the name
-                            if (i == START_CELL_INDEX || i == START_CELL_INDEX + 2) // first
-                                // cell,
-                                // IST-ID
-                                // then.
-                                // or
-                                // third
-                                // cell
-                                // the
-                                // other
-                                // IST-ID
-                            {
-                                cell.setCellStyle(defaultTextIstIdLastStyle);
-                            } else {
-                                cell.setCellStyle(defaultTextNameLastStyle);
-                            }
+                }
+                // let's make a bottom border on the last four cells
+                for (int i = START_CELL_INDEX; i < START_CELL_INDEX + 4; i++) {
+                    cell = row.getCell(i);
+                    // let's diferentaitate between the IST-id and the name
+                    if (i == START_CELL_INDEX || i == START_CELL_INDEX + 2) // first
+                    // cell,
+                    // IST-ID
+                    // then.
+                    // or
+                    // third
+                    // cell
+                    // the
+                    // other
+                    // IST-ID
+                    {
+                        cell.setCellStyle(defaultTextIstIdLastStyle);
+                    } else {
+                        cell.setCellStyle(defaultTextNameLastStyle);
+                    }
 
-                        }
-                        row = sheetToWriteTo.createRow(++rowIndex);
-                        row = sheetToWriteTo.createRow(++rowIndex);
+                }
+                row = sheetToWriteTo.createRow(++rowIndex);
+                row = sheetToWriteTo.createRow(++rowIndex);
 
             }
 
@@ -656,6 +650,7 @@ public class SiadapRootModule extends SiadapRootModule_Base {
         // now let's resize the logo
         picture.resize();
     }
+
     @Deprecated
     public java.util.Set<module.siadap.domain.ObjectiveEvaluationIndicator> getIndicators() {
         return getIndicatorsSet();

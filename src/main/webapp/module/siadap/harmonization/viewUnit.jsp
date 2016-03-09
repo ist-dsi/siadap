@@ -559,7 +559,7 @@ color: #999;
 						<fr:property name="link(viewProcess)" value="/workflowProcessManagement.do?method=viewProcess"/>
 						<fr:property name="bundle(viewProcess)" value="MYORG_RESOURCES"/>
 						<fr:property name="key(viewProcess)" value="link.view"/>
-						<fr:property name="param(viewProcess)" value="siadap.process.externalId/processId"/>
+						<fr:property name="param(viewProcess)" value="siadap.externalId/processId"/>
 						<fr:property name="order(viewProcess)" value="1"/>
 						<fr:property name="visibleIf(viewProcess)" value="accessibleToCurrentUser"/>
 						
@@ -683,7 +683,7 @@ color: #999;
 						<fr:property name="link(viewProcess)" value="/workflowProcessManagement.do?method=viewProcess"/>
 						<fr:property name="bundle(viewProcess)" value="MYORG_RESOURCES"/>
 						<fr:property name="key(viewProcess)" value="link.view"/>
-						<fr:property name="param(viewProcess)" value="siadap.process.externalId/processId"/>
+						<fr:property name="param(viewProcess)" value="siadap.externalId/processId"/>
 						<fr:property name="order(viewProcess)" value="1"/>
 						<fr:property name="visibleIf(viewProcess)" value="accessibleToCurrentUser"/>
 						
@@ -808,7 +808,7 @@ color: #999;
 						<fr:property name="link(viewProcess)" value="/workflowProcessManagement.do?method=viewProcess"/>
 						<fr:property name="bundle(viewProcess)" value="MYORG_RESOURCES"/>
 						<fr:property name="key(viewProcess)" value="link.view"/>
-						<fr:property name="param(viewProcess)" value="siadap.process.externalId/processId"/>
+						<fr:property name="param(viewProcess)" value="siadap.externalId/processId"/>
 						<fr:property name="order(viewProcess)" value="1"/>
 						<fr:property name="visibleIf(viewProcess)" value="accessibleToCurrentUser"/>
 						
@@ -931,7 +931,7 @@ color: #999;
 						<fr:property name="link(viewProcess)" value="/workflowProcessManagement.do?method=viewProcess"/>
 						<fr:property name="bundle(viewProcess)" value="MYORG_RESOURCES"/>
 						<fr:property name="key(viewProcess)" value="link.view"/>
-						<fr:property name="param(viewProcess)" value="siadap.process.externalId/processId"/>
+						<fr:property name="param(viewProcess)" value="siadap.externalId/processId"/>
 						<fr:property name="order(viewProcess)" value="1"/>
 						<fr:property name="visibleIf(viewProcess)" value="accessibleToCurrentUser"/>
 						
@@ -989,7 +989,7 @@ color: #999;
 						<fr:property name="link(viewProcess)" value="/workflowProcessManagement.do?method=viewProcess"/>
 						<fr:property name="bundle(viewProcess)" value="MYORG_RESOURCES"/>
 						<fr:property name="key(viewProcess)" value="link.view"/>
-						<fr:property name="param(viewProcess)" value="siadap.process.externalId/processId"/>
+						<fr:property name="param(viewProcess)" value="siadap.externalId/processId"/>
 						<fr:property name="order(viewProcess)" value="1"/>
 						<fr:property name="visibleIf(viewProcess)" value="accessibleToCurrentUser"/>
 						
@@ -1031,7 +1031,7 @@ color: #999;
 						<fr:property name="link(viewProcess)" value="/workflowProcessManagement.do?method=viewProcess"/>
 						<fr:property name="bundle(viewProcess)" value="MYORG_RESOURCES"/>
 						<fr:property name="key(viewProcess)" value="link.view"/>
-						<fr:property name="param(viewProcess)" value="siadap.process.externalId/processId"/>
+						<fr:property name="param(viewProcess)" value="siadap.externalId/processId"/>
 						<fr:property name="order(viewProcess)" value="1"/>
 						<fr:property name="visibleIf(viewProcess)" value="accessibleToCurrentUser"/>
 						

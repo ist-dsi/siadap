@@ -29,13 +29,6 @@ import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
-import jvstm.cps.ConsistencyPredicate;
-import module.organization.domain.Person;
-import module.organization.domain.Unit;
-import module.siadap.domain.wrappers.PersonSiadapWrapper;
-import module.siadap.domain.wrappers.UnitSiadapWrapper;
-
-import org.antlr.v4.runtime.misc.Nullable;
 import org.apache.commons.lang.StringUtils;
 import org.apache.xmlbeans.impl.xb.xsdschema.NamedGroup;
 import org.fenixedu.bennu.core.domain.Bennu;
@@ -46,12 +39,17 @@ import org.joda.time.LocalDate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import pt.ist.fenixframework.Atomic;
-
 import com.google.common.base.Predicate;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Iterators;
+
+import jvstm.cps.ConsistencyPredicate;
+import module.organization.domain.Person;
+import module.organization.domain.Unit;
+import module.siadap.domain.wrappers.PersonSiadapWrapper;
+import module.siadap.domain.wrappers.UnitSiadapWrapper;
+import pt.ist.fenixframework.Atomic;
 
 /**
  * 
@@ -432,7 +430,7 @@ public class SiadapYearConfiguration extends SiadapYearConfiguration_Base {
     public static final Predicate<Siadap> SIADAP_WITHOUT_VALID_HARM_UNIT = new Predicate<Siadap>() {
 
         @Override
-        public boolean apply(@Nullable Siadap input) {
+        public boolean apply(Siadap input) {
             if (input == null) {
                 return false;
             }

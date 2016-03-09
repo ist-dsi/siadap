@@ -3,9 +3,9 @@
  *
  * Copyright 2012 Instituto Superior Tecnico
  * Founding Authors: Paulo Abrantes
- * 
+ *
  *      https://fenix-ashes.ist.utl.pt/
- * 
+ *
  *   This file is part of the SIADAP Module.
  *
  *   The SIADAP Module is free software: you can
@@ -20,9 +20,17 @@
  *
  *   You should have received a copy of the GNU Lesser General Public License
  *   along with the SIADAP Module. If not, see <http://www.gnu.org/licenses/>.
- * 
+ *
  */
 package module.siadap.activities;
+
+import org.fenixedu.bennu.core.domain.User;
+import org.fenixedu.bennu.core.groups.Group;
+import org.fenixedu.bennu.core.util.CoreConfiguration;
+import org.fenixedu.messaging.domain.Message;
+import org.fenixedu.messaging.template.DeclareMessageTemplate;
+import org.fenixedu.messaging.template.TemplateParameter;
+import org.joda.time.LocalDate;
 
 import module.organization.domain.Person;
 import module.siadap.domain.Siadap;
@@ -31,25 +39,24 @@ import module.siadap.domain.SiadapProcessStateEnum;
 import module.workflow.activities.ActivityInformation;
 import module.workflow.activities.WorkflowActivity;
 
-import org.fenixedu.bennu.core.domain.User;
-import org.fenixedu.bennu.core.groups.UserGroup;
-import org.fenixedu.messaging.domain.Message.MessageBuilder;
-import org.fenixedu.messaging.domain.MessagingSystem;
-import org.fenixedu.messaging.domain.Sender;
-import org.joda.time.LocalDate;
-
 /**
- * 
+ *
  * @author João Antunes
- * 
+ *
  */
+@DeclareMessageTemplate(id = "siadap.evaluation", bundle = Siadap.SIADAP_BUNDLE_STRING,
+        description = "template.siadap.evaluation", subject = "template.siadap.evaluation.subject",
+        text = "template.siadap.evaluation.text", parameters = {
+                @TemplateParameter(id = "applicationUrl", description = "template.parameter.application.url"),
+                @TemplateParameter(id = "year", description = "template.parameter.year") })
 public class SubmitValidatedEvaluation extends WorkflowActivity<SiadapProcess, ActivityInformation<SiadapProcess>> {
 
     @Override
     public boolean isActive(SiadapProcess process, User user) {
         Siadap siadap = process.getSiadap();
-        if (siadap.getEvaluator() == null)
+        if (siadap.getEvaluator() == null) {
             return false;
+        }
         return siadap.getEvaluator().getPerson().getUser() == user && siadap.getValidationDateOfDefaultEvaluation() != null
                 && siadap.getRequestedAcknowledegeValidationDate() == null && siadap.getAcknowledgeValidationDate() == null
                 && siadap.getState().equals(SiadapProcessStateEnum.WAITING_SUBMITTAL_BY_EVALUATOR_AFTER_VALIDATION);
@@ -78,25 +85,13 @@ public class SubmitValidatedEvaluation extends WorkflowActivity<SiadapProcess, A
 
         try {
             SiadapProcess.checkEmailExistenceImportAndWarnOnError(evaluatedPerson);
-
-            Integer year = process.getSiadap().getYear();
-
-            StringBuilder body =
-                    new StringBuilder("A nota final (pós-validação) do seu processo SIADAP de " + year
-                            + " encontra-se disponível na plataforma. Necessita de tomar conhecimento da validação\n");
-            body.append("\nPara mais informações consulte https://dot.ist.utl.pt\n");
-            body.append("\n\n---\n");
-            body.append("Esta mensagem foi enviada por meio das Aplicações Centrais do IST.\n");
-
-            final Sender sender = MessagingSystem.getInstance().getSystemSender();
-            final MessageBuilder message = sender.message("SIADAP - " + year + " Nota final disponível", body.toString());
-            message.to(UserGroup.of(evaluatedPerson.getUser()));
-            message.send();
+            Message.fromSystem().to(Group.users(evaluatedPerson.getUser())).template("siadap.evaluation")
+                    .parameter("applicationUrl", CoreConfiguration.getConfiguration().applicationUrl())
+                    .parameter("year", process.getSiadap().getYear()).and().send();
         } catch (Throwable ex) {
-            System.out.println("Unable to lookup email address for: " + evaluatedPerson.getUser().getUsername() + " Error: "
+            System.out.println("Unable to send email to: " + evaluatedPerson.getUser().getUsername() + " Error: "
                     + ex.getMessage());
             process.addWarningMessage("warning.message.could.not.send.email.now");
         }
     }
-
 }

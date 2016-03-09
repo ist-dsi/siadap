@@ -11,16 +11,15 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import module.organization.domain.Unit;
-import module.siadap.domain.SiadapYearConfiguration;
-import module.siadap.domain.wrappers.UnitSiadapWrapper;
-
-import org.antlr.v4.runtime.misc.Nullable;
 import org.fenixedu.bennu.core.presentationTier.renderers.autoCompleteProvider.AutoCompleteProvider;
 import org.fenixedu.commons.StringNormalizer;
 
 import com.google.common.base.Function;
 import com.google.common.collect.Collections2;
+
+import module.organization.domain.Unit;
+import module.siadap.domain.SiadapYearConfiguration;
+import module.siadap.domain.wrappers.UnitSiadapWrapper;
 
 /**
  * @author João Antunes (joao.antunes@tagus.ist.utl.pt) - 24 de Jan de 2013
@@ -67,10 +66,8 @@ public class HarmonizationUnitAutoCompleteProvider implements AutoCompleteProvid
         Collection<Unit> harmonizationUnits =
                 Collections2.transform(SiadapYearConfiguration.getAllHarmonizationUnitsFor(year),
                         new Function<UnitSiadapWrapper, Unit>() {
-
                             @Override
-                            @Nullable
-                            public Unit apply(@Nullable UnitSiadapWrapper input) {
+                            public Unit apply(UnitSiadapWrapper input) {
                                 if (input == null) {
                                     return null;
                                 }

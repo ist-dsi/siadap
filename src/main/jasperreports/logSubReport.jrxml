@@ -164,7 +164,7 @@
 					<textElement textAlignment="Left" verticalAlignment="Middle">
 						<font/>
 					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[$F{activityExecutor}.getPresentationName()]]></textFieldExpression>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{activityExecutor}.getDisplayName() + "(" + $F{activityExecutor}.getUsername() + ")"]]></textFieldExpression>
 				</textField>
 			</band>
 		</detail>

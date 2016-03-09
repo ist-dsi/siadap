@@ -3,14 +3,14 @@
  *
  * Copyright 2012 Instituto Superior Tecnico
  * Founding Authors: Paulo Abrantes
- * 
+ *
  *      https://fenix-ashes.ist.utl.pt/
- * 
+ *
  *   This file is part of the SIADAP Module.
  *
  *   The SIADAP Module is free software: you can
  *   redistribute it and/or modify it under the terms of the GNU Lesser General
- *   Public License as published by the Free Software Foundation, either version 
+ *   Public License as published by the Free Software Foundation, either version
  *   3 of the License, or (at your option) any later version.
  *
  *   The SIADAP Module is distributed in the hope that it will be useful,
@@ -20,11 +20,20 @@
  *
  *   You should have received a copy of the GNU Lesser General Public License
  *   along with the SIADAP Module. If not, see <http://www.gnu.org/licenses/>.
- * 
+ *
  */
 package module.siadap.activities;
 
 import java.math.BigDecimal;
+
+import org.apache.commons.lang.StringUtils;
+import org.fenixedu.bennu.core.groups.Group;
+import org.fenixedu.bennu.core.i18n.BundleUtil;
+import org.fenixedu.bennu.core.util.CoreConfiguration;
+import org.fenixedu.messaging.domain.Message;
+import org.fenixedu.messaging.template.DeclareMessageTemplate;
+import org.fenixedu.messaging.template.TemplateParameter;
+import org.joda.time.LocalDate;
 
 import module.organization.domain.Person;
 import module.siadap.domain.Siadap;
@@ -38,21 +47,18 @@ import module.workflow.activities.ActivityInformation;
 import module.workflow.activities.WorkflowActivity;
 import module.workflow.domain.WorkflowProcess;
 
-import org.apache.commons.lang.StringUtils;
-import org.fenixedu.bennu.core.groups.UserGroup;
-import org.fenixedu.bennu.core.i18n.BundleUtil;
-import org.fenixedu.messaging.domain.Message.MessageBuilder;
-import org.fenixedu.messaging.domain.MessagingSystem;
-import org.fenixedu.messaging.domain.Sender;
-import org.joda.time.LocalDate;
-
 /**
- * 
+ *
  * ActivityInformation for all validation related activities.
- * 
+ *
  * @author João Antunes
- * 
+ *
  */
+@DeclareMessageTemplate(id = "siadap.validation", bundle = Siadap.SIADAP_BUNDLE_STRING,
+        description = "template.siadap.validation", subject = "template.siadap.validation.subject",
+        text = "template.siadap.validation.text",
+        parameters = { @TemplateParameter(id = "applicationUrl", description = "template.parameter.application.url"),
+                @TemplateParameter(id = "year", description = "template.parameter.year") })
 public class ValidationActivityInformation extends ActivityInformation<SiadapProcess> {
 
     public static enum ValidationSubActivity {
@@ -81,9 +87,8 @@ public class ValidationActivityInformation extends ActivityInformation<SiadapPro
                 }
 
                 // now let's check the values:
-                validationGrade =
-                        checkValidationDataAndAssignGrade(validationAssessment, validationExcellencyAssessment, validationGrade,
-                                harmonizationClassification);
+                validationGrade = checkValidationDataAndAssignGrade(validationAssessment, validationExcellencyAssessment,
+                        validationGrade, harmonizationClassification);
 
                 // let's apply them
                 siadapEvaluationUniverseForSiadapUniverse.setCcaAssessment(validationAssessment);
@@ -100,8 +105,8 @@ public class ValidationActivityInformation extends ActivityInformation<SiadapPro
              * <li>If we have an Assessment of true, then the grade must be null and set to the value of
              * harmonizationClassification;</li>
              * <li>harmonizationClassification must not be null!!</li>
-             * 
-             * 
+             *
+             *
              * @param validationAssessment
              * @param validationExcellencyAssessment
              * @param validationGrade
@@ -109,11 +114,11 @@ public class ValidationActivityInformation extends ActivityInformation<SiadapPro
              * @return the validation grade to use
              * @throws SiadapException
              *             if the data is inconsistent
-             * 
+             *
              */
             private BigDecimal checkValidationDataAndAssignGrade(Boolean validationAssessment,
                     Boolean validationExcellencyAssessment, BigDecimal validationGrade, BigDecimal harmonizationClassification)
-                    throws SiadapException {
+                            throws SiadapException {
                 if (harmonizationClassification == null) {
                     throw new SiadapException("error.validation.must.have.harmonization.grade");
                 }
@@ -151,20 +156,24 @@ public class ValidationActivityInformation extends ActivityInformation<SiadapPro
                 switch (universe) {
                 case SIADAP2:
                     return ((siadapEvaluationUniverse.getCcaAssessment() != personWrapper
-                            .getValidationCurrentAssessmentForSIADAP2()) || (siadapEvaluationUniverse
-                            .getCcaClassificationExcellencyAward() != personWrapper
-                            .getValidationCurrentAssessmentForExcellencyAwardForSIADAP2() || ((siadapEvaluationUniverse
-                            .getCcaClassification() == null && personWrapper.getValidationClassificationForSIADAP2() != null) || (siadapEvaluationUniverse
-                            .getCcaClassification() != null && !siadapEvaluationUniverse.getCcaClassification().equals(
-                            personWrapper.getValidationClassificationForSIADAP2())))));
+                            .getValidationCurrentAssessmentForSIADAP2())
+                            || (siadapEvaluationUniverse.getCcaClassificationExcellencyAward() != personWrapper
+                                    .getValidationCurrentAssessmentForExcellencyAwardForSIADAP2()
+                                    || ((siadapEvaluationUniverse.getCcaClassification() == null
+                                            && personWrapper.getValidationClassificationForSIADAP2() != null)
+                                            || (siadapEvaluationUniverse.getCcaClassification() != null
+                                                    && !siadapEvaluationUniverse.getCcaClassification()
+                                                            .equals(personWrapper.getValidationClassificationForSIADAP2())))));
                 case SIADAP3:
                     return ((siadapEvaluationUniverse.getCcaAssessment() != personWrapper
-                            .getValidationCurrentAssessmentForSIADAP3()) || (siadapEvaluationUniverse
-                            .getCcaClassificationExcellencyAward() != personWrapper
-                            .getValidationCurrentAssessmentForExcellencyAwardForSIADAP3() || ((siadapEvaluationUniverse
-                            .getCcaClassification() == null && personWrapper.getValidationClassificationForSIADAP3() != null) || (siadapEvaluationUniverse
-                            .getCcaClassification() != null && !siadapEvaluationUniverse.getCcaClassification().equals(
-                            personWrapper.getValidationClassificationForSIADAP3())))));
+                            .getValidationCurrentAssessmentForSIADAP3())
+                            || (siadapEvaluationUniverse.getCcaClassificationExcellencyAward() != personWrapper
+                                    .getValidationCurrentAssessmentForExcellencyAwardForSIADAP3()
+                                    || ((siadapEvaluationUniverse.getCcaClassification() == null
+                                            && personWrapper.getValidationClassificationForSIADAP3() != null)
+                                            || (siadapEvaluationUniverse.getCcaClassification() != null
+                                                    && !siadapEvaluationUniverse.getCcaClassification()
+                                                            .equals(personWrapper.getValidationClassificationForSIADAP3())))));
                 default:
                     return false;
                 }
@@ -195,8 +204,8 @@ public class ValidationActivityInformation extends ActivityInformation<SiadapPro
         public abstract void process(PersonSiadapWrapper personWrapper, SiadapUniverse siadapUniverse);
 
         public String[] getArgumentsDescription(ValidationActivityInformation activityInformation) {
-            return new String[] { BundleUtil.getString(Siadap.SIADAP_BUNDLE_STRING, name(), activityInformation
-                    .getSiadapUniverse().name()) };
+            return new String[] {
+                    BundleUtil.getString(Siadap.SIADAP_BUNDLE_STRING, name(), activityInformation.getSiadapUniverse().name()) };
         }
 
         public abstract boolean hasAllneededInfo(PersonSiadapWrapper personWrapper, SiadapUniverse universe);
@@ -208,22 +217,11 @@ public class ValidationActivityInformation extends ActivityInformation<SiadapPro
                 if (StringUtils.isBlank(emailEvaluator)) {
                     throw new SiadapException("error.could.not.notify.given.user", evaluator.getPresentationName());
                 }
-                StringBuilder body =
-                        new StringBuilder(
-                                "Os processos SIADAP do ano "
-                                        + year
-                                        + " estão validados, com a nota final atríbuida, e prontos a submeter para conhecimento do avaliado");
-                body.append("\nPara mais informações consulte https://dot.ist.utl.pt\n");
-                body.append("\n\n---\n");
-                body.append("Esta mensagem foi enviada por meio das Aplicações Centrais do IST.\n");
 
-                final Sender sender = MessagingSystem.getInstance().getSystemSender();
-                final MessageBuilder message = sender.message("SIADAP - " + year + " - Avaliações validadas", body.toString());
-                message.to(UserGroup.of(evaluator.getUser()));
-                message.send();
+                Message.fromSystem().to(Group.users(evaluator.getUser())).template("siadap.validation").parameter("year", year)
+                        .parameter("applicationUrl", CoreConfiguration.getConfiguration().applicationUrl()).and().send();
             } catch (final Throwable ex) {
-                System.out.println("Unable to lookup email address for: " + evaluator.getPresentationName() + " Error: "
-                        + ex.getMessage());
+                System.out.println("Unable to send email to: " + evaluator.getPresentationName() + " Error: " + ex.getMessage());
                 throw new SiadapException("error.could.not.notify.given.user", evaluator.getPresentationName());
             }
 
