@@ -26,6 +26,15 @@ package module.siadap.activities;
 
 import java.math.BigDecimal;
 
+import org.apache.commons.lang.StringUtils;
+import org.fenixedu.bennu.core.groups.Group;
+import org.fenixedu.bennu.core.i18n.BundleUtil;
+import org.fenixedu.messaging.domain.Message;
+import org.fenixedu.messaging.domain.Message.MessageBuilder;
+import org.fenixedu.messaging.domain.MessagingSystem;
+import org.fenixedu.messaging.domain.Sender;
+import org.joda.time.LocalDate;
+
 import module.organization.domain.Person;
 import module.siadap.domain.Siadap;
 import module.siadap.domain.SiadapEvaluationUniverse;
@@ -37,14 +46,6 @@ import module.siadap.domain.wrappers.PersonSiadapWrapper;
 import module.workflow.activities.ActivityInformation;
 import module.workflow.activities.WorkflowActivity;
 import module.workflow.domain.WorkflowProcess;
-
-import org.apache.commons.lang.StringUtils;
-import org.fenixedu.bennu.core.groups.UserGroup;
-import org.fenixedu.bennu.core.i18n.BundleUtil;
-import org.fenixedu.messaging.domain.Message.MessageBuilder;
-import org.fenixedu.messaging.domain.MessagingSystem;
-import org.fenixedu.messaging.domain.Sender;
-import org.joda.time.LocalDate;
 
 /**
  * 
@@ -217,9 +218,11 @@ public class ValidationActivityInformation extends ActivityInformation<SiadapPro
                 body.append("\n\n---\n");
                 body.append("Esta mensagem foi enviada por meio das Aplicações Centrais do IST.\n");
 
-                final Sender sender = MessagingSystem.getInstance().getSystemSender();
-                final MessageBuilder message = sender.message("SIADAP - " + year + " - Avaliações validadas", body.toString());
-                message.to(UserGroup.of(evaluator.getUser()));
+                final Sender sender = MessagingSystem.systemSender();
+                final MessageBuilder message = Message.from(sender);
+                message.subject("SIADAP - " + year + " - Avaliações validadas");
+                message.textBody(body.toString());
+                message.to(Group.users(evaluator.getUser()));
                 message.send();
             } catch (final Throwable ex) {
                 System.out.println("Unable to lookup email address for: " + evaluator.getPresentationName() + " Error: "

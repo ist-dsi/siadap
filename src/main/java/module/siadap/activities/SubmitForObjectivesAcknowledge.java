@@ -24,19 +24,20 @@
  */
 package module.siadap.activities;
 
+import org.fenixedu.bennu.core.domain.User;
+import org.fenixedu.bennu.core.groups.Group;
+import org.fenixedu.messaging.domain.Message;
+import org.fenixedu.messaging.domain.Message.MessageBuilder;
+import org.fenixedu.messaging.domain.MessagingSystem;
+import org.fenixedu.messaging.domain.Sender;
+import org.joda.time.LocalDate;
+
 import module.organization.domain.Person;
 import module.siadap.domain.Siadap;
 import module.siadap.domain.SiadapProcess;
 import module.siadap.domain.exceptions.SiadapException;
 import module.workflow.activities.ActivityInformation;
 import module.workflow.activities.WorkflowActivity;
-
-import org.fenixedu.bennu.core.domain.User;
-import org.fenixedu.bennu.core.groups.UserGroup;
-import org.fenixedu.messaging.domain.Message.MessageBuilder;
-import org.fenixedu.messaging.domain.MessagingSystem;
-import org.fenixedu.messaging.domain.Sender;
-import org.joda.time.LocalDate;
 
 /**
  * 
@@ -93,13 +94,13 @@ public class SubmitForObjectivesAcknowledge extends WorkflowActivity<SiadapProce
                 body.append("\n\n---\n");
                 body.append("Esta mensagem foi enviada por meio das Aplicações Centrais do IST.\n");
 
-                final Sender sender = MessagingSystem.getInstance().getSystemSender();
-                final MessageBuilder message =
-                        sender.message("SIADAP - " + year
-                                + " Reversão excepcional do estado do processo SIADAP para o estado anterior ao de ",
-                                body.toString());
-                message.to(UserGroup.of(evaluatedPerson.getUser()));
-                message.cc(UserGroup.of(evaluatorPerson.getUser()));
+                final Sender sender = MessagingSystem.systemSender();
+                final MessageBuilder message = Message.from(sender);
+                message.subject("SIADAP - " + year
+                        + " Reversão excepcional do estado do processo SIADAP para o estado anterior ao de ");
+                message.textBody(body.toString());
+                message.to(Group.users(evaluatedPerson.getUser()));
+                message.cc(Group.users(evaluatorPerson.getUser()));
                 message.send();
             } catch (Throwable ex) {
                 System.out.println("Unable to lookup email address for: "
@@ -144,11 +145,12 @@ public class SubmitForObjectivesAcknowledge extends WorkflowActivity<SiadapProce
             body.append("\n\n---\n");
             body.append("Esta mensagem foi enviada por meio das Aplicações Centrais do IST.\n");
 
-            final Sender sender = MessagingSystem.getInstance().getSystemSender();
-            final MessageBuilder message =
-                    sender.message("SIADAP - Tomada de conhecimento de objectivos e competências", body.toString());
-            message.to(UserGroup.of(evaluatedPerson.getUser()));
-            message.cc(UserGroup.of(evaluatorPerson.getUser()));
+            final Sender sender = MessagingSystem.systemSender();
+            final MessageBuilder message = Message.from(sender);
+            message.subject("SIADAP - Tomada de conhecimento de objectivos e competências");
+            message.textBody(body.toString());
+            message.to(Group.users(evaluatedPerson.getUser()));
+            message.cc(Group.users(evaluatorPerson.getUser()));
             message.send();
         } catch (Throwable ex) {
             System.out.println("Unable to lookup email address for: "

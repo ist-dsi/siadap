@@ -24,7 +24,13 @@
  */
 package module.siadap.activities;
 
-import java.util.ArrayList;
+import org.fenixedu.bennu.core.domain.User;
+import org.fenixedu.bennu.core.groups.Group;
+import org.fenixedu.messaging.domain.Message;
+import org.fenixedu.messaging.domain.Message.MessageBuilder;
+import org.fenixedu.messaging.domain.MessagingSystem;
+import org.fenixedu.messaging.domain.Sender;
+import org.joda.time.LocalDate;
 
 import module.organization.domain.Person;
 import module.siadap.domain.Siadap;
@@ -32,13 +38,6 @@ import module.siadap.domain.SiadapEvaluationItem;
 import module.siadap.domain.SiadapProcess;
 import module.workflow.activities.ActivityInformation;
 import module.workflow.activities.WorkflowActivity;
-
-import org.fenixedu.bennu.core.domain.User;
-import org.fenixedu.bennu.core.groups.UserGroup;
-import org.fenixedu.messaging.domain.MessagingSystem;
-import org.fenixedu.messaging.domain.Sender;
-import org.fenixedu.messaging.domain.Message.MessageBuilder;
-import org.joda.time.LocalDate;
 
 /**
  * 
@@ -89,11 +88,12 @@ public class AcknowledgeEvaluationObjectives extends WorkflowActivity<SiadapProc
             body.append("\n\n---\n");
             body.append("Esta mensagem foi enviada por meio das Aplicações Centrais do IST.\n");
 
-            final Sender sender = MessagingSystem.getInstance().getSystemSender();
-            final MessageBuilder message =
-                    sender.message("SIADAP - Tomada de conhecimento de objectivos e competências", body.toString());
-            message.to(UserGroup.of(evaluatorPerson.getUser()));
-            message.cc(UserGroup.of(evaluatedPerson.getUser()));
+            final Sender sender = MessagingSystem.systemSender();
+            final MessageBuilder message = Message.from(sender);
+            message.subject("SIADAP - Tomada de conhecimento de objectivos e competências");
+            message.textBody(body.toString());
+            message.to(Group.users(evaluatorPerson.getUser()));
+            message.cc(Group.users(evaluatedPerson.getUser()));
             message.send();
         } catch (final Throwable ex) {
             System.out.println("Unable to lookup email address for: "
@@ -137,24 +137,20 @@ public class AcknowledgeEvaluationObjectives extends WorkflowActivity<SiadapProc
                 evaluatorPerson = activityInformation.getProcess().getSiadap().getEvaluator().getPerson();
                 siadapProcess.checkEmailExistenceImportAndWarnOnError(evaluatorPerson);
 
-                StringBuilder body =
-                        new StringBuilder(
-                                "O processo SIADAP do ano "
-                                        + siadap.getYear()
-                                        + " do avaliado '"
-                                        + activityInformation.getProcess().getSiadap().getEvaluated().getName()
-                                        + "' foi revertido para o estado em que necessita novamente de tomar conhecimento dos objectivos e competências");
+                StringBuilder body = new StringBuilder("O processo SIADAP do ano " + siadap.getYear() + " do avaliado '"
+                        + activityInformation.getProcess().getSiadap().getEvaluated().getName()
+                        + "' foi revertido para o estado em que necessita novamente de tomar conhecimento dos objectivos e competências");
                 body.append("\nPara mais informações consulte https://dot.ist.utl.pt\n");
                 body.append("\n\n---\n");
                 body.append("Esta mensagem foi enviada por meio das Aplicações Centrais do IST.\n");
 
-                final Sender sender = MessagingSystem.getInstance().getSystemSender();
-                final MessageBuilder message =
-                        sender.message("SIADAP - " + siadap.getYear()
-                                + " - Processo revertido para o estado anterior ao de tomar conhecimento dos obj./competências",
-                                body.toString());
-                message.to(UserGroup.of(evaluatedPerson.getUser()));
-                message.cc(UserGroup.of(evaluatorPerson.getUser()));
+                final Sender sender = MessagingSystem.systemSender();
+                final MessageBuilder message = Message.from(sender);
+                message.subject("SIADAP - " + siadap.getYear()
+                        + " - Processo revertido para o estado anterior ao de tomar conhecimento dos obj./competências");
+                message.textBody(body.toString());
+                message.to(Group.users(evaluatedPerson.getUser()));
+                message.cc(Group.users(evaluatorPerson.getUser()));
                 message.send();
             } catch (final Throwable ex) {
                 System.out.println("Unable to lookup email address for: "

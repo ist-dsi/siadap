@@ -3,29 +3,24 @@
  */
 package module.siadap.domain.util.actions;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.stream.Stream;
 
 import javax.servlet.http.HttpServletRequest;
 
-import module.organization.domain.Person;
-import module.organization.domain.Unit;
-import module.siadap.domain.Siadap;
-
-import org.apache.commons.lang.StringUtils;
 import org.apache.struts.Globals;
 import org.apache.struts.action.ActionMessage;
 import org.apache.struts.action.ActionMessages;
 import org.fenixedu.bennu.core.domain.User;
-import org.fenixedu.bennu.core.groups.DynamicGroup;
-import org.fenixedu.bennu.core.groups.UserGroup;
+import org.fenixedu.bennu.core.groups.Group;
 import org.fenixedu.bennu.core.i18n.BundleUtil;
+import org.fenixedu.messaging.domain.Message;
 import org.fenixedu.messaging.domain.Message.MessageBuilder;
 import org.fenixedu.messaging.domain.MessagingSystem;
 import org.fenixedu.messaging.domain.Sender;
 
+import module.organization.domain.Person;
+import module.organization.domain.Unit;
+import module.siadap.domain.Siadap;
 import pt.ist.fenixframework.Atomic;
 
 /**
@@ -37,29 +32,25 @@ public class SiadapUtilActions {
 
     public static void notifyRemovalOfHarmonizationResponsible(Person person, Unit unit, int year, HttpServletRequest request) {
         // notify the users who have access to this interface
-        String notificationSubject =
-                BundleUtil.getString(Siadap.SIADAP_BUNDLE_STRING,
-                        "manage.siadapStructure.notification.email.managers.terminateUnitHarmonization.subject",
-                        String.valueOf(year), person.getName(), unit.getPresentationName());
-        String notificationContent =
-                BundleUtil.getString(Siadap.SIADAP_BUNDLE_STRING,
-                        "manage.siadapStructure.notification.email.managers.terminateUnitHarmonization.content",
-                        person.getName(), person.getUser().getUsername(), unit.getPresentationName(), unit.getAcronym());
+        String notificationSubject = BundleUtil.getString(Siadap.SIADAP_BUNDLE_STRING,
+                "manage.siadapStructure.notification.email.managers.terminateUnitHarmonization.subject", String.valueOf(year),
+                person.getName(), unit.getPresentationName());
+        String notificationContent = BundleUtil.getString(Siadap.SIADAP_BUNDLE_STRING,
+                "manage.siadapStructure.notification.email.managers.terminateUnitHarmonization.content", person.getName(),
+                person.getUser().getUsername(), unit.getPresentationName(), unit.getAcronym());
 
         SiadapUtilActions.notifySiadapStructureManagementUsers(request, notificationSubject, notificationContent);
 
         // notify the user
-        notificationSubject =
-                BundleUtil.getString(Siadap.SIADAP_BUNDLE_STRING,
-                        "manage.siadapStructure.notification.email.person.terminateUnitHarmonization.subject",
-                        String.valueOf(year), unit.getPresentationName());
+        notificationSubject = BundleUtil.getString(Siadap.SIADAP_BUNDLE_STRING,
+                "manage.siadapStructure.notification.email.person.terminateUnitHarmonization.subject", String.valueOf(year),
+                unit.getPresentationName());
 
-        notificationContent =
-                BundleUtil.getString(Siadap.SIADAP_BUNDLE_STRING,
-                        "manage.siadapStructure.notification.email.person.terminateUnitHarmonization.content",
-                        String.valueOf(year), unit.getPresentationName(), unit.getAcronym());
+        notificationContent = BundleUtil.getString(Siadap.SIADAP_BUNDLE_STRING,
+                "manage.siadapStructure.notification.email.person.terminateUnitHarmonization.content", String.valueOf(year),
+                unit.getPresentationName(), unit.getAcronym());
 
-        SiadapUtilActions.notifyUser(request, notificationSubject, notificationContent, Collections.singleton(person.getUser()));
+        SiadapUtilActions.notifyUser(request, notificationSubject, notificationContent, Stream.of(person.getUser()));
 
     }
 
@@ -67,60 +58,40 @@ public class SiadapUtilActions {
 
         // notify the users who have access to this interface
 
-        String notificationSubject =
-                BundleUtil.getString(Siadap.SIADAP_BUNDLE_STRING,
-                        "manage.siadapStructure.notification.email.managers.addHarmonizationUnit.subject", String.valueOf(year),
-                        person.getUser().getUsername(), unit.getAcronym());
-        String notificationContent =
-                BundleUtil.getString(Siadap.SIADAP_BUNDLE_STRING,
-                        "manage.siadapStructure.notification.email.managers.addHarmonizationUnit.content", person.getName(),
-                        person.getUser().getUsername(), unit.getPresentationName(), unit.getAcronym());
+        String notificationSubject = BundleUtil.getString(Siadap.SIADAP_BUNDLE_STRING,
+                "manage.siadapStructure.notification.email.managers.addHarmonizationUnit.subject", String.valueOf(year),
+                person.getUser().getUsername(), unit.getAcronym());
+        String notificationContent = BundleUtil.getString(Siadap.SIADAP_BUNDLE_STRING,
+                "manage.siadapStructure.notification.email.managers.addHarmonizationUnit.content", person.getName(),
+                person.getUser().getUsername(), unit.getPresentationName(), unit.getAcronym());
 
         SiadapUtilActions.notifySiadapStructureManagementUsers(request, notificationSubject, notificationContent);
 
         // notify the user
-        notificationSubject =
-                BundleUtil.getString(Siadap.SIADAP_BUNDLE_STRING,
-                        "manage.siadapStructure.notification.email.person.addHarmonizationUnit.subject", String.valueOf(year),
-                        unit.getPresentationName());
+        notificationSubject = BundleUtil.getString(Siadap.SIADAP_BUNDLE_STRING,
+                "manage.siadapStructure.notification.email.person.addHarmonizationUnit.subject", String.valueOf(year),
+                unit.getPresentationName());
 
-        notificationContent =
-                BundleUtil.getString(Siadap.SIADAP_BUNDLE_STRING,
-                        "manage.siadapStructure.notification.email.person.addHarmonizationUnit.content", String.valueOf(year),
-                        unit.getPresentationName(), unit.getAcronym());
+        notificationContent = BundleUtil.getString(Siadap.SIADAP_BUNDLE_STRING,
+                "manage.siadapStructure.notification.email.person.addHarmonizationUnit.content", String.valueOf(year),
+                unit.getPresentationName(), unit.getAcronym());
 
-        SiadapUtilActions.notifyUser(request, notificationSubject, notificationContent, Collections.singleton(person.getUser()));
+        SiadapUtilActions.notifyUser(request, notificationSubject, notificationContent, Stream.of(person.getUser()));
 
     }
 
     public static void notifySiadapStructureManagementUsers(final HttpServletRequest request, String subject, String content) {
         // get the SiadapStructureManagementUsers
         int year = Integer.parseInt(request.getParameter("year"));
-        Collection<User> users = DynamicGroup.get("SiadapStructureManagementGroup").getMembers();
+        Stream<User> users = Group.dynamic("SiadapStructureManagementGroup").getMembers();
 
         // notify them
         notifyUser(request, subject, content, users);
     }
 
     public static void notifyUser(HttpServletRequest request, String notificationSubject, String notificationContent,
-            Collection<User> users) {
-        // get the user e-mail
-        Set<User> usersEmails = new HashSet<User>();
-        for (User user : users) {
-            try {
-                String emailAddress = user.getProfile() == null ? "" : user.getProfile().getEmail();
-                if (StringUtils.isBlank(emailAddress)) {
-                    String[] arguments = { user.getPerson().getName() };
-                    addMessage(request, "WARNING", "manage.siadapStructure.notification.email.notAbleToSendTo", arguments);
-                } else {
-                    usersEmails.add(user);
-                }
-            } catch (Throwable ex) {
-                String[] arguments = { user.getPerson().getName() };
-                addMessage(request, "WARNING", "manage.siadapStructure.notification.email.notAbleToSendTo", arguments);
-            }
-        }
-        auxNotifyUser(usersEmails, notificationSubject, notificationContent);
+            Stream<User> users) {
+        auxNotifyUser(users, notificationSubject, notificationContent);
     }
 
     protected static void addMessage(final HttpServletRequest request, final String key, final String... args) {
@@ -136,10 +107,12 @@ public class SiadapUtilActions {
 
     // created because of the faulty dml injector
     @Atomic
-    private static void auxNotifyUser(Set<User> users, String notificationSubject, String notificationContent) {
-        final Sender sender = MessagingSystem.getInstance().getSystemSender();
-        final MessageBuilder message = sender.message(notificationSubject, notificationContent);
-        message.to(UserGroup.of(users));
+    private static void auxNotifyUser(Stream<User> users, String notificationSubject, String notificationContent) {
+        final Sender sender = MessagingSystem.systemSender();
+        final MessageBuilder message = Message.from(sender);
+        message.subject(notificationSubject);
+        message.textBody(notificationContent);
+        message.to(Group.users(users));
         message.send();
     }
 
