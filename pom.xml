@@ -11,7 +11,7 @@
     <groupId>pt.ist</groupId>
     <artifactId>siadap</artifactId>
     <name>SIADAP</name>
-    <version>2.1.0-SNAPSHOT</version>
+    <version>DEV-SNAPSHOT</version>
     <packaging>jar</packaging>
 
     <scm>
