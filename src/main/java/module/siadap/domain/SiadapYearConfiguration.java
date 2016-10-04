@@ -201,7 +201,7 @@ public class SiadapYearConfiguration extends SiadapYearConfiguration_Base {
             if (configuration.getYear() == year) {
                 //TODO remove these lines after a while
                 //R2
-                configuration.initializePonderationsIfNeeded();
+                //configuration.initializePonderationsIfNeeded();
                 return configuration;
             }
         }
@@ -219,27 +219,27 @@ public class SiadapYearConfiguration extends SiadapYearConfiguration_Base {
         return true;
     }
 
-    @Atomic
-    public Boolean initializePonderationsIfNeeded() {
-        Boolean migratedAnything = Boolean.FALSE;
-        if (getSiadap2CompetencesPonderation() == null) {
-            setSiadap2CompetencesPonderation(Integer.valueOf(DEFAULT_SIADAP2_COMPETENCES_PONDERATION));
-            migratedAnything = Boolean.TRUE;
-        }
-        if (getSiadap2ObjectivesPonderation() == null) {
-            setSiadap2ObjectivesPonderation(Integer.valueOf(DEFAULT_SIADAP2_OBJECTIVES_PONDERATION));
-            migratedAnything = Boolean.TRUE;
-        }
-        if (getSiadap3ObjectivesPonderation() == null) {
-            setSiadap3ObjectivesPonderation(Integer.valueOf(DEFAULT_SIADAP3_OBJECTIVES_PONDERATION));
-            migratedAnything = Boolean.TRUE;
-        }
-        if (getSiadap3CompetencesPonderation() == null) {
-            setSiadap3CompetencesPonderation(Integer.valueOf(DEFAULT_SIADAP3_COMPETENCES_PONDERATION));
-            migratedAnything = Boolean.TRUE;
-        }
-        return migratedAnything;
-    }
+//    @Atomic
+//    public Boolean initializePonderationsIfNeeded() {
+//        Boolean migratedAnything = Boolean.FALSE;
+//        if (getSiadap2CompetencesPonderation() == null) {
+//            setSiadap2CompetencesPonderation(Integer.valueOf(DEFAULT_SIADAP2_COMPETENCES_PONDERATION));
+//            migratedAnything = Boolean.TRUE;
+//        }
+//        if (getSiadap2ObjectivesPonderation() == null) {
+//            setSiadap2ObjectivesPonderation(Integer.valueOf(DEFAULT_SIADAP2_OBJECTIVES_PONDERATION));
+//            migratedAnything = Boolean.TRUE;
+//        }
+//        if (getSiadap3ObjectivesPonderation() == null) {
+//            setSiadap3ObjectivesPonderation(Integer.valueOf(DEFAULT_SIADAP3_OBJECTIVES_PONDERATION));
+//            migratedAnything = Boolean.TRUE;
+//        }
+//        if (getSiadap3CompetencesPonderation() == null) {
+//            setSiadap3CompetencesPonderation(Integer.valueOf(DEFAULT_SIADAP3_COMPETENCES_PONDERATION));
+//            migratedAnything = Boolean.TRUE;
+//        }
+//        return migratedAnything;
+//    }
 
     @Atomic
     public static SiadapYearConfiguration createNewSiadapYearConfiguration(String label) {
