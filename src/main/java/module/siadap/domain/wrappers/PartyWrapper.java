@@ -80,7 +80,7 @@ public abstract class PartyWrapper implements Serializable {
 
     protected List<Unit> getParentUnits(Party partyToConsider, Predicate predicate, AccountabilityType... types) {
         return partyToConsider == null ? Collections.emptyList() : partyToConsider.getParentAccountabilityStream()
-                .filter(a -> match(a, types) && predicate == null || predicate.evaluate(a)).map(a -> a.getParent())
+                .filter(a -> match(a, types) && (predicate == null || predicate.evaluate(a))).map(a -> a.getParent())
                 .filter(p -> p.isUnit()).map(p -> (Unit) p).collect(Collectors.toList());
     }
 
@@ -103,7 +103,7 @@ public abstract class PartyWrapper implements Serializable {
 
     private List<Person> getParentPersons(Predicate predicate, AccountabilityType... types) {
         return getParty().getParentAccountabilityStream()
-                .filter(a -> match(a, types) && predicate == null || predicate.evaluate(a)).map(a -> a.getParent())
+                .filter(a -> match(a, types) && (predicate == null || predicate.evaluate(a))).map(a -> a.getParent())
                 .filter(p -> p.isPerson()).map(p -> (Person) p).collect(Collectors.toList());
     }
 
@@ -117,7 +117,7 @@ public abstract class PartyWrapper implements Serializable {
 
     protected List<Person> getChildPersons(Party partyToConsider, Predicate predicate, AccountabilityType... types) {
         return partyToConsider == null ? Collections.emptyList() : partyToConsider.getChildAccountabilityStream()
-                .filter(a -> match(a, types) && predicate == null || predicate.evaluate(a)).map(a -> a.getChild())
+                .filter(a -> match(a, types) && (predicate == null || predicate.evaluate(a))).map(a -> a.getChild())
                 .filter(p -> p.isPerson()).map(p -> (Person) p).collect(Collectors.toList());
     }
 
@@ -127,7 +127,7 @@ public abstract class PartyWrapper implements Serializable {
 
     protected List<Unit> getChildUnits(Predicate predicate, AccountabilityType... types) {
         return getParty().getChildAccountabilityStream()
-                .filter(a -> match(a, types) && predicate == null || predicate.evaluate(a)).map(a -> a.getChild())
+                .filter(a -> match(a, types) && (predicate == null || predicate.evaluate(a))).map(a -> a.getChild())
                 .filter(p -> p.isUnit()).map(p -> (Unit) p).collect(Collectors.toList());
     }
 
@@ -137,7 +137,7 @@ public abstract class PartyWrapper implements Serializable {
 
     protected List<Accountability> getParentAccountabilityTypes(Predicate predicate, AccountabilityType... types) {
         return getParty().getParentAccountabilityStream()
-                .filter(a -> match(a, types) && predicate == null || predicate.evaluate(a)).collect(Collectors.toList());
+                .filter(a -> match(a, types) && (predicate == null || predicate.evaluate(a))).collect(Collectors.toList());
     }
 
     protected List<Accountability> getChildAccountabilityTypes(AccountabilityType... types) {
@@ -146,7 +146,7 @@ public abstract class PartyWrapper implements Serializable {
 
     protected List<Accountability> getChildAccountabilityTypes(Predicate predicate, AccountabilityType... types) {
         return getParty().getChildAccountabilityStream()
-                .filter(a -> match(a, types) && predicate == null || predicate.evaluate(a)).collect(Collectors.toList());
+                .filter(a -> match(a, types) && (predicate == null || predicate.evaluate(a))).collect(Collectors.toList());
     }
 
     public static class FilterAccountabilities implements Predicate {
