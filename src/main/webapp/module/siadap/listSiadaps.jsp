@@ -38,7 +38,7 @@ SiadapYearWrapper siadapYearWrapper = (SiadapYearWrapper) request.getAttribute("
 	</fr:edit>
 </fr:form>  
 <div class="infobox">
-	<bean:message key="siadap.more.info" bundle="SIADAP_RESOURCES"/> <html:link target="_blank"  href="http://drh.ist.utl.pt/nao-docentes/avaliacao-nao-docentes/"> <bean:message key="siadap.more.info.link" bundle="SIADAP_RESOURCES"/></html:link>
+	<bean:message key="siadap.more.info" bundle="SIADAP_RESOURCES"/> <html:link target="_blank"  href="http://drh.ist.utl.pt/nao-docentes/avaliacao-siadap/"> <bean:message key="siadap.more.info.link" bundle="SIADAP_RESOURCES"/></html:link>
 </div>
 
 <logic:present name="person">
