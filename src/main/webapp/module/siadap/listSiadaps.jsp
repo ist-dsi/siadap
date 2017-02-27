@@ -242,6 +242,10 @@ function displayLoadingScreen() {
     <p><b>A processar... por favor aguarde</b></p> 
 </div> 
 
+<form id="forceHomologationReadinessForm" action="<%=request.getContextPath()%>/siadapManagement.do?method=batchForceReadinessForEvaluation&year=<%=siadapYearWrapper.getChosenYear().toString()%>" method="post">
+<input class="inputbutton" type="submit" value="Forçar prontidão para avaliação">
+</form>
+
 <form id="forceHomologationReadinessForm" action="<%=request.getContextPath()%>/siadapManagement.do?method=batchForceReadinessToHomologation&year=<%=siadapYearWrapper.getChosenYear().toString()%>" method="post">
 <input class="inputbutton" type="submit" value="Forçar prontidão para homologação">
 </form>
