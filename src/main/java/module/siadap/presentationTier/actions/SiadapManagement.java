@@ -36,6 +36,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import module.organization.domain.Person;
 import module.organization.domain.Unit;
+import module.siadap.activities.ForceReadinessForEvaluation;
 import module.siadap.activities.ForceReadinessToHomologate;
 import module.siadap.activities.Homologate;
 import module.siadap.activities.HomologationActivityInformation;
@@ -609,6 +610,55 @@ public class SiadapManagement extends BaseAction {
         return forward("/module/siadap/bulkManagement/listHarmonizationUnits.jsp");
     }
 
+    public final ActionForward batchForceReadinessForEvaluation(final ActionMapping mapping, final ActionForm form,
+            final HttpServletRequest request, final HttpServletResponse response) {
+        int forceReadinessForEvaluationCount = 0;
+
+        Integer year = Integer.valueOf((String) getAttribute(request, "year"));
+
+        ArrayList<SiadapException> warningMessages = new ArrayList<SiadapException>();
+
+        SiadapYearConfiguration siadapYearConfiguration = SiadapYearConfiguration.getSiadapYearConfiguration(year);
+
+        try {
+            if (!siadapYearConfiguration.getCcaMembers().contains(Authenticate.getUser().getPerson())) {
+                throw new SiadapException("error.onlyCCA.can.force.readiness.to.homologation");
+            }
+
+            ForceReadinessForEvaluation forceReadinessForEvaluation =
+                    (ForceReadinessForEvaluation) SiadapProcess.getActivityStaticly(ForceReadinessForEvaluation.class
+                            .getSimpleName());
+            // let's get all of the siadaps for a given year
+            Set<Siadap> siadapsSet = siadapYearConfiguration.getSiadapsSet();
+
+            for (Siadap siadap : siadapsSet) {
+                SiadapProcess siadapProcess = siadap.getProcess();
+                if (forceReadinessForEvaluation.isActive(siadapProcess)) {
+                    ActivityInformation<SiadapProcess> activityInformation =
+                            new ActivityInformation<SiadapProcess>(siadapProcess, forceReadinessForEvaluation);
+                    forceReadinessForEvaluation.execute(activityInformation);
+                    forceReadinessForEvaluationCount++;
+                }
+            }
+        } catch (SiadapException ex) {
+            warningMessages.add(ex);
+        } catch (ActivityException ex) {
+            addLocalizedMessage(request, ex.getMessage());
+        }
+        for (SiadapException warningMessage : warningMessages) {
+            addLocalizedWarningMessage(request, warningMessage.getLocalizedMessage());
+        }
+
+        if (forceReadinessForEvaluationCount != 0) {
+            addLocalizedSuccessMessage(request, BundleUtil.getString(Siadap.SIADAP_BUNDLE_STRING,
+                    "label.batchForceReadinessForEvaluation.success", String.valueOf(forceReadinessForEvaluationCount)));
+
+        }
+
+        return manageSiadapForGivenYear(mapping, form, request, response, new SiadapYearWrapper(year));
+
+    }
+    
     public final ActionForward batchForceReadinessToHomologation(final ActionMapping mapping, final ActionForm form,
             final HttpServletRequest request, final HttpServletResponse response) {
         int forceReadinessToHomologationCount = 0;
