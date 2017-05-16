@@ -1524,6 +1524,11 @@ public class PersonSiadapWrapper extends PartyWrapper implements Serializable {
         }
         SiadapEvaluationUniverse siadapEvaluationUniverseForSiadapUniverse =
                 getSiadap().getSiadapEvaluationUniverseForSiadapUniverse(siadapUniverse);
+
+        if (siadapEvaluationUniverseForSiadapUniverse == null) {
+            return;
+        }
+
         Boolean harmonizationCurrentAssessment = null;
         Boolean harmonizationCurrentAssessmentForExcellencyAward = null;
         if (siadapUniverse.equals(SiadapUniverse.SIADAP2)) {

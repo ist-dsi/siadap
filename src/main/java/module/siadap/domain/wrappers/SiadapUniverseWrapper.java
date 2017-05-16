@@ -520,6 +520,9 @@ public class SiadapUniverseWrapper implements Serializable {
             Siadap siadap = personSiadapWrapper.getSiadap();
             SiadapGlobalEvaluation globalEvaluationEnum =
                     siadap.getSiadapGlobalEvaluationEnum(siadapUniverseToConsider, considerValidatedOnly);
+            if (globalEvaluationEnum == null) {
+                return false;
+            }
             if (globalEvaluationEnum.equals(SiadapGlobalEvaluation.EXCELLENCY)) {
                 return (siadapGlobalEvaluation.equals(SiadapGlobalEvaluation.HIGH) || siadapGlobalEvaluation
                         .equals(SiadapGlobalEvaluation.EXCELLENCY));

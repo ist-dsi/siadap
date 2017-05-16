@@ -57,6 +57,7 @@ import module.siadap.domain.ExceedingQuotaSuggestionType;
 import module.siadap.domain.Siadap;
 import module.siadap.domain.SiadapEvaluationUniverse;
 import module.siadap.domain.SiadapProcess;
+import module.siadap.domain.SiadapProcessStateEnum;
 import module.siadap.domain.SiadapUniverse;
 import module.siadap.domain.SiadapYearConfiguration;
 import module.siadap.domain.exceptions.SiadapException;
@@ -553,7 +554,8 @@ public class UnitSiadapWrapper extends PartyWrapper implements Serializable {
 
         for (SiadapUniverseWrapper universeWrapper : siadapUniverseWrappers) {
             for (PersonSiadapWrapper personSiadapWrapper : universeWrapper.getSiadapUniverse()) {
-                if (personSiadapWrapper.getSiadap() != null) {
+                if (personSiadapWrapper.getSiadap() != null
+                        && !personSiadapWrapper.getSiadap().getState().equals(SiadapProcessStateEnum.NULLED)) {
                     ActivityInformation<?> validationActivityInformation =
                             new ValidationActivityInformation(personSiadapWrapper, activity, validationSubActivity,
                                     universeWrapper.getSiadapUniverseEnum());

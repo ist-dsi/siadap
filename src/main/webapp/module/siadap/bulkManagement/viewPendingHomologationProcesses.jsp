@@ -150,7 +150,7 @@ function uncheckAll() {
 		</td>
 	</logic:equal>
 	<td>
-		<%= "<strong>" + personWrapper.getPerson().getPartyName().getContent() + "</strong><br>(" + personWrapper.getPerson().getUser().getUsername() + ")" %>
+		<%= "<strong>" + personWrapper.getPerson().getName() + "</strong><br>(" + personWrapper.getPerson().getUser().getUsername() + ")" %>
 	</td>
 	<td>
 		<%= personWrapper.getSiadap().getState().getDescription() %>

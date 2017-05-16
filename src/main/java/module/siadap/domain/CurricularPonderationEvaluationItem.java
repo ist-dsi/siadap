@@ -52,7 +52,9 @@ public class CurricularPonderationEvaluationItem extends CurricularPonderationEv
 
     static public BigDecimal getCurricularPonderationValue(SiadapEvaluationUniverse siadapEvaluationUniverse) {
         for (SiadapEvaluationItem siadapEvaluationItem : siadapEvaluationUniverse.getSiadapEvaluationItems()) {
-            return ((CurricularPonderationEvaluationItem) siadapEvaluationItem).getItemEvaluation().getPoints();
+            if (siadapEvaluationItem instanceof CurricularPonderationEvaluationItem) {
+                return ((CurricularPonderationEvaluationItem) siadapEvaluationItem).getItemEvaluation().getPoints();
+            }
         }
         return null;
     }

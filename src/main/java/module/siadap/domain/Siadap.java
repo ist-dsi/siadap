@@ -173,17 +173,17 @@ public class Siadap extends Siadap_Base {
             return SiadapProcessStateEnum.NULLED;
         } else if (isWithSkippedEvaluation()) {
             return SiadapProcessStateEnum.EVALUATION_NOT_GOING_TO_BE_DONE;
-        } else if (!isWithObjectivesFilled()) {
+        } else if (!isWithObjectivesFilled() && !isCurricularPonderation()) {
             return SiadapProcessStateEnum.INCOMPLETE_OBJ_OR_COMP;
-        } else if (!hasSealedObjectivesAndCompetences()) {
+        } else if (!hasSealedObjectivesAndCompetences() && !isCurricularPonderation()) {
             return SiadapProcessStateEnum.NOT_SEALED;
-        } else if (getRequestedAcknowledgeDate() == null) {
+        } else if (getRequestedAcknowledgeDate() == null && !isCurricularPonderation()) {
             return SiadapProcessStateEnum.NOT_YET_SUBMITTED_FOR_ACK;
-        } else if (!isEvaluatedWithKnowledgeOfObjectives()) {
+        } else if (!isEvaluatedWithKnowledgeOfObjectives() && !isCurricularPonderation()) {
             return SiadapProcessStateEnum.WAITING_EVAL_OBJ_ACK;
-        } else if (!isAutoEvaliationDone() && !isDefaultEvaluationDone()) {
+        } else if (!isAutoEvaliationDone() && !isDefaultEvaluationDone() && !isCurricularPonderation()) {
             return SiadapProcessStateEnum.WAITING_SELF_EVALUATION;
-        } else if (!isDefaultEvaluationDone()) {
+        } else if (!isDefaultEvaluationDone() && !isCurricularPonderation()) {
             return SiadapProcessStateEnum.NOT_YET_EVALUATED;
         } else if (getHarmonizationDate() == null) {
             return SiadapProcessStateEnum.WAITING_HARMONIZATION;
@@ -209,6 +209,10 @@ public class Siadap extends Siadap_Base {
             return SiadapProcessStateEnum.FINAL_STATE;
         }
         return SiadapProcessStateEnum.UNIMPLEMENTED_STATE;
+    }
+
+    private boolean isCurricularPonderation() {
+        return getSiadapEvaluationUniversesSet().stream().anyMatch(u -> u.isCurriculumPonderation());
     }
 
     private boolean isDuringReviewCommissionWaitingPeriod() {
@@ -441,10 +445,10 @@ public class Siadap extends Siadap_Base {
             throw new SiadapException("invalid.data.for.creation.of.a.curricular.ponderation");
         }
 
-        // let's if we don't have an evaluation for the given universe
-        if (getSiadapEvaluationUniverseForSiadapUniverse(siadapUniverse) != null) {
-            throw new SiadapException("error.curricular.ponderation.cannot.have.more.than.one.eval.for.universe");
-        }
+//        // let's if we don't have an evaluation for the given universe
+//        if (getSiadapEvaluationUniverseForSiadapUniverse(siadapUniverse) != null) {
+//            throw new SiadapException("error.curricular.ponderation.cannot.have.more.than.one.eval.for.universe");
+//        }
 
         SiadapYearConfiguration siadapYearConfiguration = getSiadapYearConfiguration();
         Unit siadapSpecialHarmonizationUnit = siadapYearConfiguration.getSiadapSpecialHarmonizationUnit();
@@ -465,31 +469,36 @@ public class Siadap extends Siadap_Base {
             throw new SiadapException("error.must.configure.SIADAP.2.and.3.harm.relation.types.first");
         }
         // let's create the new SiadapEvaluationUniverse
-        SiadapEvaluationUniverse siadapEvaluationUniverse = new SiadapEvaluationUniverse(this, siadapUniverse, null, false);
+        SiadapEvaluationUniverse siadapEvaluationUniverse = this.getDefaultSiadapEvaluationUniverse();
+        //new SiadapEvaluationUniverse(this, siadapUniverse, null, false);
+
         CurricularPonderationEvaluationItem curricularPonderationEvaluationItem =
                 new CurricularPonderationEvaluationItem(gradeToAssign, assignedExcellency, excellencyAwardJustification,
                         curricularPonderationJustification, siadapEvaluationUniverse, evaluator);
-        // let's connect this SiadapEvaluationUniverse with the specialunit
-        Person evaluated = getEvaluated();
-        // let's remove the current accountability that it might have for the
-        // given SiadapUniverse
 
-        // let's search for the previous accountability
-        evaluated.getParentAccountabilityStream()
-                .filter(a -> accTypeToReplace == null || a.getAccountabilityType() == accTypeToReplace)
-                .filter(a -> a.getParent() instanceof Unit && a.isActive(SiadapMiscUtilClass.lastDayOfYear(getYear()))).findAny()
-                .ifPresent(new Consumer<Accountability>() {
-                    @Override
-                    public void accept(Accountability t) {
-                        throw new SiadapException("already.with.a.curricular.ponderation.attributed");
-                    }
-
-                });
-
-        LocalDate dateToUse = getSiadapYearConfiguration().getLastDayForAccountabilities();
-
-        evaluated.addParent(siadapSpecialHarmonizationUnit, accTypeToReplace, dateToUse,
-                SiadapMiscUtilClass.lastDayOfYear(getYear()), null);
+        this.setEvaluationSealedDate(new LocalDate());
+        //this.getState();
+//        // let's connect this SiadapEvaluationUniverse with the specialunit
+//        Person evaluated = getEvaluated();
+//        // let's remove the current accountability that it might have for the
+//        // given SiadapUniverse
+//
+//        // let's search for the previous accountability
+//        evaluated.getParentAccountabilityStream()
+//                .filter(a -> accTypeToReplace == null || a.getAccountabilityType() == accTypeToReplace)
+//                .filter(a -> a.getParent() instanceof Unit && a.isActive(SiadapMiscUtilClass.lastDayOfYear(getYear()))).findAny()
+//                .ifPresent(new Consumer<Accountability>() {
+//                    @Override
+//                    public void accept(Accountability t) {
+//                        throw new SiadapException("already.with.a.curricular.ponderation.attributed");
+//                    }
+//
+//                });
+//
+//        LocalDate dateToUse = getSiadapYearConfiguration().getLastDayForAccountabilities();
+//
+//        evaluated.addParent(siadapSpecialHarmonizationUnit, accTypeToReplace, dateToUse,
+//                SiadapMiscUtilClass.lastDayOfYear(getYear()), null);
 
     }
 
@@ -611,8 +620,12 @@ public class Siadap extends Siadap_Base {
     }
 
     public SiadapGlobalEvaluation getSiadapGlobalEvaluationEnum(SiadapUniverse siadapUniverse, boolean considerValidation) {
-        return getSiadapEvaluationUniverseForSiadapUniverse(siadapUniverse).getSiadapGlobalEvaluationEnum(considerValidation,
-                false);
+        SiadapEvaluationUniverse universEvaluation = getSiadapEvaluationUniverseForSiadapUniverse(siadapUniverse);
+
+        return (universEvaluation != null ? universEvaluation.getSiadapGlobalEvaluationEnum(considerValidation, false) : null);
+
+//        return getSiadapEvaluationUniverseForSiadapUniverse(siadapUniverse).getSiadapGlobalEvaluationEnum(considerValidation,
+//                false);
 
     }
 
@@ -824,8 +837,10 @@ public class Siadap extends Siadap_Base {
     @Atomic
     public void removeHarmonizationMark(SiadapUniverse siadapUniverse) {
         SiadapEvaluationUniverse evaluationUniverse = getSiadapEvaluationUniverseForSiadapUniverse(siadapUniverse);
-        evaluationUniverse.setHarmonizationDate(null);
-        getProcess().removeHarmonizationMark(evaluationUniverse);
+        if (evaluationUniverse != null) {
+            evaluationUniverse.setHarmonizationDate(null);
+            getProcess().removeHarmonizationMark(evaluationUniverse);
+        }
     }
 
     public boolean hasAnAssociatedCurricularPonderationEval() {
@@ -842,38 +857,41 @@ public class Siadap extends Siadap_Base {
     @Atomic
     public void markAsHarmonized(LocalDate harmonizationDate, SiadapUniverse siadapUniverse) {
         SiadapEvaluationUniverse evaluationUniverse = getSiadapEvaluationUniverseForSiadapUniverse(siadapUniverse);
-        if (!(evaluationUniverse.isWithSkippedEvaluation() || getState().equals(SiadapProcessStateEnum.NULLED))) {
-            //only if we don't have a nulled or skipped evaluation
-            if (evaluationUniverse.getHarmonizationAssessment() == null || (evaluationUniverse.hasExcellencyAwardedFromEvaluator()
-                    && evaluationUniverse.getHarmonizationAssessmentForExcellencyAward() == null)) {
-                //and only if we have no harmonization assessment, or an excellent and no harmonization for that one
-                throw new SiadapException("harmonization.error.there.are.people.not.harmonized");
+        if (evaluationUniverse != null) {
+            if (!(evaluationUniverse.isWithSkippedEvaluation() || getState().equals(SiadapProcessStateEnum.NULLED))) {
+                //only if we don't have a nulled or skipped evaluation
+                if (evaluationUniverse.getHarmonizationAssessment() == null
+                        || (evaluationUniverse.hasExcellencyAwardedFromEvaluator() && evaluationUniverse
+                                .getHarmonizationAssessmentForExcellencyAward() == null)) {
+                    //and only if we have no harmonization assessment, or an excellent and no harmonization for that one
+                    throw new SiadapException("harmonization.error.there.are.people.not.harmonized");
 
+                }
             }
-        }
-        // let's also make sure that this person either has been marked as not
-        // having an evaluation or has the evaluation done
-        if (!isEvaluationDone(siadapUniverse) && !getState().equals(SiadapProcessStateEnum.NULLED)) {
-            if ((evaluationUniverse.getDefaultEvaluationUniverse() && isWithSkippedEvaluation())
-                    || evaluationUniverse.isCurriculumPonderation()) {
-                // do nothing :)
-            } else {
-                throw new SiadapException("error.harmonization.can't.harmonize.with.users.without.grade");
+            // let's also make sure that this person either has been marked as not
+            // having an evaluation or has the evaluation done
+            if (!isEvaluationDone(siadapUniverse) && !getState().equals(SiadapProcessStateEnum.NULLED)) {
+                if ((evaluationUniverse.getDefaultEvaluationUniverse() && isWithSkippedEvaluation())
+                        || evaluationUniverse.isCurriculumPonderation()) {
+                    // do nothing :)
+                } else {
+                    throw new SiadapException("error.harmonization.can't.harmonize.with.users.without.grade");
+                }
             }
-        }
 
-        // let's also make sure there's consistency between the excellency
-        // assessment and the regular.
-        // you cannot have the case where excellencyAssessment = true and
-        // regularAssessment = false
-        if (evaluationUniverse.getHarmonizationAssessment() != null
-                && evaluationUniverse.getHarmonizationAssessmentForExcellencyAward() != null
-                && evaluationUniverse.getHarmonizationAssessmentForExcellencyAward() == true
-                && evaluationUniverse.getHarmonizationAssessment() == false) {
-            throw new SiadapException("error.harmonization.inconsistency.between.excellency.and.regular.assessment");
+            // let's also make sure there's consistency between the excellency
+            // assessment and the regular.
+            // you cannot have the case where excellencyAssessment = true and
+            // regularAssessment = false
+            if (evaluationUniverse.getHarmonizationAssessment() != null
+                    && evaluationUniverse.getHarmonizationAssessmentForExcellencyAward() != null
+                    && evaluationUniverse.getHarmonizationAssessmentForExcellencyAward() == true
+                    && evaluationUniverse.getHarmonizationAssessment() == false) {
+                throw new SiadapException("error.harmonization.inconsistency.between.excellency.and.regular.assessment");
+            }
+            evaluationUniverse.setHarmonizationDate(harmonizationDate);
+            getProcess().markAsHarmonized(evaluationUniverse);
         }
-        evaluationUniverse.setHarmonizationDate(harmonizationDate);
-        getProcess().markAsHarmonized(evaluationUniverse);
     }
 
     public boolean isHomologated() {
