@@ -339,7 +339,7 @@ pre {
 					</logic:notEmpty>
 				</logic:notEmpty>
 			</logic:equal>
-			
+		</logic:equal>	
 			<logic:equal name="process" property="siadap.withSkippedEvaluation" value="false">
 				<logic:equal name="evaluatedPersonWrapper" property="currentUserAbleToSeeEvaluationDetails" value="true">
 					<p><strong><bean:message key="label.overalEvaluation" bundle="SIADAP_RESOURCES"/>:</strong></p>
@@ -410,7 +410,7 @@ pre {
 				<pre><fr:view name="process" property="siadap.evaluationData2.noEvaluationJustification"/></pre>
 			</logic:equal>
 		
-		</logic:equal>
+		
 		<%-- End of condition if the objectives and competences should show or not --%>
 	</logic:equal>
 	<logic:equal name="evaluatedPersonWrapper" property="currentUserAbleToSeeDetails" value="false">

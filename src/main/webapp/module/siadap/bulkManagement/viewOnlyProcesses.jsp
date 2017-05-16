@@ -25,9 +25,9 @@
 
 <fr:view name="employees">
 	<fr:schema type="module.siadap.domain.wrappers.PersonSiadapWrapper" bundle="SIADAP_RESOURCES">
-		<fr:slot name="person.partyName" layout="format" key="label.evaluated">
+		<fr:slot name="person.name" layout="format" key="label.evaluated">
 			<fr:property name="useParent" value="true" />
-			<fr:property name="format" value="\${person.partyName.content} (\${person.user.username})"/>
+			<fr:property name="format" value="\${person.name} (\${person.user.username})"/>
 		</fr:slot>
 		<fr:slot name="siadap.state.description" key="label.process.state"/>
 		<fr:slot name="latestClassificationForSIADAP2" layout="null-as-label" key="label.validation.classification.SIADAP2"/>
