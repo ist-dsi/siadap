@@ -455,7 +455,12 @@ request.setAttribute("isCCAMember", isCCAMember);
 					<bean:define id="evalutedId" name="evaluated" property="person.externalId"/>
 					<tr>
 						<td><fr:view name="evaluated" property="name"/>
-						<td><fr:view name="evaluated" property="workingUnit.name"/>
+						<logic:notPresent name="evaluated" property="workingUnit">
+							<td>-</td>
+						</logic:notPresent>
+						<logic:present name="evaluated" property="workingUnit">
+							<td><fr:view name="evaluated" property="workingUnit.name"/></td>
+						</logic:present>												
 						<td>
 							<html:link page="<%= "/siadapPersonnelManagement.do?method=viewPerson&personId=" + evalutedId + "&year=" + year.toString()%>"> Ver avaliado </html:link>
 							|

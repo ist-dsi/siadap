@@ -663,7 +663,8 @@ public class PersonSiadapWrapper extends PartyWrapper implements Serializable {
             return null;
         }
         if (parentUnits.size() > 1) {
-            throw new SiadapException("inconsistent.harmonization.units");
+            return null;
+            // throw new SiadapException("inconsistent.harmonization.units");
 
         } else {
             UnitSiadapWrapper unitWrapper = new UnitSiadapWrapper(parentUnits.get(0), getYear());
