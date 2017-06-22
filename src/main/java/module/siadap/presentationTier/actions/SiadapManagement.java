@@ -271,7 +271,7 @@ public class SiadapManagement extends BaseAction {
 
         String label = request.getParameter("label");
         SiadapYearConfiguration.createNewSiadapYearConfiguration(label);
-        return manageSiadap(mapping, form, request, response);
+        return showConfiguration(mapping, form, request, response);
     }
 
     public final ActionForward setUnitHarmonizationAssessmentData(final ActionMapping mapping, final ActionForm form,

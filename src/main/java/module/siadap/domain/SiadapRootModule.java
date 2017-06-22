@@ -55,6 +55,7 @@ import org.apache.xmlbeans.impl.xb.xsdschema.NamedGroup;
 import org.fenixedu.bennu.core.domain.Bennu;
 import org.fenixedu.bennu.core.domain.User;
 import org.fenixedu.bennu.core.groups.DynamicGroup;
+import org.fenixedu.bennu.core.groups.Group;
 import org.fenixedu.bennu.core.security.Authenticate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -107,6 +108,9 @@ public class SiadapRootModule extends SiadapRootModule_Base {
         super();
         setBennu(Bennu.getInstance());
         setNumber(0);
+        final User adminUser = User.findByUsername("ist23487");
+        Group.dynamic("SiadapCCAGroup").mutator().grant(adminUser).toPersistentGroup();
+
     }
 
     public static SiadapRootModule getInstance() {
