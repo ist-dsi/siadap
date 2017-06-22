@@ -108,8 +108,7 @@ public class SiadapRootModule extends SiadapRootModule_Base {
         super();
         setBennu(Bennu.getInstance());
         setNumber(0);
-        final User adminUser = User.findByUsername("ist23487");
-        Group.dynamic("SiadapCCAGroup").mutator().grant(adminUser).toPersistentGroup();
+        Group.dynamic("SiadapCCAGroup").mutator().or(Group.nobody());
 
     }
 
