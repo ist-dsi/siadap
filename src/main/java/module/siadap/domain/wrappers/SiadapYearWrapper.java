@@ -51,8 +51,12 @@ public class SiadapYearWrapper implements Serializable, Comparable<SiadapYearWra
     public static SiadapYearWrapper getCurrentYearOrLatestAvailableWrapper() {
         SiadapYearWrapper siadapYearWrapper = null;
         ArrayList<Integer> yearsWithConfigs = SiadapYearsFromExistingSiadapConfigurations.getYearsWithExistingConfigs();
-        if (yearsWithConfigs.size() == 0 || yearsWithConfigs.contains(new Integer(new LocalDate().getYear()))) {
-            int year = new LocalDate().getYear();
+        int year = new LocalDate().getYear();
+        if (yearsWithConfigs.size() == 0) {
+            SiadapYearConfiguration.createNewSiadapYearConfiguration(String.valueOf(year));
+            yearsWithConfigs = SiadapYearsFromExistingSiadapConfigurations.getYearsWithExistingConfigs();
+        }
+        if (yearsWithConfigs.contains(new Integer(new LocalDate().getYear()))) {
             siadapYearWrapper = new SiadapYearWrapper(year);
         } else {
             siadapYearWrapper = new SiadapYearWrapper(yearsWithConfigs.get(yearsWithConfigs.size() - 1));
@@ -66,7 +70,8 @@ public class SiadapYearWrapper implements Serializable, Comparable<SiadapYearWra
         Integer currentYear = new LocalDate().getYear();
         SiadapYearWrapper siadapYearWrapper = null;
         ArrayList<Integer> yearsWithConfigs = SiadapYearsFromExistingSiadapConfigurations.getYearsWithExistingConfigs();
-        if (SiadapYearConfiguration.getSiadapYearConfiguration(currentYear) != null) {
+        if (SiadapYearsFromExistingSiadapConfigurations.getYearsWithExistingConfigs().size() < 1
+                && SiadapYearConfiguration.getSiadapYearConfiguration(currentYear) != null) {
             siadapYearWrapper =
                     new SiadapYearWrapper(SiadapYearConfiguration.getSiadapYearConfiguration(currentYear)
                             .getPreviousSiadapYearConfiguration().getYear());
@@ -109,8 +114,9 @@ public class SiadapYearWrapper implements Serializable, Comparable<SiadapYearWra
 
     @Override
     public int compareTo(SiadapYearWrapper o) {
-        if (o == null)
+        if (o == null) {
             return 1;
+        }
         return ObjectUtils.compare(year, o.getChosenYear());
     }
 

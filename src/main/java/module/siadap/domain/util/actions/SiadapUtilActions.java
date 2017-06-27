@@ -4,6 +4,7 @@
 package module.siadap.domain.util.actions;
 
 import java.util.Map;
+import java.util.function.Supplier;
 import java.util.stream.Stream;
 
 import javax.servlet.http.HttpServletRequest;
@@ -67,7 +68,8 @@ public class SiadapUtilActions {
         parameters.put("unitAcronym", unit.getAcronym());
         parameters.put("action", action);
         parameters.put("applicationUrl", CoreConfiguration.getConfiguration().applicationUrl());
-        SiadapUtilActions.notifyUser(request, Stream.of(person.getUser()), template, parameters);
+        Supplier<Stream<User>> users = () -> Stream.of(person.getUser());
+        SiadapUtilActions.notifyUser(request, users, template, parameters);
 
         template = "siadap.harmonization.managers";
         parameters.put("personName", person.getName());
@@ -79,13 +81,13 @@ public class SiadapUtilActions {
             Map<String, Object> parameters) {
         // get the SiadapStructureManagementUsers
         int year = Integer.parseInt(request.getParameter("year"));
-        Stream<User> users = Group.dynamic("SiadapStructureManagementGroup").getMembers();
+        Supplier<Stream<User>> users = () -> Group.dynamic("SiadapStructureManagementGroup").getMembers();
 
         // notify them
         auxNotifyUser(users, template, parameters);
     }
 
-    public static void notifyUser(HttpServletRequest request, Stream<User> users, String template,
+    public static void notifyUser(HttpServletRequest request, Supplier<Stream<User>> users, String template,
             Map<String, Object> parameters) {
         auxNotifyUser(users, template, parameters);
     }
@@ -103,8 +105,8 @@ public class SiadapUtilActions {
 
     // created because of the faulty dml injector
     @Atomic
-    private static void auxNotifyUser(Stream<User> users, String template, Map<String, Object> parameters) {
-        Message.fromSystem().to(Group.users(users)).template(template, parameters).send();
+    private static void auxNotifyUser(Supplier<Stream<User>> users, String template, Map<String, Object> parameters) {
+        Message.fromSystem().to(Group.users(users.get())).template(template, parameters).send();
     }
 
     private static ActionMessages getMessages(HttpServletRequest request) {

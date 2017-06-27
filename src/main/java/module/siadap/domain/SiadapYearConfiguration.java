@@ -79,6 +79,9 @@ public class SiadapYearConfiguration extends SiadapYearConfiguration_Base {
                 nextYear = endYear;
             }
         }
+        if (nextYear == -1) {
+            nextYear = new LocalDate().getYear();
+        }
         return nextYear;
     }
 
