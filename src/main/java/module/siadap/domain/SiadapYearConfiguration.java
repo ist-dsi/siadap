@@ -33,6 +33,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.xmlbeans.impl.xb.xsdschema.NamedGroup;
 import org.fenixedu.bennu.core.domain.Bennu;
 import org.fenixedu.bennu.core.domain.User;
+import org.fenixedu.bennu.core.groups.Group;
 import org.fenixedu.bennu.core.security.Authenticate;
 import org.jfree.data.time.Month;
 import org.joda.time.LocalDate;
@@ -341,24 +342,28 @@ public class SiadapYearConfiguration extends SiadapYearConfiguration_Base {
     @Atomic
     public void addStructureManagementGroupMembers(Person structureManagementGroupMembers) {
         super.addStructureManagementGroupMembers(structureManagementGroupMembers);
+        Group.dynamic("SiadapStructureManagementGroup").mutator().grant(structureManagementGroupMembers.getUser());
     }
 
     @Override
     @Atomic
     public void removeStructureManagementGroupMembers(Person structureManagementGroupMembers) {
         super.removeStructureManagementGroupMembers(structureManagementGroupMembers);
+        Group.dynamic("SiadapStructureManagementGroup").mutator().revoke(structureManagementGroupMembers.getUser());
     }
 
     @Override
     @Atomic
     public void addCcaMembers(Person ccaMembers) {
         super.addCcaMembers(ccaMembers);
+        Group.dynamic("SiadapCCAGroup").mutator().grant(ccaMembers.getUser());
     }
 
     @Override
     @Atomic
     public void removeCcaMembers(Person ccaMembers) {
         super.removeCcaMembers(ccaMembers);
+        Group.dynamic("SiadapCCAGroup").mutator().revoke(ccaMembers.getUser());
     }
 
     @Override
@@ -537,8 +542,8 @@ public class SiadapYearConfiguration extends SiadapYearConfiguration_Base {
     }
 
     public boolean containsYear(int year) {
-	final int startYear = getYear();
-	final int endYear = getBiannual() ? startYear + 1 : startYear;
-	return year == startYear || year == endYear;
+        final int startYear = getYear();
+        final int endYear = getBiannual() ? startYear + 1 : startYear;
+        return year == startYear || year == endYear;
     }
 }

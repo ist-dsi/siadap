@@ -64,6 +64,7 @@ import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
+import org.fenixedu.bennu.core.domain.exceptions.DomainException;
 import org.fenixedu.bennu.core.groups.DynamicGroup;
 import org.fenixedu.bennu.core.i18n.BundleUtil;
 import org.fenixedu.bennu.core.security.Authenticate;
@@ -234,6 +235,8 @@ public class SiadapPersonnelManagement extends BaseAction {
             addLocalizedMessage(request, ex.getLocalizedMessage());
         } catch (ActivityException e) {
             addLocalizedMessage(request, e.getMessage());
+        } catch (DomainException e) {
+            addLocalizedMessage(request, e.getLocalizedMessage());
         }
 
         return viewPerson(mapping, form, request, response);
