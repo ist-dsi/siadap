@@ -195,7 +195,7 @@ public class SiadapProcess extends SiadapProcess_Base {
         PersonSiadapWrapper personSiadapWrapper = new PersonSiadapWrapper(getSiadap());
         personSiadapWrapper.correctHarmonizationRelationsForRecentlyCreatedProcess();
 
-        new LabelLog(this, currentUser, this.getClass().getName() + ".creation", "resources/SiadapResources", evaluated.getName(),
+        new LabelLog(this, this.getClass().getName() + ".creation", "resources/SiadapResources", evaluated.getName(),
                 year.toString(), siadapUniverse.getLocalizedName(), competenceType.getName());
     }
 
@@ -319,7 +319,7 @@ public class SiadapProcess extends SiadapProcess_Base {
             siadapUniverseLocalizedName +=
                     " (" + BundleUtil.getString(Siadap.SIADAP_BUNDLE_STRING, "label.curricularPonderation") + " )";
         }
-        new LabelLog(this, Authenticate.getUser(), "label.terminateHarmonization.for", "resources/SiadapResources",
+        new LabelLog(this, "label.terminateHarmonization.for", "resources/SiadapResources",
                 siadapUniverseLocalizedName);
     }
 
@@ -329,7 +329,7 @@ public class SiadapProcess extends SiadapProcess_Base {
             siadapUniverseLocalizedName +=
                     " (" + BundleUtil.getString(Siadap.SIADAP_BUNDLE_STRING, "label.curricularPonderation") + " )";
         }
-        new LabelLog(this, Authenticate.getUser(), "label.givenHarmonizationAssessment.for", "resources/SiadapResources",
+        new LabelLog(this, "label.givenHarmonizationAssessment.for", "resources/SiadapResources",
                 siadapUniverseLocalizedName);
     }
 
@@ -339,7 +339,7 @@ public class SiadapProcess extends SiadapProcess_Base {
             siadapUniverseLocalizedName +=
                     " (" + BundleUtil.getString(Siadap.SIADAP_BUNDLE_STRING, "label.curricularPonderation") + " )";
         }
-        new LabelLog(this, Authenticate.getUser(), "label.reOpenHarmonization.for", "resources/SiadapResources",
+        new LabelLog(this, "label.reOpenHarmonization.for", "resources/SiadapResources",
                 siadapUniverseLocalizedName);
     }
 
@@ -476,7 +476,7 @@ public class SiadapProcess extends SiadapProcess_Base {
             siadapUniverseLocalizedName +=
                     " (" + BundleUtil.getString(Siadap.SIADAP_BUNDLE_STRING, "label.curricularPonderation") + " )";
         }
-        new LabelLog(this, Authenticate.getUser(), "label.removedHarmonizationAssessment.for", "resources/SiadapResources",
+        new LabelLog(this, "label.removedHarmonizationAssessment.for", "resources/SiadapResources",
                 siadapUniverseLocalizedName);
 
     }
