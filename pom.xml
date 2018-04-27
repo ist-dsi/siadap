@@ -24,9 +24,9 @@
     <properties>
         <version.org.fenixedu.bennu.core>5.0.0</version.org.fenixedu.bennu.core>
         <version.org.fenixedu.bennu.renderers>5.3.0</version.org.fenixedu.bennu.renderers>
-        <version.org.fenixedu.messaging>3.1.0</version.org.fenixedu.messaging>
+        <version.org.fenixedu.messaging>3.5.0</version.org.fenixedu.messaging>
         <version.org.fenixedu.organization>3.2.0</version.org.fenixedu.organization>
-        <version.org.fenixedu.workflow>2.4.0</version.org.fenixedu.workflow>
+        <version.org.fenixedu.workflow>3.0.0</version.org.fenixedu.workflow>
         <version.jfree.jfreechart>0.9.18</version.jfree.jfreechart>
         <version.net.sf.jasperreports>3.6.0</version.net.sf.jasperreports>
     </properties>
