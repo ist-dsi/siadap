@@ -68,11 +68,11 @@
 						</html:link>
 					</td>
 					<% if (DynamicGroup.get("managers").isMember(Authenticate.getUser())) { %>
-						<td>
+						<!--  <td>
 							<html:link page="<%="/organization.do?method=viewParty&partyOid=" + siadapObtained.getEvaluated().getExternalId()%>">
 								Gerir accs
 							</html:link>
-						</td>
+						</td>-->
 					<% } %>
 				</logic:equal>
 			</logic:present>

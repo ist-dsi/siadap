@@ -167,7 +167,11 @@ pre {
 	</logic:empty>
 	<logic:notEmpty name="evaluatorPersonWrapper">
 		<p><strong><bean:message bundle="SIADAP_RESOURCES" key="siadapProcess.body.currentEvaluator" arg0="<%=evaluatedPersonWrapper.getEvaluator().getPerson().getPresentationName()%>" /></strong></p>
-		<p><strong><bean:message bundle="SIADAP_RESOURCES" key="label.state" />: <bean:message bundle="SIADAP_RESOURCES" key="<%= ((Siadap) siadap).getState().getLabelPrefix() %>" /> - <bean:write name="evaluatedPersonWrapper" property="nextStep"/></strong></p>
+		<p><strong><bean:message bundle="SIADAP_RESOURCES" key="label.state" />: <bean:message bundle="SIADAP_RESOURCES" key="<%= ((Siadap) siadap).getState().getLabelPrefix() %>" /> - <bean:write name="evaluatedPersonWrapper" property="nextStep"/>
+		<logic:equal value="WAITING_SELF_EVALUATION" name="siadap" property="state">
+		<%=evaluatedPersonWrapper.getSiadap().getSiadapYearConfiguration().getNextYear()%>
+		</logic:equal>
+		</strong></p>
 	</logic:notEmpty>
 </div>
 

@@ -443,27 +443,34 @@ public class SiadapManagement extends BaseAction {
         SiadapYearConfiguration configuration = SiadapYearConfiguration.getSiadapYearConfiguration(year);
 
         UniverseDisplayMode displayMode = UniverseDisplayMode.HARMONIZATION;
-        SiadapUniverseWrapper peopleWithQuotasSIADAP2 =
-                new SiadapUniverseWrapper(wrapper.getSiadap2AndWorkingRelationWithQuotaUniverse(), "siadap2WithQuotas",
-                        SiadapUniverse.SIADAP2, configuration.getQuotaExcellencySiadap2WithQuota(),
-                        configuration.getQuotaRelevantSiadap2WithQuota(), displayMode, null, null);
-        SiadapUniverseWrapper peopleWithQuotasSIADAP3 =
-                new SiadapUniverseWrapper(wrapper.getSiadap3AndWorkingRelationWithQuotaUniverse(), "siadap3WithQuotas",
-                        SiadapUniverse.SIADAP3, configuration.getQuotaExcellencySiadap3WithQuota(),
-                        configuration.getQuotaRelevantSiadap3WithQuota(), displayMode, null, null);
-        SiadapUniverseWrapper peopleWithoutQuotasSIADAP2 =
-                new SiadapUniverseWrapper(wrapper.getSiadap2AndWorkingRelationWithoutQuotaUniverse(), "siadap2WithoutQuotas",
-                        SiadapUniverse.SIADAP2, configuration.getQuotaExcellencySiadap2WithoutQuota(),
-                        configuration.getQuotaRelevantSiadap2WithoutQuota(), displayMode, null, null);
-        SiadapUniverseWrapper peopleWithoutQuotasSIADAP3 =
-                new SiadapUniverseWrapper(wrapper.getSiadap3AndWorkingRelationWithoutQuotaUniverse(), "siadap3WithoutQuotas",
-                        SiadapUniverse.SIADAP3, configuration.getQuotaExcellencySiadap3WithoutQuota(),
-                        configuration.getQuotaRelevantSiadap3WithoutQuota(), displayMode, null, null);
+        try {
+            SiadapUniverseWrapper peopleWithQuotasSIADAP2 =
+                    new SiadapUniverseWrapper(wrapper.getSiadap2AndWorkingRelationWithQuotaUniverse(), "siadap2WithQuotas",
+                            SiadapUniverse.SIADAP2, configuration.getQuotaExcellencySiadap2WithQuota(),
+                            configuration.getQuotaRelevantSiadap2WithQuota(), displayMode, null, null);
+            SiadapUniverseWrapper peopleWithQuotasSIADAP3 =
+                    new SiadapUniverseWrapper(wrapper.getSiadap3AndWorkingRelationWithQuotaUniverse(), "siadap3WithQuotas",
+                            SiadapUniverse.SIADAP3, configuration.getQuotaExcellencySiadap3WithQuota(),
+                            configuration.getQuotaRelevantSiadap3WithQuota(), displayMode, null, null);
+            SiadapUniverseWrapper peopleWithoutQuotasSIADAP2 =
+                    new SiadapUniverseWrapper(wrapper.getSiadap2AndWorkingRelationWithoutQuotaUniverse(), "siadap2WithoutQuotas",
+                            SiadapUniverse.SIADAP2, configuration.getQuotaExcellencySiadap2WithoutQuota(),
+                            configuration.getQuotaRelevantSiadap2WithoutQuota(), displayMode, null, null);
+            SiadapUniverseWrapper peopleWithoutQuotasSIADAP3 =
+                    new SiadapUniverseWrapper(wrapper.getSiadap3AndWorkingRelationWithoutQuotaUniverse(), "siadap3WithoutQuotas",
+                            SiadapUniverse.SIADAP3, configuration.getQuotaExcellencySiadap3WithoutQuota(),
+                            configuration.getQuotaRelevantSiadap3WithoutQuota(), displayMode, null, null);
+            request.setAttribute("people-withQuotas-SIADAP2", peopleWithQuotasSIADAP2);
+            request.setAttribute("people-withQuotas-SIADAP3", peopleWithQuotasSIADAP3);
+            request.setAttribute("people-withoutQuotas-SIADAP2", peopleWithoutQuotasSIADAP2);
+            request.setAttribute("people-withoutQuotas-SIADAP3", peopleWithoutQuotasSIADAP3);
 
-        request.setAttribute("people-withQuotas-SIADAP2", peopleWithQuotasSIADAP2);
-        request.setAttribute("people-withQuotas-SIADAP3", peopleWithQuotasSIADAP3);
-        request.setAttribute("people-withoutQuotas-SIADAP2", peopleWithoutQuotasSIADAP2);
-        request.setAttribute("people-withoutQuotas-SIADAP3", peopleWithoutQuotasSIADAP3);
+        } catch (Exception e) {
+            SiadapException ex = new SiadapException("erro.on.configuration", new String[] { configuration.getLabel() });
+            addLocalizedMessage(request, ex.getLocalizedMessage());
+            return manageSiadapForGivenYear(mapping, form, request, response, new SiadapYearWrapper(configuration.getYear()));
+
+        }
         // request.setAttribute("people-withQuotas",
         // wrapper.getUnitEmployeesWithQuotas(false));
         // request.setAttribute("people-withoutQuotas",

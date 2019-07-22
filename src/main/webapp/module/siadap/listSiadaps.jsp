@@ -20,6 +20,16 @@
 <%
 SiadapYearWrapper siadapYearWrapper = (SiadapYearWrapper) request.getAttribute("siadapYearWrapper");%>
 
+<%-- Error messages: --%>
+<logic:messagesPresent property="message" message="true" >
+	<div class="error1">
+		<html:messages id="errorMessage" property="message" message="true" > 
+			<span><fr:view name="errorMessage" /></span>
+		</html:messages>
+	</div>
+</logic:messagesPresent>
+<%-- *END* Error messages *END* --%>
+
 <%-- The year chooser: --%>
 <fr:form action="/siadapManagement.do?method=manageSiadap">
 	<fr:edit id="siadapYearWrapper" name="siadapYearWrapper" nested="true">
