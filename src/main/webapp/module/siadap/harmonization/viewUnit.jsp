@@ -504,7 +504,7 @@ color: #999;
 				<fr:edit id="people-withQuotas-SIADAP2" name="people-withQuotas-SIADAP2" visible="false" nested="true" />
 				<fr:edit id="people-withQuotas-SIADAP2id" name="people-withQuotas-SIADAP2" property="siadapUniverse" nested="true">
 					<fr:schema type="module.siadap.domain.wrappers.PersonSiadapWrapper" bundle="SIADAP_RESOURCES">
-						<fr:slot name="person.partyName" key="label.evaluated" readOnly="true"/>
+						<fr:slot name="person.user.displayName" key="label.evaluated" readOnly="true"/>
 						<fr:slot name="person.user.username" key="label.login.username" bundle="MYORG_RESOURCES" readOnly="true"/>
 						<fr:slot name="totalEvaluationScoringSiadap2" layout="null-as-label" key="label.totalEvaluationScoring" readOnly="true">
 							<fr:property name="subLayout" value=""/>
@@ -572,7 +572,7 @@ color: #999;
 						
 						<fr:property name="sortParameter" value="sortByQuotas"/>
 		       			<fr:property name="sortUrl" value="<%= "/siadapManagement.do?method=viewUnitHarmonizationData&unitId=" + unitId + "&year=" + year.toString()%>"/>
-					    <fr:property name="sortBy" value="<%= request.getParameter("sortByQuotas") == null ? "person.partyName=asc" : request.getParameter("sortByQuotas") %>"/>
+					    <fr:property name="sortBy" value="<%= request.getParameter("sortByQuotas") == null ? "person.user.displayName=asc" : request.getParameter("sortByQuotas") %>"/>
 						
 					</fr:layout>
 				</fr:edit>
@@ -627,7 +627,7 @@ color: #999;
 				<fr:edit visible="false" nested="true" id="people-withQuotas-SIADAP3" name="people-withQuotas-SIADAP3"/>
 				<fr:edit id="people-withQuotas-SIADAP3id" name="people-withQuotas-SIADAP3" property="siadapUniverse" nested="true">
 					<fr:schema type="module.siadap.domain.wrappers.PersonSiadapWrapper" bundle="SIADAP_RESOURCES">
-						<fr:slot name="person.partyName" key="label.evaluated" readOnly="true" />
+						<fr:slot name="person.user.displayName" key="label.evaluated" readOnly="true" />
 						<fr:slot name="person.user.username" key="label.login.username" bundle="MYORG_RESOURCES" readOnly="true" />
 						<%--<fr:slot name="evaluator.name" key="label.evaluator"/>
 						<fr:slot name="evaluator.person.user.username" key="label.login.username" bundle="MYORG_RESOURCES"/> --%>
@@ -696,7 +696,7 @@ color: #999;
 						
 						<fr:property name="sortParameter" value="sortByQuotas"/>
 		       			<fr:property name="sortUrl" value="<%= "/siadapManagement.do?method=viewUnitHarmonizationData&unitId=" + unitId + "&year=" + year.toString()%>"/>
-					    <fr:property name="sortBy" value="<%= request.getParameter("sortByQuotas") == null ? "person.partyName=asc" : request.getParameter("sortByQuotas") %>"/>
+					    <fr:property name="sortBy" value="<%= request.getParameter("sortByQuotas") == null ? "person.user.displayName=asc" : request.getParameter("sortByQuotas") %>"/>
 						
 					</fr:layout>
 				</fr:edit>
@@ -752,7 +752,7 @@ color: #999;
 				<fr:edit visible="false" nested="true" id="people-withoutQuotas-SIADAP2" name="people-withoutQuotas-SIADAP2" />
 				<fr:edit id="people-withoutQuotas-SIADAP2id" name="people-withoutQuotas-SIADAP2" property="siadapUniverse" nested="true">
 					<fr:schema type="module.siadap.domain.wrappers.PersonSiadapWrapper" bundle="SIADAP_RESOURCES">
-						<fr:slot name="person.partyName" key="label.evaluated" readOnly="true" />
+						<fr:slot name="person.user.displayName" key="label.evaluated" readOnly="true" />
 						<fr:slot name="person.user.username" key="label.login.username" bundle="MYORG_RESOURCES" readOnly="true"/>
 						<%--<fr:slot name="evaluator.name" key="label.evaluator"/>
 						<fr:slot name="evaluator.person.user.username" key="label.login.username" bundle="MYORG_RESOURCES"/>  --%>
@@ -821,7 +821,7 @@ color: #999;
 						
 						<fr:property name="sortParameter" value="sortByQuotas"/>
 		       			<fr:property name="sortUrl" value="<%= "/siadapManagement.do?method=viewUnitHarmonizationData&unitId=" + unitId + "&year=" + year.toString()%>"/>
-					    <fr:property name="sortBy" value="<%= request.getParameter("sortByQuotas") == null ? "person.partyName=asc" : request.getParameter("sortByQuotas") %>"/>
+					    <fr:property name="sortBy" value="<%= request.getParameter("sortByQuotas") == null ? "person.user.displayName=asc" : request.getParameter("sortByQuotas") %>"/>
 						
 					</fr:layout>
 				</fr:edit>
@@ -875,7 +875,7 @@ color: #999;
 				<fr:edit visible="false" nested="true" id="people-withoutQuotas-SIADAP3" name="people-withoutQuotas-SIADAP3"/>
 				<fr:edit id="people-withoutQuotas-SIADAP3id" name="people-withoutQuotas-SIADAP3" property="siadapUniverse" nested="true">
 					<fr:schema type="module.siadap.domain.wrappers.PersonSiadapWrapper" bundle="SIADAP_RESOURCES">
-						<fr:slot name="person.partyName" key="label.evaluated" readOnly="true" />
+						<fr:slot name="person.user.displayName" key="label.evaluated" readOnly="true" />
 						<fr:slot name="person.user.username" key="label.login.username" bundle="MYORG_RESOURCES" readOnly="true"/>
 						<%-- <fr:slot name="evaluator.name" key="label.evaluator"/>
 						<fr:slot name="evaluator.person.user.username" key="label.login.username" bundle="MYORG_RESOURCES"/> --%>
@@ -944,7 +944,7 @@ color: #999;
 						
 						<fr:property name="sortParameter" value="sortByQuotas"/>
 		       			<fr:property name="sortUrl" value="<%= "/siadapManagement.do?method=viewUnitHarmonizationData&unitId=" + unitId + "&year=" + year.toString()%>"/>
-					    <fr:property name="sortBy" value="<%= request.getParameter("sortByQuotas") == null ? "person.partyName=asc" : request.getParameter("sortByQuotas") %>"/>
+					    <fr:property name="sortBy" value="<%= request.getParameter("sortByQuotas") == null ? "person.user.displayName=asc" : request.getParameter("sortByQuotas") %>"/>
 						
 					</fr:layout>
 				</fr:edit>
@@ -968,7 +968,7 @@ color: #999;
 			<p>
 				<fr:view name="people-withQuotas">
 					<fr:schema type="module.siadap.domain.wrappers.PersonSiadapWrapper" bundle="SIADAP_RESOURCES">
-						<fr:slot name="person.partyName" key="label.evaluated"/>
+						<fr:slot name="person.user.displayName" key="label.evaluated"/>
 						<fr:slot name="person.user.username" key="label.login.username" bundle="MYORG_RESOURCES"/>
 						<fr:slot name="evaluator.name" key="label.evaluator"/>
 						<fr:slot name="evaluator.person.user.username" key="label.login.username" bundle="MYORG_RESOURCES"/>
@@ -995,7 +995,7 @@ color: #999;
 						
 						<fr:property name="sortParameter" value="sortByQuotas"/>
 		       			<fr:property name="sortUrl" value="<%= "/siadapManagement.do?method=viewUnitHarmonizationData&unitId=" + unitId + "&year=" + year.toString()%>"/>
-					    <fr:property name="sortBy" value="<%= request.getParameter("sortByQuotas") == null ? "person.partyName=asc" : request.getParameter("sortByQuotas") %>"/>
+					    <fr:property name="sortBy" value="<%= request.getParameter("sortByQuotas") == null ? "person.user.displayName=asc" : request.getParameter("sortByQuotas") %>"/>
 						
 					</fr:layout>
 				</fr:view>
@@ -1010,7 +1010,7 @@ color: #999;
 			<p>
 				<fr:view name="people-withoutQuotas">
 					<fr:schema type="module.siadap.domain.wrappers.PersonSiadapWrapper" bundle="SIADAP_RESOURCES">
-						<fr:slot name="person.partyName" key="label.evaluated"/>
+						<fr:slot name="person.user.displayName" key="label.evaluated"/>
 						<fr:slot name="person.user.username" key="label.login.username" bundle="MYORG_RESOURCES"/>
 						<fr:slot name="evaluator.name" key="label.evaluator"/>
 						<fr:slot name="evaluator.person.user.username" key="label.login.username" bundle="MYORG_RESOURCES"/>
@@ -1037,7 +1037,7 @@ color: #999;
 						
 						<fr:property name="sortParameter" value="sortByNoQuotas"/>
 		       			<fr:property name="sortUrl" value="<%= "/siadapManagement.do?method=viewUnitHarmonizationData&unitId=" + unitId + "&year=" + year.toString()%>"/>
-					    <fr:property name="sortBy" value="<%= request.getParameter("sortByNoQuotas") == null ? "person.partyName=asc" : request.getParameter("sortByNoQuotas") %>"/>
+					    <fr:property name="sortBy" value="<%= request.getParameter("sortByNoQuotas") == null ? "person.user.displayName=asc" : request.getParameter("sortByNoQuotas") %>"/>
 					</fr:layout>
 				</fr:view>
 			</p>
