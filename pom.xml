@@ -10,14 +10,14 @@
     <groupId>pt.ist</groupId>
     <artifactId>siadap</artifactId>
     <name>SIADAP</name>
-    <version>4.2.0-SNAPSHOT</version>
+    <version>4.1.1</version>
     <packaging>jar</packaging>
 
     <scm>
         <connection>scm:git:git@repo.dsi.tecnico.ulisboa.pt:software/tecnicolisboa/siadap.git</connection>
         <developerConnection>scm:git:git@repo.dsi.tecnico.ulisboa.pt:software/tecnicolisboa/siadap</developerConnection>
         <url>https://repo.dsi.tecnico.ulisboa.pt/software/tecnicolisboa/siadap</url>
-        <tag>HEAD</tag>
+        <tag>v4.1.1</tag>
     </scm>
 
     <properties>
