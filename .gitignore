@@ -13,3 +13,8 @@
 target/
 bin/
 /output
+
+# IntelliJ #
+
+.idea/
+*.iml
