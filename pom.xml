@@ -14,16 +14,11 @@
     <packaging>jar</packaging>
 
     <scm>
-        <connection>scm:git:git@github.com:ist-dsi/siadap.git</connection>
-        <developerConnection>scm:git:git@github.com:ist-dsi/siadap.git</developerConnection>
-        <url>http://ist-dsi.github.io/siadap/</url>
+        <connection>scm:git:git@repo.dsi.tecnico.ulisboa.pt:software/tecnicolisboa/siadap.git</connection>
+        <developerConnection>scm:git:git@repo.dsi.tecnico.ulisboa.pt:software/tecnicolisboa/siadap</developerConnection>
+        <url>https://repo.dsi.tecnico.ulisboa.pt/software/tecnicolisboa/siadap</url>
         <tag>HEAD</tag>
     </scm>
-
-    <issueManagement>
-        <system>JIRA</system>
-        <url>https://jira.fenixedu.org/browse/DSIADAP</url>
-    </issueManagement>
 
     <properties>
         <version.org.fenixedu.bennu.core>6.1.0</version.org.fenixedu.bennu.core>
@@ -128,12 +123,20 @@
             <id>fenixedu-maven-repository</id>
             <url>https://repo.fenixedu.org/fenixedu-maven-repository</url>
         </repository>
+        <repository>
+            <id>dsi-maven-artifacts</id>
+            <url>https://fenix-ashes.ist.utl.pt/nexus/repository/dsi-private-repo</url>
+        </repository>
     </repositories>
 
     <distributionManagement>
         <repository>
+            <id>dsi-maven-artifacts</id>
+            <url>https://fenix-ashes.tecnico.ulisboa.pt/nexus/repository/dsi-private-repo</url>
+        </repository>
+<!--        <repository>
             <id>fenixedu-contrib-releases</id>
             <url>https://repo.fenixedu.org/fenixedu-contrib-releases</url>
-        </repository>
+        </repository>-->
     </distributionManagement>
 </project>
